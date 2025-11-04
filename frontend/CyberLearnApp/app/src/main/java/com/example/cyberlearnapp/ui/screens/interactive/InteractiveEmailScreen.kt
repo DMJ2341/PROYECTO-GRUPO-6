@@ -29,6 +29,9 @@ fun InteractiveEmailScreen(
     var showFeedback by remember { mutableStateOf<Signal?>(null) }
     val scrollState = rememberScrollState()
 
+    // ✅ CORREGIDO: Calcular totalSignals basado en las señales disponibles
+    val totalSignals = screen.signals?.size ?: 8
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -111,7 +114,7 @@ fun InteractiveEmailScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Progress
+        // Progress - ✅ CORREGIDO: Usar totalSignals calculado
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFF1E293B)
@@ -129,7 +132,7 @@ fun InteractiveEmailScreen(
                         fontSize = 14.sp
                     )
                     Text(
-                        text = "${signalsFound.size}/${screen.totalSignals}",
+                        text = "${signalsFound.size}/$totalSignals", // ✅ CORREGIDO
                         color = Color(0xFF60A5FA),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
@@ -139,7 +142,11 @@ fun InteractiveEmailScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 LinearProgressIndicator(
-                    progress = signalsFound.size.toFloat() / (screen.totalSignals ?: 8),
+                    progress = if (totalSignals > 0) {
+                        signalsFound.size.toFloat() / totalSignals
+                    } else {
+                        0f
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp),
@@ -147,10 +154,11 @@ fun InteractiveEmailScreen(
                     trackColor = Color.White.copy(alpha = 0.2f)
                 )
 
-                if (signalsFound.size < (screen.totalSignals ?: 8)) {
+                // ✅ CORREGIDO: Usar totalSignals calculado
+                if (signalsFound.size < totalSignals) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = screen.hint ?: "",
+                        text = screen.hint ?: "Busca señales sospechosas en el email",
                         color = Color(0xFFFBBF24),
                         fontSize = 12.sp
                     )
@@ -161,7 +169,9 @@ fun InteractiveEmailScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Botón continuar (solo si encontró suficientes)
-        if (signalsFound.size >= 4) {
+        // ✅ CORREGIDO: Usar totalSignals calculado
+        val minSignalsToContinue = if (totalSignals >= 4) 4 else totalSignals
+        if (signalsFound.size >= minSignalsToContinue) {
             Button(
                 onClick = onNext,
                 modifier = Modifier

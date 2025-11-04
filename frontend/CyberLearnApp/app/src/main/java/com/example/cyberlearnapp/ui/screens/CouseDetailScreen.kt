@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.cyberlearnapp.network.Lesson
 import com.example.cyberlearnapp.network.RetrofitInstance
@@ -171,15 +172,22 @@ fun CourseDetailScreen(
                     LessonItem(
                         lesson = lesson,
                         onClick = {
+                            println("🔹 Lección clickeada: ${lesson.lesson_id} - ${lesson.title}")
+
                             // Detectar si es la lección interactiva
-                            if (lesson.lesson_id == "phishing_2" ||
+                            if (lesson.lesson_id == "phishing_anatomia_interactivo" ||
                                 lesson.title.contains("Anatomía", ignoreCase = true) ||
                                 lesson.title.contains("anatomia", ignoreCase = true)) {
+
+                                println("🔹 Navegando a lección interactiva")
+
                                 // Navegar a lección interactiva
                                 navController.navigate(
                                     "interactive_lesson/phishing_anatomia_interactivo/${lesson.title}"
                                 )
                             } else {
+                                println("🔹 Navegando a lección normal")
+
                                 // Navegar a lección normal
                                 navController.navigate(
                                     "lesson/${lesson.lesson_id}/${lesson.title}"
@@ -225,7 +233,7 @@ fun CourseInfoChip(icon: String, label: String) {
 @Composable
 fun LessonItem(lesson: Lesson, onClick: () -> Unit) {
     // Badge especial para lección interactiva
-    val isInteractive = lesson.lesson_id == "phishing_2" ||
+    val isInteractive = lesson.lesson_id == "phishing_anatomia_interactivo" ||
             lesson.title.contains("Anatomía", ignoreCase = true) ||
             lesson.title.contains("anatomia", ignoreCase = true)
 
@@ -235,61 +243,30 @@ fun LessonItem(lesson: Lesson, onClick: () -> Unit) {
             .padding(horizontal = 24.dp, vertical = 8.dp)
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
-            containerColor = if (isInteractive)
-                Color(0xFFFBBF24).copy(alpha = 0.15f)
-            else
-                Color.White
+            containerColor = Color.White
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column {
-            // Badge interactivo
-            if (isInteractive) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color(0xFFFBBF24),
-                                    Color(0xFFF59E0B)
-                                )
-                            )
-                        )
-                        .padding(horizontal = 12.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "✨ LECCIÓN INTERACTIVA ✨",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-            }
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // ✅ SIEMPRE número en círculo azul (para todas las lecciones)
                 Box(
                     modifier = Modifier
                         .size(48.dp)
                         .background(
-                            color = if (isInteractive)
-                                Color(0xFFFBBF24)
-                            else
-                                Color(0xFF3B82F6),
+                            color = Color(0xFF3B82F6), // Azul consistente
                             shape = RoundedCornerShape(12.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (isInteractive) "🎮" else "${lesson.order}",
+                        text = "${lesson.order}", // ✅ SIEMPRE el número de lección
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -299,6 +276,32 @@ fun LessonItem(lesson: Lesson, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
+                    // ✅ Badge INTERACTIVA solo si es interactiva
+                    if (isInteractive) {
+                        Row(
+                            modifier = Modifier
+                                .background(
+                                    color = Color(0xFF8B5CF6).copy(alpha = 0.15f),
+                                    shape = RoundedCornerShape(6.dp)
+                                )
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "⚡",
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "INTERACTIVA",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF8B5CF6)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                    }
+
                     Text(
                         text = lesson.title,
                         style = MaterialTheme.typography.titleMedium,
@@ -309,8 +312,12 @@ fun LessonItem(lesson: Lesson, onClick: () -> Unit) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Row {
+                        // Duración
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "⏱️", style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                text = "⏱️",
+                                style = MaterialTheme.typography.bodySmall
+                            )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = "${lesson.duration_minutes} min",
@@ -321,12 +328,13 @@ fun LessonItem(lesson: Lesson, onClick: () -> Unit) {
 
                         Spacer(modifier = Modifier.width(16.dp))
 
+                        // XP
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.Star,
                                 contentDescription = null,
                                 tint = Color(0xFFFBBF24),
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(14.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
@@ -338,14 +346,22 @@ fun LessonItem(lesson: Lesson, onClick: () -> Unit) {
                     }
                 }
 
-                Text(
-                    text = if (isInteractive) "🎯" else "▶",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = if (isInteractive)
-                        Color(0xFFFBBF24)
-                    else
-                        Color(0xFF3B82F6)
-                )
+                // ✅ SIEMPRE triángulo azul (para todas las lecciones)
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .background(
+                            color = Color(0xFF3B82F6).copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "▶", // ✅ Triángulo azul para todas
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color(0xFF3B82F6) // Azul consistente
+                    )
+                }
             }
         }
     }
