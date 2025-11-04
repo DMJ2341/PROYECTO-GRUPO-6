@@ -7,7 +7,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://10.0.2.2:5000/" // Para emulador
+    // ✅ Para conectar desde el emulador a tu backend local
+    private const val BASE_URL = "http://10.0.2.2:5000/"
+
+    // 📱 Si usas dispositivo físico, cambia a tu IP local:
+    // private const val BASE_URL = "http://TU_IP_LOCAL:5000/"
+    // Ejemplo: "http://192.168.1.100:5000/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

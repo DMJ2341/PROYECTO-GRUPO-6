@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,51 +32,60 @@ class UserViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    // Cargar progreso del usuario automáticamente
     fun loadUserProgress() {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
 
-            // OBTENER TOKEN DEL REPOSITORIO
-            val token = userRepository.getAuthTokenSync()
-            if (token == null) {
-                _errorMessage.value = "No autenticado"
-                _isLoading.value = false
-                return@launch
-            }
-
             try {
+                // ✅ OBTENER TOKEN DEL USUARIO
+                val user = userRepository.userInfo.first()
+                val token = user?.token
+
+                if (token == null) {
+                    _errorMessage.value = "No autenticado"
+                    _isLoading.value = false
+                    return@launch
+                }
+
+                println("🔹 UserViewModel - Token: $token")
+
                 val response = apiService.getUserProgress("Bearer $token")
+
+                println("🔹 UserViewModel - Response code: ${response.code()}")
+
                 if (response.isSuccessful) {
                     _userProgress.value = response.body()
+                    println("✅ UserViewModel - Progreso cargado")
                 } else {
                     _errorMessage.value = "Error cargando progreso: ${response.code()}"
+                    println("❌ UserViewModel - Error: ${response.code()}")
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "Error de conexión: ${e.message}"
+                println("❌ UserViewModel - Exception: ${e.message}")
+                e.printStackTrace()
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    // Cargar insignias del usuario
     fun loadUserBadges() {
         viewModelScope.launch {
-            // OBTENER TOKEN DEL REPOSITORIO
-            val token = userRepository.getAuthTokenSync()
-            if (token == null) {
-                return@launch
-            }
-
             try {
+                val user = userRepository.userInfo.first()
+                val token = user?.token
+
+                if (token == null) {
+                    return@launch
+                }
+
                 val response = apiService.getUserBadges("Bearer $token")
                 if (response.isSuccessful && response.body()?.success == true) {
                     _userBadges.value = response.body()?.badges ?: emptyList()
                 }
             } catch (e: Exception) {
-                // Silenciar errores de badges por ahora
                 println("Error cargando badges: ${e.message}")
             }
         }

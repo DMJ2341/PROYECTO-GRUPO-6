@@ -7,8 +7,21 @@ class AuthService:
     def __init__(self):
         self.data_file = 'data/users.json'
         self._ensure_data_file()
+        
+        # Verificar si tenemos PostgreSQL disponible
+        try:
+            from models.user import User
+            from database.db import db
+            self.use_postgres = True
+            self.User = User
+            self.db = db
+            print("🔹 AuthService usando PostgreSQL")
+        except ImportError:
+            self.use_postgres = False
+            print("🔹 AuthService usando JSON")
     
     def _ensure_data_file(self):
+        """Solo para modo JSON"""
         if not os.path.exists('data'):
             os.makedirs('data')
         if not os.path.exists(self.data_file):
@@ -16,6 +29,7 @@ class AuthService:
                 json.dump({}, f)
     
     def _load_users(self):
+        """Solo para modo JSON"""
         try:
             with open(self.data_file, 'r') as f:
                 return json.load(f)
@@ -23,6 +37,7 @@ class AuthService:
             return {}
     
     def _save_users(self, users):
+        """Solo para modo JSON"""
         with open(self.data_file, 'w') as f:
             json.dump(users, f, indent=2)
     
@@ -41,6 +56,53 @@ class AuthService:
                 'message': 'Contraseña débil. Usa mayúsculas, números y mínimo 8 caracteres.'
             }
         
+        if self.use_postgres:
+            return self._register_postgres(email, password, name)
+        else:
+            return self._register_json(email, password, name)
+    
+    def _register_postgres(self, email, password, name):
+        """Registro usando PostgreSQL"""
+        try:
+            # Verificar si el usuario ya existe
+            existing_user = self.User.query.filter_by(email=email).first()
+            if existing_user:
+                return {
+                    'success': False,
+                    'message': 'El usuario ya existe'
+                }
+            
+            # Crear nuevo usuario
+            new_user = self.User(
+                email=email,
+                password_hash=self._hash_password(password),
+                name=name,
+                xp_total=0,
+                level=1,
+                streak=0
+            )
+            
+            self.db.session.add(new_user)
+            self.db.session.commit()
+            
+            return {
+                'success': True,
+                'message': 'Usuario registrado correctamente',
+                'token': f"token-{email}-{datetime.now().timestamp()}",
+                'user': {
+                    'email': email,
+                    'name': name
+                }
+            }
+        except Exception as e:
+            self.db.session.rollback()
+            return {
+                'success': False,
+                'message': f'Error al registrar: {str(e)}'
+            }
+    
+    def _register_json(self, email, password, name):
+        """Registro usando JSON (fallback)"""
         users = self._load_users()
         
         if email in users:
@@ -76,6 +138,43 @@ class AuthService:
         }
     
     def login(self, email, password):
+        if self.use_postgres:
+            return self._login_postgres(email, password)
+        else:
+            return self._login_json(email, password)
+    
+    def _login_postgres(self, email, password):
+        """Login usando PostgreSQL"""
+        try:
+            user = self.User.query.filter_by(email=email).first()
+            
+            if not user or user.password_hash != self._hash_password(password):
+                return {
+                    'success': False,
+                    'message': 'Credenciales inválidas'
+                }
+            
+            # Actualizar última conexión
+            user.last_login = datetime.utcnow()
+            self.db.session.commit()
+            
+            return {
+                'success': True,
+                'message': 'Autenticación exitosa',
+                'token': f"token-{email}-{datetime.now().timestamp()}",
+                'user': {
+                    'email': email,
+                    'name': user.name
+                }
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'message': f'Error en login: {str(e)}'
+            }
+    
+    def _login_json(self, email, password):
+        """Login usando JSON (fallback)"""
         users = self._load_users()
         user = users.get(email)
         
@@ -100,18 +199,23 @@ class AuthService:
         }
     
     def verify_token(self, token):
+        """Verificación de token (funciona para ambos modos)"""
         # TEMPORAL - Permitir token de prueba para desarrollo
         if token == "token-test@ejemplo.com":
-            print("🔓 Token de prueba aceptado para desarrollo")
             return {'email': 'test@ejemplo.com'}
         
         try:
-            # Simulación simple de verificación de token
             if token.startswith('token-'):
                 email_part = token.split('-')[1]
-                users = self._load_users()
-                if email_part in users:
-                    return {'email': email_part}
+                
+                if self.use_postgres:
+                    user = self.User.query.filter_by(email=email_part).first()
+                    if user:
+                        return {'email': email_part}
+                else:
+                    users = self._load_users()
+                    if email_part in users:
+                        return {'email': email_part}
             return None
         except:
             return None

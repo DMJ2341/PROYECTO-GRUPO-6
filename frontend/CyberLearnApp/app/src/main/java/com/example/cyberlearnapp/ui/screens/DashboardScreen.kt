@@ -14,7 +14,6 @@ import com.example.cyberlearnapp.ui.theme.*
 import com.example.cyberlearnapp.ui.components.ProgressCard
 import com.example.cyberlearnapp.ui.components.CourseCard
 import com.example.cyberlearnapp.viewmodel.UserViewModel
-import androidx.compose.runtime.collectAsState
 
 @Composable
 fun DashboardScreen(
@@ -24,82 +23,122 @@ fun DashboardScreen(
 ) {
     val userProgress by userViewModel.userProgress.collectAsState()
     val isLoading by userViewModel.isLoading.collectAsState()
+    val errorMessage by userViewModel.errorMessage.collectAsState()
+
+    // ✅ Cargar datos cuando se abre la pantalla
+    LaunchedEffect(Unit) {
+        println("🔹 Dashboard - Cargando progreso del usuario...")
+        userViewModel.loadUserProgress()
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(PrimaryDark)
     ) {
-        // Mostrar loading mientras carga
-        if (isLoading || userProgress == null) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = AccentCyan)
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = AccentCyan)
+                    Text(
+                        text = "Cargando...",
+                        color = TextWhite,
+                        modifier = Modifier.padding(top = 80.dp)
+                    )
+                }
             }
-            return
-        }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-        ) {
-            // Header
-            Text(
-                text = "CyberLearn",
-                style = MaterialTheme.typography.headlineLarge,
-                color = TextWhite,
-                fontWeight = FontWeight.Bold
-            )
+            errorMessage != null -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "❌ Error",
+                            color = TextWhite,
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                        Text(
+                            text = errorMessage ?: "Error desconocido",
+                            color = TextGray,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                        Button(
+                            onClick = { userViewModel.loadUserProgress() },
+                            modifier = Modifier.padding(top = 16.dp)
+                        ) {
+                            Text("Reintentar")
+                        }
+                    }
+                }
+            }
 
-            Text(
-                text = "Aprende. Hackea. Protege.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = AccentCyan,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
+            userProgress != null -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "CyberLearn",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = TextWhite,
+                        fontWeight = FontWeight.Bold
+                    )
 
-            // Tarjeta de Bienvenida CON DATOS REALES
-            ProgressCard(
-                progress = userProgress!!,  // ← DATOS REALES del backend
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
+                    Text(
+                        text = "Aprende. Hackea. Protege.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = AccentCyan,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
 
-            // Cursos en progreso
-            Text(
-                text = "Continúa aprendiendo",
-                style = MaterialTheme.typography.headlineSmall,
-                color = TextWhite,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+                    ProgressCard(
+                        progress = userProgress!!,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
 
-            CourseCard(
-                title = "Criptografía Básica",
-                description = "Principiante • +120 XP",
-                progress = 0.65f,
-                onClick = { onCourseClick("Criptografía Básica") }
-            )
+                    Text(
+                        text = "Continúa aprendiendo",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = TextWhite,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
 
-            Spacer(modifier = Modifier.height(12.dp))
+                    CourseCard(
+                        title = "Fundamentos de Ciberseguridad",
+                        description = "Principiante • +155 XP",
+                        progress = 0f,
+                        onClick = { onCourseClick("Fundamentos de Ciberseguridad") }
+                    )
 
-            CourseCard(
-                title = "Ethical Hacking",
-                description = "Intermedio • +80 XP",
-                progress = 0.30f,
-                onClick = { onCourseClick("Ethical Hacking") }
-            )
+                    Spacer(modifier = Modifier.height(12.dp))
 
-            Spacer(modifier = Modifier.height(12.dp))
+                    CourseCard(
+                        title = "Phishing e Ingeniería Social",
+                        description = "Principiante • +185 XP",
+                        progress = 0f,
+                        onClick = { onCourseClick("Phishing e Ingeniería Social") }
+                    )
 
-            CourseCard(
-                title = "IA para Seguridad",
-                description = "Avanzado",
-                progress = 0f,
-                onClick = { onCourseClick("IA para Seguridad") }
-            )
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
+            }
+
+            else -> {
+                // Estado inicial - mostrar algo mientras carga
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = AccentCyan)
+                }
+            }
         }
     }
 }

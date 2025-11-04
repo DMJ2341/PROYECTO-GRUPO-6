@@ -2,6 +2,8 @@ from database.db import db
 from datetime import datetime
 
 class User(db.Model):
+    __tablename__ = 'users'  # ← Cambiar de 'user' a 'users'
+    
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
@@ -14,7 +16,9 @@ class User(db.Model):
     last_activity = db.Column(db.DateTime)
 
 class UserBadge(db.Model):
+    __tablename__ = 'user_badge'  # Ya está bien
+    
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # ← Cambiar referencia
     badge_id = db.Column(db.String(50), nullable=False)
     earned_at = db.Column(db.DateTime, default=datetime.utcnow)
