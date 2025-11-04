@@ -1,48 +1,5 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-# 1. Importación necesaria
-from flask_sqlalchemy import SQLAlchemy
-
-# --- CONFIGURACIÓN DE LA APP Y LA BASE DE DATOS ---
-app = Flask(__name__)
-
-# 2. Definir la URI de la BD
-# Formato: postgresql://<user>:<password>@<host>:<port>/<database_name>
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://<user>:<password>@<host>:5432/<database_name>'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# 3. Inicializar SQLAlchemy
-db = SQLAlchemy(app)
-
-# Modelos para SQLAlchemy (Tablas de la Base de Datos)
-
-# Tabla para registrar las acciones de los usuarios
-class Activity(db.Model):
-    __tablename__ = 'activity'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
-    type = db.Column(db.String(80), nullable=False)
-    points_awarded = db.Column(db.Integer, default=0)
-    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-
-# Tabla para definir las insignias
-class Badge(db.Model):
-    __tablename__ = 'badge'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    description = db.Column(db.String(255))
-    required_activities = db.Column(db.Integer, default=1)
-
-# Tabla para rastrear qué insignias ha ganado cada usuario
-class UserBadge(db.Model):
-    __tablename__ = 'user_badge'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
-    badge_id = db.Column(db.Integer, db.ForeignKey('badge.id'), nullable=False)
-    awarded_date = db.Column(db.DateTime, default=db.func.current_timestamp())
-
-    # Evita que un usuario obtenga la misma insignia dos veces
-    __table_args__ = (db.UniqueConstraint('user_id', 'badge_id', name='_user_badge_uc'),)
 from auth_service import AuthService
 from gamification_service import GamificationService
 from course_service import CourseService
@@ -176,6 +133,182 @@ def get_achievements():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
+# ✅ ENDPOINTS PARA LECCIONES
+@app.route('/api/courses/<course_id>/lessons', methods=['GET'])
+def get_course_lessons(course_id):
+    """Obtener todas las lecciones de un curso"""
+    try:
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        user_data = auth_service.verify_token(token)
+        
+        if not user_data:
+            return jsonify({'error': 'Token inválido'}), 401
+        
+        if not DB_AVAILABLE:
+            return jsonify({'lessons': []}), 200
+        
+        from sqlalchemy import text
+        result = db.session.execute(
+            text("""
+                SELECT lesson_id, title, lesson_order, xp_reward, duration_minutes 
+                FROM lessons 
+                WHERE course_id = :course_id 
+                ORDER BY lesson_order
+            """),
+            {"course_id": course_id}
+        ).fetchall()
+        
+        lessons = []
+        for row in result:
+            lessons.append({
+                'id': row[0],
+                'title': row[1],
+                'order': row[2],
+                'xp_reward': row[3],
+                'duration_minutes': row[4]
+            })
+        
+        return jsonify({'lessons': lessons})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/lessons/<lesson_id>', methods=['GET'])
+def get_lesson_content(lesson_id):
+    """Obtener el contenido completo de una lección"""
+    try:
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        user_data = auth_service.verify_token(token)
+        
+        if not user_data:
+            return jsonify({'error': 'Token inválido'}), 401
+        
+        if not DB_AVAILABLE:
+            return jsonify({'error': 'Base de datos no disponible'}), 503
+        
+        from sqlalchemy import text
+        result = db.session.execute(
+            text("""
+                SELECT lesson_id, title, content, xp_reward, duration_minutes, course_id
+                FROM lessons 
+                WHERE lesson_id = :lesson_id
+            """),
+            {"lesson_id": lesson_id}
+        ).fetchone()
+        
+        if not result:
+            return jsonify({'error': 'Lección no encontrada'}), 404
+        
+        lesson = {
+            'id': result[0],
+            'title': result[1],
+            'content': result[2],
+            'xp_reward': result[3],
+            'duration_minutes': result[4],
+            'course_id': result[5]
+        }
+        
+        return jsonify(lesson)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+# ✅ NUEVOS ENDPOINTS PARA LECCIONES INTERACTIVAS
+@app.route('/api/lessons/<lesson_id>/interactive', methods=['GET'])
+def get_interactive_lesson(lesson_id):
+    """Obtener lección interactiva completa"""
+    try:
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        user_data = auth_service.verify_token(token)
+        
+        if not user_data:
+            return jsonify({'error': 'Token inválido'}), 401
+        
+        # Buscar lección interactiva en archivo JSON
+        file_path = f'lessons_data/{lesson_id}.json'
+        
+        if os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                lesson_data = json.load(f)
+            
+            return jsonify({
+                'success': True,
+                'lesson': lesson_data
+            }), 200
+        else:
+            # Si no existe como archivo, buscar en BD
+            if not DB_AVAILABLE:
+                return jsonify({'error': 'Lección interactiva no encontrada'}), 404
+            
+            from sqlalchemy import text
+            lesson = db.session.execute(
+                text("SELECT * FROM lessons WHERE lesson_id = :lesson_id"),
+                {"lesson_id": lesson_id}
+            ).fetchone()
+            
+            if not lesson:
+                return jsonify({'error': 'Lección no encontrada'}), 404
+            
+            # Convertir a formato interactivo si tiene screens
+            lesson_dict = dict(lesson._mapping)
+            return jsonify({
+                'success': True,
+                'lesson': lesson_dict
+            }), 200
+            
+    except Exception as e:
+        print(f"Error obteniendo lección: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/lessons/<lesson_id>/progress', methods=['POST'])
+def save_lesson_progress(lesson_id):
+    """Guardar progreso por pantalla"""
+    try:
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        user_data = auth_service.verify_token(token)
+        
+        if not user_data:
+            return jsonify({'error': 'Token inválido'}), 401
+        
+        if not DB_AVAILABLE:
+            return jsonify({'success': True, 'message': 'Modo JSON - Progreso simulado'}), 200
+        
+        data = request.json
+        email = user_data['email']
+        
+        from sqlalchemy import text
+        # Actualizar o insertar progreso
+        db.session.execute(
+            text("""
+                INSERT INTO user_lesson_progress 
+                (user_email, lesson_id, current_screen, completed_screens, signals_found, quiz_answers)
+                VALUES (:email, :lesson_id, :current_screen, :completed_screens, :signals_found, :quiz_answers)
+                ON CONFLICT (user_email, lesson_id) 
+                DO UPDATE SET
+                    current_screen = :current_screen,
+                    completed_screens = :completed_screens,
+                    signals_found = :signals_found,
+                    quiz_answers = :quiz_answers
+            """),
+            {
+                'email': email,
+                'lesson_id': lesson_id,
+                'current_screen': data.get('current_screen', 1),
+                'completed_screens': data.get('completed_screens', []),
+                'signals_found': data.get('signals_found', []),
+                'quiz_answers': json.dumps(data.get('quiz_answers', {}))
+            }
+        )
+        db.session.commit()
+        
+        return jsonify({'success': True}), 200
+        
+    except Exception as e:
+        if DB_AVAILABLE:
+            db.session.rollback()
+        print(f"Error guardando progreso: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/user/complete-activity', methods=['POST'])
 @token_required
 def complete_activity(current_user):
@@ -222,16 +355,22 @@ def get_user_badges(current_user):
 
 @app.route('/')
 def home():
+    endpoints = [
+        'POST /api/auth/register',
+        'POST /api/auth/login', 
+        'GET /api/user/progress',
+        'GET /api/courses',
+        'GET /api/achievements',
+        'GET /api/courses/<course_id>/lessons',
+        'GET /api/lessons/<lesson_id>',
+        'GET /api/lessons/<lesson_id>/interactive',
+        'POST /api/lessons/<lesson_id>/progress'
+    ]
+    
     return jsonify({
         'message': '🚀 CyberLearn Backend funcionando!',
         'version': '1.0',
-        'endpoints': [
-            'POST /api/auth/register',
-            'POST /api/auth/login', 
-            'GET /api/user/progress',
-            'GET /api/courses',
-            'GET /api/achievements'
-        ]
+        'endpoints': endpoints
     })
 
 if __name__ == '__main__':
@@ -245,5 +384,9 @@ if __name__ == '__main__':
     print("   GET /api/user/progress") 
     print("   GET /api/courses")
     print("   GET /api/achievements")
+    print("   GET /api/courses/<course_id>/lessons")
+    print("   GET /api/lessons/<lesson_id>")
+    print("   GET /api/lessons/<lesson_id>/interactive")
+    print("   POST /api/lessons/<lesson_id>/progress")
     print("=" * 60)
     app.run(debug=True, port=5000, host='0.0.0.0')

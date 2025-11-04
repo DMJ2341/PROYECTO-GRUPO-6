@@ -14,66 +14,67 @@ import com.example.cyberlearnapp.ui.components.CourseCard
 
 @Composable
 fun CoursesScreen(
-    onCourseClick: (String) -> Unit,
+    onCourseClick: (String, String, String, String, Int, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Por ahora datos mock - luego conectaremos con ViewModel
+    // Datos de cursos actualizados con los que están en el backend
     val courses = listOf(
         CourseItem(
-            id = "crypto_basics",
-            title = "Criptografía Básica",
-            description = "Principiante • +120 XP",
-            progress = 0.65f,
+            id = "fundamentos_ciberseguridad",
+            title = "Fundamentos de Ciberseguridad",
+            description = "Aprende los conceptos básicos de ciberseguridad",
+            progress = 0f,
             level = "Principiante",
-            xpReward = 120,
-            lessonsTotal = 5,
-            lessonsCompleted = 3,
-            image = "🔐"
-        ),
-        CourseItem(
-            id = "ethical_hacking",
-            title = "Ethical Hacking",
-            description = "Intermedio • +80 XP",
-            progress = 0.30f,
-            level = "Intermedio",
-            xpReward = 80,
-            lessonsTotal = 8,
-            lessonsCompleted = 2,
+            xpReward = 155,
+            lessonsTotal = 6,
+            lessonsCompleted = 0,
             image = "🛡️"
         ),
         CourseItem(
-            id = "ai_security",
-            title = "IA para Seguridad",
-            description = "Avanzado • +150 XP",
+            id = "phishing_ingenieria_social",
+            title = "Phishing e Ingeniería Social",
+            description = "Identifica y protégete de ataques de phishing",
             progress = 0f,
-            level = "Avanzado",
-            xpReward = 150,
-            lessonsTotal = 6,
+            level = "Principiante",
+            xpReward = 185,
+            lessonsTotal = 7,
             lessonsCompleted = 0,
-            image = "🤖"
+            image = "🎣"
         ),
         CourseItem(
-            id = "malware_analysis",
-            title = "Análisis de Malware",
-            description = "Avanzado • +200 XP",
+            id = "malware_ransomware",
+            title = "Malware y Ransomware",
+            description = "Comprende y prevén infecciones de malware",
             progress = 0f,
-            level = "Avanzado",
-            xpReward = 200,
-            lessonsTotal = 7,
+            level = "Intermedio",
+            xpReward = 150,
+            lessonsTotal = 6,
             lessonsCompleted = 0,
             image = "🦠",
             locked = true
         ),
         CourseItem(
-            id = "cloud_security",
-            title = "Seguridad en la Nube",
-            description = "Intermedio • +100 XP",
+            id = "seguridad_redes_wifi",
+            title = "Seguridad en Redes y WiFi",
+            description = "Protege tus conexiones y datos en redes",
             progress = 0f,
             level = "Intermedio",
-            xpReward = 100,
-            lessonsTotal = 4,
+            xpReward = 140,
+            lessonsTotal = 6,
             lessonsCompleted = 0,
-            image = "☁️",
+            image = "📡",
+            locked = true
+        ),
+        CourseItem(
+            id = "criptografia_usuarios",
+            title = "Criptografía para Usuarios",
+            description = "Protege tu información con criptografía",
+            progress = 0f,
+            level = "Intermedio",
+            xpReward = 125,
+            lessonsTotal = 5,
+            lessonsCompleted = 0,
+            image = "🔐",
             locked = true
         )
     )
@@ -105,21 +106,33 @@ fun CoursesScreen(
             )
 
             // Cursos en progreso
-            Text(
-                text = "En progreso",
-                style = MaterialTheme.typography.headlineSmall,
-                color = TextWhite,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            courses.filter { it.progress > 0 }.forEach { course ->
-                CourseCard(
-                    title = course.title,
-                    description = course.description,
-                    progress = course.progress,
-                    onClick = { onCourseClick(course.id) }
+            val coursesInProgress = courses.filter { it.progress > 0 }
+            if (coursesInProgress.isNotEmpty()) {
+                Text(
+                    text = "En progreso",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = TextWhite,
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+
+                coursesInProgress.forEach { course ->
+                    CourseCard(
+                        title = course.title,
+                        description = course.description,
+                        progress = course.progress,
+                        onClick = {
+                            onCourseClick(
+                                course.id,
+                                course.title,
+                                course.description,
+                                course.level,
+                                course.xpReward,
+                                course.image
+                            )
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
 
             // Cursos disponibles
@@ -135,33 +148,46 @@ fun CoursesScreen(
                     title = course.title,
                     description = course.description,
                     progress = course.progress,
-                    onClick = { onCourseClick(course.id) }
+                    onClick = {
+                        onCourseClick(
+                            course.id,
+                            course.title,
+                            course.description,
+                            course.level,
+                            course.xpReward,
+                            course.image
+                        )
+                    }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
             // Cursos bloqueados
-            Text(
-                text = "Próximamente",
-                style = MaterialTheme.typography.headlineSmall,
-                color = TextGray,
-                modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
-            )
-
-            courses.filter { it.locked }.forEach { course ->
-                CourseCard(
-                    title = course.title,
-                    description = course.description,
-                    progress = course.progress,
-                    onClick = { onCourseClick(course.id) }
+            val lockedCourses = courses.filter { it.locked }
+            if (lockedCourses.isNotEmpty()) {
+                Text(
+                    text = "Próximamente",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = TextGray,
+                    modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+
+                lockedCourses.forEach { course ->
+                    CourseCard(
+                        title = course.title,
+                        description = course.description,
+                        progress = course.progress,
+                        onClick = { }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
+
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
 
-// Data class para los cursos
 data class CourseItem(
     val id: String,
     val title: String,
