@@ -16,33 +16,35 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ApiService {
-    @POST("api/auth/register")
+    // ✅ TODAS las rutas SIN /api/ porque ya está en BASE_URL
+
+    @POST("auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
 
-    @POST("api/auth/login")
+    @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
-    @GET("api/user/progress")
+    @GET("user/progress")
     suspend fun getUserProgress(@Header("Authorization") token: String): Response<Progress>
 
-    @POST("/api/user/complete-activity")
+    @POST("user/complete-activity")
     suspend fun completeActivity(
         @Header("Authorization") token: String,
         @Body request: CompleteActivityRequest
     ): Response<CompleteActivityResponse>
 
-    @GET("/api/user/badges")
+    @GET("user/badges")
     suspend fun getUserBadges(
         @Header("Authorization") token: String
     ): Response<BadgeResponse>
 
-    @GET("api/courses/{courseId}/lessons")
+    @GET("courses/{courseId}/lessons")
     suspend fun getCourseLessons(
         @Path("courseId") courseId: String,
         @Header("Authorization") token: String
     ): Response<LessonsResponse>
 
-    @GET("api/lessons/{lessonId}")
+    @GET("lessons/{lessonId}")
     suspend fun getLessonContent(
         @Path("lessonId") lessonId: String,
         @Header("Authorization") token: String
@@ -82,6 +84,7 @@ data class AuthResponse(
 
 data class Lesson(
     val id: String,
+    val lesson_id: String = "",
     val title: String,
     val content: String = "",
     val order: Int = 0,

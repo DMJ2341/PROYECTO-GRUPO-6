@@ -14,6 +14,7 @@ from functools import wraps
 try:
     from database.db import db, init_db
     from config import Config
+    from sqlalchemy import text  # ✅ IMPORTAR TEXT AQUÍ
     DB_AVAILABLE = True
     print("✅ Módulos de base de datos cargados correctamente")
 except ImportError as e:
@@ -147,7 +148,6 @@ def get_course_lessons(course_id):
         if not DB_AVAILABLE:
             return jsonify({'lessons': []}), 200
         
-        from sqlalchemy import text
         result = db.session.execute(
             text("""
                 SELECT lesson_id, title, lesson_order, xp_reward, duration_minutes 
@@ -186,7 +186,6 @@ def get_lesson_content(lesson_id):
         if not DB_AVAILABLE:
             return jsonify({'error': 'Base de datos no disponible'}), 503
         
-        from sqlalchemy import text
         result = db.session.execute(
             text("""
                 SELECT lesson_id, title, content, xp_reward, duration_minutes, course_id
@@ -213,51 +212,94 @@ def get_lesson_content(lesson_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-# ✅ NUEVOS ENDPOINTS PARA LECCIONES INTERACTIVAS
+# ✅ ENDPOINT CORREGIDO PARA LECCIONES INTERACTIVAS
 @app.route('/api/lessons/<lesson_id>/interactive', methods=['GET'])
 def get_interactive_lesson(lesson_id):
-    """Obtener lección interactiva completa"""
+    """Obtener lección interactiva desde PostgreSQL"""
+    print(f"🔹 Petición de lección interactiva: {lesson_id}")
+    
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    
+    # Validar token usando el método existente
+    user_data = auth_service.verify_token(token)
+    
+    if not user_data:
+        print("❌ Token inválido")
+        return jsonify({'error': 'No autorizado'}), 401
+    
     try:
-        token = request.headers.get('Authorization', '').replace('Bearer ', '')
-        user_data = auth_service.verify_token(token)
+        print(f"🔹 Usuario autenticado: {user_data['email']}")
         
-        if not user_data:
-            return jsonify({'error': 'Token inválido'}), 401
+        # Verificar que la base de datos está disponible
+        if not DB_AVAILABLE:
+            print("❌ Base de datos no disponible")
+            return jsonify({'error': 'Base de datos no disponible'}), 503
         
-        # Buscar lección interactiva en archivo JSON
-        file_path = f'lessons_data/{lesson_id}.json'
+        # Buscar lección en PostgreSQL
+        result = db.session.execute(
+            text("""
+                SELECT 
+                    lesson_id,
+                    course_id,
+                    title,
+                    lesson_order,
+                    xp_reward,
+                    duration_minutes,
+                    lesson_type,
+                    screens,
+                    total_screens
+                FROM lessons 
+                WHERE lesson_id = :lesson_id 
+                AND lesson_type = 'interactive'
+            """),
+            {"lesson_id": lesson_id}
+        ).fetchone()
         
-        if os.path.exists(file_path):
-            with open(file_path, 'r', encoding='utf-8') as f:
-                lesson_data = json.load(f)
-            
-            return jsonify({
-                'success': True,
-                'lesson': lesson_data
-            }), 200
+        if not result:
+            print(f"❌ Lección interactiva no encontrada: {lesson_id}")
+            return jsonify({'error': 'Lección no encontrada'}), 404
+        
+        print(f"🔹 Lección encontrada: {result.title}")
+        print(f"🔹 Tipo de screens: {type(result.screens)}")
+        
+        # Manejar diferentes formatos de screens
+        screens_data = result.screens
+        
+        # Si screens es un diccionario con clave 'screens', extraer el array
+        if isinstance(screens_data, dict) and 'screens' in screens_data:
+            screens_array = screens_data['screens']
+        # Si screens es directamente el array, usarlo tal cual
+        elif isinstance(screens_data, list):
+            screens_array = screens_data
         else:
-            # Si no existe como archivo, buscar en BD
-            if not DB_AVAILABLE:
-                return jsonify({'error': 'Lección interactiva no encontrada'}), 404
-            
-            from sqlalchemy import text
-            lesson = db.session.execute(
-                text("SELECT * FROM lessons WHERE lesson_id = :lesson_id"),
-                {"lesson_id": lesson_id}
-            ).fetchone()
-            
-            if not lesson:
-                return jsonify({'error': 'Lección no encontrada'}), 404
-            
-            # Convertir a formato interactivo si tiene screens
-            lesson_dict = dict(lesson._mapping)
-            return jsonify({
-                'success': True,
-                'lesson': lesson_dict
-            }), 200
-            
+            print(f"❌ Formato de screens no reconocido: {type(screens_data)}")
+            screens_array = []
+        
+        # Construir respuesta
+        lesson_data = {
+            'lesson_id': result.lesson_id,
+            'course_id': result.course_id,
+            'title': result.title,
+            'lesson_order': result.lesson_order,
+            'xp_reward': result.xp_reward,
+            'duration_minutes': result.duration_minutes,
+            'lesson_type': result.lesson_type,
+            'total_screens': result.total_screens,
+            'screens': screens_array  # Usar el array extraído
+        }
+        
+        print(f"✅ Lección cargada desde PostgreSQL: {lesson_id}")
+        print(f"✅ Total de pantallas: {len(screens_array)}")
+        
+        return jsonify({
+            'success': True,
+            'lesson': lesson_data
+        }), 200
+        
     except Exception as e:
-        print(f"Error obteniendo lección: {e}")
+        print(f"❌ Error obteniendo lección: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/lessons/<lesson_id>/progress', methods=['POST'])
@@ -276,7 +318,6 @@ def save_lesson_progress(lesson_id):
         data = request.json
         email = user_data['email']
         
-        from sqlalchemy import text
         # Actualizar o insertar progreso
         db.session.execute(
             text("""

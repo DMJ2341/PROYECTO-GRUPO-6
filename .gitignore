@@ -1,3 +1,4 @@
+# ========== ANDROID ==========
 # Gradle files
 .gradle/
 build/
@@ -32,3 +33,26 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# ========== BACKEND  ==========
+
+# Python
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/instance/
+backend/.env
+backend/migrations/
+
+# Database (SQLite local - si usas)
+*.db
+*.sqlite3
+
+# Entorno virtual Python
+venv/
+ENV/
+
+# Archivos de configuración sensible
+config.py
+secrets.py
+.env.local
