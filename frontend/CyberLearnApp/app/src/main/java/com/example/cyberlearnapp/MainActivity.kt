@@ -19,6 +19,7 @@ import com.example.cyberlearnapp.ui.components.BottomNavigationBar
 import com.example.cyberlearnapp.ui.screens.AuthScreen
 import com.example.cyberlearnapp.ui.theme.CyberLearnAppTheme
 import com.example.cyberlearnapp.viewmodel.AuthViewModel
+import com.example.cyberlearnapp.viewmodel.CourseViewModel
 import com.example.cyberlearnapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,6 +40,7 @@ fun CyberLearnApp() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
     val userViewModel: UserViewModel = hiltViewModel()
+    val courseViewModel: CourseViewModel = hiltViewModel() // <-- AÑADIDO
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -77,7 +79,8 @@ fun CyberLearnApp() {
             mainGraph(
                 navController = navController,
                 authViewModel = authViewModel,
-                userViewModel = userViewModel
+                userViewModel = userViewModel,
+                courseViewModel = courseViewModel // <-- AÑADIDO
             )
         }
     }

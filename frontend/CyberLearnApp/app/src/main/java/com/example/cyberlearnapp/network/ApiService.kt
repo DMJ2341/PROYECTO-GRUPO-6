@@ -16,7 +16,6 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ApiService {
-    // ✅ TODAS las rutas SIN /api/ porque ya está en BASE_URL
 
     @POST("auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
@@ -37,6 +36,14 @@ interface ApiService {
     suspend fun getUserBadges(
         @Header("Authorization") token: String
     ): Response<BadgeResponse>
+
+    // --- NUEVA FUNCIÓN ---
+    @GET("courses")
+    suspend fun getAllCourses(
+        @Header("Authorization") token: String
+    ): Response<List<Course>> // Devuelve una lista de Cursos
+
+    // --- FIN NUEVA FUNCIÓN ---
 
     @GET("courses/{courseId}/lessons")
     suspend fun getCourseLessons(
@@ -64,6 +71,8 @@ interface ApiService {
     ): Response<SuccessResponse>
 }
 
+// --- CLASES DE DATOS (DATA CLASSES) ---
+
 data class RegisterRequest(
     val email: String,
     val password: String,
@@ -82,6 +91,17 @@ data class AuthResponse(
     val user: User?
 )
 
+// --- NUEVA DATA CLASS PARA COURSE ---
+data class Course(
+    val id: String,
+    val title: String,
+    val description: String,
+    val level: String,
+    val xp_reward: Int,
+    val image_url: String // Para el emoji 🚀
+)
+// --- FIN NUEVA DATA CLASS ---
+
 data class Lesson(
     val id: String,
     val lesson_id: String = "",
@@ -96,3 +116,4 @@ data class Lesson(
 data class LessonsResponse(
     val lessons: List<Lesson>
 )
+

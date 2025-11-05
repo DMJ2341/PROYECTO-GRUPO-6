@@ -1,11 +1,12 @@
 package com.example.cyberlearnapp.repository
 
-import android.content.Context
+// 1. IMPORTACIONES NECESARIAS (LIMPIADAS)
+import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import com.example.cyberlearnapp.network.ApiService
 import com.example.cyberlearnapp.network.models.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -13,75 +14,58 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// DataStore name
-private val Context.dataStore by preferencesDataStore(name = "user_preferences")
-
+// 2. EL REPOSITORIO AHORA RECIBE SUS DEPENDENCIAS
 @Singleton
 class UserRepository @Inject constructor(
-    private val context: Context
+    private val apiService: ApiService, // <-- Inyectado por Hilt
+    private val dataStore: DataStore<Preferences> // <-- Inyectado por Hilt
 ) {
-    companion object {
-        private val TOKEN_KEY = stringPreferencesKey("auth_token")
-        private val USER_EMAIL_KEY = stringPreferencesKey("user_email")
-        private val USER_NAME_KEY = stringPreferencesKey("user_name")
-        private val IS_LOGGED_IN_KEY = booleanPreferencesKey("is_logged_in")
+
+    // 3. CLAVES PARA EL DATASTORE (Esto está bien)
+    private object PreferencesKeys {
+        val AUTH_TOKEN = stringPreferencesKey("auth_token")
+        val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+        val USER_NAME = stringPreferencesKey("user_name")
+        val USER_EMAIL = stringPreferencesKey("user_email")
     }
 
-    // Guardar token de autenticación
-    suspend fun saveAuthToken(token: String) {
-        context.dataStore.edit { preferences ->
-            preferences[TOKEN_KEY] = token
-            preferences[IS_LOGGED_IN_KEY] = true
-        }
-    }
-
-    // Obtener token de autenticación
-    val authToken: Flow<String?> = context.dataStore.data
-        .map { preferences ->
-            preferences[TOKEN_KEY]
-        }
-
-    // Guardar información del usuario
-    suspend fun saveUserInfo(user: User) {
-        context.dataStore.edit { preferences ->
-            preferences[USER_EMAIL_KEY] = user.email
-            preferences[USER_NAME_KEY] = user.name
-            preferences[TOKEN_KEY] = user.token
-            preferences[IS_LOGGED_IN_KEY] = true
+    // 4. FUNCIONES DEL REPOSITORIO (Usan el dataStore inyectado)
+    suspend fun saveLoginData(token: String, user: User) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.AUTH_TOKEN] = token
+            preferences[PreferencesKeys.IS_LOGGED_IN] = true
+            preferences[PreferencesKeys.USER_NAME] = user.name ?: ""
+            preferences[PreferencesKeys.USER_EMAIL] = user.email
         }
     }
 
-    // Obtener información del usuario
-    val userInfo: Flow<User?> = context.dataStore.data
-        .map { preferences ->
-            val email = preferences[USER_EMAIL_KEY]
-            val name = preferences[USER_NAME_KEY]
-            val token = preferences[TOKEN_KEY]
-
-            if (email != null && name != null && token != null) {
-                User(email = email, name = name, token = token)
-            } else {
-                null
-            }
-        }
-
-    // Verificar si el usuario está logueado
-    val isLoggedIn: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[IS_LOGGED_IN_KEY] ?: false
-        }
-
-    // Limpiar todos los datos (logout)
-    suspend fun clearUserData() {
-        context.dataStore.edit { preferences ->
+    suspend fun clearLoginData() {
+        dataStore.edit { preferences ->
             preferences.clear()
         }
     }
 
-    // Obtener token de forma síncrona (para casos especiales)
-    suspend fun getAuthTokenSync(): String? {
-        return context.dataStore.data
-            .map { it[TOKEN_KEY] }
-            .firstOrNull()
+    fun getToken(): Flow<String?> {
+        return dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.AUTH_TOKEN]
+        }
+    }
+
+    fun getUserData(): Flow<User?> {
+        return dataStore.data.map { preferences ->
+            val name = preferences[PreferencesKeys.USER_NAME]
+            val email = preferences[PreferencesKeys.USER_EMAIL]
+            if (name != null && email != null) {
+                User(email = email, name = name)
+            } else {
+                null
+            }
+        }
+    }
+
+    suspend fun isLoggedIn(): Boolean {
+        return dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.IS_LOGGED_IN] ?: false
+        }.firstOrNull() ?: false
     }
 }

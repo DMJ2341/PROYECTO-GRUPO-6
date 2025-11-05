@@ -8,6 +8,8 @@ import os
 from services.activity_service import ActivityService
 from services.badge_service import BadgeService
 from models.user import User
+from models.course import Course
+from models.lesson import Lesson
 from functools import wraps
 
 # ✅ IMPORTACIONES NUEVAS - con manejo de errores para compatibilidad

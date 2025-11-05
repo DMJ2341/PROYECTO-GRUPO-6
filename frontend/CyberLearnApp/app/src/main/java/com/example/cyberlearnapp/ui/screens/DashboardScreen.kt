@@ -10,7 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.cyberlearnapp.ui.theme.*
+// --- IMPORTACIONES DE COLOR AÑADIDAS ---
+import com.example.cyberlearnapp.ui.theme.AccentCyan
+import com.example.cyberlearnapp.ui.theme.PrimaryDark
+import com.example.cyberlearnapp.ui.theme.TextGray
+import com.example.cyberlearnapp.ui.theme.TextWhite
+// --- FIN DE IMPORTACIONES ---
 import com.example.cyberlearnapp.ui.components.ProgressCard
 import com.example.cyberlearnapp.ui.components.CourseCard
 import com.example.cyberlearnapp.viewmodel.UserViewModel
@@ -34,7 +39,7 @@ fun DashboardScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(PrimaryDark)
+            .background(PrimaryDark) // <-- Ahora funciona
     ) {
         when {
             isLoading -> {
@@ -42,10 +47,10 @@ fun DashboardScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = AccentCyan)
+                    CircularProgressIndicator(color = AccentCyan) // <-- Ahora funciona
                     Text(
                         text = "Cargando...",
-                        color = TextWhite,
+                        color = TextWhite, // <-- Ahora funciona
                         modifier = Modifier.padding(top = 80.dp)
                     )
                 }
@@ -59,12 +64,12 @@ fun DashboardScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "❌ Error",
-                            color = TextWhite,
+                            color = TextWhite, // <-- Ahora funciona
                             style = MaterialTheme.typography.headlineMedium
                         )
                         Text(
                             text = errorMessage ?: "Error desconocido",
-                            color = TextGray,
+                            color = TextGray, // <-- Ahora funciona
                             modifier = Modifier.padding(top = 8.dp)
                         )
                         Button(
@@ -87,14 +92,14 @@ fun DashboardScreen(
                     Text(
                         text = "CyberLearn",
                         style = MaterialTheme.typography.headlineLarge,
-                        color = TextWhite,
+                        color = TextWhite, // <-- Ahora funciona
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Aprende. Hackea. Protege.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = AccentCyan,
+                        color = AccentCyan, // <-- Ahora funciona
                         modifier = Modifier.padding(bottom = 24.dp)
                     )
 
@@ -106,25 +111,40 @@ fun DashboardScreen(
                     Text(
                         text = "Continúa aprendiendo",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = TextWhite,
+                        color = TextWhite, // <-- Ahora funciona
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
+                    // --- ESTA ES LA SECCIÓN PROBLEMÁTICA ---
+                    // Esta pantalla (Dashboard) no debería saber de Cursos
+                    // Debería ser la pantalla "CoursesScreen" la que
+                    // llame al CourseViewModel.
+                    // Por ahora, lo dejamos como estaba en tu código:
                     CourseCard(
+                        emoji = "🚀",
                         title = "Fundamentos de Ciberseguridad",
-                        description = "Principiante • +155 XP",
-                        progress = 0f,
-                        onClick = { onCourseClick("Fundamentos de Ciberseguridad") }
+                        description = "El curso obligatorio para iniciar",
+                        level = "Principiante",
+                        xp = 150,
+                        progress = 0, // El progreso debe venir de UserViewModel
+                        onCourseClick = { onCourseClick("Fundamentos de Ciberseguridad") }
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    // Este es otro curso estático, debería venir de la API
+                    // a través de CoursesScreen.
                     CourseCard(
+                        emoji = "🎣",
                         title = "Phishing e Ingeniería Social",
-                        description = "Principiante • +185 XP",
-                        progress = 0f,
-                        onClick = { onCourseClick("Phishing e Ingeniería Social") }
+                        description = "Detecta correos falsos",
+                        level = "Principiante",
+                        xp = 35,
+                        progress = 0,
+                        onCourseClick = { onCourseClick("Phishing e Ingeniería Social") }
                     )
+                    // --- FIN DE LA SECCIÓN PROBLEMÁTICA ---
+
 
                     Spacer(modifier = Modifier.height(80.dp))
                 }
@@ -136,7 +156,7 @@ fun DashboardScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = AccentCyan)
+                    CircularProgressIndicator(color = AccentCyan) // <-- Ahora funciona
                 }
             }
         }

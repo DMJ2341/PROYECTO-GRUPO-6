@@ -3,7 +3,7 @@ package com.example.cyberlearnapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.models.User
+import com.example.cyberlearnapp.network.models.User // Asegúrate que sea el import de network.models
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +35,8 @@ class AuthViewModel @Inject constructor(
 
     fun loadStoredUser() {
         viewModelScope.launch {
-            userRepository.userInfo.collect { user ->
+            // CORREGIDO: Llama a la función correcta "getUserData"
+            userRepository.getUserData().collect { user ->
                 _currentUser.value = user
             }
         }
@@ -56,15 +57,9 @@ class AuthViewModel @Inject constructor(
                     val token = response.body()?.token ?: ""
 
                     if (userData != null) {
-                        val user = User(
-                            email = userData.email,
-                            name = userData.name,
-                            token = token
-                        )
-
-                        // GUARDAR EN REPOSITORIO (PERSISTENCIA)
-                        userRepository.saveUserInfo(user)
-                        _currentUser.value = user
+                        // CORREGIDO: Llama a "saveLoginData" con el token y el usuario
+                        userRepository.saveLoginData(token, userData)
+                        _currentUser.value = userData // El User original de la API
                     }
                 } else {
                     _errorMessage.value = response.body()?.message ?: "Error en el registro"
@@ -92,15 +87,9 @@ class AuthViewModel @Inject constructor(
                     val token = response.body()?.token ?: ""
 
                     if (userData != null) {
-                        val user = User(
-                            email = userData.email,
-                            name = userData.name,
-                            token = token
-                        )
-
-                        // GUARDAR EN REPOSITORIO (PERSISTENCIA)
-                        userRepository.saveUserInfo(user)
-                        _currentUser.value = user
+                        // CORREGIDO: Llama a "saveLoginData" con el token y el usuario
+                        userRepository.saveLoginData(token, userData)
+                        _currentUser.value = userData // El User original de la API
                     }
                 } else {
                     _errorMessage.value = response.body()?.message ?: "Error en el login"
@@ -115,8 +104,8 @@ class AuthViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            // LIMPIAR DATOS DEL REPOSITORIO
-            userRepository.clearUserData()
+            // CORREGIDO: Llama a la función correcta "clearLoginData"
+            userRepository.clearLoginData()
             _currentUser.value = null
         }
     }
