@@ -1,5 +1,6 @@
 package com.example.cyberlearnapp.navigation
 
+
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -11,11 +12,13 @@ import com.example.cyberlearnapp.viewmodel.AuthViewModel
 import com.example.cyberlearnapp.viewmodel.UserViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.example.cyberlearnapp.viewmodel.CourseViewModel
 
 fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
     authViewModel: AuthViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    courseViewModel: CourseViewModel // <-- AÑADIDO
 ) {
     navigation(
         startDestination = Screens.Dashboard.route,
@@ -32,6 +35,7 @@ fun NavGraphBuilder.mainGraph(
 
         composable(Screens.Courses.route) {
             CoursesScreen(
+                courseViewModel = courseViewModel, // <-- AÑADIDO
                 onCourseClick = { courseId, courseTitle, courseDescription, courseLevel, courseXp, courseEmoji ->
                     navController.navigate(
                         "course_detail/$courseId/$courseTitle/$courseDescription/$courseLevel/$courseXp/$courseEmoji"
@@ -59,17 +63,18 @@ fun NavGraphBuilder.mainGraph(
             val courseEmoji = backStackEntry.arguments?.getString("courseEmoji") ?: "📚"
 
             val currentUser by authViewModel.currentUser.collectAsState()
-            val token = currentUser?.token ?: ""
+            val token = currentUser?.token ?: "" // Este token sigue siendo útil para lecciones individuales
 
             CourseDetailScreen(
+                courseViewModel = courseViewModel, // <-- AÑADIDO
                 courseId = courseId,
                 courseTitle = courseTitle,
                 courseDescription = courseDescription,
                 courseLevel = courseLevel,
                 courseXp = courseXp,
                 courseEmoji = courseEmoji,
-                token = token,
-                navController = navController,  // ← AGREGADO
+                token = token, // Lo mantenemos por si lo usa LessonScreen
+                navController = navController,
                 onNavigateBack = { navController.navigateUp() }
             )
         }

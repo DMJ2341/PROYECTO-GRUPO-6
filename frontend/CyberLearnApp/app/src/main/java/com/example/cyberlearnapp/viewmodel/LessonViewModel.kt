@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.ApiService
 import com.example.cyberlearnapp.network.models.CompleteActivityRequest
+import com.example.cyberlearnapp.repository.UserRepository // <-- 1. IMPORTAR UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first // <-- 2. IMPORTAR flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,12 +18,14 @@ data class LessonUiState(
     val lessonContent: String = "",
     val isCompleting: Boolean = false,
     val xpEarned: Int = 0,
+    val isLoading: Boolean = false, // <-- 3. Añadir estado de carga
     val errorMessage: String? = null
 )
 
 @HiltViewModel
 class LessonViewModel @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val userRepository: UserRepository // <-- 4. Inyectar UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LessonUiState())
@@ -29,27 +33,49 @@ class LessonViewModel @Inject constructor(
 
     fun loadLessonContent(lessonId: String) {
         viewModelScope.launch {
-            // Por ahora contenido estático
-            _uiState.value = _uiState.value.copy( // Accedemos con .value
-                lessonTitle = when (lessonId) {
-                    "crypto_1" -> "Introducción a Criptografía"
-                    "crypto_2" -> "Tipos de Encriptación"
-                    else -> "Lección $lessonId"
-                },
-                lessonContent = "Este es el contenido de la lección $lessonId..."
-            )
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            try {
+                // 5. OBTENER EL TOKEN REAL
+                val token = userRepository.getToken().first()
+                if (token == null) {
+                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Usuario no autenticado")
+                    return@launch
+                }
+
+                // 6. LLAMAR A LA API REAL
+                val response = apiService.getLessonContent(lessonId, "Bearer $token")
+
+                if (response.isSuccessful && response.body() != null) {
+                    val lesson = response.body()!!
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        lessonTitle = lesson.title,
+                        lessonContent = lesson.content
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Error al cargar contenido")
+                }
+
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Error de red: ${e.message}")
+            }
         }
     }
 
     fun completeLesson(lessonId: String, difficulty: Int = 1, onCompleted: (Int) -> Unit) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isCompleting = true, errorMessage = null)
-            try {
-                // TEMPORAL: Usar el token que sabemos que funciona
-                val token = "Bearer token-test@ejemplo.com"
 
+            // 7. OBTENER EL TOKEN REAL
+            val token = userRepository.getToken().first()
+            if (token == null) {
+                _uiState.value = _uiState.value.copy(isCompleting = false, errorMessage = "Usuario no autenticado")
+                return@launch
+            }
+
+            try {
                 val response = apiService.completeActivity(
-                    token = token,
+                    token = "Bearer $token", // <-- 8. USAR EL TOKEN REAL
                     request = CompleteActivityRequest(
                         type = "lesson_completed",
                         lessonId = lessonId,
@@ -76,8 +102,5 @@ class LessonViewModel @Inject constructor(
         }
     }
 
-    private fun getToken(): String {
-        // Temporal - Se implementará la persistencia real
-        return "token-usuario@ejemplo.com"
-    }
+    // 9. Eliminar la función private getToken() que estaba hardcodeada
 }

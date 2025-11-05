@@ -1,8 +1,10 @@
 package com.example.cyberlearnapp.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape // <-- ¡IMPORTACIÓN AÑADIDA!
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -12,10 +14,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.cyberlearnapp.ui.theme.*
+// --- IMPORTACIONES DE COLOR ---
+import com.example.cyberlearnapp.ui.theme.AccentCyan
+import com.example.cyberlearnapp.ui.theme.CardBg
+import com.example.cyberlearnapp.ui.theme.Danger
+import com.example.cyberlearnapp.ui.theme.PrimaryDark
+import com.example.cyberlearnapp.ui.theme.Success
+import com.example.cyberlearnapp.ui.theme.TextGray
+import com.example.cyberlearnapp.ui.theme.TextWhite
+import com.example.cyberlearnapp.ui.theme.Warning
+// --- FIN DE IMPORTACIONES ---
 import com.example.cyberlearnapp.viewmodel.AuthViewModel
 import com.example.cyberlearnapp.viewmodel.UserViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
+import com.example.cyberlearnapp.network.models.Progress
 
 @Composable
 fun ProfileScreen(
@@ -35,6 +50,15 @@ fun ProfileScreen(
         userViewModel.loadUserProgress()
         userViewModel.loadUserBadges()
     }
+
+    // --- CÁLCULOS DE PROGRESO CORREGIDOS ---
+    val currentLevel = userProgress?.level ?: 1
+    val currentXpTotal = userProgress?.xpTotal ?: 0
+    // Asumiendo 100 XP por nivel
+    val currentLevelXp = currentXpTotal % 100
+    val xpToNextLevel = 100 - currentLevelXp
+    val progressFraction = currentLevelXp / 100f
+    // ----------------------------------------
 
     Box(
         modifier = modifier
@@ -63,7 +87,7 @@ fun ProfileScreen(
             )
 
             // Mostrar loading si está cargando
-            if (isLoading) {
+            if (isLoading && userProgress == null) { // Mostrar solo si no hay datos
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -88,15 +112,15 @@ fun ProfileScreen(
                     // Avatar del usuario
                     Surface(
                         modifier = Modifier.size(80.dp),
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = CircleShape, // <-- Ahora funciona
                         color = AccentCyan
                     ) {
                         Box(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "👤",
-                                style = MaterialTheme.typography.headlineLarge
+                                text = "👤", // Emoji de avatar
+                                fontSize = 40.sp // Tamaño ajustado
                             )
                         }
                     }
@@ -130,7 +154,7 @@ fun ProfileScreen(
                                 modifier = Modifier.padding(horizontal = 12.dp)
                             ) {
                                 Text(
-                                    text = userProgress?.level?.toString() ?: "1",
+                                    text = currentLevel.toString(),
                                     style = MaterialTheme.typography.headlineMedium,
                                     color = AccentCyan,
                                     fontWeight = FontWeight.Bold
@@ -147,7 +171,7 @@ fun ProfileScreen(
                                 modifier = Modifier.padding(horizontal = 12.dp)
                             ) {
                                 Text(
-                                    text = userProgress?.xpTotal?.toString() ?: "0",
+                                    text = currentXpTotal.toString(),
                                     style = MaterialTheme.typography.headlineMedium,
                                     color = AccentCyan,
                                     fontWeight = FontWeight.Bold
@@ -187,12 +211,12 @@ fun ProfileScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "Nivel ${userProgress?.level ?: 1}",
+                                text = "Nivel $currentLevel",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextWhite
                             )
                             Text(
-                                text = "Nivel ${(userProgress?.level ?: 1) + 1}",
+                                text = "Nivel ${currentLevel + 1}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextGray
                             )
@@ -200,22 +224,16 @@ fun ProfileScreen(
 
                         Spacer(modifier = Modifier.height(4.dp))
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(8.dp)
-                                .background(TextGray.copy(alpha = 0.3f), MaterialTheme.shapes.small)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.5f)
-                                    .height(8.dp)
-                                    .background(AccentCyan, MaterialTheme.shapes.small)
-                            )
-                        }
+                        // Barra de progreso dinámica
+                        LinearProgressIndicator(
+                            progress = { progressFraction },
+                            modifier = Modifier.fillMaxWidth().height(8.dp).clip(MaterialTheme.shapes.small),
+                            color = AccentCyan,
+                            trackColor = TextGray.copy(alpha = 0.3f)
+                        )
 
                         Text(
-                            text = "Faltan ${userProgress?.nextLevelXp ?: 100} XP para el nivel ${(userProgress?.level ?: 1) + 1}",
+                            text = "Faltan $xpToNextLevel XP para el nivel ${currentLevel + 1}",
                             style = MaterialTheme.typography.bodySmall,
                             color = TextGray,
                             modifier = Modifier.padding(top = 4.dp)
@@ -264,18 +282,13 @@ fun ProfileScreen(
                         )
                         StatItem(
                             label = "Insignias obtenidas",
-                            value = "${userBadges.size} / 15",
+                            value = "${userBadges.size} / 15", // Asumiendo 15 totales
                             color = Success
                         )
                         StatItem(
-                            label = "Progreso general",
-                            value = "${userProgress?.progressPercentage?.toInt() ?: 0}%",
+                            label = "Progreso Nivel Actual",
+                            value = "$currentLevelXp / 100 XP",
                             color = Warning
-                        )
-                        StatItem(
-                            label = "Cursos en progreso",
-                            value = "2",
-                            color = AccentCyan
                         )
                         StatItem(
                             label = "Cursos completados",
@@ -286,7 +299,7 @@ fun ProfileScreen(
                 }
             }
 
-            // Actividad reciente
+            // Actividad reciente (Datos estáticos por ahora)
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -307,16 +320,8 @@ fun ProfileScreen(
                     // Lista de actividad
                     Column {
                         ActivityItem(
-                            course = "Criptografía Básica",
-                            activity = "Última actividad: Hoy, 15:30"
-                        )
-                        ActivityItem(
-                            course = "Ethical Hacking",
-                            activity = "Última actividad: Ayer, 18:45"
-                        )
-                        ActivityItem(
-                            course = "Fundamentos de Seguridad",
-                            activity = "Completado: Hace 3 días"
+                            course = "Fundamentos de Ciberseguridad",
+                            activity = "Última actividad: Hoy"
                         )
                     }
                 }
@@ -356,7 +361,7 @@ fun ProfileScreen(
 
 // Componente de item de estadística
 @Composable
-fun StatItem(label: String, value: String, color: androidx.compose.ui.graphics.Color) {
+fun StatItem(label: String, value: String, color: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -38,9 +38,8 @@ class UserViewModel @Inject constructor(
             _errorMessage.value = null
 
             try {
-                // ✅ OBTENER TOKEN DEL USUARIO
-                val user = userRepository.userInfo.first()
-                val token = user?.token
+                // ✅ OBTENER TOKEN DEL USUARIO (Forma corregida)
+                val token = userRepository.getToken().first() // Llama a la función correcta
 
                 if (token == null) {
                     _errorMessage.value = "No autenticado"
@@ -50,6 +49,7 @@ class UserViewModel @Inject constructor(
 
                 println("🔹 UserViewModel - Token: $token")
 
+                // Usa el token real
                 val response = apiService.getUserProgress("Bearer $token")
 
                 println("🔹 UserViewModel - Response code: ${response.code()}")
@@ -74,15 +74,16 @@ class UserViewModel @Inject constructor(
     fun loadUserBadges() {
         viewModelScope.launch {
             try {
-                val user = userRepository.userInfo.first()
-                val token = user?.token
+                // ✅ OBTENER TOKEN DEL USUARIO (Forma corregida)
+                val token = userRepository.getToken().first() // Llama a la función correcta
 
                 if (token == null) {
                     return@launch
                 }
 
+                // Usa el token real
                 val response = apiService.getUserBadges("Bearer $token")
-                if (response.isSuccessful && response.body()?.success == true) {
+                if (response.isSuccessful) { // La API de badges no tiene un campo "success"
                     _userBadges.value = response.body()?.badges ?: emptyList()
                 }
             } catch (e: Exception) {
