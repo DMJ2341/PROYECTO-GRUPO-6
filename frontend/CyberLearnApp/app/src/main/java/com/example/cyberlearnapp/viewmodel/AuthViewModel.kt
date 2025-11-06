@@ -28,9 +28,9 @@ class AuthViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    // ✅ NUEVO: Estado para controlar navegación después de registro/login
-    private val _authSuccess = MutableStateFlow(false)
-    val authSuccess: StateFlow<Boolean> = _authSuccess.asStateFlow()
+    // ✅ SOLUCIÓN: Estado único para navegación inmediata
+    private val _shouldNavigateToMain = MutableStateFlow(false)
+    val shouldNavigateToMain: StateFlow<Boolean> = _shouldNavigateToMain.asStateFlow()
 
     init {
         loadStoredUser()
@@ -48,7 +48,7 @@ class AuthViewModel @Inject constructor(
     fun register(email: String, password: String, name: String) {
         _isLoading.value = true
         _errorMessage.value = null
-        _authSuccess.value = false // ✅ Resetear estado de éxito
+        _shouldNavigateToMain.value = false
 
         viewModelScope.launch {
             try {
@@ -68,28 +68,35 @@ class AuthViewModel @Inject constructor(
                     println("✅ [DEBUG] User data registro: $userData")
 
                     if (userData != null && token.isNotEmpty()) {
-                        // ✅ CORREGIDO: Esperar a que se guarden los datos antes de actualizar el estado
                         userRepository.saveLoginData(token, userData)
                         println("💾 [DEBUG] Datos de registro guardados en DataStore")
 
-                        // ✅ CORREGIDO: Actualizar currentUser Y marcar éxito de auth
+                        // ✅ SOLUCIÓN: Actualizar currentUser y activar navegación simultáneamente
                         _currentUser.value = userData
-                        _authSuccess.value = true // ✅ Señal para navegación
+
+                        // ✅ CRÍTICO: Primero desactivar loading, LUEGO activar navegación
+                        _isLoading.value = false
+
+                        // Pequeño delay para asegurar que la UI actualizó el loading
+                        kotlinx.coroutines.delay(50)
+
+                        _shouldNavigateToMain.value = true
 
                         debugAuthStatus()
                     } else {
                         println("❌ [DEBUG] Registro: UserData null o token vacío")
                         _errorMessage.value = "Error: Token vacío recibido del servidor"
+                        _isLoading.value = false
                     }
                 } else {
                     val errorMsg = response.body()?.message ?: "Error en el registro"
                     println("❌ [DEBUG] Registro fallido: $errorMsg")
                     _errorMessage.value = errorMsg
+                    _isLoading.value = false
                 }
             } catch (e: Exception) {
                 println("💥 [DEBUG] Excepción en registro: ${e.message}")
                 _errorMessage.value = "Error de conexión: ${e.message}"
-            } finally {
                 _isLoading.value = false
             }
         }
@@ -98,7 +105,7 @@ class AuthViewModel @Inject constructor(
     fun login(email: String, password: String) {
         _isLoading.value = true
         _errorMessage.value = null
-        _authSuccess.value = false // ✅ Resetear estado de éxito
+        _shouldNavigateToMain.value = false
 
         viewModelScope.launch {
             try {
@@ -118,35 +125,42 @@ class AuthViewModel @Inject constructor(
                     println("✅ [DEBUG] User data login: $userData")
 
                     if (userData != null && token.isNotEmpty()) {
-                        // ✅ CORREGIDO: Esperar a que se guarden los datos antes de actualizar el estado
                         userRepository.saveLoginData(token, userData)
                         println("💾 [DEBUG] Datos de login guardados en DataStore")
 
+                        // ✅ SOLUCIÓN: Actualizar currentUser y activar navegación simultáneamente
                         _currentUser.value = userData
-                        _authSuccess.value = true // ✅ Señal para navegación
+
+                        // ✅ CRÍTICO: Primero desactivar loading, LUEGO activar navegación
+                        _isLoading.value = false
+
+                        // Pequeño delay para asegurar que la UI actualizó el loading
+                        kotlinx.coroutines.delay(50)
+
+                        _shouldNavigateToMain.value = true
 
                         debugAuthStatus()
                     } else {
                         println("❌ [DEBUG] Login: UserData null o token vacío")
                         _errorMessage.value = "Error: Token vacío recibido del servidor"
+                        _isLoading.value = false
                     }
                 } else {
                     val errorMsg = response.body()?.message ?: "Error en el login"
                     println("❌ [DEBUG] Login fallido: $errorMsg")
                     _errorMessage.value = errorMsg
+                    _isLoading.value = false
                 }
             } catch (e: Exception) {
                 println("💥 [DEBUG] Excepción en login: ${e.message}")
                 _errorMessage.value = "Error de conexión: ${e.message}"
-            } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    // ✅ NUEVO: Resetear estado de éxito después de la navegación
-    fun resetAuthSuccess() {
-        _authSuccess.value = false
+    fun resetNavigation() {
+        _shouldNavigateToMain.value = false
     }
 
     fun logout() {
@@ -154,12 +168,13 @@ class AuthViewModel @Inject constructor(
             println("🚪 [DEBUG] Cerrando sesión...")
             userRepository.clearLoginData()
             _currentUser.value = null
-            _authSuccess.value = false // ✅ Resetear estado de éxito
+            _shouldNavigateToMain.value = false
+            _isLoading.value = false
+            _errorMessage.value = null
             println("✅ [DEBUG] Sesión cerrada")
         }
     }
 
-    // 🔍 FUNCIÓN DE DEBUG
     private fun debugAuthStatus() {
         viewModelScope.launch {
             println("=== 🔍 AUTH DEBUG ===")

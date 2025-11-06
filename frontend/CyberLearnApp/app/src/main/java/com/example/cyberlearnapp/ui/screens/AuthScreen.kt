@@ -24,13 +24,14 @@ fun AuthScreen(
     var name by remember { mutableStateOf("") }
     var isRegistering by remember { mutableStateOf(false) }
 
-    val currentUser by viewModel.currentUser.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    val shouldNavigateToMain by viewModel.shouldNavigateToMain.collectAsState()
 
-    // Redirigir si el usuario está autenticado
-    LaunchedEffect(currentUser) {
-        if (currentUser != null) {
+    // ✅ SOLUCIÓN: Navegación controlada únicamente por shouldNavigateToMain
+    LaunchedEffect(shouldNavigateToMain) {
+        if (shouldNavigateToMain && !isLoading) {
+            println("🎯 [AUTH-DEBUG] shouldNavigateToMain detectado, navegando (Loading: $isLoading)")
             onLoginSuccess()
         }
     }
@@ -139,6 +140,7 @@ fun AuthScreen(
                             contentColor = TextWhite
                         )
                     ) {
+                        // ✅ CRÍTICO: El spinner desaparece ANTES de la navegación
                         if (isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(16.dp),
