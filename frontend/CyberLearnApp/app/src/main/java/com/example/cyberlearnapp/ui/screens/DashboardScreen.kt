@@ -10,12 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-// --- IMPORTACIONES DE COLOR AÑADIDAS ---
-import com.example.cyberlearnapp.ui.theme.AccentCyan
-import com.example.cyberlearnapp.ui.theme.PrimaryDark
-import com.example.cyberlearnapp.ui.theme.TextGray
-import com.example.cyberlearnapp.ui.theme.TextWhite
-// --- FIN DE IMPORTACIONES ---
+import com.example.cyberlearnapp.ui.theme.*
 import com.example.cyberlearnapp.ui.components.ProgressCard
 import com.example.cyberlearnapp.ui.components.CourseCard
 import com.example.cyberlearnapp.viewmodel.UserViewModel
@@ -39,18 +34,19 @@ fun DashboardScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(PrimaryDark) // <-- Ahora funciona
+            .background(PrimaryDark)
     ) {
         when {
-            isLoading -> {
+            isLoading && userProgress == null -> {
+                // ✅ SOLUCIÓN: Solo mostrar "Cargando..." la PRIMERA vez
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = AccentCyan) // <-- Ahora funciona
+                    CircularProgressIndicator(color = AccentCyan)
                     Text(
                         text = "Cargando...",
-                        color = TextWhite, // <-- Ahora funciona
+                        color = TextWhite,
                         modifier = Modifier.padding(top = 80.dp)
                     )
                 }
@@ -64,12 +60,12 @@ fun DashboardScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "❌ Error",
-                            color = TextWhite, // <-- Ahora funciona
+                            color = TextWhite,
                             style = MaterialTheme.typography.headlineMedium
                         )
                         Text(
                             text = errorMessage ?: "Error desconocido",
-                            color = TextGray, // <-- Ahora funciona
+                            color = TextGray,
                             modifier = Modifier.padding(top = 8.dp)
                         )
                         Button(
@@ -83,6 +79,7 @@ fun DashboardScreen(
             }
 
             userProgress != null -> {
+                // ✅ CONTENIDO PRINCIPAL - Ya tenemos datos
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -92,14 +89,14 @@ fun DashboardScreen(
                     Text(
                         text = "CyberLearn",
                         style = MaterialTheme.typography.headlineLarge,
-                        color = TextWhite, // <-- Ahora funciona
+                        color = TextWhite,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Aprende. Hackea. Protege.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = AccentCyan, // <-- Ahora funciona
+                        color = AccentCyan,
                         modifier = Modifier.padding(bottom = 24.dp)
                     )
 
@@ -111,29 +108,22 @@ fun DashboardScreen(
                     Text(
                         text = "Continúa aprendiendo",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = TextWhite, // <-- Ahora funciona
+                        color = TextWhite,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
-                    // --- ESTA ES LA SECCIÓN PROBLEMÁTICA ---
-                    // Esta pantalla (Dashboard) no debería saber de Cursos
-                    // Debería ser la pantalla "CoursesScreen" la que
-                    // llame al CourseViewModel.
-                    // Por ahora, lo dejamos como estaba en tu código:
                     CourseCard(
                         emoji = "🚀",
                         title = "Fundamentos de Ciberseguridad",
                         description = "El curso obligatorio para iniciar",
                         level = "Principiante",
                         xp = 150,
-                        progress = 0, // El progreso debe venir de UserViewModel
+                        progress = 0,
                         onCourseClick = { onCourseClick("Fundamentos de Ciberseguridad") }
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Este es otro curso estático, debería venir de la API
-                    // a través de CoursesScreen.
                     CourseCard(
                         emoji = "🎣",
                         title = "Phishing e Ingeniería Social",
@@ -143,20 +133,18 @@ fun DashboardScreen(
                         progress = 0,
                         onCourseClick = { onCourseClick("Phishing e Ingeniería Social") }
                     )
-                    // --- FIN DE LA SECCIÓN PROBLEMÁTICA ---
-
 
                     Spacer(modifier = Modifier.height(80.dp))
                 }
             }
 
             else -> {
-                // Estado inicial - mostrar algo mientras carga
+                // Estado inicial - mostrar algo mientras carga (sin texto)
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = AccentCyan) // <-- Ahora funciona
+                    CircularProgressIndicator(color = AccentCyan)
                 }
             }
         }
