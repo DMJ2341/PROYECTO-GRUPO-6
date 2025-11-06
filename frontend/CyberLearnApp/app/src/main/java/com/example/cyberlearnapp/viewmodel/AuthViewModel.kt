@@ -3,7 +3,7 @@ package com.example.cyberlearnapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.models.User // Asegúrate que sea el import de network.models
+import com.example.cyberlearnapp.network.models.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,15 +29,14 @@ class AuthViewModel @Inject constructor(
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     init {
-        // Cargar usuario almacenado al iniciar
         loadStoredUser()
     }
 
     fun loadStoredUser() {
         viewModelScope.launch {
-            // CORREGIDO: Llama a la función correcta "getUserData"
             userRepository.getUserData().collect { user ->
                 _currentUser.value = user
+                println("👤 [DEBUG] Usuario cargado desde DataStore: $user")
             }
         }
     }
@@ -48,23 +47,37 @@ class AuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
+                println("🔐 [DEBUG] Iniciando registro para: $email")
                 val response = apiService.register(
                     com.example.cyberlearnapp.network.RegisterRequest(email, password, name)
                 )
+
+                println("📡 [DEBUG] Response code registro: ${response.code()}")
+                println("📡 [DEBUG] Response body registro: ${response.body()}")
 
                 if (response.isSuccessful && response.body()?.success == true) {
                     val userData = response.body()?.user
                     val token = response.body()?.token ?: ""
 
-                    if (userData != null) {
-                        // CORREGIDO: Llama a "saveLoginData" con el token y el usuario
+                    println("✅ [DEBUG] Token recibido registro: ${if (token.isNotEmpty()) "LONGITUD: ${token.length}" else "VACÍO"}")
+                    println("✅ [DEBUG] User data registro: $userData")
+
+                    if (userData != null && token.isNotEmpty()) {
                         userRepository.saveLoginData(token, userData)
-                        _currentUser.value = userData // El User original de la API
+                        println("💾 [DEBUG] Datos de registro guardados en DataStore")
+                        _currentUser.value = userData
+                        debugAuthStatus() // ← Debug después de guardar
+                    } else {
+                        println("❌ [DEBUG] Registro: UserData null o token vacío")
+                        _errorMessage.value = "Error: Token vacío recibido del servidor"
                     }
                 } else {
-                    _errorMessage.value = response.body()?.message ?: "Error en el registro"
+                    val errorMsg = response.body()?.message ?: "Error en el registro"
+                    println("❌ [DEBUG] Registro fallido: $errorMsg")
+                    _errorMessage.value = errorMsg
                 }
             } catch (e: Exception) {
+                println("💥 [DEBUG] Excepción en registro: ${e.message}")
                 _errorMessage.value = "Error de conexión: ${e.message}"
             } finally {
                 _isLoading.value = false
@@ -78,23 +91,37 @@ class AuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
+                println("🔐 [DEBUG] Iniciando login para: $email")
                 val response = apiService.login(
                     com.example.cyberlearnapp.network.LoginRequest(email, password)
                 )
+
+                println("📡 [DEBUG] Login response code: ${response.code()}")
+                println("📡 [DEBUG] Login response body: ${response.body()}")
 
                 if (response.isSuccessful && response.body()?.success == true) {
                     val userData = response.body()?.user
                     val token = response.body()?.token ?: ""
 
-                    if (userData != null) {
-                        // CORREGIDO: Llama a "saveLoginData" con el token y el usuario
+                    println("✅ [DEBUG] Token recibido login: ${if (token.isNotEmpty()) "LONGITUD: ${token.length} -> ${token.take(30)}..." else "VACÍO"}")
+                    println("✅ [DEBUG] User data login: $userData")
+
+                    if (userData != null && token.isNotEmpty()) {
                         userRepository.saveLoginData(token, userData)
-                        _currentUser.value = userData // El User original de la API
+                        println("💾 [DEBUG] Datos de login guardados en DataStore")
+                        _currentUser.value = userData
+                        debugAuthStatus() // ← Debug después de guardar
+                    } else {
+                        println("❌ [DEBUG] Login: UserData null o token vacío")
+                        _errorMessage.value = "Error: Token vacío recibido del servidor"
                     }
                 } else {
-                    _errorMessage.value = response.body()?.message ?: "Error en el login"
+                    val errorMsg = response.body()?.message ?: "Error en el login"
+                    println("❌ [DEBUG] Login fallido: $errorMsg")
+                    _errorMessage.value = errorMsg
                 }
             } catch (e: Exception) {
+                println("💥 [DEBUG] Excepción en login: ${e.message}")
                 _errorMessage.value = "Error de conexión: ${e.message}"
             } finally {
                 _isLoading.value = false
@@ -104,9 +131,23 @@ class AuthViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            // CORREGIDO: Llama a la función correcta "clearLoginData"
+            println("🚪 [DEBUG] Cerrando sesión...")
             userRepository.clearLoginData()
             _currentUser.value = null
+            println("✅ [DEBUG] Sesión cerrada")
+        }
+    }
+
+    // 🔍 FUNCIÓN DE DEBUG
+    private fun debugAuthStatus() {
+        viewModelScope.launch {
+            println("=== 🔍 AUTH DEBUG ===")
+            val token = userRepository.getToken().first()
+            val user = userRepository.getUserData().first()
+
+            println("🔑 Token guardado: ${token?.let { "LONGITUD: ${it.length}" } ?: "NULL"}")
+            println("👤 User guardado: $user")
+            println("=== 🏁 FIN AUTH DEBUG ===")
         }
     }
 

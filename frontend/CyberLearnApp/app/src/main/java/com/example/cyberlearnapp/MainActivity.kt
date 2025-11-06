@@ -6,12 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cyberlearnapp.navigation.Screens
 import com.example.cyberlearnapp.navigation.mainGraph
@@ -40,34 +41,45 @@ fun CyberLearnApp() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
     val userViewModel: UserViewModel = hiltViewModel()
-    val courseViewModel: CourseViewModel = hiltViewModel() // <-- AÑADIDO
+    val courseViewModel: CourseViewModel = hiltViewModel()
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    // Estado de autenticación
+    val currentUser by authViewModel.currentUser.collectAsState()
 
-    val showBottomBar = currentRoute in listOf(
-        Screens.Dashboard.route,
-        Screens.Courses.route,
-        Screens.Achievements.route,
-        Screens.Profile.route
-    )
+    // 🔍 DEBUG: Ver estado de autenticación
+    LaunchedEffect(currentUser) {
+        println("👤 [MAIN-DEBUG] Estado autenticación: ${currentUser?.email ?: "NO AUTENTICADO"}")
+    }
+
+    // 🎯 CORRECCIÓN: Start destination basado en autenticación real
+    val startDestination = if (currentUser != null) {
+        println("🚀 [MAIN-DEBUG] Usuario YA autenticado, yendo a Main")
+        Screens.Main.route
+    } else {
+        println("🚀 [MAIN-DEBUG] Usuario NO autenticado, yendo a Auth")
+        Screens.Auth.route
+    }
 
     Scaffold(
         bottomBar = {
-            if (showBottomBar) {
+            // BottomBar solo se muestra en Main, no en Auth
+            if (currentUser != null) {
                 BottomNavigationBar(navController = navController)
             }
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screens.Auth.route,
+            startDestination = startDestination,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screens.Auth.route) {
                 AuthScreen(
                     viewModel = authViewModel,
                     onLoginSuccess = {
+                        println("🎉 [MAIN-DEBUG] Login exitoso! Navegando a Main...")
+                        // ✅ CORREGIDO: Solo cargar progreso del usuario
+                        // CourseViewModel.loadCourses() se llamará automáticamente desde CoursesScreen
                         userViewModel.loadUserProgress()
                         navController.navigate(Screens.Main.route) {
                             popUpTo(Screens.Auth.route) { inclusive = true }
@@ -76,11 +88,12 @@ fun CyberLearnApp() {
                 )
             }
 
+            // ✅ CORREGIDO: Pasar TODOS los ViewModels que mainGraph necesita
             mainGraph(
                 navController = navController,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                courseViewModel = courseViewModel // <-- AÑADIDO
+                courseViewModel = courseViewModel
             )
         }
     }

@@ -1,19 +1,19 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    kotlin("kapt")
     alias(libs.plugins.hilt.android)
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.21"
+    alias(libs.plugins.kotlin.compose) // ✅ NUEVA LÍNEA
+    kotlin("kapt")
 }
 
 android {
     namespace = "com.example.cyberlearnapp"
-    compileSdk = 34  // Corregido: usa = y versión más actual
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.cyberlearnapp"
         minSdk = 24
-        targetSdk = 34  // Actualizado a versión más reciente
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -59,37 +59,31 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
-    // AGREGAR MATERIAL ICONS EXTENDED - SOLUCIÓN AL ERROR PlayCircle
+    // Material Icons
     implementation("androidx.compose.material:material-icons-extended:1.6.4")
 
-    // ARQUITECTURA DE RED Y NAVEGACIÓN
-
-    // 1. Retrofit (HTTP Client) y GSON (JSON Converter)
+    // Retrofit
     implementation(libs.retrofit.runtime)
     implementation(libs.retrofit.converter.gson)
-
     implementation(libs.logging.interceptor)
 
-    // 2. Jetpack Navigation para Compose
+    // Navigation
     implementation(libs.navigation.compose)
-
     implementation(libs.lifecycle.viewmodel.compose)
 
-    // 3. Hilt (Dependency Injection - Recomendado)
+    // ✅ HILT CORREGIDO
     implementation(libs.hilt.android)
-
     implementation(libs.hilt.navigation.compose)
-    // El procesador de anotaciones debe usar 'kapt'
     kapt(libs.hilt.compiler)
 
-    // COROUTINES
+    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
-
     implementation(libs.androidx.compose.runtime)
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

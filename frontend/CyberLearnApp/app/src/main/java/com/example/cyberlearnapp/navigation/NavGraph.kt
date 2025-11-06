@@ -1,6 +1,5 @@
 package com.example.cyberlearnapp.navigation
 
-
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -18,7 +17,7 @@ fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    courseViewModel: CourseViewModel // <-- AÑADIDO
+    courseViewModel: CourseViewModel
 ) {
     navigation(
         startDestination = Screens.Dashboard.route,
@@ -35,7 +34,7 @@ fun NavGraphBuilder.mainGraph(
 
         composable(Screens.Courses.route) {
             CoursesScreen(
-                courseViewModel = courseViewModel, // <-- AÑADIDO
+                courseViewModel = courseViewModel,
                 onCourseClick = { courseId, courseTitle, courseDescription, courseLevel, courseXp, courseEmoji ->
                     navController.navigate(
                         "course_detail/$courseId/$courseTitle/$courseDescription/$courseLevel/$courseXp/$courseEmoji"
@@ -62,24 +61,20 @@ fun NavGraphBuilder.mainGraph(
             val courseXp = backStackEntry.arguments?.getInt("courseXp") ?: 0
             val courseEmoji = backStackEntry.arguments?.getString("courseEmoji") ?: "📚"
 
-            val currentUser by authViewModel.currentUser.collectAsState()
-            val token = currentUser?.token ?: "" // Este token sigue siendo útil para lecciones individuales
-
             CourseDetailScreen(
-                courseViewModel = courseViewModel, // <-- AÑADIDO
+                courseViewModel = courseViewModel,
                 courseId = courseId,
                 courseTitle = courseTitle,
                 courseDescription = courseDescription,
                 courseLevel = courseLevel,
                 courseXp = courseXp,
                 courseEmoji = courseEmoji,
-                token = token, // Lo mantenemos por si lo usa LessonScreen
                 navController = navController,
                 onNavigateBack = { navController.navigateUp() }
             )
         }
 
-        // Lección normal (texto)
+
         composable(
             route = "lesson/{lessonId}/{lessonTitle}",
             arguments = listOf(
@@ -90,13 +85,10 @@ fun NavGraphBuilder.mainGraph(
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
             val lessonTitle = backStackEntry.arguments?.getString("lessonTitle") ?: ""
 
-            val currentUser by authViewModel.currentUser.collectAsState()
-            val token = currentUser?.token ?: ""
-
+            // ❌ PROBLEMA: LessonScreen todavía espera el parámetro token
             LessonScreen(
                 lessonId = lessonId,
                 lessonTitle = lessonTitle,
-                token = token,
                 onNavigateBack = { navController.navigateUp() },
                 onLessonCompleted = {
                     navController.navigateUp()
@@ -104,7 +96,6 @@ fun NavGraphBuilder.mainGraph(
             )
         }
 
-        // ✨ NUEVA: Lección interactiva
         composable(
             route = "interactive_lesson/{lessonId}/{lessonTitle}",
             arguments = listOf(
@@ -115,19 +106,17 @@ fun NavGraphBuilder.mainGraph(
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
             val lessonTitle = backStackEntry.arguments?.getString("lessonTitle") ?: ""
 
-            val currentUser by authViewModel.currentUser.collectAsState()
-            val token = currentUser?.token ?: ""
-
+            // ❌ PROBLEMA: InteractiveLessonScreen todavía espera el parámetro token
             InteractiveLessonScreen(
                 lessonId = lessonId,
                 lessonTitle = lessonTitle,
-                token = token,
                 onNavigateBack = { navController.navigateUp() },
                 onLessonCompleted = {
                     navController.navigateUp()
                 }
             )
         }
+
 
         composable(Screens.Achievements.route) {
             AchievementsScreen()

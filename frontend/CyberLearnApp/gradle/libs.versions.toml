@@ -9,13 +9,13 @@ lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
 composeBom = "2024.09.00"
 
-retrofit = "2.11.0" # Última versión estable
+retrofit = "2.11.0"
 gson = "2.10.1"
-hilt = "2.51.1" # Última versión de Dagger Hilt
+hilt = "2.51.1"
 navigation = "2.7.0"
-lifecycleCompose = "2.8.0" # Para usar los ViewModels con Compose
+lifecycleCompose = "2.8.0"
 
-# NUEVAS VERSIONES AGREGADAS:
+# ✅ CORREGIDO: Versiones compatibles con Hilt 2.51.1
 logging-interceptor = "4.12.0"
 kotlinx-coroutines = "1.8.0"
 hilt-navigation = "1.2.0"
@@ -44,26 +44,23 @@ google-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gs
 # 2. Jetpack Navigation para Compose
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 
-# 3. Hilt (Inyección de Dependencias)
+# 3. Hilt (Inyección de Dependencias) - ✅ CORREGIDO
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation" }
 
 # 4. Lifecycle ViewModel Compose (Para MVVM)
 lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleCompose" }
 
-# NUEVAS LIBRERÍAS AGREGADAS:
+# 5. Otras librerías
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "logging-interceptor" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation" }
-
 
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+# ✅ AGREGA este plugin para Compose Compiler
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
