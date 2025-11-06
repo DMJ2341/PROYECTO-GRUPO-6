@@ -2,8 +2,12 @@ import hashlib
 import json
 import os
 from datetime import datetime, timedelta
+import jwt  # ← NUEVO: Necesitas instalar PyJWT
 
 class AuthService:
+    # ✅ CONFIGURACIÓN JWT
+    SECRET_KEY = "tu_clave_secreta_muy_segura_123456"  # ⚠️ CAMBIAR EN PRODUCCIÓN
+    
     def __init__(self):
         self.data_file = 'data/users.json'
         self._ensure_data_file()
@@ -49,6 +53,61 @@ class AuthService:
     def _hash_password(self, password):
         return hashlib.sha256(password.encode()).hexdigest()
     
+    # ========================================
+    # ✅ NUEVAS FUNCIONES JWT
+    # ========================================
+    
+    def _generate_token(self, email):
+        """
+        Genera un token JWT válido con expiración.
+        
+        Args:
+            email (str): Email del usuario
+            
+        Returns:
+            str: Token JWT firmado
+        """
+        payload = {
+            'email': email,
+            'exp': datetime.utcnow() + timedelta(hours=24),  # Expira en 24h
+            'iat': datetime.utcnow()  # Fecha de emisión
+        }
+        token = jwt.encode(payload, self.SECRET_KEY, algorithm='HS256')
+        print(f"🔑 Token generado para {email}")
+        return token
+    
+    def verify_token(self, token):
+        """
+        Verifica y decodifica un token JWT.
+        
+        Args:
+            token (str): Token JWT a verificar
+            
+        Returns:
+            dict: {'email': email} si es válido, None si no lo es
+        """
+        try:
+            # Decodificar y verificar el token
+            payload = jwt.decode(token, self.SECRET_KEY, algorithms=['HS256'])
+            print(f"✅ Token válido para: {payload['email']}")
+            return {'email': payload['email']}
+        
+        except jwt.ExpiredSignatureError:
+            print("❌ Token expirado")
+            return None
+        
+        except jwt.InvalidTokenError as e:
+            print(f"❌ Token inválido: {e}")
+            return None
+        
+        except Exception as e:
+            print(f"❌ Error verificando token: {e}")
+            return None
+    
+    # ========================================
+    # ✅ REGISTRO (Actualizado para usar JWT)
+    # ========================================
+    
     def register(self, email, password, name):
         if not self.is_strong_password(password):
             return {
@@ -62,7 +121,7 @@ class AuthService:
             return self._register_json(email, password, name)
     
     def _register_postgres(self, email, password, name):
-        """Registro usando PostgreSQL"""
+        """Registro usando PostgreSQL con JWT"""
         try:
             # Verificar si el usuario ya existe
             existing_user = self.User.query.filter_by(email=email).first()
@@ -85,10 +144,13 @@ class AuthService:
             self.db.session.add(new_user)
             self.db.session.commit()
             
+            # ✅ GENERAR TOKEN JWT
+            token = self._generate_token(email)
+            
             return {
                 'success': True,
                 'message': 'Usuario registrado correctamente',
-                'token': f"token-{email}-{datetime.now().timestamp()}",
+                'token': token,  # ← Token JWT real
                 'user': {
                     'email': email,
                     'name': name
@@ -102,7 +164,7 @@ class AuthService:
             }
     
     def _register_json(self, email, password, name):
-        """Registro usando JSON (fallback)"""
+        """Registro usando JSON (fallback) con JWT"""
         users = self._load_users()
         
         if email in users:
@@ -127,15 +189,22 @@ class AuthService:
         
         self._save_users(users)
         
+        # ✅ GENERAR TOKEN JWT
+        token = self._generate_token(email)
+        
         return {
             'success': True,
             'message': 'Usuario registrado correctamente',
-            'token': f"token-{email}-{datetime.now().timestamp()}",
+            'token': token,  # ← Token JWT real
             'user': {
                 'email': email,
                 'name': name
             }
         }
+    
+    # ========================================
+    # ✅ LOGIN (Actualizado para usar JWT)
+    # ========================================
     
     def login(self, email, password):
         if self.use_postgres:
@@ -144,7 +213,7 @@ class AuthService:
             return self._login_json(email, password)
     
     def _login_postgres(self, email, password):
-        """Login usando PostgreSQL"""
+        """Login usando PostgreSQL con JWT"""
         try:
             user = self.User.query.filter_by(email=email).first()
             
@@ -158,10 +227,13 @@ class AuthService:
             user.last_login = datetime.utcnow()
             self.db.session.commit()
             
+            # ✅ GENERAR TOKEN JWT
+            token = self._generate_token(email)
+            
             return {
                 'success': True,
                 'message': 'Autenticación exitosa',
-                'token': f"token-{email}-{datetime.now().timestamp()}",
+                'token': token,  # ← Token JWT real
                 'user': {
                     'email': email,
                     'name': user.name
@@ -174,7 +246,7 @@ class AuthService:
             }
     
     def _login_json(self, email, password):
-        """Login usando JSON (fallback)"""
+        """Login usando JSON (fallback) con JWT"""
         users = self._load_users()
         user = users.get(email)
         
@@ -188,34 +260,15 @@ class AuthService:
         user['last_login'] = datetime.now().isoformat()
         self._save_users(users)
         
+        # ✅ GENERAR TOKEN JWT
+        token = self._generate_token(email)
+        
         return {
             'success': True,
             'message': 'Autenticación exitosa',
-            'token': f"token-{email}-{datetime.now().timestamp()}",
+            'token': token,  # ← Token JWT real
             'user': {
                 'email': email,
                 'name': user['name']
             }
         }
-    
-    def verify_token(self, token):
-        """Verificación de token (funciona para ambos modos)"""
-        # TEMPORAL - Permitir token de prueba para desarrollo
-        if token == "token-test@ejemplo.com":
-            return {'email': 'test@ejemplo.com'}
-        
-        try:
-            if token.startswith('token-'):
-                email_part = token.split('-')[1]
-                
-                if self.use_postgres:
-                    user = self.User.query.filter_by(email=email_part).first()
-                    if user:
-                        return {'email': email_part}
-                else:
-                    users = self._load_users()
-                    if email_part in users:
-                        return {'email': email_part}
-            return None
-        except:
-            return None

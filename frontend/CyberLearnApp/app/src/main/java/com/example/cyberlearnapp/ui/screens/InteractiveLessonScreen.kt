@@ -14,10 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyberlearnapp.network.RetrofitInstance
-import com.example.cyberlearnapp.network.models.InteractiveLesson
 import com.example.cyberlearnapp.network.models.LessonProgressRequest
 import com.example.cyberlearnapp.ui.screens.interactive.*
+import com.example.cyberlearnapp.viewmodel.InteractiveLessonViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,15 +26,11 @@ import kotlinx.coroutines.launch
 fun InteractiveLessonScreen(
     lessonId: String,
     lessonTitle: String,
-    token: String,
     onNavigateBack: () -> Unit,
-    onLessonCompleted: () -> Unit
+    onLessonCompleted: () -> Unit,
+    viewModel: InteractiveLessonViewModel = hiltViewModel()
 ) {
-    var lesson by remember { mutableStateOf<InteractiveLesson?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-
-    val scope = rememberCoroutineScope()
+    val state by viewModel.state.collectAsState()
 
     // Estados para tracking
     var signalsFound by remember { mutableStateOf<List<Int>>(emptyList()) }
@@ -41,26 +38,11 @@ fun InteractiveLessonScreen(
     var completedScreens by remember { mutableStateOf<List<Int>>(emptyList()) }
     var totalXpEarned by remember { mutableStateOf(0) }
 
+    val scope = rememberCoroutineScope()
+
     // Cargar lección
     LaunchedEffect(lessonId) {
-        scope.launch {
-            try {
-                isLoading = true
-                val response = RetrofitInstance.api.getInteractiveLesson(
-                    lessonId = lessonId,
-                    token = "Bearer $token"
-                )
-                if (response.isSuccessful && response.body() != null) {
-                    lesson = response.body()!!.lesson
-                } else {
-                    errorMessage = "Error: ${response.code()}"
-                }
-                isLoading = false
-            } catch (e: Exception) {
-                errorMessage = e.message ?: "Error cargando lección"
-                isLoading = false
-            }
-        }
+        viewModel.loadLesson(lessonId)
     }
 
     Scaffold(
@@ -92,7 +74,7 @@ fun InteractiveLessonScreen(
                 .padding(padding)
         ) {
             when {
-                isLoading -> {
+                state.isLoading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -109,7 +91,7 @@ fun InteractiveLessonScreen(
                     }
                 }
 
-                errorMessage != null -> {
+                state.errorMessage != null -> {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -136,17 +118,29 @@ fun InteractiveLessonScreen(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = errorMessage ?: "Error desconocido",
+                                    text = state.errorMessage ?: "Error desconocido",
                                     color = Color.White.copy(alpha = 0.7f),
                                     fontSize = 14.sp
                                 )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Button(
+                                    onClick = {
+                                        viewModel.clearError()
+                                        onNavigateBack()
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(0xFFDC2626)
+                                    )
+                                ) {
+                                    Text("Volver")
+                                }
                             }
                         }
                     }
                 }
 
-                lesson != null -> {
-                    val pagerState = rememberPagerState(pageCount = { lesson!!.totalScreens })
+                state.lesson != null -> {
+                    val pagerState = rememberPagerState(pageCount = { state.lesson!!.totalScreens })
 
                     Column(modifier = Modifier.fillMaxSize()) {
                         // Progress indicator
@@ -162,7 +156,7 @@ fun InteractiveLessonScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "${pagerState.currentPage + 1}/${lesson!!.totalScreens}",
+                                    text = "${pagerState.currentPage + 1}/${state.lesson!!.totalScreens}",
                                     color = Color.White,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold
@@ -171,7 +165,7 @@ fun InteractiveLessonScreen(
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
-                                    repeat(lesson!!.totalScreens) { index ->
+                                    repeat(state.lesson!!.totalScreens) { index ->
                                         Box(
                                             modifier = Modifier
                                                 .width(if (index == pagerState.currentPage) 24.dp else 8.dp)
@@ -202,7 +196,7 @@ fun InteractiveLessonScreen(
                             modifier = Modifier.weight(1f),
                             userScrollEnabled = false
                         ) { page ->
-                            val screen = lesson!!.screens[page]
+                            val screen = state.lesson!!.screens[page]
 
                             when (screen.type) {
                                 "story_hook" -> {
@@ -281,20 +275,23 @@ fun InteractiveLessonScreen(
                                         },
                                         onComplete = {
                                             scope.launch {
-                                                // Guardar progreso final
-                                                try {
-                                                    RetrofitInstance.api.saveLessonProgress(
-                                                        lessonId = lessonId,
-                                                        token = "Bearer $token",
-                                                        progress = LessonProgressRequest(
-                                                            currentScreen = lesson!!.totalScreens,
-                                                            completedScreens = completedScreens + page,
-                                                            signalsFound = signalsFound,
-                                                            quizAnswers = quizAnswers
+                                                // ✅ CORREGIDO: Usar la función del ViewModel
+                                                val token = viewModel.getToken()
+                                                if (token.isNotEmpty()) {
+                                                    try {
+                                                        RetrofitInstance.api.saveLessonProgress(
+                                                            lessonId = lessonId,
+                                                            token = "Bearer $token",
+                                                            progress = LessonProgressRequest(
+                                                                currentScreen = state.lesson!!.totalScreens,
+                                                                completedScreens = completedScreens + page,
+                                                                signalsFound = signalsFound,
+                                                                quizAnswers = quizAnswers
+                                                            )
                                                         )
-                                                    )
-                                                } catch (e: Exception) {
-                                                    println("Error guardando progreso: ${e.message}")
+                                                    } catch (e: Exception) {
+                                                        println("Error guardando progreso: ${e.message}")
+                                                    }
                                                 }
 
                                                 onLessonCompleted()
@@ -307,7 +304,7 @@ fun InteractiveLessonScreen(
 
                         // Botones de navegación
                         if (pagerState.currentPage > 0 &&
-                            pagerState.currentPage < lesson!!.totalScreens - 1) {
+                            pagerState.currentPage < state.lesson!!.totalScreens - 1) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()

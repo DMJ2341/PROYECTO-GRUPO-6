@@ -38,61 +38,135 @@ class UserViewModel @Inject constructor(
             _errorMessage.value = null
 
             try {
-                // ✅ OBTENER TOKEN DEL USUARIO (Forma corregida)
-                val token = userRepository.getToken().first() // Llama a la función correcta
+                // 🔍 DEBUG 1: OBTENER TOKEN
+                println("🔑 [DEBUG] === INICIANDO CARGA DE PROGRESO ===")
+                val token = userRepository.getToken().first()
 
-                if (token == null) {
-                    _errorMessage.value = "No autenticado"
+                // 🔍 DEBUG 2: VERIFICAR TOKEN
+                println("🔑 [DEBUG] Token leído de DataStore: ${token?.let {
+                    "LONGITUD: ${it.length} -> ${it.take(30)}..."
+                } ?: "NULL"}")
+
+                if (token == null || token.isEmpty()) {
+                    _errorMessage.value = "No autenticado - Token vacío o nulo"
                     _isLoading.value = false
+                    println("❌ [DEBUG] Token es null o vacío - ABORTANDO")
                     return@launch
                 }
 
-                println("🔹 UserViewModel - Token: $token")
+                // 🔍 DEBUG 3: PREPARAR HEADER
+                val authHeader = "Bearer $token"
+                println("📤 [DEBUG] Header completo: $authHeader")
+                println("📤 [DEBUG] Longitud header: ${authHeader.length}")
+                println("📤 [DEBUG] Inicio del token: ${token.take(50)}...")
 
-                // Usa el token real
-                val response = apiService.getUserProgress("Bearer $token")
+                // 🔍 DEBUG 4: HACER LA PETICIÓN
+                println("🌐 [DEBUG] Haciendo request a /api/user/progress...")
+                val response = apiService.getUserProgress(authHeader)
 
-                println("🔹 UserViewModel - Response code: ${response.code()}")
+                // 🔍 DEBUG 5: ANALIZAR RESPUESTA
+                println("📥 [DEBUG] Response code: ${response.code()}")
+                println("📥 [DEBUG] Response isSuccessful: ${response.isSuccessful}")
+                println("📥 [DEBUG] Response headers: ${response.headers()}")
 
                 if (response.isSuccessful) {
-                    _userProgress.value = response.body()
-                    println("✅ UserViewModel - Progreso cargado")
+                    val progressData = response.body()
+                    println("✅ [DEBUG] Progreso cargado exitosamente: $progressData")
+                    _userProgress.value = progressData
                 } else {
-                    _errorMessage.value = "Error cargando progreso: ${response.code()}"
-                    println("❌ UserViewModel - Error: ${response.code()}")
+                    val errorBody = response.errorBody()?.string()
+                    println("❌ [DEBUG] Error HTTP ${response.code()}: $errorBody")
+
+                    when (response.code()) {
+                        401 -> _errorMessage.value = "Error 401: No autorizado - Token inválido o expirado"
+                        403 -> _errorMessage.value = "Error 403: Prohibido - Sin permisos"
+                        404 -> _errorMessage.value = "Error 404: Recurso no encontrado"
+                        500 -> _errorMessage.value = "Error 500: Error interno del servidor"
+                        else -> _errorMessage.value = "Error ${response.code()}: $errorBody"
+                    }
                 }
+
             } catch (e: Exception) {
-                _errorMessage.value = "Error de conexión: ${e.message}"
-                println("❌ UserViewModel - Exception: ${e.message}")
+                println("💥 [DEBUG] EXCEPCIÓN: ${e.message}")
+                println("💥 [DEBUG] Stack trace:")
                 e.printStackTrace()
+
+                _errorMessage.value = when {
+                    e.message?.contains("Unable to resolve host") == true ->
+                        "Error de conexión: No se puede conectar al servidor"
+                    e.message?.contains("timeout") == true ->
+                        "Error de conexión: Timeout del servidor"
+                    else -> "Error de conexión: ${e.message}"
+                }
             } finally {
                 _isLoading.value = false
+                println("🏁 [DEBUG] === FIN CARGA DE PROGRESO ===")
             }
         }
     }
 
     fun loadUserBadges() {
         viewModelScope.launch {
+            println("🛡️ [DEBUG] Cargando badges...")
             try {
-                // ✅ OBTENER TOKEN DEL USUARIO (Forma corregida)
-                val token = userRepository.getToken().first() // Llama a la función correcta
+                val token = userRepository.getToken().first()
 
-                if (token == null) {
+                println("🔑 [DEBUG-BADGES] Token: ${token?.let { "LONGITUD: ${it.length}" } ?: "NULL"}")
+
+                if (token == null || token.isEmpty()) {
+                    println("❌ [DEBUG-BADGES] Token vacío - No se cargan badges")
                     return@launch
                 }
 
-                // Usa el token real
                 val response = apiService.getUserBadges("Bearer $token")
-                if (response.isSuccessful) { // La API de badges no tiene un campo "success"
-                    _userBadges.value = response.body()?.badges ?: emptyList()
+                println("📥 [DEBUG-BADGES] Response code: ${response.code()}")
+
+                if (response.isSuccessful) {
+                    val badges = response.body()?.badges ?: emptyList()
+                    println("✅ [DEBUG-BADGES] Badges cargados: ${badges.size}")
+                    _userBadges.value = badges
+                } else {
+                    println("❌ [DEBUG-BADGES] Error cargando badges: ${response.code()}")
                 }
             } catch (e: Exception) {
-                println("Error cargando badges: ${e.message}")
+                println("💥 [DEBUG-BADGES] Error: ${e.message}")
+            }
+        }
+    }
+
+    // 🔍 FUNCIÓN DE DEBUG TEMPORAL
+    fun debugAuthStatus() {
+        viewModelScope.launch {
+            println("=== 🔍 DEBUG AUTH STATUS ===")
+            val token = userRepository.getToken().first()
+            val user = userRepository.getUserData().first()
+
+            println("🔑 Token en DataStore: ${token?.let {
+                "LONGITUD: ${it.length} -> ${it.take(20)}..."
+            } ?: "NULL"}")
+
+            println("👤 User en DataStore: $user")
+            println("📱 User en ViewModel: ${_userProgress.value}")
+            println("=== 🏁 FIN DEBUG AUTH STATUS ===")
+        }
+    }
+
+    // 🔍 FUNCIÓN PARA PROBAR TOKEN MANUALMENTE
+    fun testTokenManually(testToken: String) {
+        viewModelScope.launch {
+            println("🧪 [TEST] Probando token manual: ${testToken.take(30)}...")
+            try {
+                val response = apiService.getUserProgress("Bearer $testToken")
+                println("🧪 [TEST] Response code: ${response.code()}")
+                println("🧪 [TEST] Response body: ${response.body()}")
+            } catch (e: Exception) {
+                println("🧪 [TEST] Error: ${e.message}")
             }
         }
     }
 
     fun clearError() {
         _errorMessage.value = null
+        println("🧹 [DEBUG] Error limpiado")
     }
 }

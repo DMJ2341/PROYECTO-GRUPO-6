@@ -37,7 +37,6 @@ fun CourseDetailScreen(
     courseLevel: String,
     courseXp: Int,
     courseEmoji: String,
-    token: String, // Mantenemos el token para la navegación a lecciones
     navController: NavController,
     onNavigateBack: () -> Unit
 ) {
@@ -92,14 +91,22 @@ fun CourseDetailScreen(
             when {
                 uiState.isLoading -> {
                     item {
-                        Box(modifier = Modifier.fillParentMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier
+                                .fillParentMaxWidth()
+                                .height(100.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
                             CircularProgressIndicator()
                         }
                     }
                 }
                 uiState.error != null -> {
                     item {
-                        Text("Error: ${uiState.error}", color = MaterialTheme.colorScheme.error)
+                        Text(
+                            text = "Error: ${uiState.error}",
+                            color = MaterialTheme.colorScheme.error
+                        )
                     }
                 }
                 else -> {
@@ -142,9 +149,17 @@ fun CourseHeader(emoji: String, title: String, description: String, level: Strin
     ) {
         Text(emoji, fontSize = 60.sp)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(description, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(horizontal = 16.dp))
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -164,7 +179,11 @@ fun InfoChip(text: String) {
             .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Text(text, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
@@ -181,7 +200,8 @@ fun LessonItem(
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isLocked) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
+            containerColor = if (isLocked) MaterialTheme.colorScheme.surfaceVariant
+            else MaterialTheme.colorScheme.surface
         )
     ) {
         Row(

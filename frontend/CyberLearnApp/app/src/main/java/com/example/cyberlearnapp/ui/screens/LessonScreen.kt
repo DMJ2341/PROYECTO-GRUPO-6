@@ -1,5 +1,6 @@
 package com.example.cyberlearnapp.ui.screens
 
+import kotlinx.coroutines.flow.first
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,8 +24,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyberlearnapp.network.Lesson
 import com.example.cyberlearnapp.network.RetrofitInstance
+import com.example.cyberlearnapp.repository.UserRepository
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,10 +35,12 @@ import kotlinx.coroutines.launch
 fun LessonScreen(
     lessonId: String,
     lessonTitle: String,
-    token: String,
     onNavigateBack: () -> Unit,
     onLessonCompleted: () -> Unit
 ) {
+    // ✅ CORREGIDO: Obtener UserRepository usando hiltViewModel()
+    val userRepository: UserRepository = hiltViewModel()
+
     var lessonContent by remember { mutableStateOf<Lesson?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -48,6 +53,14 @@ fun LessonScreen(
         scope.launch {
             try {
                 isLoading = true
+                // ✅ CORRECCIÓN: Obtener token del UserRepository
+                val token = userRepository.getToken().first() ?: ""
+                if (token.isEmpty()) {
+                    errorMessage = "No autenticado"
+                    isLoading = false
+                    return@launch
+                }
+
                 val response = RetrofitInstance.api.getLessonContent(
                     lessonId = lessonId,
                     token = "Bearer $token"
