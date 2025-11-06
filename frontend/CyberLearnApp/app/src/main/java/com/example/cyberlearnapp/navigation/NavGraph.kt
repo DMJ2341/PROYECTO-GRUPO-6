@@ -1,17 +1,15 @@
 package com.example.cyberlearnapp.navigation
 
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.cyberlearnapp.ui.screens.*
 import com.example.cyberlearnapp.viewmodel.AuthViewModel
-import com.example.cyberlearnapp.viewmodel.UserViewModel
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import com.example.cyberlearnapp.viewmodel.CourseViewModel
+import com.example.cyberlearnapp.viewmodel.UserViewModel
 
 fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
@@ -20,9 +18,10 @@ fun NavGraphBuilder.mainGraph(
     courseViewModel: CourseViewModel
 ) {
     navigation(
-        startDestination = Screens.Dashboard.route,
-        route = Screens.Main.route
+        startDestination = Screens.Dashboard.route, // ✅ CORREGIDO: Dashboard como inicio
+        route = Screens.Main.route // ✅ CORREGIDO: Main es el contenedor
     ) {
+        // ✅ TODAS las pantallas dentro del main graph
         composable(Screens.Dashboard.route) {
             DashboardScreen(
                 userViewModel = userViewModel,
@@ -36,13 +35,32 @@ fun NavGraphBuilder.mainGraph(
             CoursesScreen(
                 courseViewModel = courseViewModel,
                 onCourseClick = { courseId, courseTitle, courseDescription, courseLevel, courseXp, courseEmoji ->
-                    navController.navigate(
-                        "course_detail/$courseId/$courseTitle/$courseDescription/$courseLevel/$courseXp/$courseEmoji"
-                    )
+                    navController.navigate("course_detail/$courseId/$courseTitle/$courseDescription/$courseLevel/$courseXp/$courseEmoji")
                 }
             )
         }
 
+        composable(Screens.Achievements.route) {
+            AchievementsScreen()
+        }
+
+        composable(Screens.Profile.route) {
+            ProfileScreen(
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                onEditProfile = {
+                    println("✏️ Editar perfil")
+                },
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate(Screens.Auth.route) {
+                        popUpTo(Screens.Main.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // ✅ MANTENER las rutas de detalle de cursos y lecciones
         composable(
             route = "course_detail/{courseId}/{courseTitle}/{courseDescription}/{courseLevel}/{courseXp}/{courseEmoji}",
             arguments = listOf(
@@ -74,7 +92,6 @@ fun NavGraphBuilder.mainGraph(
             )
         }
 
-
         composable(
             route = "lesson/{lessonId}/{lessonTitle}",
             arguments = listOf(
@@ -85,7 +102,6 @@ fun NavGraphBuilder.mainGraph(
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
             val lessonTitle = backStackEntry.arguments?.getString("lessonTitle") ?: ""
 
-            // ❌ PROBLEMA: LessonScreen todavía espera el parámetro token
             LessonScreen(
                 lessonId = lessonId,
                 lessonTitle = lessonTitle,
@@ -106,34 +122,12 @@ fun NavGraphBuilder.mainGraph(
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
             val lessonTitle = backStackEntry.arguments?.getString("lessonTitle") ?: ""
 
-            // ❌ PROBLEMA: InteractiveLessonScreen todavía espera el parámetro token
             InteractiveLessonScreen(
                 lessonId = lessonId,
                 lessonTitle = lessonTitle,
                 onNavigateBack = { navController.navigateUp() },
                 onLessonCompleted = {
                     navController.navigateUp()
-                }
-            )
-        }
-
-
-        composable(Screens.Achievements.route) {
-            AchievementsScreen()
-        }
-
-        composable(Screens.Profile.route) {
-            ProfileScreen(
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                onEditProfile = {
-                    println("✏️ Editar perfil")
-                },
-                onLogout = {
-                    authViewModel.logout()
-                    navController.navigate(Screens.Auth.route) {
-                        popUpTo(Screens.Main.route) { inclusive = true }
-                    }
                 }
             )
         }

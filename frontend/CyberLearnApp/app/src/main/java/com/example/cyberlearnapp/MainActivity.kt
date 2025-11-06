@@ -9,6 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -43,28 +46,56 @@ fun CyberLearnApp() {
     val userViewModel: UserViewModel = hiltViewModel()
     val courseViewModel: CourseViewModel = hiltViewModel()
 
-    // Estado de autenticación
     val currentUser by authViewModel.currentUser.collectAsState()
+    val authSuccess by authViewModel.authSuccess.collectAsState()
 
-    // 🔍 DEBUG: Ver estado de autenticación
+    // 🔍 DEBUG
     LaunchedEffect(currentUser) {
-        println("👤 [MAIN-DEBUG] Estado autenticación: ${currentUser?.email ?: "NO AUTENTICADO"}")
+        println("👤 [MAIN-DEBUG] Usuario: ${currentUser?.email ?: "NULL"}")
     }
 
-    // 🎯 CORRECCIÓN: Start destination basado en autenticación real
-    val startDestination = if (currentUser != null) {
-        println("🚀 [MAIN-DEBUG] Usuario YA autenticado, yendo a Main")
-        Screens.Main.route
-    } else {
-        println("🚀 [MAIN-DEBUG] Usuario NO autenticado, yendo a Auth")
-        Screens.Auth.route
+    // ✅ Navegación por auth exitosa
+    LaunchedEffect(authSuccess) {
+        if (authSuccess) {
+            println("🚀 [MAIN-DEBUG] Navegando a Main por authSuccess")
+            navController.navigate(Screens.Main.route) {
+                popUpTo(Screens.Auth.route) { inclusive = true }
+            }
+            authViewModel.resetAuthSuccess()
+        }
     }
+
+    // ✅ Navegación inicial
+    var initialNavDone by remember { mutableStateOf(false) }
+    LaunchedEffect(currentUser) {
+        if (!initialNavDone) {
+            if (currentUser != null) {
+                println("🚀 [MAIN-DEBUG] Navegación inicial a Main")
+                navController.navigate(Screens.Main.route) {
+                    popUpTo(0)
+                }
+            }
+            initialNavDone = true
+        }
+    }
+
+    val startDestination = if (currentUser != null && initialNavDone) Screens.Main.route else Screens.Auth.route
 
     Scaffold(
         bottomBar = {
-            // BottomBar solo se muestra en Main, no en Auth
+            // ✅ CORREGIDO: Mostrar BottomBar en las rutas principales
             if (currentUser != null) {
-                BottomNavigationBar(navController = navController)
+                val currentRoute = navController.currentDestination?.route
+                val showBottomBar = currentRoute in listOf(
+                    Screens.Dashboard.route,
+                    Screens.Courses.route,
+                    Screens.Achievements.route,
+                    Screens.Profile.route
+                )
+
+                if (showBottomBar) {
+                    BottomNavigationBar(navController = navController)
+                }
             }
         }
     ) { innerPadding ->
@@ -77,18 +108,11 @@ fun CyberLearnApp() {
                 AuthScreen(
                     viewModel = authViewModel,
                     onLoginSuccess = {
-                        println("🎉 [MAIN-DEBUG] Login exitoso! Navegando a Main...")
-                        // ✅ CORREGIDO: Solo cargar progreso del usuario
-                        // CourseViewModel.loadCourses() se llamará automáticamente desde CoursesScreen
-                        userViewModel.loadUserProgress()
-                        navController.navigate(Screens.Main.route) {
-                            popUpTo(Screens.Auth.route) { inclusive = true }
-                        }
+                        println("✅ [MAIN-DEBUG] onLoginSuccess llamado")
                     }
                 )
             }
 
-            // ✅ CORREGIDO: Pasar TODOS los ViewModels que mainGraph necesita
             mainGraph(
                 navController = navController,
                 authViewModel = authViewModel,

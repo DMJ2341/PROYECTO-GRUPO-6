@@ -28,6 +28,10 @@ class AuthViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    // ✅ NUEVO: Estado para controlar navegación después de registro/login
+    private val _authSuccess = MutableStateFlow(false)
+    val authSuccess: StateFlow<Boolean> = _authSuccess.asStateFlow()
+
     init {
         loadStoredUser()
     }
@@ -44,6 +48,7 @@ class AuthViewModel @Inject constructor(
     fun register(email: String, password: String, name: String) {
         _isLoading.value = true
         _errorMessage.value = null
+        _authSuccess.value = false // ✅ Resetear estado de éxito
 
         viewModelScope.launch {
             try {
@@ -63,10 +68,15 @@ class AuthViewModel @Inject constructor(
                     println("✅ [DEBUG] User data registro: $userData")
 
                     if (userData != null && token.isNotEmpty()) {
+                        // ✅ CORREGIDO: Esperar a que se guarden los datos antes de actualizar el estado
                         userRepository.saveLoginData(token, userData)
                         println("💾 [DEBUG] Datos de registro guardados en DataStore")
+
+                        // ✅ CORREGIDO: Actualizar currentUser Y marcar éxito de auth
                         _currentUser.value = userData
-                        debugAuthStatus() // ← Debug después de guardar
+                        _authSuccess.value = true // ✅ Señal para navegación
+
+                        debugAuthStatus()
                     } else {
                         println("❌ [DEBUG] Registro: UserData null o token vacío")
                         _errorMessage.value = "Error: Token vacío recibido del servidor"
@@ -88,6 +98,7 @@ class AuthViewModel @Inject constructor(
     fun login(email: String, password: String) {
         _isLoading.value = true
         _errorMessage.value = null
+        _authSuccess.value = false // ✅ Resetear estado de éxito
 
         viewModelScope.launch {
             try {
@@ -107,10 +118,14 @@ class AuthViewModel @Inject constructor(
                     println("✅ [DEBUG] User data login: $userData")
 
                     if (userData != null && token.isNotEmpty()) {
+                        // ✅ CORREGIDO: Esperar a que se guarden los datos antes de actualizar el estado
                         userRepository.saveLoginData(token, userData)
                         println("💾 [DEBUG] Datos de login guardados en DataStore")
+
                         _currentUser.value = userData
-                        debugAuthStatus() // ← Debug después de guardar
+                        _authSuccess.value = true // ✅ Señal para navegación
+
+                        debugAuthStatus()
                     } else {
                         println("❌ [DEBUG] Login: UserData null o token vacío")
                         _errorMessage.value = "Error: Token vacío recibido del servidor"
@@ -129,11 +144,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // ✅ NUEVO: Resetear estado de éxito después de la navegación
+    fun resetAuthSuccess() {
+        _authSuccess.value = false
+    }
+
     fun logout() {
         viewModelScope.launch {
             println("🚪 [DEBUG] Cerrando sesión...")
             userRepository.clearLoginData()
             _currentUser.value = null
+            _authSuccess.value = false // ✅ Resetear estado de éxito
             println("✅ [DEBUG] Sesión cerrada")
         }
     }
