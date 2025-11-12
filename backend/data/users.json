@@ -1,15 +1,1 @@
-{
-  "miusuario@test.com": {
-    "email": "miusuario@test.com",
-    "password_hash": "07480fb9e85b9396af06f006cf1c95024af2531c65fb505cfbd0add1e2f31573",
-    "name": "Mi Usuario",
-    "created_at": "2025-11-02T19:16:50.861688",
-    "xp_total": 0,
-    "level": 1,
-    "streak": 0,
-    "last_login": null,
-    "badges": [],
-    "lessons_completed": 0,
-    "courses_completed": 0
-  }
-}
+{}

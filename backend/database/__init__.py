@@ -1,3 +1,4 @@
-from .db import db, init_db
+# backend/database/__init__.py
+from .db import engine, SessionLocal, Base, db, Session, init_db
 
-__all__ = ['db', 'init_db']
+__all__ = ["engine", "SessionLocal", "Base", "db", "Session", "init_db"]

@@ -1,25 +1,18 @@
-from database.db import db
-from sqlalchemy.dialects.postgresql import JSONB
+# backend/models/lesson.py
+from database.db import db  # ✅ Importar db
+from datetime import datetime
+import json
 
 class Lesson(db.Model):
     __tablename__ = 'lessons'
-
-    # Columnas que coinciden con tu script upload_lessons.py
-    lesson_id = db.Column(db.String, primary_key=True)
     
-    # Establece la relación con la tabla 'courses'
-    course_id = db.Column(db.String, db.ForeignKey('courses.id'), nullable=False)
-    
-    title = db.Column(db.String, nullable=False)
-    lesson_order = db.Column(db.Integer)
-    xp_reward = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    content = db.Column(db.Text)  # JSON
+    order_index = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.String(20), default='video')
     duration_minutes = db.Column(db.Integer)
-    lesson_type = db.Column(db.String(50)) # 'text' o 'interactive'
-    
-    # 'screens' se guarda como JSON. Usamos JSONB para PostgreSQL.
-    screens = db.Column(JSONB) 
-    
-    total_screens = db.Column(db.Integer)
-    
-    # 'content' es para lecciones de solo texto (como la Triada CIA)
-    content = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

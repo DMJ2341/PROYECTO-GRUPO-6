@@ -1,37 +1,44 @@
-# La línea 'version: 3.8' se ha eliminado por ser obsoleta
+# C:\Users\Usuario\PROYECTO-GRUPO-6\docker-compose.yml (versión final)
+# Quitamos 'version' para evitar el warning
+
 services:
-  # 1. El servicio/caja para tu Backend de Python/Flask
-  backend:
-    build: ./backend  # Le dice a Docker que busque el Dockerfile en la carpeta ./backend
-    container_name: cyberlearn_backend
-    ports:
-      # Mapea el puerto 5000 de tu PC (Host) al puerto 5000 del Contenedor
-      - "5000:5000"
-    volumes:
-      # Enlaza tu carpeta ./backend con /app dentro del contenedor.
-      - ./backend:/app
-    environment:
-      # Esta es la variable de entorno que tu app.py usa para encontrar la BD
-      - DATABASE_URL=postgresql://cyberlearn_user:supersecretpassword@db:5432/cyberlearn_db
-    depends_on:
-      - db # Le dice a Docker que inicie la BD primero, y luego el backend
-
-  # 2. El servicio/caja para tu Base de Datos PostgreSQL
+  # PostgreSQL Oficial
   db:
-    image: postgres:15-alpine # Usa una imagen oficial y ligera de PostgreSQL
+    image: postgres:15-alpine
     container_name: cyberlearn_db
+    restart: unless-stopped
     environment:
-      # Estas son las credenciales que usará la base de datos
       POSTGRES_USER: cyberlearn_user
-      POSTGRES_PASSWORD: supersecretpassword
+      POSTGRES_PASSWORD: CyberLearn2024!
       POSTGRES_DB: cyberlearn_db
-    volumes:
-      # Guarda los datos de la BD en una carpeta local 'database-data'
-      - database-data:/var/lib/postgresql/data
     ports:
-      # Opcional: Si quieres conectarte a la BD con DBeaver o pgAdmin
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cyberlearn_user -d cyberlearn_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-# 3. Definición del volumen persistente para la base de datos
+  # Backend Oficial
+  backend:
+    build: ./backend  # ✅ Ahora apunta a ./backend
+    container_name: cyberlearn_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://cyberlearn_user:CyberLearn2024!@db:5432/cyberlearn_db
+      SECRET_KEY: 3f8b2a1e5d9c4f6a8b1e2d3c4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3
+      JWT_EXPIRATION_HOURS: 24
+      PASSWORD_MIN_LENGTH: 8
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - ./backend/data:/app/data
+
 volumes:
-  database-data:
+  postgres_data:

@@ -1,22 +1,34 @@
-# 1. La imagen base: Usamos una imagen oficial de Python
-FROM python:3.10-slim
+# backend/Dockerfile
+FROM python:3.11-slim
 
-# 2. Establecemos el directorio de trabajo DENTRO del contenedor
+# Variables de entorno
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=8000
+
+# Crear usuario no-root
+RUN useradd -m -u 1000 appuser && \
+    mkdir -p /app/data && \
+    chown -R appuser:appuser /app
+
 WORKDIR /app
 
-# 3. Copiamos solo el archivo de requisitos primero (para eficiencia de caché)
-COPY requirements.txt .
-
-# 4. Instalamos las librerías de Python (Flask, SQLAlchemy, etc.)
-# Usamos --no-cache-dir para mantener la imagen ligera
+# Copiar requirements PRIMERO (para cache de Docker)
+COPY --chown=appuser:appuser requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Copiamos TODO el resto de tu código del backend al contenedor
-COPY . .
+# Copiar código
+COPY --chown=appuser:appuser . .
 
-# 6. Exponemos el puerto 5000 (el que usa Flask en tu app.py)
-EXPOSE 5000
+# Cambiar permisos de data
+RUN chown -R appuser:appuser /app/data
 
-# 7. El comando para correr tu aplicación cuando el contenedor inicie
-# Esto es lo mismo que "python app.py"
+# Usuario no-root
+USER appuser
+
+# Health check corregido - puerto 8000 y ruta correcta
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD python -c "import requests; requests.get('http://localhost:8000/health').raise_for_status()"
+
+# Arrancar
 CMD ["python", "app.py"]
