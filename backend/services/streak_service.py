@@ -13,7 +13,7 @@ class StreakService:
             # Obtener última actividad de lección completada
             last_activity = session.query(func.max(Activity.created_at)).filter(
                 Activity.user_id == user_id,
-                Activity.type == 'lesson_completed'
+                Activity.activity_type == 'lesson_completed'
             ).scalar()
             
             if not last_activity:
@@ -32,7 +32,7 @@ class StreakService:
                 while True:
                     count = session.query(Activity).filter(
                         Activity.user_id == user_id,
-                        Activity.type == 'lesson_completed',
+                        Activity.activity_type == 'lesson_completed',
                         func.date(Activity.created_at) == current_date
                     ).count()
                     

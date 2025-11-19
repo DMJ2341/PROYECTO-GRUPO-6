@@ -9,14 +9,25 @@ from models.activity import Activity
 from models.badge import Badge
 from services.activity_service import ActivityService
 from services.course_service import CourseService
+from services.badge_service import BadgeService
 import jwt
 import datetime
-import os
 from functools import wraps
+from sqlalchemy import text
 
 app = Flask(__name__)
 CORS(app)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback-secret-key')
+app.config['SECRET_KEY'] = 'cyberlearn_super_secret_key_2024_change_in_production'
+
+# INICIALIZACIÓN DE BASE DE DATOS
+try:
+    # Verificar que la conexión funciona
+    with app.app_context():
+        db.session.execute(text("SELECT 1"))
+        print("✅ Base de datos conectada correctamente")
+except Exception as e:
+    print(f"❌ Error conectando a la base de datos: {e}")
+    raise
 
 # ---------- AUTH DECORATOR ----------
 def token_required(f):
@@ -40,24 +51,67 @@ def token_required(f):
 # ---------- HEALTH ----------
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    return jsonify({'status': 'OK', 'message': 'Servidor funcionando'})
+    return jsonify({
+        'status': 'OK', 
+        'message': 'Servidor funcionando',
+        'database': 'Conectada',
+        'environment': 'Producción - Servidor'
+    })
 
 # ---------- AUTH ----------
 @app.route('/api/auth/register', methods=['POST'])
 def register():
     try:
         data = request.get_json()
+        print(f"📨 Datos recibidos: {data}")
+        
         if not data or not data.get('email') or not data.get('password'):
             return jsonify({"error": "Email y password son requeridos"}), 400
-        existing = db.session.query(User).filter_by(email=data['email']).first()
-        if existing:
-            return jsonify({"error": "El usuario ya existe"}), 400
-        new_user = User(email=data['email'], name=data.get('name', ''), password_hash=data['password'])
-        db.session.add(new_user)
-        db.session.commit()
-        return jsonify({"success": True, "message": "Usuario registrado", "user_id": new_user.id}), 201
+        
+        session = db.get_session()
+        try:
+            existing = session.query(User).filter_by(email=data['email']).first()
+            if existing:
+                return jsonify({"error": "El usuario ya existe"}), 400
+            
+            new_user = User(email=data['email'], name=data.get('name', ''), password_hash=data['password'])
+            session.add(new_user)
+            session.commit()
+            
+            # ✅ DEBUG: Verificar que el usuario se creó
+            print(f"✅ Usuario creado: ID={new_user.id}, Email={new_user.email}")
+            
+            # Generar token
+            token = jwt.encode({
+                'user_id': new_user.id, 
+                'email': new_user.email, 
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=30)
+            }, app.config['SECRET_KEY'], algorithm='HS256')
+            
+            print(f"🔑 Token generado: {token}")
+            
+            response_data = {
+                "success": True, 
+                "message": "Usuario registrado", 
+                "token": token,
+                "user": {
+                    "id": new_user.id, 
+                    "email": new_user.email, 
+                    "name": new_user.name
+                }
+            }
+            
+            print(f"📤 Enviando respuesta: {response_data}")
+            
+            return jsonify(response_data), 201
+            
+        finally:
+            session.close()
+            
     except Exception as e:
-        db.session.rollback()
+        print(f"❌ Error en registro: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": "Error interno"}), 500
 
 @app.route('/api/auth/login', methods=['POST'])
@@ -66,13 +120,33 @@ def login():
         data = request.get_json()
         if not data or not data.get('email') or not data.get('password'):
             return jsonify({"error": "Email y password son requeridos"}), 400
-        user = db.session.query(User).filter_by(email=data['email']).first()
-        if not user or user.password_hash != data['password']:
-            return jsonify({"error": "Credenciales inválidas"}), 401
-        token = jwt.encode({'user_id': user.id, 'email': user.email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=30)},
-                           app.config['SECRET_KEY'], algorithm='HS256')
-        return jsonify({"success": True, "token": token, "user": {"id": user.id, "email": user.email, "name": user.name}})
+        
+        session = db.get_session()
+        try:
+            user = session.query(User).filter_by(email=data['email']).first()
+            if not user or user.password_hash != data['password']:
+                return jsonify({"error": "Credenciales inválidas"}), 401
+            
+            token = jwt.encode({
+                'user_id': user.id, 
+                'email': user.email, 
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=30)
+            }, app.config['SECRET_KEY'], algorithm='HS256')
+            
+            return jsonify({
+                "success": True, 
+                "token": token, 
+                "user": {
+                    "id": user.id, 
+                    "email": user.email, 
+                    "name": user.name
+                }
+            })
+        finally:
+            session.close()
+            
     except Exception as e:
+        print(f"❌ Error en login: {e}")
         return jsonify({"error": "Error interno"}), 500
 
 # ---------- CURSOS ----------
@@ -80,26 +154,26 @@ def login():
 def get_courses():
     try:
         print("🔍 Obteniendo cursos...")
-        courses = db.session.query(Course).all()
-        print(f"✅ Encontrados {len(courses)} cursos")
-        out = []
-        for c in courses:
-            out.append({
-                'id': c.id,
-                'title': c.title,
-                'description': c.description,
-                'category': c.category,
-                'difficulty': c.difficulty,
-                'duration_hours': c.duration_hours,
-                'instructor': c.instructor,
-                'price': float(c.price) if c.price else 0.0,
-                'rating': c.rating,
-                'students_count': c.students_count,
-                'language': c.language,
-                'image_url': c.image_url or ""
-            })
-        print("✅ JSON armado")
-        return jsonify(out)
+        session = db.get_session()
+        try:
+            courses = session.query(Course).all()
+            print(f"✅ Encontrados {len(courses)} cursos")
+            
+            out = []
+            for c in courses:
+                out.append({
+                    'id': c.id,
+                    'title': c.title,
+                    'description': c.description,
+                    'level': c.level,
+                    'xp_reward': c.xp_reward,
+                    'image_url': c.image_url or ""
+                })
+            print("✅ JSON armado")
+            return jsonify(out)
+        finally:
+            session.close()
+            
     except Exception as e:
         print(f"❌ Error en /api/courses: {e}")
         return jsonify({"error": "Error interno al obtener cursos"}), 500
@@ -108,34 +182,44 @@ def get_courses():
 @app.route('/api/lessons/<int:lesson_id>', methods=['GET'])
 def get_lesson_public(lesson_id):
     try:
-        lesson = db.session.query(Lesson).filter_by(id=lesson_id).first()
-        if not lesson:
-            return jsonify({"error": "Lección no encontrada"}), 404
-        return jsonify({
-            "success": True,
-            "lesson": {
-                'id': lesson.id, 'course_id': lesson.course_id, 'title': lesson.title,
-                'description': lesson.description, 'content': lesson.content, 'type': lesson.type,
-                'duration_minutes': lesson.duration_minutes, 'order_index': lesson.order_index,
-                'created_at': lesson.created_at.isoformat() if lesson.created_at else None
-            }
-        })
+        session = db.get_session()
+        try:
+            lesson = session.query(Lesson).filter_by(id=lesson_id).first()
+            if not lesson:
+                return jsonify({"error": "Lección no encontrada"}), 404
+            return jsonify({
+                "success": True,
+                "lesson": {
+                    'id': lesson.id, 'course_id': lesson.course_id, 'title': lesson.title,
+                    'description': lesson.description, 'content': lesson.content, 'type': lesson.type,
+                    'duration_minutes': lesson.duration_minutes, 'order_index': lesson.order_index,
+                    'created_at': lesson.created_at.isoformat() if lesson.created_at else None
+                }
+            })
+        finally:
+            session.close()
     except Exception as e:
+        print(f"❌ Error en /api/lessons/{lesson_id}: {e}")
         return jsonify({"error": "Error interno"}), 500
 
 @app.route('/api/courses/<int:course_id>/lessons/<int:lesson_id>', methods=['GET'])
 def get_course_lesson_detail(course_id, lesson_id):
     try:
-        lesson = db.session.query(Lesson).filter_by(course_id=course_id, id=lesson_id).first()
-        if not lesson:
-            return jsonify({"error": "Lección no encontrada"}), 404
-        return jsonify({
-            'id': lesson.id, 'course_id': lesson.course_id, 'title': lesson.title,
-            'description': lesson.description, 'content': lesson.content, 'type': lesson.type,
-            'duration_minutes': lesson.duration_minutes, 'order_index': lesson.order_index,
-            'created_at': lesson.created_at.isoformat() if lesson.created_at else None
-        })
+        session = db.get_session()
+        try:
+            lesson = session.query(Lesson).filter_by(course_id=course_id, id=lesson_id).first()
+            if not lesson:
+                return jsonify({"error": "Lección no encontrada"}), 404
+            return jsonify({
+                'id': lesson.id, 'course_id': lesson.course_id, 'title': lesson.title,
+                'description': lesson.description, 'content': lesson.content, 'type': lesson.type,
+                'duration_minutes': lesson.duration_minutes, 'order_index': lesson.order_index,
+                'created_at': lesson.created_at.isoformat() if lesson.created_at else None
+            })
+        finally:
+            session.close()
     except Exception as e:
+        print(f"❌ Error en /api/courses/{course_id}/lessons/{lesson_id}: {e}")
         return jsonify({"error": "Error interno"}), 500
 
 # ---------- USUARIO ----------
@@ -143,14 +227,19 @@ def get_course_lesson_detail(course_id, lesson_id):
 @token_required
 def get_user_profile(current_user_id):
     try:
-        user = db.session.query(User).filter_by(id=current_user_id).first()
-        if not user:
-            return jsonify({"error": "Usuario no encontrado"}), 404
-        return jsonify({"success": True, "user": {
-            "id": user.id, "email": user.email, "name": user.name,
-            "created_at": user.created_at.isoformat() if user.created_at else None
-        }})
+        session = db.get_session()
+        try:
+            user = session.query(User).filter_by(id=current_user_id).first()
+            if not user:
+                return jsonify({"error": "Usuario no encontrado"}), 404
+            return jsonify({"success": True, "user": {
+                "id": user.id, "email": user.email, "name": user.name,
+                "created_at": user.created_at.isoformat() if user.created_at else None
+            }})
+        finally:
+            session.close()
     except Exception as e:
+        print(f"❌ Error en /api/user/profile: {e}")
         return jsonify({"error": "Error interno"}), 500
 
 # ---------- PROGRESO ----------
@@ -160,31 +249,45 @@ def update_lesson_progress(current_user_id, lesson_id):
     try:
         data = request.get_json()
         completed = data.get('completed', False)
-        activity_service = ActivityService()
-        if completed:
-            activity_service.create_activity(user_id=current_user_id,
-                                             activity_type='lesson_completed',
-                                             description=f'Lección {lesson_id} completada',
-                                             points=10)
+        
+        session = db.get_session()
+        try:
+            activity_service = ActivityService()
+            if completed:
+                activity_service.create_activity(
+                    user_id=current_user_id,
+                    activity_type='lesson_completed',
+                    points=10,
+                    lesson_id=str(lesson_id)
+                )
 
-            # ⭐ OTORGAR MEDALLAS AUTOMÁTICAS ⭐
-            from services.badge_service import BadgeService
-            BadgeService.award_lesson_badges(current_user_id, lesson_id)
-
-        return jsonify({"success": True, "lesson_id": lesson_id, "completed": completed, "points_earned": 10 if completed else 0})
+            return jsonify({
+                "success": True, 
+                "lesson_id": lesson_id, 
+                "completed": completed, 
+                "points_earned": 10 if completed else 0
+            })
+        finally:
+            session.close()
+            
     except Exception as e:
-        print(f"Error update progress: {e}")
+        print(f"❌ Error update progress: {e}")
         return jsonify({"error": "Error interno"}), 500
 
 # ---------- MEDALLAS ----------
 @app.route('/api/badges/available', methods=['GET'])
 def get_available_badges():
     try:
-        badges = db.session.query(Badge).all()
-        return jsonify({"success": True, "badges": [
-            {"id": b.id, "name": b.name, "description": b.description, "icon": b.icon,
-             "condition": b.condition, "points_required": b.points_required} for b in badges]})
+        session = db.get_session()
+        try:
+            badges = session.query(Badge).all()
+            return jsonify({"success": True, "badges": [
+                {"id": b.id, "name": b.name, "description": b.description, "icon": b.icon,
+                 "xp_required": b.xp_required} for b in badges]})
+        finally:
+            session.close()
     except Exception as e:
+        print(f"❌ Error en /api/badges/available: {e}")
         return jsonify({"error": "Error interno"}), 500
 
 @app.route('/api/user/badges', methods=['GET'])
@@ -192,23 +295,26 @@ def get_available_badges():
 def get_user_badges(current_user_id):
     try:
         print(f"🔍 Obteniendo medallas para usuario {current_user_id}")
-        user_badges = db.session.query(UserBadge, Badge).join(
-            Badge, UserBadge.badge_id == Badge.id
-        ).filter(UserBadge.user_id == current_user_id).all()
-        print(f"✅ Encontradas {len(user_badges)} medallas")
+        session = db.get_session()
+        try:
+            user_badges = session.query(UserBadge, Badge).join(
+                Badge, UserBadge.badge_id == Badge.id
+            ).filter(UserBadge.user_id == current_user_id).all()
+            print(f"✅ Encontradas {len(user_badges)} medallas")
 
-        return jsonify({"success": True, "badges": [
-            {
-                "id": badge.id,
-                "name": badge.name,
-                "description": badge.description,
-                "icon": badge.icon,
-                "condition": badge.condition,
-                "points_required": badge.points_required,
-                "earned_at": ub.earned_at.isoformat(),
-                "earned_value": ub.earned_value if hasattr(ub, 'earned_value') else 1
-            } for ub, badge in user_badges
-        ]})
+            return jsonify({"success": True, "badges": [
+                {
+                    "id": badge.id,
+                    "name": badge.name,
+                    "description": badge.description,
+                    "icon": badge.icon,
+                    "xp_required": badge.xp_required,
+                    "earned_at": ub.earned_at.isoformat(),
+                    "earned_value": ub.earned_value if hasattr(ub, 'earned_value') else 1
+                } for ub, badge in user_badges
+            ]})
+        finally:
+            session.close()
     except Exception as e:
         print(f"❌ Error en /api/user/badges: {e}")
         return jsonify({"error": "Error interno al obtener medallas"}), 500
@@ -219,36 +325,60 @@ def get_user_badges(current_user_id):
 def get_user_dashboard(current_user_id):
     try:
         from services.streak_service import StreakService
-        act = ActivityService()
-        total_xp = act.get_total_xp(current_user_id)
-        streak = StreakService()
-        current_streak = streak.get_current_streak(current_user_id)
-        streak_bonus = streak.get_streak_bonus(current_streak)
-        user_badges = db.session.query(UserBadge).filter_by(user_id=current_user_id).count()
-        courses_prog = []
-        for course in db.session.query(Course).all():
-            total = db.session.query(Lesson).filter_by(course_id=course.id).count()
-            completed = db.session.query(Activity).filter(
-                Activity.user_id == current_user_id,
-                Activity.type == 'lesson_completed',
-                Activity.description.like(f'%curso {course.id}%')).count()
-            if total:
-                courses_prog.append({
-                    'course_id': course.id, 'course_title': course.title,
-                    'completed_lessons': completed, 'total_lessons': total,
-                    'progress_percent': round(completed / total * 100, 1)
-                })
-        next_badge = db.session.query(Badge).filter(
-            Badge.id == user_badges + 1).first() if user_badges < 6 else None
-        return jsonify({"success": True, "dashboard": {
-            "total_xp": total_xp, "current_streak": current_streak,
-            "streak_bonus": streak_bonus, "badges_count": user_badges,
-            "courses_progress": courses_prog,
-            "next_badge": {"name": next_badge.name, "description": next_badge.description,
-                           "icon": next_badge.icon, "condition": next_badge.description} if next_badge else None
-        }})
+        
+        session = db.get_session()
+        try:
+            act = ActivityService()
+            total_xp = act.get_total_xp(current_user_id)
+            
+            streak_service = StreakService()
+            current_streak = streak_service.get_current_streak(current_user_id)
+            streak_bonus = streak_service.get_streak_bonus(current_streak)
+            
+            user_badges = session.query(UserBadge).filter_by(user_id=current_user_id).count()
+            
+            courses_prog = []
+            for course in session.query(Course).all():
+                total = session.query(Lesson).filter_by(course_id=course.id).count()
+                completed = session.query(Activity).filter(
+                    Activity.user_id == current_user_id,
+                    Activity.activity_type == 'lesson_completed',
+                    Activity.lesson_id.isnot(None)
+                ).count()
+                
+                if total:
+                    courses_prog.append({
+                        'course_id': course.id, 
+                        'course_title': course.title,
+                        'completed_lessons': completed, 
+                        'total_lessons': total,
+                        'progress_percent': round(completed / total * 100, 1)
+                    })
+            
+            next_badge = session.query(Badge).filter(
+                Badge.id == str(user_badges + 1)
+            ).first() if user_badges < 6 else None
+            
+            return jsonify({"success": True, "dashboard": {
+                "total_xp": total_xp, 
+                "current_streak": current_streak,
+                "streak_bonus": streak_bonus, 
+                "badges_count": user_badges,
+                "courses_progress": courses_prog,
+                "next_badge": {
+                    "name": next_badge.name, 
+                    "description": next_badge.description,
+                    "icon": next_badge.icon, 
+                    "condition": f"Necesitas {next_badge.xp_required} XP"
+                } if next_badge else None
+            }})
+        finally:
+            session.close()
+            
     except Exception as e:
         print(f"Dashboard error: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": "Error interno"}), 500
 
 @app.route('/api/user/streak', methods=['GET'])
@@ -285,25 +415,52 @@ def award_final_badge(user_id):
 @app.route('/api/courses/<int:course_id>/lessons', methods=['GET'])
 def get_course_lessons(course_id):
     try:
-        lessons = db.session.query(Lesson).filter_by(course_id=course_id).order_by(Lesson.order_index).all()
-        if not lessons:
-            return jsonify([]), 200  # Lista vacía, no 404
-        return jsonify([{
-            'id': l.id,
-            'course_id': l.course_id,
-            'title': l.title,
-            'description': l.description,
-            'content': l.content,
-            'duration_minutes': l.duration_minutes,
-            'order_index': l.order_index,
-            'type': l.type,
-            'created_at': l.created_at.isoformat() if l.created_at else None
-        } for l in lessons])
+        session = db.get_session()
+        try:
+            lessons = session.query(Lesson).filter_by(course_id=course_id).order_by(Lesson.order_index).all()
+            if not lessons:
+                return jsonify([]), 200
+            return jsonify([{
+                'id': l.id,
+                'course_id': l.course_id,
+                'title': l.title,
+                'description': l.description,
+                'content': l.content,
+                'duration_minutes': l.duration_minutes,
+                'order_index': l.order_index,
+                'type': l.type,
+                'created_at': l.created_at.isoformat() if l.created_at else None
+            } for l in lessons])
+        finally:
+            session.close()
     except Exception as e:
         print(f"❌ Error en /api/courses/{course_id}/lessons: {e}")
         return jsonify({"error": "Error interno"}), 500
 
+# ---------- RUTA RAIZ ----------
+@app.route('/')
+def home():
+    return jsonify({
+        "message": "🚀 CyberLearn API - Servidor de Producción",
+        "status": "activo", 
+        "version": "1.0.0",
+        "database": "PostgreSQL en servidor"
+    })
+
 # ---------- INICIO ----------
 if __name__ == '__main__':
-    db.create_all()
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    print("🚀 INICIANDO CYBERLEARN BACKEND - SERVIDOR")
+    print("=" * 50)
+    print("🔗 Base de datos: PostgreSQL en servidor")
+    print("🌐 Host: 0.0.0.0:8000")
+    print("⚡ Modo: Producción")
+    print("=" * 50)
+    
+    # Crear tablas si no existen
+    try:
+        db.create_all()
+        print("✅ Tablas de base de datos verificadas")
+    except Exception as e:
+        print(f"⚠️  Error creando tablas: {e}")
+    
+    app.run(host='0.0.0.0', port=8000, debug=False)  # debug=False para producción

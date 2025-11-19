@@ -23,9 +23,10 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationBarItem(
             icon = { Icon("🏠", contentDescription = "Inicio") },
             label = { Text("Inicio") },
-            selected = currentRoute == Screens.Dashboard.route,
+            // ✅ CORREGIDO: Usar ruta completa
+            selected = currentRoute == "main/dashboard",
             onClick = {
-                navController.navigate(Screens.Dashboard.route) {
+                navController.navigate("main/dashboard") {
                     launchSingleTop = true
                     restoreState = true
                 }
@@ -42,9 +43,10 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationBarItem(
             icon = { Icon("📚", contentDescription = "Cursos") },
             label = { Text("Cursos") },
-            selected = currentRoute == Screens.Courses.route,
+            // ✅ CORREGIDO: Usar ruta completa
+            selected = currentRoute == "main/courses",
             onClick = {
-                navController.navigate(Screens.Courses.route) {
+                navController.navigate("main/courses") {
                     launchSingleTop = true
                     restoreState = true
                 }
@@ -61,9 +63,10 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationBarItem(
             icon = { Icon("🏆", contentDescription = "Logros") },
             label = { Text("Logros") },
-            selected = currentRoute == Screens.Achievements.route,
+            // ✅ CORREGIDO: Usar ruta completa
+            selected = currentRoute == "main/achievements",
             onClick = {
-                navController.navigate(Screens.Achievements.route) {
+                navController.navigate("main/achievements") {
                     launchSingleTop = true
                     restoreState = true
                 }
@@ -80,9 +83,10 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationBarItem(
             icon = { Icon("👤", contentDescription = "Perfil") },
             label = { Text("Perfil") },
-            selected = currentRoute == Screens.Profile.route,
+            // ✅ CORREGIDO: Usar ruta completa
+            selected = currentRoute == "main/profile",
             onClick = {
-                navController.navigate(Screens.Profile.route) {
+                navController.navigate("main/profile") {
                     launchSingleTop = true
                     restoreState = true
                 }

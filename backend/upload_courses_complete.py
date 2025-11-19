@@ -4,85 +4,141 @@ import json
 
 def upload_courses():
     conn = psycopg2.connect(
-        host="localhost",
+        host="172.232.188.183",
         port=5432,
         database="cyberlearn_db",
-        user="cyberlearn_user",
-        password="CyberLearn2024!"
+        user="app_cyberlearn",
+        password="CyberLearn2025*"
     )
     cursor = conn.cursor()
     
     # Cursos reales completos
     courses = [
+        # --- NIVEL 1: FUNDAMENTOS Y CONCIENTIZACIÓN ---
         {
-            "title": "Ciberseguridad para Emprendedores",
-            "description": "Aprende a proteger tu negocio digital desde cero. Cubre aspectos básicos de seguridad, contraseñas, phishing y protección de datos.",
-            "category": "Seguridad Básica",
-            "difficulty": "Principiante",
-            "duration_hours": 8,
+            "title": "Fundamentos y Concientización", 
+            "description": "Aprende los principios básicos de ciberseguridad a través de casos reales. Domina la identificación de amenazas y conviértete en un primer respondedor digital.",
+            "level": "Principiante",
+            "xp_reward": 215,
             "image_url": "https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=500",
-            "instructor": "Ana García",
-            "rating": 4.8,
-            "students_count": 1250,
-            "price": 0.00,
-            "language": "Español",
-            "requirements": ["Conocimientos básicos de informática", "Correo electrónico"],
-            "learning_objectives": [
-                "Identificar amenazas comunes en línea",
-                "Crear contraseñas seguras",
-                "Reconocer intentos de phishing",
-                "Proteger información personal"
-            ]
+            "category": "Fundamentos",
+            "duration_hours": 6
         },
         {
-            "title": "Hacking Ético y Penetration Testing",
-            "description": "Curso completo de hacking ético desde cero. Aprende a encontrar vulnerabilidades y mejorar la seguridad de sistemas.",
-            "category": "Hacking Ético",
-            "difficulty": "Avanzado",
-            "duration_hours": 40,
+            "title": "Higiene Digital Esencial",
+            "description": "Protege tus cuentas y dispositivos con prácticas esenciales. Contraseñas seguras, 2FA, backups y navegación segura.",
+            "level": "Principiante", 
+            "xp_reward": 185,
             "image_url": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500",
-            "instructor": "Carlos Rodríguez",
-            "rating": 4.9,
-            "students_count": 890,
-            "price": 199.99,
-            "language": "Español",
-            "requirements": [
-                "Conocimientos de redes y Linux",
-                "Sistema Kali Linux",
-                "Comprensión de vulnerabilidades web"
-            ],
-            "learning_objectives": [
-                "Realizar pruebas de penetración",
-                "Usar herramientas de hacking ético",
-                "Documentar hallazgos de seguridad",
-                "Aplicar metodologías OWASP"
-            ]
+            "category": "Prácticas Seguras",
+            "duration_hours": 5
+        },
+        {
+            "title": "Fundamentos de Redes",
+            "description": "Domina los fundamentos de redes que todo profesional de ciberseguridad necesita. TCP/IP, DNS, HTTP/HTTPS y firewalls.",
+            "level": "Principiante",
+            "xp_reward": 225,
+            "image_url": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=500",
+            "category": "Redes",
+            "duration_hours": 7
+        },
+        {
+            "title": "Sistemas Operativos Seguros",
+            "description": "Seguridad en Windows y Linux. Gestión de permisos, usuarios, y la importancia de parches y actualizaciones.",
+            "level": "Principiante",
+            "xp_reward": 200,
+            "image_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500",
+            "category": "Sistemas",
+            "duration_hours": 6
+        },
+        
+        # --- NIVEL 2: RED TEAM (OFENSIVA) ---
+        {
+            "title": "Reconocimiento y OSINT",
+            "description": "Técnicas para recolectar información ética sobre objetivos usando fuentes públicas (OSINT).",
+            "level": "Intermedio",
+            "xp_reward": 280,
+            "image_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500",
+            "category": "Red Team",
+            "duration_hours": 8
+        },
+        {
+            "title": "Hacking Web y API",
+            "description": "Principales fallos de seguridad en aplicaciones web (OWASP Top 10). Inyecciones y fallos de autenticación.",
+            "level": "Avanzado",
+            "xp_reward": 320,
+            "image_url": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500",
+            "category": "Red Team",
+            "duration_hours": 10
+        },
+        
+        # --- NIVEL 3: BLUE TEAM (DEFENSIVA) ---
+        {
+            "title": "Monitoreo y Análisis de Logs",
+            "description": "Leer y comprender logs de sistemas y red. Rol de Analista SOC y uso de SIEM para detección temprana.",
+            "level": "Intermedio",
+            "xp_reward": 300,
+            "image_url": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=500",
+            "category": "Blue Team",
+            "duration_hours": 9
+        },
+        {
+            "title": "Respuesta a Incidentes y Forense",
+            "description": "Fases de respuesta a ciberataques. Fundamentos de análisis forense para recolección de pruebas digitales.",
+            "level": "Avanzado",
+            "xp_reward": 350,
+            "image_url": "https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=500",
+            "category": "Blue Team",
+            "duration_hours": 11
+        },
+        
+        # --- CURSOS ADICIONALES ---
+        {
+            "title": "Hacking Ético y Pentesting",
+            "description": "Curso completo de hacking ético y pruebas de penetración en entornos controlados.",
+            "level": "Avanzado",
+            "xp_reward": 400,
+            "image_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500",
+            "category": "Red Team",
+            "duration_hours": 12
+        },
+        {
+            "title": "Ciberseguridad para Emprendedores",
+            "description": "Protege tu negocio digital desde cero. Seguridad para startups y pequeños negocios.",
+            "level": "Principiante",
+            "xp_reward": 180,
+            "image_url": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500",
+            "category": "Negocios",
+            "duration_hours": 4
         }
     ]
+
+    course_ids = []
     
     for course in courses:
         cursor.execute("""
-            INSERT INTO courses (
-                title, description, category, difficulty, duration_hours,
-                image_url, instructor, rating, students_count, price,
-                language, requirements, learning_objectives, created_at, updated_at
+            INSERT INTO course (
+                title, description, level, xp_reward, image_url, 
+                category, duration_hours, created_at
             ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW()
-            )
+                %s, %s, %s, %s, %s, %s, %s, NOW()
+            ) RETURNING id
         """, (
-            course["title"], course["description"], course["category"],
-            course["difficulty"], course["duration_hours"], course["image_url"],
-            course["instructor"], course["rating"], course["students_count"],
-            course["price"], course["language"], 
-            json.dumps(course["requirements"]), json.dumps(course["learning_objectives"])
+            course["title"], course["description"], course["level"],
+            course["xp_reward"], course["image_url"], course["category"],
+            course["duration_hours"]
         ))
         
-        print(f"✅ Curso creado: {course['title']}")
+        course_id = cursor.fetchone()[0]
+        course_ids.append(course_id)
+        print(f"✅ Curso creado: {course['title']} (ID: {course_id})")
     
     conn.commit()
     cursor.close()
     conn.close()
     print("🎉 Todos los cursos han sido cargados exitosamente!")
+
+    return course_ids
 
 if __name__ == "__main__":
     upload_courses()

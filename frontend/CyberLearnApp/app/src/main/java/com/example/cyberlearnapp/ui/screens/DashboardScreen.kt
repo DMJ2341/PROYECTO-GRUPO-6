@@ -38,7 +38,6 @@ fun DashboardScreen(
     ) {
         when {
             isLoading && userProgress == null -> {
-                // ✅ SOLUCIÓN: Solo mostrar "Cargando..." la PRIMERA vez
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -101,7 +100,18 @@ fun DashboardScreen(
                     )
 
                     ProgressCard(
-                        progress = userProgress!!,
+                        progress = com.example.cyberlearnapp.network.models.Progress(
+                            name = userProgress?.userName ?: "Estudiante",
+                            email = userProgress?.userEmail ?: "",
+                            level = userProgress?.level ?: 1,
+                            xpTotal = userProgress?.totalXp ?: 0,
+                            streak = userProgress?.currentStreak ?: 0,
+                            badges = emptyList(), // Por ahora vacío
+                            lessonsCompleted = userProgress?.completedLessons ?: 0,
+                            coursesCompleted = userProgress?.completedCourses ?: 0,
+                            nextLevelXp = userProgress?.nextLevelXp ?: 100,
+                            progressPercentage = userProgress?.progressPercentage ?: 0.0
+                        ),
                         modifier = Modifier.padding(bottom = 24.dp)
                     )
 
@@ -112,27 +122,39 @@ fun DashboardScreen(
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
-                    CourseCard(
-                        emoji = "🚀",
-                        title = "Fundamentos de Ciberseguridad",
-                        description = "El curso obligatorio para iniciar",
-                        level = "Principiante",
-                        xp = 150,
-                        progress = 0,
-                        onCourseClick = { onCourseClick("Fundamentos de Ciberseguridad") }
+                    val courses = listOf(
+                        CourseData(
+                            id = "fundamentos",
+                            emoji = "🚀",
+                            title = "Fundamentos de Ciberseguridad",
+                            description = "El curso obligatorio para iniciar",
+                            level = "Principiante",
+                            xp = 150,
+                            progress = 0 //userProgress?.courseProgress?.get("fundamentos") ?: 0
+                        ),
+                        CourseData(
+                            id = "phishing",
+                            emoji = "🎣",
+                            title = "Phishing e Ingeniería Social",
+                            description = "Detecta correos falsos",
+                            level = "Principiante",
+                            xp = 35,
+                            progress = 0 //userProgress?.courseProgress?.get("phishing") ?: 0
+                        )
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    CourseCard(
-                        emoji = "🎣",
-                        title = "Phishing e Ingeniería Social",
-                        description = "Detecta correos falsos",
-                        level = "Principiante",
-                        xp = 35,
-                        progress = 0,
-                        onCourseClick = { onCourseClick("Phishing e Ingeniería Social") }
-                    )
+                    courses.forEach { course ->
+                        CourseCard(
+                            emoji = course.emoji,
+                            title = course.title,
+                            description = course.description,
+                            level = course.level,
+                            xp = course.xp,
+                            progress = course.progress,
+                            onCourseClick = { onCourseClick(course.id) }
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
 
                     Spacer(modifier = Modifier.height(80.dp))
                 }
@@ -150,3 +172,14 @@ fun DashboardScreen(
         }
     }
 }
+
+// Data class para cursos
+data class CourseData(
+    val id: String,
+    val emoji: String,
+    val title: String,
+    val description: String,
+    val level: String,
+    val xp: Int,
+    val progress: Int
+)

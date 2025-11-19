@@ -1,13 +1,5 @@
 package com.example.cyberlearnapp.network
 
-import com.example.cyberlearnapp.network.models.InteractiveLessonResponse
-import com.example.cyberlearnapp.network.models.LessonProgressRequest
-import com.example.cyberlearnapp.network.models.SuccessResponse
-import com.example.cyberlearnapp.network.models.Progress
-import com.example.cyberlearnapp.network.models.User
-import com.example.cyberlearnapp.network.models.CompleteActivityRequest
-import com.example.cyberlearnapp.network.models.CompleteActivityResponse
-import com.example.cyberlearnapp.network.models.BadgeResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -23,45 +15,22 @@ interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
-    @GET("user/progress")
-    suspend fun getUserProgress(@Header("Authorization") token: String): Response<Progress>
+    // ✅ ENDPOINTS CORREGIDOS según tu backend real
+    @GET("user/profile")
+    suspend fun getUserProfile(@Header("Authorization") token: String): Response<UserProfileResponse>
 
-    @POST("user/complete-activity")
-    suspend fun completeActivity(
-        @Header("Authorization") token: String,
-        @Body request: CompleteActivityRequest
-    ): Response<CompleteActivityResponse>
-
-    @GET("user/badges")
-    suspend fun getUserBadges(
-        @Header("Authorization") token: String
-    ): Response<BadgeResponse>
-
-    // --- NUEVA FUNCIÓN ---
     @GET("courses")
-    suspend fun getAllCourses(
-        @Header("Authorization") token: String
-    ): Response<List<Course>> // Devuelve una lista de Cursos
-
-    // --- FIN NUEVA FUNCIÓN ---
+    suspend fun getAllCourses(): Response<List<Course>>
 
     @GET("courses/{courseId}/lessons")
     suspend fun getCourseLessons(
-        @Path("courseId") courseId: String,
-        @Header("Authorization") token: String
-    ): Response<LessonsResponse>
+        @Path("courseId") courseId: String
+    ): Response<List<Lesson>>
 
     @GET("lessons/{lessonId}")
     suspend fun getLessonContent(
-        @Path("lessonId") lessonId: String,
-        @Header("Authorization") token: String
+        @Path("lessonId") lessonId: String
     ): Response<Lesson>
-
-    @GET("lessons/{lessonId}/interactive")
-    suspend fun getInteractiveLesson(
-        @Path("lessonId") lessonId: String,
-        @Header("Authorization") token: String
-    ): Response<InteractiveLessonResponse>
 
     @POST("lessons/{lessonId}/progress")
     suspend fun saveLessonProgress(
@@ -69,10 +38,17 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body progress: LessonProgressRequest
     ): Response<SuccessResponse>
+
+    @GET("user/badges")
+    suspend fun getUserBadges(
+        @Header("Authorization") token: String
+    ): Response<BadgeResponse>
+
+    @GET("user/dashboard")
+    suspend fun getUserDashboard(@Header("Authorization") token: String): Response<DashboardResponse>
 }
 
-// --- CLASES DE DATOS (DATA CLASSES) ---
-
+// MODELOS ACTUALIZADOS
 data class RegisterRequest(
     val email: String,
     val password: String,
@@ -91,29 +67,90 @@ data class AuthResponse(
     val user: User?
 )
 
-// --- NUEVA DATA CLASS PARA COURSE ---
+data class User(
+    val id: Int,
+    val email: String,
+    val name: String
+)
+
 data class Course(
     val id: String,
     val title: String,
     val description: String,
     val level: String,
     val xp_reward: Int,
-    val image_url: String // Para el emoji 🚀
+    val image_url: String,
+    val category: String? = null,
+    val duration_hours: Int? = null
 )
-// --- FIN NUEVA DATA CLASS ---
 
 data class Lesson(
     val id: String,
-    val lesson_id: String = "",
+    val course_id: String,
     val title: String,
-    val content: String = "",
-    val order: Int = 0,
-    val xp_reward: Int = 0,
-    val duration_minutes: Int = 0,
-    val course_id: String = ""
+    val description: String?,
+    val content: String?,
+    val order_index: Int,
+    val type: String,
+    val duration_minutes: Int?,
+    val xp_reward: Int? = 0,
+    val total_screens: Int? = 1,
+    val screens: String? = null
 )
 
-data class LessonsResponse(
-    val lessons: List<Lesson>
+data class UserProfileResponse(
+    val success: Boolean,
+    val user: UserProfile?
 )
 
+data class UserProfile(
+    val id: Int,
+    val email: String,
+    val name: String,
+    val created_at: String?
+)
+
+data class DashboardResponse(
+    val success: Boolean,
+    val dashboard: DashboardData?
+)
+
+data class DashboardData(
+    val total_xp: Int,
+    val current_streak: Int,
+    val streak_bonus: Int,
+    val badges_count: Int,
+    val courses_progress: List<CourseProgress>
+)
+
+data class CourseProgress(
+    val course_id: String,
+    val course_title: String,
+    val completed_lessons: Int,
+    val total_lessons: Int,
+    val progress_percent: Double
+)
+
+data class BadgeResponse(
+    val success: Boolean,
+    val badges: List<Badge>
+)
+
+data class Badge(
+    val id: String,
+    val name: String,
+    val description: String,
+    val icon: String,
+    val condition: String?,
+    val points_required: Int,
+    val earned_at: String? = null
+)
+
+data class LessonProgressRequest(
+    val completed: Boolean = true
+)
+
+data class SuccessResponse(
+    val success: Boolean,
+    val message: String
+)

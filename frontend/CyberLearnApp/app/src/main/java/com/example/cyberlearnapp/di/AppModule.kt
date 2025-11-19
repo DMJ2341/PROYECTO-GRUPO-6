@@ -23,9 +23,9 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // --- ¡CORREGIDO! ---
-    // Esta es la IP para que el emulador hable con el Docker que corre en tu PC.
-    private const val BASE_URL = "http://10.0.2.2:5000/api/"
+    //
+    //private const val BASE_URL = "http://172.232.188.183:8000/api/"
+    private const val BASE_URL = "http://10.0.2.2:8000/api/"
 
     @Singleton
     @Provides

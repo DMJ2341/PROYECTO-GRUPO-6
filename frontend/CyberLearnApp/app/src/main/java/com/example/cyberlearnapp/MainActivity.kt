@@ -47,70 +47,58 @@ fun CyberLearnApp() {
     val shouldNavigateToMain by authViewModel.shouldNavigateToMain.collectAsState()
     val isLoading by authViewModel.isLoading.collectAsState()
 
-    // 🔍 DEBUG mejorado
-    LaunchedEffect(currentUser) {
-        println("👤 [MAIN-DEBUG] Usuario: ${currentUser?.email ?: "NULL"}")
+    // 🔍 DEBUG EXTENDIDO
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    LaunchedEffect(currentRoute) {
+        println("📍 [ROUTE-DEBUG] Ruta actual: $currentRoute")
+        println("👤 [USER-DEBUG] Usuario: ${currentUser?.email ?: "NULL"}")
+        println("🚀 [NAV-DEBUG] ShouldNavigateToMain: $shouldNavigateToMain")
+        println("⏳ [NAV-DEBUG] isLoading: $isLoading")
     }
 
-    // ✅ SOLUCIÓN: Navegación controlada únicamente por shouldNavigateToMain
-    LaunchedEffect(shouldNavigateToMain) {
-        if (shouldNavigateToMain && !isLoading) {
-            println("🚀 [MAIN-DEBUG] Navegando a Main por shouldNavigateToMain (Loading: $isLoading)")
+    // ✅ Navegación con DEBUG
+    LaunchedEffect(currentUser, shouldNavigateToMain) {
+        println("🔄 [NAV-TRIGGER] currentUser: ${currentUser != null}, shouldNavigateToMain: $shouldNavigateToMain")
 
+        if ((currentUser != null || shouldNavigateToMain) &&
+            currentRoute != Screens.Main.route &&
+            !isLoading) {
+
+            println("🎯 [NAV-EXECUTING] Navegando a Main...")
             navController.navigate(Screens.Main.route) {
                 launchSingleTop = true
+                popUpTo(Screens.Auth.route) { inclusive = true }
             }
-
             authViewModel.resetNavigation()
         }
     }
 
-    // ✅ SOLUCIÓN: Eliminar navegación inicial automática - solo navegar cuando hay usuario REAL
-    LaunchedEffect(currentUser) {
-        // Solo navegar si hay un usuario REAL (no null) y no estamos ya en Main
-        if (currentUser != null &&
-            navController.currentBackStackEntry?.destination?.route != Screens.Main.route &&
-            !shouldNavigateToMain) {
-            println("🚀 [MAIN-DEBUG] Navegando a Main para usuario existente: ${currentUser?.email}")
-            navController.navigate(Screens.Main.route) {
-                launchSingleTop = true
-            }
-        }
-    }
-
-    // ✅ SOLUCIÓN: Start destination siempre Auth al inicio
-    val startDestination = Screens.Auth.route
-
     Scaffold(
         bottomBar = {
-            // Solo mostrar BottomBar si hay usuario y estamos en rutas principales
-            if (currentUser != null) {
-                val currentRoute = navController.currentDestination?.route
-                val showBottomBar = currentRoute in listOf(
-                    Screens.Dashboard.route,
-                    Screens.Courses.route,
-                    Screens.Achievements.route,
-                    Screens.Profile.route
-                )
+            // ✅ SOLUCIÓN TEMPORAL: Mostrar siempre para debug
+            val showBottomBar = true // currentRoute?.startsWith("main/") == true
 
-                if (showBottomBar) {
-                    BottomNavigationBar(navController = navController)
-                }
+            if (showBottomBar) {
+                println("📱 [BOTTOMBAR] ✅ MOSTRANDO - Ruta: $currentRoute")
+                BottomNavigationBar(navController = navController)
+            } else {
+                println("📱 [BOTTOMBAR] ❌ OCULTANDO - Ruta: $currentRoute")
             }
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = startDestination,
+            startDestination = Screens.Auth.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screens.Auth.route) {
                 AuthScreen(
                     viewModel = authViewModel,
                     onLoginSuccess = {
-                        println("✅ [MAIN-DEBUG] onLoginSuccess llamado")
+                        println("✅ [AUTH] Login exitoso, navegando a Main")
                         navController.navigate(Screens.Main.route) {
                             launchSingleTop = true
+                            popUpTo(Screens.Auth.route) { inclusive = true }
                         }
                     }
                 )

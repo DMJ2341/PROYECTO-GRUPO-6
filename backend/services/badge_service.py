@@ -35,7 +35,7 @@ class BadgeService:
                 return
 
             # Entregar
-            ub = UserBadge(user_id=user_id, badge_id=badge_id, earned_at=func.now())
+            ub = UserBadge(user_id=user_id, badge_id=badge_id, earned_at=func.now(), earned_value=1)
             session.add(ub)
             session.commit()
             print(f"🏅 Medalla '{badge_id}' otorgada a usuario {user_id}")
@@ -65,6 +65,7 @@ class BadgeService:
     def check_and_award_badges(self, user_id: int):
         """Otorga badges por puntos o actividades (genérico)."""
         user_badges = []
+        
         from services.activity_service import ActivityService
         act = ActivityService()
         total_points = act.get_user_points(user_id)
@@ -83,17 +84,26 @@ class BadgeService:
                 ub = self.award_badge(user_id, badge.id)
                 if ub:
                     user_badges.append(ub)
+        
+        # Cerrar sesión del ActivityService
+        act.__del__()
         return user_badges
 
     def get_badge_progress(self, user_id: int):
         user_badge_ids = [ub.badge_id for ub in self.db.query(UserBadge).filter_by(user_id=user_id).all()]
         available = self.db.query(Badge).filter(~Badge.id.in_(user_badge_ids)).all()
+        
         from services.activity_service import ActivityService
-        total_points = ActivityService().get_user_points(user_id)
+        act = ActivityService()
+        total_points = act.get_user_points(user_id)
+        
         progress = []
         for b in available:
             pct = min(100, (total_points / b.points_required * 100)) if b.points_required else 0
             progress.append({"badge": b, "progress_percent": pct})
+        
+        # Cerrar sesión del ActivityService
+        act.__del__()
         return progress
 
     def __del__(self):

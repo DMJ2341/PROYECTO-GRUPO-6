@@ -1,15 +1,15 @@
-# backend/auth_service.py
+# backend/services/auth_service.py
 from database.db import Session
 from models.user import User
 import bcrypt
 import jwt
 from datetime import datetime, timedelta
-import os
 
 class AuthService:
     def __init__(self):
         self.db = Session()
-        self.secret_key = os.getenv('SECRET_KEY', '3f8b2a1e5d9c4f6a8b1e2d3c4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3')
+        
+        self.secret_key = 'cyberlearn_super_secret_key_2024_change_in_production'
     
     def register(self, user_data):
         """Registrar nuevo usuario"""

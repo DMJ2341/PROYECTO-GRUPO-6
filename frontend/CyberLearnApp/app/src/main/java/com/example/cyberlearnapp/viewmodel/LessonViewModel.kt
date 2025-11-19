@@ -1,15 +1,16 @@
 package com.example.cyberlearnapp.viewmodel
 
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.models.CompleteActivityRequest
-import com.example.cyberlearnapp.repository.UserRepository // <-- 1. IMPORTAR UserRepository
+import com.example.cyberlearnapp.network.RetrofitInstance
+import com.example.cyberlearnapp.network.LessonProgressRequest
+import com.example.cyberlearnapp.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first // <-- 2. IMPORTAR flow.first
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,14 +19,13 @@ data class LessonUiState(
     val lessonContent: String = "",
     val isCompleting: Boolean = false,
     val xpEarned: Int = 0,
-    val isLoading: Boolean = false, // <-- 3. Añadir estado de carga
+    val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
 
 @HiltViewModel
 class LessonViewModel @Inject constructor(
-    private val apiService: ApiService,
-    private val userRepository: UserRepository // <-- 4. Inyectar UserRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LessonUiState())
@@ -35,29 +35,27 @@ class LessonViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                // 5. OBTENER EL TOKEN REAL
-                val token = userRepository.getToken().first()
-                if (token == null) {
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Usuario no autenticado")
-                    return@launch
-                }
-
-                // 6. LLAMAR A LA API REAL
-                val response = apiService.getLessonContent(lessonId, "Bearer $token")
+                val response = RetrofitInstance.api.getLessonContent(lessonId)
 
                 if (response.isSuccessful && response.body() != null) {
                     val lesson = response.body()!!
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         lessonTitle = lesson.title,
-                        lessonContent = lesson.content
+                        lessonContent = lesson.content ?: "Contenido no disponible" // ✅ Manejar null
                     )
                 } else {
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Error al cargar contenido")
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = "Error: ${response.code()} - ${response.message()}"
+                    )
                 }
 
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Error de red: ${e.message}")
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Error de red: ${e.message}"
+                )
             }
         }
     }
@@ -66,26 +64,28 @@ class LessonViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isCompleting = true, errorMessage = null)
 
-            // 7. OBTENER EL TOKEN REAL
             val token = userRepository.getToken().first()
             if (token == null) {
-                _uiState.value = _uiState.value.copy(isCompleting = false, errorMessage = "Usuario no autenticado")
+                _uiState.value = _uiState.value.copy(
+                    isCompleting = false,
+                    errorMessage = "Usuario no autenticado"
+                )
                 return@launch
             }
 
             try {
-                val response = apiService.completeActivity(
-                    token = "Bearer $token", // <-- 8. USAR EL TOKEN REAL
-                    request = CompleteActivityRequest(
-                        type = "lesson_completed",
-                        lessonId = lessonId,
-                        difficulty = difficulty
-                    )
+                val response = RetrofitInstance.api.saveLessonProgress(
+                    lessonId = lessonId,
+                    token = "Bearer $token",
+                    progress = LessonProgressRequest(completed = true)
                 )
 
                 if (response.isSuccessful) {
-                    val xpEarned = response.body()?.activityResult?.xpEarned ?: 0
-                    _uiState.value = _uiState.value.copy(xpEarned = xpEarned, isCompleting = false)
+                    val xpEarned = 25
+                    _uiState.value = _uiState.value.copy(
+                        xpEarned = xpEarned,
+                        isCompleting = false
+                    )
                     onCompleted(xpEarned)
                 } else {
                     _uiState.value = _uiState.value.copy(
@@ -101,6 +101,4 @@ class LessonViewModel @Inject constructor(
             }
         }
     }
-
-    // 9. Eliminar la función private getToken() que estaba hardcodeada
 }

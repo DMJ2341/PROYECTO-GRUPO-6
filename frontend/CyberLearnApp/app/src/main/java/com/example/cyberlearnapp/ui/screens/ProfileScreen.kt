@@ -1,64 +1,37 @@
 package com.example.cyberlearnapp.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape // <-- ¡IMPORTACIÓN AÑADIDA!
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-// --- IMPORTACIONES DE COLOR ---
-import com.example.cyberlearnapp.ui.theme.AccentCyan
-import com.example.cyberlearnapp.ui.theme.CardBg
-import com.example.cyberlearnapp.ui.theme.Danger
-import com.example.cyberlearnapp.ui.theme.PrimaryDark
-import com.example.cyberlearnapp.ui.theme.Success
-import com.example.cyberlearnapp.ui.theme.TextGray
-import com.example.cyberlearnapp.ui.theme.TextWhite
-import com.example.cyberlearnapp.ui.theme.Warning
-// --- FIN DE IMPORTACIONES ---
-import com.example.cyberlearnapp.viewmodel.AuthViewModel
+import com.example.cyberlearnapp.ui.theme.*
 import com.example.cyberlearnapp.viewmodel.UserViewModel
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.sp
-import com.example.cyberlearnapp.network.models.Progress
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun ProfileScreen(
-    authViewModel: AuthViewModel,
-    userViewModel: UserViewModel,
-    onEditProfile: () -> Unit,
-    onLogout: () -> Unit,
+    userViewModel: UserViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
-    val currentUser by authViewModel.currentUser.collectAsState()
     val userProgress by userViewModel.userProgress.collectAsState()
     val userBadges by userViewModel.userBadges.collectAsState()
     val isLoading by userViewModel.isLoading.collectAsState()
+    val errorMessage by userViewModel.errorMessage.collectAsState()
 
-    // CARGAR DATOS AL INICIAR LA PANTALLA
+    // Cargar datos cuando se abre la pantalla
     LaunchedEffect(Unit) {
         userViewModel.loadUserProgress()
         userViewModel.loadUserBadges()
     }
-
-    // --- CÁLCULOS DE PROGRESO CORREGIDOS ---
-    val currentLevel = userProgress?.level ?: 1
-    val currentXpTotal = userProgress?.xpTotal ?: 0
-    // Asumiendo 100 XP por nivel
-    val currentLevelXp = currentXpTotal % 100
-    val xpToNextLevel = 100 - currentLevelXp
-    val progressFraction = currentLevelXp / 100f
-    // ----------------------------------------
 
     Box(
         modifier = modifier
@@ -80,279 +53,189 @@ fun ProfileScreen(
             )
 
             Text(
-                text = "Tu información y configuración",
+                text = "Tu progreso en CyberLearn",
                 style = MaterialTheme.typography.bodyMedium,
                 color = AccentCyan,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // Mostrar loading si está cargando
-            if (isLoading && userProgress == null) { // Mostrar solo si no hay datos
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = AccentCyan)
+                    }
+                }
+                errorMessage != null -> {
+                    Text(
+                        text = "Error: $errorMessage",
+                        color = Danger,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+                userProgress != null -> {
+                    ProfileStats(
+                        userProgress = userProgress!!,
+                        userBadges = userBadges
+                    )
+                }
+                else -> {
+                    Text(
+                        text = "No hay datos de progreso",
+                        color = TextGray,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ProfileStats(
+    userProgress: com.example.cyberlearnapp.viewmodel.UserProgress,
+    userBadges: List<com.example.cyberlearnapp.network.Badge>
+) {
+    val currentLevel = (userProgress.totalXp / 100) + 1
+    val currentXpTotal = userProgress.totalXp
+    val xpForNextLevel = currentLevel * 100
+    val xpInCurrentLevel = currentXpTotal % 100
+
+    val lessonsCompleted = userProgress.coursesProgress.sumOf { it.completedLessons }
+    val coursesCompleted = userProgress.coursesProgress.count { it.progressPercent >= 100 }
+
+    Column {
+        // Tarjeta de nivel
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            colors = CardDefaults.cardColors(containerColor = CardBg)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Nivel $currentLevel",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = TextWhite,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "$currentXpTotal XP totales",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = AccentCyan,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                // Barra de progreso de nivel
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
+                        .height(8.dp)
+                        .background(TextGray.copy(alpha = 0.3f), MaterialTheme.shapes.small)
                 ) {
-                    CircularProgressIndicator(color = AccentCyan)
-                }
-            }
-
-            // Tarjeta de información del usuario
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                colors = CardDefaults.cardColors(containerColor = CardBg)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Avatar del usuario
-                    Surface(
-                        modifier = Modifier.size(80.dp),
-                        shape = CircleShape, // <-- Ahora funciona
-                        color = AccentCyan
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "👤", // Emoji de avatar
-                                fontSize = 40.sp // Tamaño ajustado
-                            )
-                        }
-                    }
-
-                    Text(
-                        text = currentUser?.name ?: "Usuario",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = TextWhite,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
-
-                    Text(
-                        text = currentUser?.email ?: "usuario@ejemplo.com",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = AccentCyan,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
-                    // Nivel y XP
-                    Surface(
-                        shape = MaterialTheme.shapes.medium,
-                        color = AccentCyan.copy(alpha = 0.1f),
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(horizontal = 12.dp)
-                            ) {
-                                Text(
-                                    text = currentLevel.toString(),
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    color = AccentCyan,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "Nivel",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TextGray
-                                )
-                            }
-
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(horizontal = 12.dp)
-                            ) {
-                                Text(
-                                    text = currentXpTotal.toString(),
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    color = AccentCyan,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "XP Total",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TextGray
-                                )
-                            }
-
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(horizontal = 12.dp)
-                            ) {
-                                Text(
-                                    text = userProgress?.streak?.toString() ?: "0",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    color = Warning,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "Racha",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TextGray
-                                )
-                            }
-                        }
-                    }
-
-                    // Barra de progreso de nivel
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "Nivel $currentLevel",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextWhite
-                            )
-                            Text(
-                                text = "Nivel ${currentLevel + 1}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextGray
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        // Barra de progreso dinámica
-                        LinearProgressIndicator(
-                            progress = { progressFraction },
-                            modifier = Modifier.fillMaxWidth().height(8.dp).clip(MaterialTheme.shapes.small),
-                            color = AccentCyan,
-                            trackColor = TextGray.copy(alpha = 0.3f)
-                        )
-
-                        Text(
-                            text = "Faltan $xpToNextLevel XP para el nivel ${currentLevel + 1}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TextGray,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
-
-                    Button(
-                        onClick = onEditProfile,
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = AccentCyan,
-                            contentColor = TextWhite
-                        )
-                    ) {
-                        Text("Editar perfil")
-                    }
+                            .fillMaxWidth(xpInCurrentLevel / 100f)
+                            .height(8.dp)
+                            .background(AccentCyan, MaterialTheme.shapes.small)
+                    )
+                }
+
+                Text(
+                    text = "$xpInCurrentLevel/$xpForNextLevel XP para el siguiente nivel",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextGray,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+
+        // Estadísticas
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            colors = CardDefaults.cardColors(containerColor = CardBg)
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text(
+                    text = "Estadísticas",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = TextWhite,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    StatItem(
+                        title = "Racha actual",
+                        value = userProgress.currentStreak.toString(),
+                        icon = "🔥"
+                    )
+                    StatItem(
+                        title = "Insignias",
+                        value = userProgress.badgesCount.toString(),
+                        icon = "🛡️"
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    StatItem(
+                        title = "Lecciones completadas",
+                        value = lessonsCompleted.toString(),
+                        icon = "📚"
+                    )
+                    StatItem(
+                        title = "Cursos completados",
+                        value = coursesCompleted.toString(),
+                        icon = "🎓"
+                    )
                 }
             }
+        }
 
-            // Estadísticas
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                colors = CardDefaults.cardColors(containerColor = CardBg)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
+        // Insignias
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = CardBg)
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text(
+                    text = "Tus Insignias",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = TextWhite,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                if (userBadges.isNotEmpty()) {
+                    // Mostrar insignias del usuario
+                    // (Implementar grid de insignias aquí)
                     Text(
-                        text = "📊 Estadísticas",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = TextWhite,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        text = "${userBadges.size} insignias desbloqueadas",
+                        color = TextGray
                     )
-
-                    // Lista de estadísticas
-                    Column {
-                        StatItem(
-                            label = "Lecciones completadas",
-                            value = userProgress?.lessonsCompleted?.toString() ?: "0",
-                            color = AccentCyan
-                        )
-                        StatItem(
-                            label = "Insignias obtenidas",
-                            value = "${userBadges.size} / 15", // Asumiendo 15 totales
-                            color = Success
-                        )
-                        StatItem(
-                            label = "Progreso Nivel Actual",
-                            value = "$currentLevelXp / 100 XP",
-                            color = Warning
-                        )
-                        StatItem(
-                            label = "Cursos completados",
-                            value = userProgress?.coursesCompleted?.toString() ?: "0",
-                            color = Success
-                        )
-                    }
-                }
-            }
-
-            // Actividad reciente (Datos estáticos por ahora)
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                colors = CardDefaults.cardColors(containerColor = CardBg)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
+                } else {
                     Text(
-                        text = "📚 Actividad Reciente",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = TextWhite,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        text = "Aún no tienes insignias. ¡Completa lecciones para ganarlas!",
+                        color = TextGray
                     )
-
-                    // Lista de actividad
-                    Column {
-                        ActivityItem(
-                            course = "Fundamentos de Ciberseguridad",
-                            activity = "Última actividad: Hoy"
-                        )
-                    }
-                }
-            }
-
-            // Configuración
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = CardBg)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "⚙️ Configuración",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = TextWhite,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
-                    Button(
-                        onClick = onLogout,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Danger,
-                            contentColor = TextWhite
-                        )
-                    ) {
-                        Text("Cerrar Sesión")
-                    }
                 }
             }
         }
@@ -361,24 +244,22 @@ fun ProfileScreen(
 
 // Componente de item de estadística
 @Composable
-fun StatItem(label: String, value: String, color: Color) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+fun StatItem(title: String, value: String, icon: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = TextGray
+            text = icon,
+            style = MaterialTheme.typography.headlineSmall
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            color = color,
+            style = MaterialTheme.typography.headlineMedium,
+            color = TextWhite,
             fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodySmall,
+            color = TextGray
         )
     }
 }
