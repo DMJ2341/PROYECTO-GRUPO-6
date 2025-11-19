@@ -10,6 +10,7 @@ import com.example.cyberlearnapp.ui.screens.*
 import com.example.cyberlearnapp.viewmodel.AuthViewModel
 import com.example.cyberlearnapp.viewmodel.CourseViewModel
 import com.example.cyberlearnapp.viewmodel.UserViewModel
+import androidx.compose.ui.Modifier
 
 fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
@@ -46,17 +47,7 @@ fun NavGraphBuilder.mainGraph(
 
         composable(Screens.Profile.route) {
             ProfileScreen(
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                onEditProfile = {
-                    println("✏️ Editar perfil")
-                },
-                onLogout = {
-                    authViewModel.logout()
-                    navController.navigate(Screens.Auth.route) {
-                        popUpTo(Screens.Main.route) { inclusive = true }
-                    }
-                }
+                modifier = Modifier
             )
         }
 
@@ -122,7 +113,7 @@ fun NavGraphBuilder.mainGraph(
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
             val lessonTitle = backStackEntry.arguments?.getString("lessonTitle") ?: ""
 
-            InteractiveLessonScreen(
+            SimpleLessonScreen(
                 lessonId = lessonId,
                 lessonTitle = lessonTitle,
                 onNavigateBack = { navController.navigateUp() },

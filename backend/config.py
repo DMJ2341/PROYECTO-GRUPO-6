@@ -1,23 +1,19 @@
 # backend/config.py
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class Config:
-    """Configuración oficial de CyberLearn."""
+    """Configuración oficial de CyberLearn para servidor real."""
     
-    # PostgreSQL real vía Docker
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    if not SQLALCHEMY_DATABASE_URI:
-        raise ValueError("❌ DATABASE_URL no está en variables de entorno. Docker debe setearla.")
+    # CONEXIÓN DIRECTA AL SERVIDOR
+    SQLALCHEMY_DATABASE_URI = 'postgresql://app_cyberlearn:CyberLearn2025*@172.232.188.183:5432/cyberlearn_db'
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    # Seguridad oficial
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    if not SECRET_KEY:
-        raise ValueError("❌ SECRET_KEY no está en variables de entorno.")
+    # CLAVE SECRETA DIRECTA (para desarrollo)
+    SECRET_KEY = 'cyberlearn_super_secret_key_2024_change_in_production'
     
-    JWT_EXPIRATION_HOURS = int(os.environ.get('JWT_EXPIRATION_HOURS', 24))
-    PASSWORD_MIN_LENGTH = int(os.environ.get('PASSWORD_MIN_LENGTH', 8))
+    JWT_EXPIRATION_HOURS = 24
+    PASSWORD_MIN_LENGTH = 8
+
+# Configuración global
+config = Config()

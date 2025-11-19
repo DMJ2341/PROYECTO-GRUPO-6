@@ -53,18 +53,8 @@ fun LessonScreen(
         scope.launch {
             try {
                 isLoading = true
-                // ✅ CORRECCIÓN: Obtener token del UserRepository
-                val token = userRepository.getToken().first() ?: ""
-                if (token.isEmpty()) {
-                    errorMessage = "No autenticado"
-                    isLoading = false
-                    return@launch
-                }
+                val response = RetrofitInstance.api.getLessonContent(lessonId = lessonId)
 
-                val response = RetrofitInstance.api.getLessonContent(
-                    lessonId = lessonId,
-                    token = "Bearer $token"
-                )
                 if (response.isSuccessful && response.body() != null) {
                     lessonContent = response.body()!!
                 } else {
@@ -227,7 +217,7 @@ fun LessonScreen(
 
                         // Contenido formateado
                         FormattedLessonContent(
-                            content = lessonContent!!.content,
+                            content = lessonContent!!.content ?: "Contenido no disponible",
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
 

@@ -33,8 +33,7 @@ class CourseViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
-                val token = userRepository.getToken().first() ?: ""
-                val response = apiService.getAllCourses("Bearer $token")
+                val response = apiService.getAllCourses()
 
                 if (response.isSuccessful) {
                     _uiState.value = _uiState.value.copy(
@@ -42,10 +41,16 @@ class CourseViewModel @Inject constructor(
                         courseList = response.body() ?: emptyList()
                     )
                 } else {
-                    _uiState.value = _uiState.value.copy(isLoading = false, error = "Error al cargar cursos")
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Error: ${response.code()}"
+                    )
                 }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Error de conexión: ${e.message}"
+                )
             }
         }
     }
@@ -54,19 +59,24 @@ class CourseViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
-                val token = userRepository.getToken().first() ?: ""
-                val response = apiService.getCourseLessons(courseId, "Bearer $token")
+                val response = apiService.getCourseLessons(courseId)
 
                 if (response.isSuccessful) {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        lessonList = response.body()?.lessons ?: emptyList()
+                        lessonList = response.body() ?: emptyList()
                     )
                 } else {
-                    _uiState.value = _uiState.value.copy(isLoading = false, error = "Error al cargar lecciones")
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Error: ${response.code()}"
+                    )
                 }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Error de conexión: ${e.message}"
+                )
             }
         }
     }

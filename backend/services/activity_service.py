@@ -8,14 +8,14 @@ class ActivityService:
     def __init__(self):
         self.db = Session()
     
-    def create_activity(self, user_id, activity_type, description, points=0):
+    def create_activity(self, user_id, activity_type, points=0, lesson_id=None):
         """Crear una nueva actividad"""
         try:
             activity = Activity(
                 user_id=user_id,
-                type=activity_type,
-                description=description,
-                points=points,
+                activity_type=activity_type,
+                xp_earned=points,
+                lesson_id=lesson_id,
                 created_at=datetime.utcnow()
             )
             self.db.add(activity)
@@ -32,7 +32,7 @@ class ActivityService:
     
     def get_user_points(self, user_id):
         """Obtener puntos totales de un usuario"""
-        result = self.db.query(func.sum(Activity.points)).filter_by(user_id=user_id).first()
+        result = self.db.query(func.sum(Activity.xp_earned)).filter_by(user_id=user_id).first()
         return result[0] or 0 if result else 0
 
     def get_total_xp(self, user_id):
@@ -45,10 +45,12 @@ class ActivityService:
             total_activities = self.db.query(Activity).filter_by(user_id=user_id).count()
             total_points = self.get_user_points(user_id)
             
-            # Estadísticas por tipo
             stats_by_type = {}
             for activity_type in ['lesson_completed', 'course_completed', 'badge_earned', 'login']:
-                count = self.db.query(Activity).filter_by(user_id=user_id, type=activity_type).count()
+                count = self.db.query(Activity).filter_by(
+                    user_id=user_id, 
+                    activity_type=activity_type
+                ).count()
                 stats_by_type[activity_type] = count
             
             return {
@@ -94,9 +96,9 @@ class ActivityService:
             if last_activity:
                 return {
                     "id": last_activity.id,
-                    "type": last_activity.type,
-                    "description": last_activity.description,
-                    "points": last_activity.points,
+                    "type": last_activity.activity_type,
+                    "points": last_activity.xp_earned,
+                    "lesson_id": last_activity.lesson_id,
                     "created_at": last_activity.created_at.isoformat()
                 }
             return None
