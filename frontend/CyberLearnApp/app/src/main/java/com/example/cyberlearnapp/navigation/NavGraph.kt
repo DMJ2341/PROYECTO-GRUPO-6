@@ -1,111 +1,119 @@
 package com.example.cyberlearnapp.navigation
 
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraphBuilder
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
 import com.example.cyberlearnapp.ui.screens.*
-import com.example.cyberlearnapp.viewmodel.AuthViewModel
-import com.example.cyberlearnapp.viewmodel.CourseViewModel
-import com.example.cyberlearnapp.viewmodel.UserViewModel
 
-fun NavGraphBuilder.mainGraph(
+/**
+ * Grafo de navegación principal
+ * ACTUALIZADO: Agregada ruta para lecciones interactivas
+ */
+@Composable
+fun NavGraph(
     navController: NavHostController,
-    authViewModel: AuthViewModel,
-    userViewModel: UserViewModel,
-    courseViewModel: CourseViewModel
+    startDestination: String = Screens.Auth.route
 ) {
-    navigation(
-        startDestination = Screens.Dashboard.route,
-        route = Screens.Main.route
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
     ) {
-        // ========== DASHBOARD ==========
-        composable(Screens.Dashboard.route) {
-            DashboardScreen(
-                navController = navController
-            )
-        }
-
-        // ========== COURSES ==========
-        composable(Screens.Courses.route) {
-            CoursesScreen(
-                navController = navController
-            )
-        }
-
-        // ========== ACHIEVEMENTS ==========
-        composable(Screens.Achievements.route) {
-            AchievementsScreen()
-        }
-
-        // ========== PROFILE ==========
-        composable(Screens.Profile.route) {
-            ProfileScreen(
-                modifier = Modifier
-            )
-        }
-
-        // ========== COURSE DETAIL ==========
-        composable(
-            route = "course_detail/{courseId}",
-            arguments = listOf(
-                navArgument("courseId") { type = NavType.IntType }
-            )
-        ) { backStackEntry ->
-            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
-
-            println("🎯 [NAV] Navegando a CourseDetail con ID: $courseId")
-
-            CourseDetailScreen(
-                courseId = courseId,
-                navController = navController
-            )
-        }
-
-        // ========== LESSON (TEXT) ==========
-        composable(
-            route = "lesson/{lessonId}/{lessonTitle}",
-            arguments = listOf(
-                navArgument("lessonId") { type = NavType.StringType },
-                navArgument("lessonTitle") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
-            val lessonTitle = backStackEntry.arguments?.getString("lessonTitle") ?: ""
-
-            println("🎯 [NAV] Navegando a Lesson: $lessonId - $lessonTitle")
-
-            LessonScreen(
-                lessonId = lessonId,
-                lessonTitle = lessonTitle,
-                onNavigateBack = { navController.navigateUp() },
-                onLessonCompleted = {
-                    println("✅ [NAV] Lección completada: $lessonId")
-                    navController.navigateUp()
+        // Autenticación
+        composable(route = Screens.Auth.route) {
+            AuthScreen(
+                onLoginSuccess = {
+                    navController.navigate(Screens.Dashboard.route) {
+                        popUpTo(Screens.Auth.route) { inclusive = true }
+                    }
                 }
             )
         }
 
-        // ========== INTERACTIVE LESSON ==========
+        // Dashboard
+        composable(route = Screens.Dashboard.route) {
+            DashboardScreen(
+                onCourseClick = { courseId ->
+                    navController.navigate(Screens.CourseDetail.createRoute(courseId))
+                },
+                onLogout = {
+                    navController.navigate(Screens.Auth.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // Cursos
+        composable(route = Screens.Courses.route) {
+            CoursesScreen(
+                onCourseClick = { courseId ->
+                    navController.navigate(Screens.CourseDetail.createRoute(courseId))
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // Detalle de curso
         composable(
-            route = "interactive_lesson/{lessonId}",
+            route = Screens.CourseDetail.route,
             arguments = listOf(
-                navArgument("lessonId") { type = NavType.StringType }
+                navArgument("courseId") { type = NavType.IntType }
             )
         ) { backStackEntry ->
-            val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
+            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 1
 
-            println("🎯 [NAV] Navegando a Interactive Lesson: $lessonId")
+            CourseDetailScreen(
+                courseId = courseId,
+                onLessonClick = { lessonId ->
+                    navController.navigate(Screens.InteractiveLesson.createRoute(lessonId))
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 🆕 NUEVO: Lección interactiva
+        composable(
+            route = Screens.InteractiveLesson.route,
+            arguments = listOf(
+                navArgument("lessonId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val lessonId = backStackEntry.arguments?.getInt("lessonId") ?: 1
 
             InteractiveLessonScreen(
                 lessonId = lessonId,
-                onNavigateBack = { navController.navigateUp() },
-                onLessonCompleted = {
-                    println("✅ [NAV] Lección interactiva completada: $lessonId")
-                    navController.navigateUp()
+                onComplete = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // Logros
+        composable(route = Screens.Achievements.route) {
+            AchievementsScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // Perfil
+        composable(route = Screens.Profile.route) {
+            ProfileScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onLogout = {
+                    navController.navigate(Screens.Auth.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
