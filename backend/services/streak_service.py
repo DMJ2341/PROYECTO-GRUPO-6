@@ -1,3 +1,4 @@
+# backend/services/streak_service.py - CORREGIDO
 from datetime import date, timedelta
 from models.activity import Activity
 from sqlalchemy import func
@@ -11,7 +12,7 @@ class StreakService:
         
         try:
             # Obtener última actividad de lección completada
-            last_activity = session.query(func.max(Activity.created_at)).filter(
+            last_activity = session.query(func.max(Activity.timestamp)).filter(  # ✅ CAMBIADO de created_at
                 Activity.user_id == user_id,
                 Activity.activity_type == 'lesson_completed'
             ).scalar()
@@ -33,7 +34,7 @@ class StreakService:
                     count = session.query(Activity).filter(
                         Activity.user_id == user_id,
                         Activity.activity_type == 'lesson_completed',
-                        func.date(Activity.created_at) == current_date
+                        func.date(Activity.timestamp) == current_date  # ✅ CAMBIADO de created_at
                     ).count()
                     
                     if count == 0:
