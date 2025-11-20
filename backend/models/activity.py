@@ -1,4 +1,4 @@
-# backend/models/activity.py
+# backend/models/activity.py - CORREGIDO PARA COINCIDIR CON BD REAL
 from database.db import db
 from datetime import datetime
 
@@ -9,10 +9,10 @@ class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     activity_type = db.Column(db.String(50), nullable=False)
-    xp_earned = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(255))  # ✅ EXISTE EN BD
+    points = db.Column(db.Integer, nullable=False)  # ✅ ERA "xp_earned" en modelo viejo
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # ✅ ERA "created_at" en modelo viejo
     lesson_id = db.Column(db.String(100))
-    difficulty = db.Column(db.Integer)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def __repr__(self):
-        return f'<Activity {self.id}: {self.activity_type} - {self.xp_earned} XP>'
+        return f'<Activity {self.id}: {self.activity_type} - {self.points} pts>'

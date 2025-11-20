@@ -1,4 +1,4 @@
-# backend/app.py - versión completa, limpia y sin duplicados
+# backend/app.py - VERSIÓN CORREGIDA COMPLETA
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.db import db, Session
@@ -21,7 +21,6 @@ app.config['SECRET_KEY'] = 'cyberlearn_super_secret_key_2024_change_in_productio
 
 # INICIALIZACIÓN DE BASE DE DATOS
 try:
-    # Verificar que la conexión funciona
     with app.app_context():
         db.session.execute(text("SELECT 1"))
         print("✅ Base de datos conectada correctamente")
@@ -78,10 +77,8 @@ def register():
             session.add(new_user)
             session.commit()
             
-            # ✅ DEBUG: Verificar que el usuario se creó
             print(f"✅ Usuario creado: ID={new_user.id}, Email={new_user.email}")
             
-            # Generar token
             token = jwt.encode({
                 'user_id': new_user.id, 
                 'email': new_user.email, 
@@ -100,8 +97,6 @@ def register():
                     "name": new_user.name
                 }
             }
-            
-            print(f"📤 Enviando respuesta: {response_data}")
             
             return jsonify(response_data), 201
             
@@ -169,7 +164,6 @@ def get_courses():
                     'xp_reward': c.xp_reward,
                     'image_url': c.image_url or ""
                 })
-            print("✅ JSON armado")
             return jsonify(out)
         finally:
             session.close()
@@ -178,42 +172,117 @@ def get_courses():
         print(f"❌ Error en /api/courses: {e}")
         return jsonify({"error": "Error interno al obtener cursos"}), 500
 
-# ---------- LECCIONES (público) ----------
-@app.route('/api/lessons/<int:lesson_id>', methods=['GET'])
-def get_lesson_public(lesson_id):
+# ---------- LISTAR LECCIONES DE UN CURSO ----------
+@app.route('/api/courses/<int:course_id>/lessons', methods=['GET'])
+def get_course_lessons(course_id):
     try:
+        print(f"🔍 Obteniendo lecciones del curso {course_id}")
         session = db.get_session()
         try:
+            lessons = session.query(Lesson).filter_by(course_id=course_id).order_by(Lesson.order_index).all()
+            
+            print(f"✅ Encontradas {len(lessons)} lecciones")
+            
+            if not lessons:
+                return jsonify([]), 200
+            
+            result = []
+            for l in lessons:
+                result.append({
+                    'id': l.id,  # ✅ String: "fundamentos_leccion_1"
+                    'course_id': l.course_id,
+                    'title': l.title,
+                    'description': l.description,
+                    'type': l.type,
+                    'duration_minutes': l.duration_minutes,
+                    'xp_reward': getattr(l, 'xp_reward', 10),
+                    'order_index': l.order_index,
+                    'is_completed': False  # ✅ Agregar lógica de completado después
+                })
+            
+            return jsonify(result)
+        finally:
+            session.close()
+    except Exception as e:
+        print(f"❌ Error en /api/courses/{course_id}/lessons: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Error interno"}), 500
+
+# ---------- OBTENER UNA LECCIÓN ESPECÍFICA ----------
+@app.route('/api/lessons/<lesson_id>', methods=['GET'])
+def get_lesson_public(lesson_id):
+    try:
+        print(f"🔍 Buscando lección: {lesson_id}")
+        session = db.get_session()
+        try:
+            # ✅ Buscar por ID string directamente
             lesson = session.query(Lesson).filter_by(id=lesson_id).first()
+            
             if not lesson:
-                return jsonify({"error": "Lección no encontrada"}), 404
+                # DEBUG: Mostrar IDs disponibles
+                all_lessons = session.query(Lesson).all()
+                available_ids = [l.id for l in all_lessons]
+                print(f"❌ Lección '{lesson_id}' no encontrada")
+                print(f"📋 IDs disponibles: {available_ids}")
+                
+                return jsonify({
+                    "error": "Lección no encontrada",
+                    "searched_id": lesson_id,
+                    "available_ids": available_ids
+                }), 404
+            
+            print(f"✅ Lección encontrada: {lesson.title}")
+            
             return jsonify({
                 "success": True,
-                "lesson": {
-                    'id': lesson.id, 'course_id': lesson.course_id, 'title': lesson.title,
-                    'description': lesson.description, 'content': lesson.content, 'type': lesson.type,
-                    'duration_minutes': lesson.duration_minutes, 'order_index': lesson.order_index,
-                    'created_at': lesson.created_at.isoformat() if lesson.created_at else None
-                }
+                "id": lesson.id,
+                "title": lesson.title,
+                "description": lesson.description,
+                "content": lesson.content,
+                "type": lesson.type,
+                "screens": lesson.screens,
+                "total_screens": getattr(lesson, 'total_screens', 0),
+                "duration_minutes": lesson.duration_minutes,
+                "xp_reward": getattr(lesson, 'xp_reward', 10),
+                "order_index": lesson.order_index,
+                "created_at": lesson.created_at.isoformat() if lesson.created_at else None
             })
         finally:
             session.close()
     except Exception as e:
         print(f"❌ Error en /api/lessons/{lesson_id}: {e}")
-        return jsonify({"error": "Error interno"}), 500
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Error interno: {str(e)}"}), 500
 
-@app.route('/api/courses/<int:course_id>/lessons/<int:lesson_id>', methods=['GET'])
+# ---------- OBTENER LECCIÓN DE UN CURSO ESPECÍFICO ----------
+@app.route('/api/courses/<int:course_id>/lessons/<lesson_id>', methods=['GET'])
 def get_course_lesson_detail(course_id, lesson_id):
     try:
+        print(f"🔍 Buscando lección {lesson_id} del curso {course_id}")
         session = db.get_session()
         try:
-            lesson = session.query(Lesson).filter_by(course_id=course_id, id=lesson_id).first()
+            lesson = session.query(Lesson).filter_by(
+                course_id=course_id, 
+                id=lesson_id
+            ).first()
+            
             if not lesson:
                 return jsonify({"error": "Lección no encontrada"}), 404
+            
             return jsonify({
-                'id': lesson.id, 'course_id': lesson.course_id, 'title': lesson.title,
-                'description': lesson.description, 'content': lesson.content, 'type': lesson.type,
-                'duration_minutes': lesson.duration_minutes, 'order_index': lesson.order_index,
+                'id': lesson.id,
+                'course_id': lesson.course_id,
+                'title': lesson.title,
+                'description': lesson.description,
+                'content': lesson.content,
+                'type': lesson.type,
+                'screens': lesson.screens,
+                'total_screens': getattr(lesson, 'total_screens', 0),
+                'duration_minutes': lesson.duration_minutes,
+                'xp_reward': getattr(lesson, 'xp_reward', 10),
+                'order_index': lesson.order_index,
                 'created_at': lesson.created_at.isoformat() if lesson.created_at else None
             })
         finally:
@@ -243,12 +312,14 @@ def get_user_profile(current_user_id):
         return jsonify({"error": "Error interno"}), 500
 
 # ---------- PROGRESO ----------
-@app.route('/api/lessons/<int:lesson_id>/progress', methods=['POST'])
+@app.route('/api/lessons/<lesson_id>/progress', methods=['POST'])
 @token_required
 def update_lesson_progress(current_user_id, lesson_id):
     try:
         data = request.get_json()
         completed = data.get('completed', False)
+        
+        print(f"📊 Actualizando progreso - Usuario: {current_user_id}, Lección: {lesson_id}, Completado: {completed}")
         
         session = db.get_session()
         try:
@@ -258,7 +329,8 @@ def update_lesson_progress(current_user_id, lesson_id):
                     user_id=current_user_id,
                     activity_type='lesson_completed',
                     points=10,
-                    lesson_id=str(lesson_id)
+                    lesson_id=lesson_id,  # ✅ Ahora es string
+                    description=f"Lección {lesson_id} completada"
                 )
 
             return jsonify({
@@ -272,6 +344,8 @@ def update_lesson_progress(current_user_id, lesson_id):
             
     except Exception as e:
         print(f"❌ Error update progress: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": "Error interno"}), 500
 
 # ---------- MEDALLAS ----------
@@ -340,6 +414,8 @@ def get_user_dashboard(current_user_id):
             courses_prog = []
             for course in session.query(Course).all():
                 total = session.query(Lesson).filter_by(course_id=course.id).count()
+                
+                # ✅ Contar lecciones completadas por lesson_id string
                 completed = session.query(Activity).filter(
                     Activity.user_id == current_user_id,
                     Activity.activity_type == 'lesson_completed',
@@ -396,46 +472,6 @@ def get_user_streak(current_user_id):
         }})
     except Exception as e:
         return jsonify({"error": "Error interno"}), 500
-    
-# ---------- OTORGAR MEDALLA FINAL ----------
-def award_final_badge(user_id):
-    from models.user import UserBadge
-    badge = db.session.query(Badge).filter_by(id=6).first()  # Escudo Ciudadano
-    if not badge:
-        print("❌ Medalla 6 no encontrada")
-        return
-    exists = db.session.query(UserBadge).filter_by(user_id=user_id, badge_id=6).first()
-    if not exists:
-        ub = UserBadge(user_id=user_id, badge_id=6, earned_at=datetime.datetime.utcnow(), earned_value=1)
-        db.session.add(ub)
-        db.session.commit()
-        print("🏅 Medalla 'Escudo Ciudadano' otorgada")
-        
-# ---------- LISTAR TODAS LAS LECCIONES DE UN CURSO (faltante) ----------
-@app.route('/api/courses/<int:course_id>/lessons', methods=['GET'])
-def get_course_lessons(course_id):
-    try:
-        session = db.get_session()
-        try:
-            lessons = session.query(Lesson).filter_by(course_id=course_id).order_by(Lesson.order_index).all()
-            if not lessons:
-                return jsonify([]), 200
-            return jsonify([{
-                'id': l.id,
-                'course_id': l.course_id,
-                'title': l.title,
-                'description': l.description,
-                'content': l.content,
-                'duration_minutes': l.duration_minutes,
-                'order_index': l.order_index,
-                'type': l.type,
-                'created_at': l.created_at.isoformat() if l.created_at else None
-            } for l in lessons])
-        finally:
-            session.close()
-    except Exception as e:
-        print(f"❌ Error en /api/courses/{course_id}/lessons: {e}")
-        return jsonify({"error": "Error interno"}), 500
 
 # ---------- RUTA RAIZ ----------
 @app.route('/')
@@ -456,11 +492,10 @@ if __name__ == '__main__':
     print("⚡ Modo: Producción")
     print("=" * 50)
     
-    # Crear tablas si no existen
     try:
         db.create_all()
         print("✅ Tablas de base de datos verificadas")
     except Exception as e:
         print(f"⚠️  Error creando tablas: {e}")
     
-    app.run(host='0.0.0.0', port=8000, debug=False)  # debug=False para producción
+    app.run(host='0.0.0.0', port=8000, debug=False)

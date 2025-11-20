@@ -1,4 +1,4 @@
-# backend/services/activity_service.py
+# backend/services/activity_service.py - CORREGIDO PARA COINCIDIR CON BD
 from database.db import Session
 from models.activity import Activity
 from sqlalchemy import func
@@ -8,15 +8,16 @@ class ActivityService:
     def __init__(self):
         self.db = Session()
     
-    def create_activity(self, user_id, activity_type, points=0, lesson_id=None):
+    def create_activity(self, user_id, activity_type, points=0, lesson_id=None, description=None):
         """Crear una nueva actividad"""
         try:
             activity = Activity(
                 user_id=user_id,
                 activity_type=activity_type,
-                xp_earned=points,
+                points=points,  # ✅ CAMBIADO de xp_earned
                 lesson_id=lesson_id,
-                created_at=datetime.utcnow()
+                description=description,  # ✅ AGREGADO
+                timestamp=datetime.utcnow()  # ✅ CAMBIADO de created_at
             )
             self.db.add(activity)
             self.db.commit()
@@ -28,11 +29,11 @@ class ActivityService:
     
     def get_user_activities(self, user_id, limit=50):
         """Obtener actividades de un usuario"""
-        return self.db.query(Activity).filter_by(user_id=user_id).order_by(Activity.created_at.desc()).limit(limit).all()
+        return self.db.query(Activity).filter_by(user_id=user_id).order_by(Activity.timestamp.desc()).limit(limit).all()
     
     def get_user_points(self, user_id):
         """Obtener puntos totales de un usuario"""
-        result = self.db.query(func.sum(Activity.xp_earned)).filter_by(user_id=user_id).first()
+        result = self.db.query(func.sum(Activity.points)).filter_by(user_id=user_id).first()  # ✅ CAMBIADO de xp_earned
         return result[0] or 0 if result else 0
 
     def get_total_xp(self, user_id):
@@ -75,13 +76,12 @@ class ActivityService:
     def get_user_streak(self, user_id):
         """Obtener racha de actividades del usuario"""
         try:
-            # Implementación simple: contar actividades del último mes
             from datetime import timedelta
             last_month = datetime.utcnow() - timedelta(days=30)
             
             activities = self.db.query(Activity).filter(
                 Activity.user_id == user_id,
-                Activity.created_at >= last_month
+                Activity.timestamp >= last_month  # ✅ CAMBIADO de created_at
             ).count()
             
             return activities
@@ -92,14 +92,15 @@ class ActivityService:
     def get_last_activity(self, user_id):
         """Obtener última actividad del usuario"""
         try:
-            last_activity = self.db.query(Activity).filter_by(user_id=user_id).order_by(Activity.created_at.desc()).first()
+            last_activity = self.db.query(Activity).filter_by(user_id=user_id).order_by(Activity.timestamp.desc()).first()  # ✅ CAMBIADO
             if last_activity:
                 return {
                     "id": last_activity.id,
                     "type": last_activity.activity_type,
-                    "points": last_activity.xp_earned,
+                    "points": last_activity.points,  # ✅ CAMBIADO de xp_earned
                     "lesson_id": last_activity.lesson_id,
-                    "created_at": last_activity.created_at.isoformat()
+                    "description": last_activity.description,  # ✅ AGREGADO
+                    "timestamp": last_activity.timestamp.isoformat()  # ✅ CAMBIADO de created_at
                 }
             return None
         except Exception as e:
