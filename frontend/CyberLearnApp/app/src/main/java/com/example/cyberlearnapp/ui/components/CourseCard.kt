@@ -12,13 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// Esta es la función @Composable que faltaba o era incorrecta
 @Composable
 fun CourseCard(
-    emoji: String,
+    emoji: String,       // ✅ Recibimos el Emoji directamente
     title: String,
     description: String,
     level: String,
@@ -29,9 +29,10 @@ fun CourseCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 8.dp) // Un poco de espacio vertical entre tarjetas
             .clickable { onCourseClick() },
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
@@ -40,37 +41,44 @@ fun CourseCard(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Emoji
+            // 🎨 Círculo con Emoji
             Box(
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(56.dp) // Tamaño del círculo
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    // Fondo suave del color primario
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = emoji, fontSize = 24.sp)
+                Text(
+                    text = emoji,
+                    fontSize = 28.sp, // Emoji grande y claro
+                    textAlign = TextAlign.Center
+                )
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Text content
+            // 📝 Contenido de Texto
             Column(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Info Chips
+                // 🏷️ Etiquetas (Chips)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     InfoChip(text = level)
                     InfoChip(text = "$xp XP")
@@ -80,19 +88,19 @@ fun CourseCard(
     }
 }
 
-// Un componente auxiliar para las "píldoras" de información
+// Componente auxiliar para las etiquetas pequeñas
 @Composable
 private fun InfoChip(text: String) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f))
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+        modifier = Modifier.wrapContentSize()
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         )
     }
 }

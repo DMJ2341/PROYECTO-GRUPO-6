@@ -1,6 +1,5 @@
 package com.example.cyberlearnapp.ui.screens
 
-import kotlinx.coroutines.flow.first
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,32 +15,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.cyberlearnapp.network.Lesson
+import com.example.cyberlearnapp.network.LessonDetailResponse
 import com.example.cyberlearnapp.network.RetrofitInstance
-import com.example.cyberlearnapp.repository.UserRepository
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LessonScreen(
-    lessonId: String,
+    lessonId: String,  // ✅ String ahora
     lessonTitle: String,
     onNavigateBack: () -> Unit,
     onLessonCompleted: () -> Unit
 ) {
-    // ✅ CORREGIDO: Obtener UserRepository usando hiltViewModel()
-    val userRepository: UserRepository = hiltViewModel()
-
-    var lessonContent by remember { mutableStateOf<Lesson?>(null) }
+    var lessonContent by remember { mutableStateOf<LessonDetailResponse?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isCompleting by remember { mutableStateOf(false) }
@@ -52,17 +43,24 @@ fun LessonScreen(
     LaunchedEffect(lessonId) {
         scope.launch {
             try {
+                println("🔍 [LESSON] Cargando lección: $lessonId")
                 isLoading = true
                 val response = RetrofitInstance.api.getLessonContent(lessonId = lessonId)
 
+                println("📡 [LESSON] Response code: ${response.code()}")
+
                 if (response.isSuccessful && response.body() != null) {
                     lessonContent = response.body()!!
+                    println("✅ [LESSON] Lección cargada: ${lessonContent?.title}")
                 } else {
                     errorMessage = "Error: ${response.code()}"
+                    println("❌ [LESSON] Error: ${response.code()}")
                 }
                 isLoading = false
             } catch (e: Exception) {
                 errorMessage = e.message ?: "Error cargando lección"
+                println("💥 [LESSON] Exception: ${e.message}")
+                e.printStackTrace()
                 isLoading = false
             }
         }
@@ -295,6 +293,9 @@ fun LessonScreen(
     }
 }
 
+// ✅ Mantén las funciones FormattedLessonContent, SectionType, RenderSection y SectionCard
+// exactamente como las tenías antes (no las cambies)
+
 @Composable
 fun FormattedLessonContent(
     content: String,
@@ -308,7 +309,6 @@ fun FormattedLessonContent(
 
         for (line in lines) {
             when {
-                // Detectar títulos principales (LECCIÓN, LA TRÍADA CIA, etc.)
                 line.contains("LECCIÓN") && line.contains("📚") -> {
                     if (sectionLines.isNotEmpty()) {
                         RenderSection(currentSection, sectionLines.toList())
@@ -317,7 +317,6 @@ fun FormattedLessonContent(
                     currentSection = SectionType.MAIN_TITLE
                     sectionLines.add(line)
                 }
-                // Detectar secciones especiales
                 line.contains("🔒 CONFIDENCIALIDAD") -> {
                     if (sectionLines.isNotEmpty()) {
                         RenderSection(currentSection, sectionLines.toList())
@@ -343,7 +342,6 @@ fun FormattedLessonContent(
                     sectionLines.add(line)
                 }
                 line.startsWith("━━━━") -> {
-                    // Línea separadora - renderizar sección anterior
                     if (sectionLines.isNotEmpty()) {
                         RenderSection(currentSection, sectionLines.toList())
                         sectionLines.clear()
@@ -356,7 +354,6 @@ fun FormattedLessonContent(
             }
         }
 
-        // Renderizar última sección
         if (sectionLines.isNotEmpty()) {
             RenderSection(currentSection, sectionLines.toList())
         }
@@ -375,7 +372,6 @@ enum class SectionType {
 fun RenderSection(type: SectionType?, lines: List<String>) {
     when (type) {
         SectionType.MAIN_TITLE -> {
-            // Título principal con gradiente
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -402,7 +398,6 @@ fun RenderSection(type: SectionType?, lines: List<String>) {
         }
 
         SectionType.CONFIDENTIALITY -> {
-            // Sección Confidencialidad - Azul
             SectionCard(
                 color = Color(0xFF3B82F6),
                 lines = lines
@@ -410,7 +405,6 @@ fun RenderSection(type: SectionType?, lines: List<String>) {
         }
 
         SectionType.INTEGRITY -> {
-            // Sección Integridad - Verde
             SectionCard(
                 color = Color(0xFF10B981),
                 lines = lines
@@ -418,7 +412,6 @@ fun RenderSection(type: SectionType?, lines: List<String>) {
         }
 
         SectionType.AVAILABILITY -> {
-            // Sección Disponibilidad - Púrpura
             SectionCard(
                 color = Color(0xFF8B5CF6),
                 lines = lines
@@ -426,7 +419,6 @@ fun RenderSection(type: SectionType?, lines: List<String>) {
         }
 
         else -> {
-            // Contenido normal
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -455,7 +447,6 @@ fun SectionCard(color: Color, lines: List<String>) {
             .clip(RoundedCornerShape(16.dp))
             .background(color.copy(alpha = 0.15f))
     ) {
-        // Barra lateral de color
         Box(
             modifier = Modifier
                 .width(6.dp)
@@ -469,7 +460,6 @@ fun SectionCard(color: Color, lines: List<String>) {
                 .fillMaxWidth()
                 .padding(start = 20.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
-            // Título de la sección
             Text(
                 text = lines.firstOrNull() ?: "",
                 color = color,
@@ -480,7 +470,6 @@ fun SectionCard(color: Color, lines: List<String>) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Contenido
             Text(
                 text = lines.drop(1).joinToString("\n"),
                 color = Color(0xFFE2E8F0),

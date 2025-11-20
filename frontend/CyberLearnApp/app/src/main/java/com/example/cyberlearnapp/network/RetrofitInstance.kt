@@ -11,7 +11,7 @@ object RetrofitInstance {
     //private const val BASE_URL = "http://172.232.188.183:8000/api/"
 
     // 📱 Si usas dispositivo físico, cambia a tu IP local:
-    private const val BASE_URL =  "http://10.0.2.2:8000/api/"
+    private const val BASE_URL = "http://172.232.188.183/api/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
