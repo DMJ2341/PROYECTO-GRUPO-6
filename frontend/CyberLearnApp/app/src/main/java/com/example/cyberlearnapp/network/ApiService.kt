@@ -33,6 +33,13 @@ interface ApiService {
         @Path("courseId") courseId: Int
     ): CourseDetail
 
+    // 🆕 NUEVO: Obtener lecciones de un curso
+    @GET("courses/{courseId}/lessons")
+    suspend fun getCourseLessons(
+        @Header("Authorization") token: String,
+        @Path("courseId") courseId: Int
+    ): List<Lesson>
+
     // ========== LECCIONES ==========
     @GET("lessons/{lessonId}")
     suspend fun getLesson(
@@ -78,13 +85,6 @@ interface ApiService {
     @GET("badges/user")
     suspend fun getUserBadges(@Header("Authorization") token: String): List<UserBadge>
 }
-
-// ========== RESPONSE MODELS ==========
-
-data class AuthResponse(
-    val token: String,
-    val user: User
-)
 
 data class ActivityResponse(
     val success: Boolean,

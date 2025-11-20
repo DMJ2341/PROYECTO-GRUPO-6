@@ -2,10 +2,10 @@ package com.example.cyberlearnapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyberlearnapp.network.Course
-import com.example.cyberlearnapp.network.Lesson
-import com.example.cyberlearnapp.network.RetrofitInstance
-import com.example.cyberlearnapp.repository.UserRepository
+import com.example.cyberlearnapp.network.ApiService
+import com.example.cyberlearnapp.network.models.Course
+import com.example.cyberlearnapp.network.models.Lesson
+import com.example.cyberlearnapp.ui.screens.LessonsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,108 +15,133 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CourseViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val apiService: ApiService
 ) : ViewModel() {
 
-    private val _courses = MutableStateFlow<List<Course>>(emptyList())
-    val courses: StateFlow<List<Course>> = _courses.asStateFlow()
+    private val _coursesState = MutableStateFlow<CoursesState>(CoursesState.Loading)
+    val coursesState: StateFlow<CoursesState> = _coursesState.asStateFlow()
 
-    private val _selectedCourse = MutableStateFlow<Course?>(null)
-    val selectedCourse: StateFlow<Course?> = _selectedCourse.asStateFlow()
+    private val _lessonsState = MutableStateFlow<LessonsState>(LessonsState.Loading)
+    val lessonsState: StateFlow<LessonsState> = _lessonsState.asStateFlow()
 
-    private val _courseLessons = MutableStateFlow<List<Lesson>>(emptyList())
-    val courseLessons: StateFlow<List<Lesson>> = _courseLessons.asStateFlow()
+    private val _currentCourseTitle = MutableStateFlow("")
+    val currentCourseTitle: StateFlow<String> = _currentCourseTitle.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    init {
+        loadCourses()
+    }
 
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
-
-    // ✅ CARGAR TODOS LOS CURSOS
     fun loadCourses() {
         viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
+            _coursesState.value = CoursesState.Loading
 
             try {
-                println("🔍 [COURSE-VM] Cargando cursos...")
-                val response = RetrofitInstance.api.getCourses()
-                println("📡 [COURSE-VM] Response code: ${response.code()}")
-
-                if (response.isSuccessful && response.body() != null) {
-                    val coursesList = response.body()!!
-                    _courses.value = coursesList
-                    println("✅ [COURSE-VM] ${coursesList.size} cursos cargados")
-                } else {
-                    val errorMsg = "Error ${response.code()}: ${response.message()}"
-                    println("❌ [COURSE-VM] $errorMsg")
-                    _errorMessage.value = errorMsg
-                }
+                // Por ahora, usar datos mock hasta que backend esté listo
+                val courses = getMockCourses()
+                _coursesState.value = CoursesState.Success(courses)
             } catch (e: Exception) {
-                val errorMsg = "Error cargando cursos: ${e.message}"
-                println("💥 [COURSE-VM] $errorMsg")
-                e.printStackTrace()
-                _errorMessage.value = errorMsg
-            } finally {
-                _isLoading.value = false
+                _coursesState.value = CoursesState.Error(
+                    e.message ?: "Error al cargar cursos"
+                )
             }
         }
     }
 
-    // ✅ SELECCIONAR UN CURSO
-    fun selectCourse(course: Course) {
-        _selectedCourse.value = course
-        println("📚 [COURSE-VM] Curso seleccionado: ${course.title}")
-    }
-
-    // ✅ CARGAR LECCIONES DE UN CURSO
     fun loadCourseLessons(courseId: Int) {
         viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
+            _lessonsState.value = LessonsState.Loading
 
             try {
-                println("🔍 [COURSE-VM] Cargando lecciones del curso $courseId...")
-                val response = RetrofitInstance.api.getCourseLessons(courseId)
-                println("📡 [COURSE-VM] Response code: ${response.code()}")
+                // Obtener título del curso
+                val course = getMockCourses().find { it.id == courseId }
+                _currentCourseTitle.value = course?.title ?: "Curso"
 
-                if (response.isSuccessful && response.body() != null) {
-                    val lessons = response.body()!!
-                    _courseLessons.value = lessons
-                    println("✅ [COURSE-VM] ${lessons.size} lecciones cargadas")
-
-                    // Debug: Mostrar IDs de lecciones
-                    lessons.forEach { lesson ->
-                        println("   📖 Lección: ${lesson.id} - ${lesson.title}")
-                    }
-                } else {
-                    val errorMsg = "Error ${response.code()}: ${response.message()}"
-                    println("❌ [COURSE-VM] $errorMsg")
-                    _errorMessage.value = errorMsg
-                }
+                // Por ahora, usar datos mock
+                val lessons = getMockLessons(courseId)
+                _lessonsState.value = LessonsState.Success(lessons)
             } catch (e: Exception) {
-                val errorMsg = "Error cargando lecciones: ${e.message}"
-                println("💥 [COURSE-VM] $errorMsg")
-                e.printStackTrace()
-                _errorMessage.value = errorMsg
-            } finally {
-                _isLoading.value = false
+                _lessonsState.value = LessonsState.Error(
+                    e.message ?: "Error al cargar lecciones"
+                )
             }
         }
     }
 
-    // ✅ OBTENER LECCIÓN POR ID
-    fun getLessonById(lessonId: String): Lesson? {
-        return _courseLessons.value.find { it.id == lessonId }
+    private fun getMockCourses(): List<Course> {
+        return listOf(
+            Course(
+                id = 1,
+                title = "Fundamentos de Ciberseguridad",
+                description = "Aprende los conceptos básicos de ciberseguridad",
+                icon = "🛡️",
+                totalLessons = 6,
+                completedLessons = 0,
+                progress = 0
+            ),
+            Course(
+                id = 2,
+                title = "Seguridad de Redes y Comunicaciones",
+                description = "Protege tus redes y comunicaciones",
+                icon = "🌐",
+                totalLessons = 6,
+                completedLessons = 0,
+                progress = 0
+            ),
+            Course(
+                id = 3,
+                title = "Seguridad de Sistemas Operativos",
+                description = "Asegura tu sistema operativo",
+                icon = "💻",
+                totalLessons = 6,
+                completedLessons = 0,
+                progress = 0
+            ),
+            Course(
+                id = 4,
+                title = "Ciberseguridad Avanzada y Cloud",
+                description = "Nivel avanzado de seguridad en la nube",
+                icon = "☁️",
+                totalLessons = 6,
+                completedLessons = 0,
+                progress = 0
+            ),
+            Course(
+                id = 5,
+                title = "Operaciones de Ciberseguridad",
+                description = "Aprende operaciones de seguridad",
+                icon = "🕵️",
+                totalLessons = 6,
+                completedLessons = 0,
+                progress = 0
+            )
+        )
     }
 
-    fun clearError() {
-        _errorMessage.value = null
+    private fun getMockLessons(courseId: Int): List<Lesson> {
+        return when (courseId) {
+            1 -> listOf(
+                Lesson(1, 1, "Introducción a las Amenazas Cibernéticas", "Aprende sobre WannaCry y tipos de amenazas", false),
+                Lesson(2, 2, "Ingeniería Social y Engaño", "Caso Equifax y técnicas de phishing", false),
+                Lesson(3, 3, "Ataques Cibernéticos Básicos", "Ransomware, DDoS y malware", false),
+                Lesson(4, 4, "Dispositivos Móviles e Inalámbricos", "Evil Twin, SMiShing y seguridad móvil", false),
+                Lesson(5, 5, "Principios de la Ciberseguridad", "Tríada CIA y principios fundamentales", false),
+                Lesson(6, 6, "Evaluación Final - Operación Escudo Ciudadano", "Pon a prueba todo lo aprendido", false)
+            )
+            2 -> listOf(
+                Lesson(7, 1, "Lección 1 - Redes", "Próximamente", false),
+                Lesson(8, 2, "Lección 2 - Redes", "Próximamente", false),
+                Lesson(9, 3, "Lección 3 - Redes", "Próximamente", false),
+                Lesson(10, 4, "Lección 4 - Redes", "Próximamente", false),
+                Lesson(11, 5, "Lección 5 - Redes", "Próximamente", false),
+                Lesson(12, 6, "Lección 6 - Redes", "Próximamente", false)
+            )
+            else -> emptyList()
+        }
     }
+}
 
-    fun clearSelectedCourse() {
-        _selectedCourse.value = null
-        _courseLessons.value = emptyList()
-    }
+sealed class CoursesState {
+    object Loading : CoursesState()
+    data class Success(val courses: List<Course>) : CoursesState()
+    data class Error(val message: String) : CoursesState()
 }

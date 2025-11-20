@@ -29,8 +29,8 @@ import com.example.cyberlearnapp.ui.screens.lessons.shared.*
 fun InfoGraphicScreen(
     title: String,
     subtitle: String? = null,
-    keyPoints: List<KeyPoint>? = null,
-    statistics: List<StatisticItem>,
+    keyPoints: List<KeyPointData>? = null,
+    statistics: List<StatisticItemData>,
     conclusionText: String? = null,
     screenNumber: Int,
     totalScreens: Int,
@@ -118,7 +118,7 @@ fun InfoGraphicScreen(
 @Composable
 fun ProcessInfographicScreen(
     title: String,
-    processSteps: List<ProcessStep>,
+    processSteps: List<ProcessStepData>,
     impactSummary: String? = null,
     screenNumber: Int,
     totalScreens: Int,
@@ -229,30 +229,3 @@ fun KeyPointItem(icon: String, text: String) {
         )
     }
 }
-
-/**
- * Modelo de datos: Key Point
- */
-data class KeyPoint(
-    val icon: String,
-    val text: String
-)
-
-/**
- * Modelo de datos: Statistic Item
- */
-data class StatisticItem(
-    val icon: String,
-    val value: String,
-    val label: String
-)
-
-/**
- * Modelo de datos: Process Step
- */
-data class ProcessStep(
-    val stepNumber: Int,
-    val title: String,
-    val description: String,
-    val icon: String
-)

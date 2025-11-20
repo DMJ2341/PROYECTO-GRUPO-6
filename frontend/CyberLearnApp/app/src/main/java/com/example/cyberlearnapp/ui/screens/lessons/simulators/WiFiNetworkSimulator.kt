@@ -11,6 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyberlearnapp.ui.screens.lessons.shared.*
+import androidx.compose.foundation.background
+import androidx.compose.ui.Alignment
 
 /**
  * 📶 SIMULADOR: SELECTOR DE REDES WI-FI
@@ -156,7 +158,7 @@ fun WiFiNetworkCard(
         Row(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -218,12 +220,12 @@ fun WiFiNetworkCard(
 @Composable
 fun SignalStrengthIndicator(strength: Int) {
     Column(
-        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(2.dp),
-            verticalAlignment = androidx.compose.ui.Alignment.Bottom
+            verticalAlignment = Alignment.Bottom
         ) {
             repeat(4) { index ->
                 Box(

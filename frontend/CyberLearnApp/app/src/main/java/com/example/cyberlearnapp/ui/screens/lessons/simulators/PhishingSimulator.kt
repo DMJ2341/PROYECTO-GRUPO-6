@@ -2,8 +2,6 @@ package com.example.cyberlearnapp.ui.screens.lessons.simulators
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -299,7 +297,7 @@ fun SMSCard(
 }
 
 /**
- * Componente: Checkable Flag
+ * Componente: Checkable Flag (CORREGIDO)
  */
 @Composable
 fun CheckableFlag(
@@ -318,7 +316,11 @@ fun CheckableFlag(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        onClick = if (!showResult) onToggle else {},
+        onClick = {
+            if (!showResult) {
+                onToggle()
+            }
+        },
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
         ),

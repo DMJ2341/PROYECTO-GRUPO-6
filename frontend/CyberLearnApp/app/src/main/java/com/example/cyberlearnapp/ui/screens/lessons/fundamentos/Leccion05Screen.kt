@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyberlearnapp.network.models.Category
 import com.example.cyberlearnapp.network.models.QuizOption
@@ -47,9 +47,9 @@ fun Screen01_TargetCase(viewModel: InteractiveLessonViewModel) {
         date = "Diciembre 2013 - Temporada Navideña",
         description = "Clientas descubren cargos no reconocidos",
         impactCards = listOf(
-            ImpactCard("💳", "40M", "Tarjetas Robadas", "Información completa de pago comprometida"),
-            ImpactCard("👤", "70M", "Clientes Expuestos", "Datos personales filtrados"),
-            ImpactCard("🔓", "1", "Contraseña Débil", "Contratista usaba 'password1234' para acceso remoto")
+            ImpactCardData("💳", "40M", "Tarjetas Robadas", "Información completa de pago comprometida"),
+            ImpactCardData("👤", "70M", "Clientes Expuestos", "Datos personales filtrados"),
+            ImpactCardData("🔓", "1", "Contraseña Débil", "Contratista usaba 'password1234' para acceso remoto")
         ),
         hookQuestion = "🔍 ¿QUÉ PRINCIPIOS SE VIOLARON?",
         screenNumber = 1,
@@ -353,9 +353,9 @@ fun Screen06_SummaryL5(viewModel: InteractiveLessonViewModel, onComplete: () -> 
             "🛡️ 6 principios adicionales de seguridad"
         ),
         statistics = listOf(
-            StatisticItem("🔒", "33%", "Confiden-\ncialidad"),
-            StatisticItem("📊", "33%", "Integridad"),
-            StatisticItem("⏰", "34%", "Disponi-\nbilidad")
+            StatisticItemData("🔒", "33%", "Confiden-\ncialidad"),
+            StatisticItemData("📊", "33%", "Integridad"),
+            StatisticItemData("⏰", "34%", "Disponi-\nbilidad")
         ),
         xpEarned = xpEarned,
         badgeName = "Estratega CIA",

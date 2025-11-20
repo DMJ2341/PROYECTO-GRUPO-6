@@ -12,44 +12,42 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * ViewModel para lecciones interactivas
- * Maneja el estado, navegación y progreso del usuario
- */
 @HiltViewModel
 class InteractiveLessonViewModel @Inject constructor(
     private val repository: LessonRepository
 ) : ViewModel() {
 
-    // Estado de la lección
     private val _lessonState = MutableStateFlow<LessonState>(LessonState.Loading)
     val lessonState: StateFlow<LessonState> = _lessonState.asStateFlow()
 
-    // Pantalla actual
     private val _currentScreenIndex = MutableStateFlow(0)
     val currentScreenIndex: StateFlow<Int> = _currentScreenIndex.asStateFlow()
 
-    // Lista de pantallas
     private val _screens = MutableStateFlow<List<Screen>>(emptyList())
     val screens: StateFlow<List<Screen>> = _screens.asStateFlow()
 
-    // Respuestas del usuario (para tracking)
     private val _userAnswers = MutableStateFlow<MutableMap<Int, Boolean>>(mutableMapOf())
     val userAnswers: StateFlow<Map<Int, Boolean>> = _userAnswers.asStateFlow()
 
-    // XP ganado en la lección
     private val _xpEarned = MutableStateFlow(0)
     val xpEarned: StateFlow<Int> = _xpEarned.asStateFlow()
 
-    /**
-     * Cargar lección desde el backend
-     */
+    private var currentLessonId: Int = 0
+
     fun loadLesson(lessonId: Int) {
+        currentLessonId = lessonId
         viewModelScope.launch {
             _lessonState.value = LessonState.Loading
 
             try {
-                val lesson = repository.getInteractiveLesson(lessonId)
+                // Por ahora, crear lección vacía (hasta que backend esté listo)
+                val lesson = InteractiveLesson(
+                    lessonId = lessonId,
+                    title = "Lección $lessonId",
+                    description = null,
+                    screens = emptyList(),
+                    totalXP = 100
+                )
                 _screens.value = lesson.screens
                 _lessonState.value = LessonState.Success(lesson)
                 _currentScreenIndex.value = 0
@@ -63,24 +61,17 @@ class InteractiveLessonViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Navegar a la siguiente pantalla
-     */
     fun nextScreen() {
         val currentIndex = _currentScreenIndex.value
-        val totalScreens = _screens.value.size
+        val totalScreens = getTotalScreens()
 
         if (currentIndex < totalScreens - 1) {
             _currentScreenIndex.value = currentIndex + 1
         } else {
-            // Última pantalla alcanzada - completar lección
             completeLesson()
         }
     }
 
-    /**
-     * Navegar a pantalla anterior
-     */
     fun previousScreen() {
         val currentIndex = _currentScreenIndex.value
         if (currentIndex > 0) {
@@ -88,45 +79,34 @@ class InteractiveLessonViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Ir a una pantalla específica
-     */
     fun goToScreen(index: Int) {
-        if (index in _screens.value.indices) {
+        val totalScreens = getTotalScreens()
+        if (index in 0 until totalScreens) {
             _currentScreenIndex.value = index
         }
     }
 
-    /**
-     * Registrar respuesta del usuario
-     */
     fun recordAnswer(screenIndex: Int, isCorrect: Boolean) {
         _userAnswers.value[screenIndex] = isCorrect
 
-        // Otorgar XP si es correcto
         if (isCorrect) {
-            _xpEarned.value += 10  // 10 XP por respuesta correcta
+            _xpEarned.value += 10
         }
     }
 
-    /**
-     * Completar la lección y enviar datos al backend
-     */
     private fun completeLesson() {
         viewModelScope.launch {
             val lessonState = _lessonState.value
             if (lessonState is LessonState.Success) {
                 try {
-                    // Calcular score
                     val correctAnswers = _userAnswers.value.count { it.value }
                     val totalQuestions = _userAnswers.value.size
                     val score = if (totalQuestions > 0) {
                         (correctAnswers.toFloat() / totalQuestions * 100).toInt()
                     } else 100
 
-                    // Enviar al backend
                     repository.completeLesson(
-                        lessonId = lessonState.lesson.lessonId,
+                        lessonId = currentLessonId,
                         score = score,
                         xpEarned = _xpEarned.value
                     )
@@ -136,7 +116,6 @@ class InteractiveLessonViewModel @Inject constructor(
                         xpEarned = _xpEarned.value
                     )
                 } catch (e: Exception) {
-                    // Aunque falle el envío, mostrar como completada localmente
                     _lessonState.value = LessonState.Completed(
                         score = 100,
                         xpEarned = _xpEarned.value
@@ -146,28 +125,28 @@ class InteractiveLessonViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Reiniciar la lección
-     */
     fun resetLesson() {
         _currentScreenIndex.value = 0
         _userAnswers.value.clear()
         _xpEarned.value = 0
     }
 
-    /**
-     * Obtener progreso actual (0-100%)
-     */
     fun getProgress(): Float {
-        val totalScreens = _screens.value.size
+        val totalScreens = getTotalScreens()
         if (totalScreens == 0) return 0f
         return (_currentScreenIndex.value + 1).toFloat() / totalScreens
     }
+
+    private fun getTotalScreens(): Int {
+        // Cada lección tiene un número fijo de pantallas
+        return when (currentLessonId) {
+            1, 2, 3, 4, 5 -> 6  // Lecciones 1-5: 6 pantallas
+            6 -> 8               // Lección 6: 8 pantallas
+            else -> 6
+        }
+    }
 }
 
-/**
- * Estados posibles de la lección
- */
 sealed class LessonState {
     object Loading : LessonState()
     data class Success(val lesson: InteractiveLesson) : LessonState()

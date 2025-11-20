@@ -52,19 +52,19 @@ fun Screen01_EvilTwinAttack(viewModel: InteractiveLessonViewModel) {
         date = "Diciembre 2022 - Centro Comercial",
         description = "Clientas reportan fraudes en sus tarjetas",
         impactCards = listOf(
-            ImpactCard(
+            ImpactCardData(
                 icon = "👤",
                 value = "2,300",
                 label = "Clientes Afectados",
                 detail = "Datos de tarjetas y contraseñas comprometidos"
             ),
-            ImpactCard(
+            ImpactCardData(
                 icon = "💳",
                 value = "$1.2M",
                 label = "Fraudes Detectados",
                 detail = "Transacciones no autorizadas en 3 días"
             ),
-            ImpactCard(
+            ImpactCardData(
                 icon = "📱",
                 value = "1",
                 label = "Router Falso",
@@ -449,9 +449,9 @@ fun Screen06_SummaryL4(viewModel: InteractiveLessonViewModel, onComplete: () -> 
             "🔵 Amenazas Bluetooth (4 tipos)"
         ),
         statistics = listOf(
-            StatisticItem("📶", "50%", "Wi-Fi"),
-            StatisticItem("📱", "30%", "SMS"),
-            StatisticItem("🔵", "20%", "Bluetooth")
+            StatisticItemData("📶", "50%", "Wi-Fi"),
+            StatisticItemData("📱", "30%", "SMS"),
+            StatisticItemData("🔵", "20%", "Bluetooth")
         ),
         xpEarned = xpEarned,
         badgeName = "Guardian Inalámbrico",

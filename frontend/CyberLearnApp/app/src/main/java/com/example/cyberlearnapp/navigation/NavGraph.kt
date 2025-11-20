@@ -8,10 +8,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
 
-/**
- * Grafo de navegación principal
- * ACTUALIZADO: Agregada ruta para lecciones interactivas
- */
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -35,8 +31,17 @@ fun NavGraph(
         // Dashboard
         composable(route = Screens.Dashboard.route) {
             DashboardScreen(
-                onCourseClick = { courseId ->
+                onNavigateToCourses = {
+                    navController.navigate(Screens.Courses.route)
+                },
+                onNavigateToCourse = { courseId ->
                     navController.navigate(Screens.CourseDetail.createRoute(courseId))
+                },
+                onNavigateToAchievements = {
+                    navController.navigate(Screens.Achievements.route)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screens.Profile.route)
                 },
                 onLogout = {
                     navController.navigate(Screens.Auth.route) {
@@ -78,7 +83,7 @@ fun NavGraph(
             )
         }
 
-        // 🆕 NUEVO: Lección interactiva
+        // Lección interactiva
         composable(
             route = Screens.InteractiveLesson.route,
             arguments = listOf(

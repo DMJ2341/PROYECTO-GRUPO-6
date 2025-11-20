@@ -5,11 +5,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,7 +29,7 @@ import com.example.cyberlearnapp.ui.screens.lessons.shared.*
 fun SummaryScreen(
     lessonTitle: String,
     achievements: List<String>,
-    statistics: List<StatisticItem>? = null,
+    statistics: List<StatisticItemData>? = null,
     xpEarned: Int,
     badgeName: String? = null,
     nextLessonTitle: String? = null,
@@ -280,7 +280,7 @@ fun CourseCompletionScreen(
     courseTitle: String,
     totalXpEarned: Int,
     totalLessonsCompleted: Int,
-    badges: List<BadgeInfo>,
+    badges: List<BadgeInfoData>,
     overallScore: Int,
     nextCourseTitle: String? = null,
     screenNumber: Int,
@@ -422,11 +422,3 @@ fun BadgeCard(icon: String, name: String) {
         }
     }
 }
-
-/**
- * Modelo de datos: Badge Info
- */
-data class BadgeInfo(
-    val icon: String,
-    val name: String
-)

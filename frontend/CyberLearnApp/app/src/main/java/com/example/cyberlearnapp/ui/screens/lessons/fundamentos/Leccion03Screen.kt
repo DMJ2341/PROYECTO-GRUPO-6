@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,19 +52,19 @@ fun Screen01_ColonialPipeline(viewModel: InteractiveLessonViewModel) {
         date = "7 de mayo de 2021 - Costa Este EE.UU.",
         description = "La mayor tubería de gasolina se detiene",
         impactCards = listOf(
-            ImpactCard(
+            ImpactCardData(
                 icon = "⛽",
                 value = "5 Días",
                 label = "Paralizada",
                 detail = "45% de la gasolina de la Costa Este afectada"
             ),
-            ImpactCard(
+            ImpactCardData(
                 icon = "🚗",
                 value = "45%",
                 label = "Aumento Precios",
                 detail = "Pánico en estaciones de servicio, largas filas"
             ),
-            ImpactCard(
+            ImpactCardData(
                 icon = "💰",
                 value = "$4.4M",
                 label = "Rescate Pagado",
@@ -87,25 +87,25 @@ fun Screen02_RansomwareProcess(viewModel: InteractiveLessonViewModel) {
     ProcessInfographicScreen(
         title = "🔄 CÓMO FUNCIONA UN RANSOMWARE",
         processSteps = listOf(
-            ProcessStep(
+            ProcessStepData(
                 stepNumber = 1,
                 title = "INFECCIÓN",
                 description = "Empleado hace clic en anuncio 'Actualizar Windows' - Descarga DarkSide",
                 icon = "🦠"
             ),
-            ProcessStep(
+            ProcessStepData(
                 stepNumber = 2,
                 title = "PROPAGACIÓN",
                 description = "El ransomware busca conexiones de red y se expande a otros sistemas",
                 icon = "🌐"
             ),
-            ProcessStep(
+            ProcessStepData(
                 stepNumber = 3,
                 title = "CIFRADO",
                 description = "Encripta 100 GB de datos en 2 horas - Archivos cambian a .locked",
                 icon = "🔒"
             ),
-            ProcessStep(
+            ProcessStepData(
                 stepNumber = 4,
                 title = "EXTORSIÓN",
                 description = "Muestra mensaje: 'Pague $4.4M o borramos todo'",
@@ -430,9 +430,9 @@ fun Screen06_SummaryL3(viewModel: InteractiveLessonViewModel, onComplete: () -> 
             "🛡️ Defensa en profundidad (5 capas)"
         ),
         statistics = listOf(
-            StatisticItem("🔒", "40%", "Ransomware"),
-            StatisticItem("🌊", "30%", "DDoS"),
-            StatisticItem("🪱", "30%", "Otros")
+            StatisticItemData("🔒", "40%", "Ransomware"),
+            StatisticItemData("🌊", "30%", "DDoS"),
+            StatisticItemData("🪱", "30%", "Otros")
         ),
         xpEarned = xpEarned,
         badgeName = "Contenedor de Ransomware",

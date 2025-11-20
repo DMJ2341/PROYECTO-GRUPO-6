@@ -31,7 +31,7 @@ fun StoryHookScreen(
     caseTitle: String,
     date: String,
     description: String,
-    impactCards: List<ImpactCard>,
+    impactCards: List<ImpactCardData>,
     hookQuestion: String,
     screenNumber: Int,
     totalScreens: Int,
@@ -81,12 +81,12 @@ fun StoryHookScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.height((impactCards.size * 120).dp)
             ) {
-                items(impactCards) { card ->
+                items(impactCards) { cardData ->
                     ImpactCard(
-                        icon = card.icon,
-                        value = card.value,
-                        label = card.label,
-                        detail = card.detail,
+                        icon = cardData.icon,
+                        value = cardData.value,
+                        label = cardData.label,
+                        detail = cardData.detail,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -113,8 +113,8 @@ fun StoryHookScreen(
 @Composable
 fun StoryHookWithTimeline(
     caseTitle: String,
-    timelineEvents: List<TimelineEvent>,
-    impactCards: List<ImpactCard>,
+    timelineEvents: List<TimelineEventData>,
+    impactCards: List<ImpactCardData>,
     hookQuestion: String,
     screenNumber: Int,
     totalScreens: Int,
@@ -156,12 +156,12 @@ fun StoryHookWithTimeline(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                impactCards.take(2).forEach { card ->
+                impactCards.take(2).forEach { cardData ->
                     ImpactCard(
-                        icon = card.icon,
-                        value = card.value,
-                        label = card.label,
-                        detail = card.detail,
+                        icon = cardData.icon,
+                        value = cardData.value,
+                        label = cardData.label,
+                        detail = cardData.detail,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -214,12 +214,3 @@ fun TimelineItem(
         }
     }
 }
-
-/**
- * Modelo de datos: Timeline Event
- */
-data class TimelineEvent(
-    val time: String,
-    val description: String,
-    val isHighlight: Boolean = false
-)

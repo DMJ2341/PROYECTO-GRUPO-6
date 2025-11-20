@@ -2,6 +2,7 @@ package com.example.cyberlearnapp.ui.screens.lessons.simulators
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.alpha
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -468,7 +469,7 @@ fun ContainmentPlan(
 }
 
 /**
- * Componente: Containment Step Card
+ * Componente: Containment Step Card (CORREGIDO)
  */
 @Composable
 fun ContainmentStepCard(
@@ -489,7 +490,11 @@ fun ContainmentStepCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        onClick = if (!showResult) onToggle else {},
+        onClick = {
+            if (!showResult) {
+                onToggle()
+            }
+        },
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
         )

@@ -53,19 +53,19 @@ fun Screen01_Equifax(viewModel: InteractiveLessonViewModel) {
         date = "Marzo 2017 - Oficina de Atlanta",
         description = "Un empleado recibe email de \"recursos humanos\"",
         impactCards = listOf(
-            ImpactCard(
+            ImpactCardData(
                 icon = "👤",
                 value = "147M",
                 label = "Personas Afectadas",
                 detail = "44% de la población adulta de EE.UU. expuesta"
             ),
-            ImpactCard(
+            ImpactCardData(
                 icon = "💳",
                 value = "209K",
                 label = "Tarjetas Robadas",
                 detail = "Números de tarjetas de crédito comprometidos"
             ),
-            ImpactCard(
+            ImpactCardData(
                 icon = "💰",
                 value = "$700M",
                 label = "Multa Record",
@@ -435,9 +435,9 @@ fun Screen06_SummaryL2(viewModel: InteractiveLessonViewModel, onComplete: () -> 
             "📞 Vishing (Engaño por llamadas)"
         ),
         statistics = listOf(
-            StatisticItem("📧", "60%", "Phishing"),
-            StatisticItem("🎭", "25%", "Pretexting"),
-            StatisticItem("📞", "15%", "Otros")
+            StatisticItemData("📧", "60%", "Phishing"),
+            StatisticItemData("🎭", "25%", "Pretexting"),
+            StatisticItemData("📞", "15%", "Otros")
         ),
         xpEarned = xpEarned,
         badgeName = "Cazador de Phishing",

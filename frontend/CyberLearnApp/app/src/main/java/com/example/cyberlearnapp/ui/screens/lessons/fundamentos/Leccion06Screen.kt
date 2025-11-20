@@ -502,12 +502,12 @@ fun Screen08_CourseCompletion(viewModel: InteractiveLessonViewModel, onComplete:
         totalXpEarned = xpEarned,
         totalLessonsCompleted = 6,
         badges = listOf(
-            BadgeInfo("🛡️", "Primer Respondedor"),
-            BadgeInfo("📧", "Cazador de Phishing"),
-            BadgeInfo("🔒", "Contenedor de Ransomware"),
-            BadgeInfo("📱", "Guardian Inalámbrico"),
-            BadgeInfo("🎯", "Estratega CIA"),
-            BadgeInfo("🏆", "Analista Certificado")
+            BadgeInfoData("🛡️", "Primer Respondedor"),
+            BadgeInfoData("📧", "Cazador de Phishing"),
+            BadgeInfoData("🔒", "Contenedor de Ransomware"),
+            BadgeInfoData("📱", "Guardian Inalámbrico"),
+            BadgeInfoData("🎯", "Estratega CIA"),
+            BadgeInfoData("🏆", "Analista Certificado")
         ),
         overallScore = 85,
         nextCourseTitle = "Seguridad de Redes",
