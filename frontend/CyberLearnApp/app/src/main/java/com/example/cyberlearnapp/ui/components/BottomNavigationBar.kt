@@ -20,15 +20,23 @@ fun BottomNavigationBar(navController: NavController) {
         containerColor = CardBg,
         tonalElevation = 8.dp
     ) {
+        // ========== INICIO ==========
         NavigationBarItem(
             icon = { Icon("🏠", contentDescription = "Inicio") },
             label = { Text("Inicio") },
-            // ✅ CORREGIDO: Usar ruta completa
-            selected = currentRoute == "main/dashboard",
+            // CORREGIDO: Usar Screens.Dashboard.route
+            selected = currentRoute == Screens.Dashboard.route,
             onClick = {
-                navController.navigate("main/dashboard") {
-                    launchSingleTop = true
-                    restoreState = true
+                // CORREGIDO: Navegar a Screens.Dashboard.route
+                if (currentRoute != Screens.Dashboard.route) {
+                    navController.navigate(Screens.Dashboard.route) {
+                        // Pop hasta el inicio del grafo 'main' para evitar pila infinita
+                        popUpTo(Screens.Dashboard.route) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             },
             colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
@@ -40,15 +48,21 @@ fun BottomNavigationBar(navController: NavController) {
             )
         )
 
+        // ========== CURSOS ==========
         NavigationBarItem(
             icon = { Icon("📚", contentDescription = "Cursos") },
             label = { Text("Cursos") },
-            // ✅ CORREGIDO: Usar ruta completa
-            selected = currentRoute == "main/courses",
+            // CORREGIDO: Usar Screens.Courses.route
+            selected = currentRoute == Screens.Courses.route,
             onClick = {
-                navController.navigate("main/courses") {
-                    launchSingleTop = true
-                    restoreState = true
+                if (currentRoute != Screens.Courses.route) {
+                    navController.navigate(Screens.Courses.route) {
+                        popUpTo(Screens.Dashboard.route) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             },
             colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
@@ -60,15 +74,21 @@ fun BottomNavigationBar(navController: NavController) {
             )
         )
 
+        // ========== LOGROS ==========
         NavigationBarItem(
             icon = { Icon("🏆", contentDescription = "Logros") },
             label = { Text("Logros") },
-            // ✅ CORREGIDO: Usar ruta completa
-            selected = currentRoute == "main/achievements",
+            // CORREGIDO: Usar Screens.Achievements.route
+            selected = currentRoute == Screens.Achievements.route,
             onClick = {
-                navController.navigate("main/achievements") {
-                    launchSingleTop = true
-                    restoreState = true
+                if (currentRoute != Screens.Achievements.route) {
+                    navController.navigate(Screens.Achievements.route) {
+                        popUpTo(Screens.Dashboard.route) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             },
             colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
@@ -80,15 +100,21 @@ fun BottomNavigationBar(navController: NavController) {
             )
         )
 
+        // ========== PERFIL ==========
         NavigationBarItem(
             icon = { Icon("👤", contentDescription = "Perfil") },
             label = { Text("Perfil") },
-            // ✅ CORREGIDO: Usar ruta completa
-            selected = currentRoute == "main/profile",
+            // CORREGIDO: Usar Screens.Profile.route
+            selected = currentRoute == Screens.Profile.route,
             onClick = {
-                navController.navigate("main/profile") {
-                    launchSingleTop = true
-                    restoreState = true
+                if (currentRoute != Screens.Profile.route) {
+                    navController.navigate(Screens.Profile.route) {
+                        popUpTo(Screens.Dashboard.route) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             },
             colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
