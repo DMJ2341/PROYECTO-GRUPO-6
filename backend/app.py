@@ -1,4 +1,4 @@
-# backend/app.py - VERSIÓN CORREGIDA COMPLETA
+# backend/app.py - VERSIÓN COMPLETA CON MODIFICACIONES PARA PYDANTIC
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.db import db, Session
@@ -10,10 +10,24 @@ from models.badge import Badge
 from services.activity_service import ActivityService
 from services.course_service import CourseService
 from services.badge_service import BadgeService
+from services.lesson_service import create_lesson  # ✅ Import para crear lección con validación
 import jwt
 import datetime
 from functools import wraps
 from sqlalchemy import text
+
+# -------------------------------------------------------------------
+# 🟢 SENTRY CONFIG (YA INTEGRADO)
+# -------------------------------------------------------------------
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn="https://242076c45c627b58d1b4254f28c0606a@o4510415052931072.ingest.us.sentry.io/4510415138586624",
+    send_default_pii=True,
+    traces_sample_rate=1.0,
+    _experiments={"profiles_sample_rate": 1.0},
+)
+# -------------------------------------------------------------------
 
 app = Flask(__name__)
 CORS(app)
@@ -25,6 +39,7 @@ try:
         db.session.execute(text("SELECT 1"))
         print("✅ Base de datos conectada correctamente")
 except Exception as e:
+    sentry_sdk.capture_exception(e)
     print(f"❌ Error conectando a la base de datos: {e}")
     raise
 
@@ -40,6 +55,9 @@ def token_required(f):
                 token = token[7:]
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             current_user_id = data['user_id']
+            
+            sentry_sdk.set_user({"id": current_user_id, "email": data.get('email')})
+            
         except jwt.ExpiredSignatureError:
             return jsonify({'error': 'Token expirado'}), 401
         except jwt.InvalidTokenError:
@@ -47,12 +65,12 @@ def token_required(f):
         return f(current_user_id, *args, **kwargs)
     return decorated
 
-# ---------- HEALTH ----------
+# ---------- HEALTH & DEBUG ----------
 @app.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({
         'status': 'OK', 
-        'message': 'Servidor funcionando',
+        'message': 'Servidor funcionando con Sentry y Pydantic',
         'database': 'Conectada',
         'environment': 'Producción - Servidor'
     })
@@ -104,6 +122,7 @@ def register():
             session.close()
             
     except Exception as e:
+        sentry_sdk.capture_exception(e) 
         print(f"❌ Error en registro: {e}")
         import traceback
         traceback.print_exc()
@@ -141,6 +160,7 @@ def login():
             session.close()
             
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"❌ Error en login: {e}")
         return jsonify({"error": "Error interno"}), 500
 
@@ -169,6 +189,7 @@ def get_courses():
             session.close()
             
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"❌ Error en /api/courses: {e}")
         return jsonify({"error": "Error interno al obtener cursos"}), 500
 
@@ -199,37 +220,27 @@ def get_course_lessons(course_id):
                     'order_index': l.order_index,
                     'is_completed': False  # ✅ Agregar lógica de completado después
                 })
-            
             return jsonify(result)
         finally:
             session.close()
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"❌ Error en /api/courses/{course_id}/lessons: {e}")
-        import traceback
-        traceback.print_exc()
         return jsonify({"error": "Error interno"}), 500
 
-# ---------- OBTENER UNA LECCIÓN ESPECÍFICA ----------
+# ---------- OBTENER LECCIÓN ESPECÍFICA ----------
 @app.route('/api/lessons/<lesson_id>', methods=['GET'])
 def get_lesson_public(lesson_id):
     try:
         print(f"🔍 Buscando lección: {lesson_id}")
         session = db.get_session()
         try:
-            # ✅ Buscar por ID string directamente
             lesson = session.query(Lesson).filter_by(id=lesson_id).first()
             
             if not lesson:
-                # DEBUG: Mostrar IDs disponibles
-                all_lessons = session.query(Lesson).all()
-                available_ids = [l.id for l in all_lessons]
-                print(f"❌ Lección '{lesson_id}' no encontrada")
-                print(f"📋 IDs disponibles: {available_ids}")
-                
                 return jsonify({
                     "error": "Lección no encontrada",
-                    "searched_id": lesson_id,
-                    "available_ids": available_ids
+                    "searched_id": lesson_id
                 }), 404
             
             print(f"✅ Lección encontrada: {lesson.title}")
@@ -251,12 +262,11 @@ def get_lesson_public(lesson_id):
         finally:
             session.close()
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"❌ Error en /api/lessons/{lesson_id}: {e}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({"error": f"Error interno: {str(e)}"}), 500
+        return jsonify({"error": "Error interno"}), 500
 
-# ---------- OBTENER LECCIÓN DE UN CURSO ESPECÍFICO ----------
+# ---------- OBTENER LECCIÓN DE CURSO ESPECÍFICO ----------
 @app.route('/api/courses/<int:course_id>/lessons/<lesson_id>', methods=['GET'])
 def get_course_lesson_detail(course_id, lesson_id):
     try:
@@ -288,6 +298,7 @@ def get_course_lesson_detail(course_id, lesson_id):
         finally:
             session.close()
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"❌ Error en /api/courses/{course_id}/lessons/{lesson_id}: {e}")
         return jsonify({"error": "Error interno"}), 500
 
@@ -308,6 +319,7 @@ def get_user_profile(current_user_id):
         finally:
             session.close()
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"❌ Error en /api/user/profile: {e}")
         return jsonify({"error": "Error interno"}), 500
 
@@ -329,7 +341,7 @@ def update_lesson_progress(current_user_id, lesson_id):
                     user_id=current_user_id,
                     activity_type='lesson_completed',
                     points=10,
-                    lesson_id=lesson_id,  # ✅ Ahora es string
+                    lesson_id=lesson_id,
                     description=f"Lección {lesson_id} completada"
                 )
 
@@ -343,6 +355,7 @@ def update_lesson_progress(current_user_id, lesson_id):
             session.close()
             
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"❌ Error update progress: {e}")
         import traceback
         traceback.print_exc()
@@ -361,6 +374,7 @@ def get_available_badges():
         finally:
             session.close()
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"❌ Error en /api/badges/available: {e}")
         return jsonify({"error": "Error interno"}), 500
 
@@ -390,6 +404,7 @@ def get_user_badges(current_user_id):
         finally:
             session.close()
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"❌ Error en /api/user/badges: {e}")
         return jsonify({"error": "Error interno al obtener medallas"}), 500
     
@@ -415,7 +430,6 @@ def get_user_dashboard(current_user_id):
             for course in session.query(Course).all():
                 total = session.query(Lesson).filter_by(course_id=course.id).count()
                 
-                # ✅ Contar lecciones completadas por lesson_id string
                 completed = session.query(Activity).filter(
                     Activity.user_id == current_user_id,
                     Activity.activity_type == 'lesson_completed',
@@ -444,7 +458,7 @@ def get_user_dashboard(current_user_id):
                 "next_badge": {
                     "name": next_badge.name, 
                     "description": next_badge.description,
-                    "icon": next_badge.icon, 
+                    "icon": next_badge.icon,
                     "condition": f"Necesitas {next_badge.xp_required} XP"
                 } if next_badge else None
             }})
@@ -452,6 +466,7 @@ def get_user_dashboard(current_user_id):
             session.close()
             
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"Dashboard error: {e}")
         import traceback
         traceback.print_exc()
@@ -471,6 +486,7 @@ def get_user_streak(current_user_id):
             "progress_to_next": streak_days % 7 if streak_days < 7 else streak_days % 30
         }})
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error interno"}), 500
 
 # ---------- RUTA RAIZ ----------
@@ -480,7 +496,8 @@ def home():
         "message": "🚀 CyberLearn API - Servidor de Producción",
         "status": "activo", 
         "version": "1.0.0",
-        "database": "PostgreSQL en servidor"
+        "database": "PostgreSQL en servidor",
+        "monitoring": "Sentry Enabled ✅"
     })
 
 # ---------- INICIO ----------
@@ -490,12 +507,14 @@ if __name__ == '__main__':
     print("🔗 Base de datos: PostgreSQL en servidor")
     print("🌐 Host: 0.0.0.0:8000")
     print("⚡ Modo: Producción")
+    print("🛡️ Sentry: Activado")
     print("=" * 50)
     
     try:
         db.create_all()
         print("✅ Tablas de base de datos verificadas")
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         print(f"⚠️  Error creando tablas: {e}")
     
     app.run(host='0.0.0.0', port=8000, debug=False)
