@@ -1,110 +1,57 @@
 package com.example.cyberlearnapp.network
 
 import com.example.cyberlearnapp.network.models.*
+import com.example.cyberlearnapp.network.models.assessments.*
+import retrofit2.Response
 import retrofit2.http.*
 
-/**
- * API Service - Endpoints del backend
- * ACTUALIZADO: Agregados endpoints para lecciones interactivas
- */
 interface ApiService {
 
-    // ========== AUTENTICACIÓN ==========
-    @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequest): AuthResponse
-
+    // --- AUTH ---
     @POST("auth/login")
-    suspend fun login(@Body request: LoginRequest): AuthResponse
+    suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
-    // ========== USUARIO ==========
-    @GET("users/profile")
-    suspend fun getUserProfile(@Header("Authorization") token: String): User
+    @POST("auth/register")
+    suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
 
-    @GET("users/dashboard")
-    suspend fun getDashboard(@Header("Authorization") token: String): DashboardData
+    // --- DASHBOARD ---
+    @GET("user/dashboard")
+    suspend fun getDashboard(@Header("Authorization") token: String): Response<DashboardResponse>
 
-    // ========== CURSOS ==========
-    @GET("courses")
-    suspend fun getCourses(@Header("Authorization") token: String): List<Course>
+    @GET("user/profile")
+    suspend fun getUserProfile(@Header("Authorization") token: String): Response<UserResponse>
 
-    @GET("courses/{courseId}")
-    suspend fun getCourseDetail(
+    // --- DAILY TERM ---
+    @GET("daily-term")
+    suspend fun getDailyTerm(@Header("Authorization") token: String): Response<DailyTermWrapper>
+
+    // --- PREFERENCE TEST (Rutas corregidas: sin "api/" al inicio) ---
+    @GET("preference-test/questions")
+    suspend fun getPreferenceQuestions(@Header("Authorization") token: String): Response<PreferenceTestResponse>
+
+    @POST("preference-test/submit")
+    suspend fun submitPreferenceTest(
         @Header("Authorization") token: String,
-        @Path("courseId") courseId: Int
-    ): CourseDetail
+        @Body body: SubmitPreferenceRequest
+    ): Response<SubmitPreferenceResponse>
 
-    // 🆕 NUEVO: Obtener lecciones de un curso
-    @GET("courses/{courseId}/lessons")
-    suspend fun getCourseLessons(
-        @Header("Authorization") token: String,
-        @Path("courseId") courseId: Int
-    ): List<Lesson>
-
-    // ========== LECCIONES ==========
-    @GET("lessons/{lessonId}")
-    suspend fun getLesson(
-        @Header("Authorization") token: String,
-        @Path("lessonId") lessonId: Int
-    ): Lesson
-
-    // 🆕 NUEVO: Obtener lección interactiva
-    @GET("lessons/{lessonId}/interactive")
-    suspend fun getInteractiveLesson(
-        @Path("lessonId") lessonId: Int
-    ): InteractiveLesson
-
-    // ========== ACTIVIDADES ==========
-    @POST("activities/start")
-    suspend fun startActivity(
-        @Header("Authorization") token: String,
-        @Body data: Map<String, Any>
-    ): ActivityResponse
-
-    @POST("activities/complete")
-    suspend fun completeActivity(
-        @Header("Authorization") token: String,
-        @Body data: Map<String, Any>
-    ): ActivityResponse
-
-    // 🆕 NUEVO: Completar lección interactiva
-    @POST("lessons/complete")
-    suspend fun completeLesson(
-        @Body data: Map<String, Any>
-    ): ActivityResponse
-
-    // 🆕 NUEVO: Registrar actividad de lección
-    @POST("lessons/activity")
-    suspend fun recordLessonActivity(
-        @Body data: Map<String, Any>
-    ): ActivityResponse
-
-    // ========== BADGES ==========
-    @GET("badges")
-    suspend fun getBadges(@Header("Authorization") token: String): List<Badge>
-
-    @GET("badges/user")
-    suspend fun getUserBadges(@Header("Authorization") token: String): List<UserBadge>
+    @GET("preference-test/result")
+    suspend fun getPreferenceResult(@Header("Authorization") token: String): Response<PreferenceResultWrapper>
 }
 
-data class ActivityResponse(
+// Wrapper necesario para la respuesta del término del día
+data class DailyTermWrapper(
     val success: Boolean,
-    val message: String,
-    val xp_earned: Int? = null,
-    val new_badges: List<Badge>? = null
+    val daily_term: DailyTerm,
+    val xp_earned: Int,
+    val already_viewed_today: Boolean
 )
 
-data class DashboardData(
-    val user: User,
-    val total_xp: Int,
-    val current_streak: Int,
-    val badges_count: Int,
-    val courses_progress: List<CourseProgress>
-)
-
-data class CourseProgress(
-    val course_id: Int,
-    val course_title: String,
-    val completed_lessons: Int,
-    val total_lessons: Int,
-    val progress_percentage: Int
+// Modelo simple del término (coincide con Glossary del backend)
+data class DailyTerm(
+    val id: Int,
+    val term: String,
+    val definition: String,
+    val category: String,
+    val difficulty: String
 )
