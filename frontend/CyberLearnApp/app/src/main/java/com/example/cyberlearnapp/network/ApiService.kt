@@ -25,7 +25,7 @@ interface ApiService {
     @GET("daily-term")
     suspend fun getDailyTerm(@Header("Authorization") token: String): Response<DailyTermWrapper>
 
-    // --- PREFERENCE TEST (Rutas corregidas: sin "api/" al inicio) ---
+    // --- PREFERENCE TEST ---
     @GET("preference-test/questions")
     suspend fun getPreferenceQuestions(@Header("Authorization") token: String): Response<PreferenceTestResponse>
 
@@ -37,21 +37,14 @@ interface ApiService {
 
     @GET("preference-test/result")
     suspend fun getPreferenceResult(@Header("Authorization") token: String): Response<PreferenceResultWrapper>
+
+    // --- FINAL EXAM (NUEVO) ---
+    @POST("final-exam/start")
+    suspend fun startFinalExam(@Header("Authorization") token: String): Response<ExamStartResponse>
+
+    @POST("final-exam/submit")
+    suspend fun submitFinalExam(
+        @Header("Authorization") token: String,
+        @Body body: ExamSubmitRequest
+    ): Response<ExamResultResponse>
 }
-
-// Wrapper necesario para la respuesta del término del día
-data class DailyTermWrapper(
-    val success: Boolean,
-    val daily_term: DailyTerm,
-    val xp_earned: Int,
-    val already_viewed_today: Boolean
-)
-
-// Modelo simple del término (coincide con Glossary del backend)
-data class DailyTerm(
-    val id: Int,
-    val term: String,
-    val definition: String,
-    val category: String,
-    val difficulty: String
-)

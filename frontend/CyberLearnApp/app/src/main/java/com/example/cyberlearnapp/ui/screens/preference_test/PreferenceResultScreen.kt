@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/cyberlearnapp/ui/screens/preference/PreferenceResultScreen.kt
-package com.example.cyberlearnapp.ui.screens.preference
+package com.example.cyberlearnapp.ui.screens.preference_test
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
