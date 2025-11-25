@@ -1,4 +1,4 @@
-package com.example.cyberlearnapp.ui.screens.preference
+package com.example.cyberlearnapp.ui.screens.preference_test
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

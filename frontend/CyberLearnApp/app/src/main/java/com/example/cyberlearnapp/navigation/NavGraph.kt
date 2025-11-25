@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
+import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceResultScreen
+import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceTestScreen
 
 @Composable
 fun NavGraph(
@@ -17,7 +19,7 @@ fun NavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
-        // Autenticación
+        // --- AUTH ---
         composable(route = Screens.Auth.route) {
             AuthScreen(
                 onLoginSuccess = {
@@ -28,30 +30,29 @@ fun NavGraph(
             )
         }
 
-        // Dashboard
+        // --- DASHBOARD ---
         composable(route = Screens.Dashboard.route) {
             DashboardScreen(
-                onNavigateToCourses = {
-                    navController.navigate(Screens.Courses.route)
-                },
-                onNavigateToCourse = { courseId ->
-                    navController.navigate(Screens.CourseDetail.createRoute(courseId))
-                },
-                onNavigateToAchievements = {
-                    navController.navigate(Screens.Achievements.route)
-                },
-                onNavigateToProfile = {
-                    navController.navigate(Screens.Profile.route)
-                },
-                onLogout = {
-                    navController.navigate(Screens.Auth.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }
+                navController = navController // Pasamos el navController directo para manejar las rutas nuevas
             )
         }
 
-        // Cursos
+        // --- PREFERENCE TEST (Paso 1: Rutas Nuevas) ---
+        composable("preference_test") {
+            PreferenceTestScreen(
+                navController = navController
+            )
+        }
+
+        composable("preference_result") {
+            // Asumimos que si navega directo, cargará el resultado guardado
+            PreferenceResultScreen(
+                profileType = "saved", // "saved" indicará al ViewModel cargar desde backend
+                navController = navController
+            )
+        }
+
+        // --- CURSOS ---
         composable(route = Screens.Courses.route) {
             CoursesScreen(
                 onCourseClick = { courseId ->
@@ -63,7 +64,7 @@ fun NavGraph(
             )
         }
 
-        // Detalle de curso
+        // --- DETALLE DE CURSO ---
         composable(
             route = Screens.CourseDetail.route,
             arguments = listOf(
@@ -71,7 +72,6 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val courseId = backStackEntry.arguments?.getInt("courseId") ?: 1
-
             CourseDetailScreen(
                 courseId = courseId,
                 onLessonClick = { lessonId ->
@@ -83,7 +83,7 @@ fun NavGraph(
             )
         }
 
-        // Lección interactiva
+        // --- LECCIÓN INTERACTIVA ---
         composable(
             route = Screens.InteractiveLesson.route,
             arguments = listOf(
@@ -91,7 +91,6 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val lessonId = backStackEntry.arguments?.getInt("lessonId") ?: 1
-
             InteractiveLessonScreen(
                 lessonId = lessonId,
                 onComplete = {
@@ -100,7 +99,7 @@ fun NavGraph(
             )
         }
 
-        // Logros
+        // --- LOGROS ---
         composable(route = Screens.Achievements.route) {
             AchievementsScreen(
                 onBackClick = {
@@ -109,7 +108,7 @@ fun NavGraph(
             )
         }
 
-        // Perfil
+        // --- PERFIL ---
         composable(route = Screens.Profile.route) {
             ProfileScreen(
                 onBackClick = {
