@@ -1,0 +1,230 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Importance of Chain of Custody",
+    "duration": 120,
+    "content": {
+      "case_name": "Forensic Evidence in Legal Case",
+      "date": "2015",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Scale_of_justice_2.svg/1200px-Scale_of_justice_2.svg.png",
+      "narrative": "Caso legal contra empleado que robó propiedad intelectual. Evidencia digital crítica: emails, archivos en USB. Durante trial, defensa cuestionó chain of custody. Gaps en documentación: evidencia dejada sin supervisión 3 horas, hash no verificado. Juez declaró evidencia inadmisible. Caso desestimado.",
+      "stats": [
+        {"label": "Evidencia Rechazada", "value": "100%", "icon": "gavel"},
+        {"label": "Costo del Caso", "value": "$500K", "icon": "attach_money"},
+        {"label": "Razón", "value": "Chain of Custody", "icon": "broken_link"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Principios de Forense Digital - NIST SP 800-86",
+    "content": {
+      "intro": "Colección, preservación y análisis de evidencia digital para investigaciones legales o internas.",
+      "tabs": [
+        {
+          "label": "Locard's Principle",
+          "title": "Principio de Intercambio",
+          "text": "Todo contacto deja rastro. En digital: logs, timestamps, network traces, file metadata. Atacante deja evidencia, pero también investigador puede alterar escena. Minimizar contaminación.",
+          "icon": "fingerprint"
+        },
+        {
+          "label": "Orden de Volatilidad",
+          "title": "RFC 3227 - Evidence Collection",
+          "text": "Colectar de más volátil a menos: 1) Registers, cache 2) Memory (RAM) 3) Network state 4) Running processes 5) Disk 6) Remote logs 7) Physical config. RAM se pierde al apagar. Disco persiste.",
+          "icon": "sort"
+        },
+        {
+          "label": "Preservación",
+          "title": "No Alterar Evidencia Original",
+          "text": "NUNCA trabajar en evidencia original. Crear copia forense (imagen bit-by-bit). Verificar integridad con hash (MD5, SHA256). Original en cadena de custodia sellada.",
+          "icon": "lock"
+        },
+        {
+          "label": "Chain of Custody",
+          "title": "Cadena de Custodia",
+          "text": "Documentar quién, qué, cuándo, dónde, por qué para cada transferencia de evidencia. Quién la recolectó, transportó, analizó. Fechas exactas. Gaps invalidan evidencia en corte.",
+          "icon": "link"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Tipos de Evidencia Digital",
+    "content": {
+      "types": [
+        {
+          "type": "Volatile Data",
+          "description": "Se pierde al apagar: RAM (procesos, conexiones de red, claves de cifrado en memoria), CPU registers, cache.",
+          "collection": "Live acquisition con herramientas especializadas. Debe ser primera acción.",
+          "icon": "memory"
+        },
+        {
+          "type": "Non-Volatile Data",
+          "description": "Persiste: discos duros, SSDs, USB drives, backups, cloud storage.",
+          "collection": "Dead acquisition (sistema apagado) o live si es necesario. Crear imagen forense completa.",
+          "icon": "storage"
+        },
+        {
+          "type": "Network-Based",
+          "description": "Packet captures (PCAP), NetFlow logs, firewall logs, IDS alerts, DNS queries.",
+          "collection": "Capturar durante incidente. Analizar tráfico C2, exfiltración, lateral movement.",
+          "icon": "network_check"
+        },
+        {
+          "type": "Cloud-Based",
+          "description": "Cloud storage (S3, Azure Blob), SaaS logs (Office 365, Google Workspace), VM snapshots.",
+          "collection": "APIs de provider, logs de access. Jurisdicción y chain of custody complejos.",
+          "icon": "cloud"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "Adquisición Forense",
+    "content": {
+      "methods": [
+        {
+          "method": "Dead Acquisition",
+          "description": "Sistema apagado. Remover disco y crear imagen en otro sistema con write blocker.",
+          "pros": ["No altera estado del sistema", "Más forense puro", "Write blocker previene modificación"],
+          "cons": ["Pierde datos volátiles (RAM)", "Downtime del sistema"],
+          "tools": "FTK Imager, dd (Linux), dcfldd"
+        },
+        {
+          "method": "Live Acquisition",
+          "description": "Sistema encendido. Capturar RAM primero, luego disco.",
+          "pros": ["Preserva datos volátiles", "Captura estado en ejecución", "No downtime"],
+          "cons": ["Footprint del investigador en sistema", "Posible alteración"],
+          "tools": "Volatility, Magnet RAM Capture, LiME (Linux)"
+        },
+        {
+          "method": "Logical Acquisition",
+          "description": "Solo archivos/carpetas específicos, no imagen completa del disco.",
+          "pros": ["Rápido", "Menos storage"],
+          "cons": ["No captura deleted files", "No unallocated space"],
+          "use_case": "Cuando no hay tiempo/recursos para full acquisition"
+        }
+      ],
+      "write_blockers": "Hardware o software que permite leer disco sin escribir. Crítico para admisibilidad legal. Previene alteración accidental de timestamps."
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "theory_section",
+    "title": "Hashing para Integridad",
+    "content": {
+      "concept": "Hash criptográfico (MD5, SHA-1, SHA-256) genera 'huella digital' única del archivo/disco. Cualquier modificación cambia el hash.",
+      "workflow": [
+        "1. Calcular hash de evidencia original inmediatamente después de adquisición",
+        "2. Documentar hash en chain of custody",
+        "3. Calcular hash de copia de trabajo",
+        "4. Verificar que ambos hashes coinciden",
+        "5. Re-verificar periódicamente durante análisis"
+      ],
+      "algorithms": [
+        {"algo": "MD5", "bits": "128", "status": "Legacy, colisiones posibles, pero aún usado para verificación"},
+        {"algo": "SHA-1", "bits": "160", "status": "Deprecated, colisiones demostradas"},
+        {"algo": "SHA-256", "bits": "256", "status": "Actual estándar recomendado"}
+      ],
+      "example": "sha256sum evidence.dd > evidence.dd.sha256\nsha256sum -c evidence.dd.sha256"
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "practical_lab",
+    "title": "Lab: Crear Imagen Forense (Simulado)",
+    "content": {
+      "scenario": "Tienes laptop de empleado sospechoso. Debes crear imagen forense del disco de 500GB.",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Fotografiar estado físico de laptop",
+          "reason": "Documentar evidencia física"
+        },
+        {
+          "step": 2,
+          "action": "Conectar write blocker hardware",
+          "reason": "Prevenir escritura accidental en disco original"
+        },
+        {
+          "step": 3,
+          "action": "Conectar disco de destino (>500GB) para imagen",
+          "reason": "Storage para copia forense"
+        },
+        {
+          "step": 4,
+          "action": "Usar FTK Imager o dd para crear imagen E01/raw",
+          "command": "dd if=/dev/sdb of=/mnt/evidence/laptop001.dd bs=64K conv=noerror,sync",
+          "reason": "Copia bit-by-bit completa"
+        },
+        {
+          "step": 5,
+          "action": "Calcular hash SHA-256 de imagen",
+          "command": "sha256sum laptop001.dd > laptop001.dd.sha256",
+          "reason": "Verificar integridad"
+        },
+        {
+          "step": 6,
+          "action": "Documentar en chain of custody",
+          "details": "Fecha, hora, quién, hash, número de serie del disco, método usado",
+          "reason": "Admisibilidad legal"
+        },
+        {
+          "step": 7,
+          "action": "Sellar disco original, guardar en evidence locker",
+          "reason": "Preservar original intacto"
+        },
+        {
+          "step": 8,
+          "action": "Trabajar solo en copia, nunca en original",
+          "reason": "Proteger evidencia"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 7,
+    "type": "practical_exercise",
+    "title": "Chain of Custody Form",
+    "content": {
+      "instruction": "Completa formulario de chain of custody para evidencia recolectada:",
+      "form_fields": [
+        {"field": "Evidence ID", "example": "CASE2024-001-HDD1"},
+        {"field": "Description", "example": "Samsung 500GB SSD from suspect laptop"},
+        {"field": "Serial Number", "example": "S3Z5NX0M123456"},
+        {"field": "Collected By", "example": "John Doe, Forensic Analyst"},
+        {"field": "Date/Time Collected", "example": "2024-11-24 14:30 UTC"},
+        {"field": "Location", "example": "Employee desk, 3rd floor, office 305"},
+        {"field": "Hash (SHA-256)", "example": "a3f5e2d8b1c4f7e9..."},
+        {"field": "Storage Location", "example": "Evidence locker #5, cabinet B"},
+        {"field": "Custodian", "example": "Jane Smith, Evidence Manager"},
+        {"field": "Transfer Log", "example": "2024-11-24 15:00 - Transferred to Jane Smith for storage"}
+      ],
+      "critical_points": [
+        "NO GAPS: Documentar cada persona que toca evidencia",
+        "TIMESTAMPS precisos",
+        "FIRMAS de quien entrega y recibe",
+        "SELLADO con tamper-evident tape"
+      ]
+    }
+  },
+  {
+    "screen_id": 8,
+    "type": "quiz",
+    "title": "Evaluación - Forense Digital Básico",
+    "content": {
+      "question": "¿Por qué es crítico usar write blocker al adquirir evidencia de disco?",
+      "options": [
+        {"id": "a", "text": "Previene modificación de timestamps y metadata, preservando integridad de evidencia", "is_correct": true, "feedback": "Correcto. SO puede escribir metadata automáticamente al montar. Write blocker hace read-only, no altera evidencia original."},
+        {"id": "b", "text": "Hace la adquisición más rápida", "is_correct": false, "feedback": "No. No afecta velocidad. Su propósito es preservar integridad."},
+        {"id": "c", "text": "Permite descifrar archivos cifrados", "is_correct": false, "feedback": "No. Write blocker no afecta cifrado, solo previene escritura."}
+      ]
+    }
+  }
+]

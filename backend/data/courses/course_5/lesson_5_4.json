@@ -1,0 +1,227 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Risk Treatment Strategies",
+    "duration": 120,
+    "content": {
+      "case_name": "Insurance Company Risk Decisions",
+      "date": "2022",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Risk_Management_Strategies.svg/1200px-Risk_Management_Strategies.svg.png",
+      "narrative": "Aseguradora enfrenta múltiples riesgos cyber. Para ransomware (ALE $2M): MITIGATE con EDR + backups ($500K inversión). Para regulatory fines por data breach: TRANSFER con cyber insurance ($200K premium, $50M coverage). Para legacy system (costo modernizar $10M vs riesgo $100K/año): ACCEPT riesgo documentado. Para obsolete system crítico con riesgo $5M: AVOID retirando sistema.",
+      "stats": [
+        {
+          "label": "Riesgos Gestionados",
+          "value": "40+",
+          "icon": "manage_accounts"
+        },
+        {
+          "label": "Estrategias Usadas",
+          "value": "4 tipos",
+          "icon": "category"
+        },
+        {
+          "label": "Budget Total",
+          "value": "$15M",
+          "icon": "account_balance"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Opciones de Tratamiento de Riesgo - NIST SP 800-39",
+    "content": {
+      "intro": "4 estrategias principales para tratar riesgos identificados.",
+      "tabs": [
+        {
+          "label": "Accept",
+          "title": "Aceptar el Riesgo",
+          "text": "NO hacer nada, asumir riesgo conscientemente. Usar cuando: costo de mitigar > impacto del riesgo, o riesgo ya dentro de risk appetite. Requiere aprobación formal de management. Documentar justificación. Re-evaluar periódicamente.",
+          "icon": "check_circle"
+        },
+        {
+          "label": "Avoid",
+          "title": "Evitar el Riesgo",
+          "text": "Eliminar actividad que causa riesgo. Ej: retirar sistema vulnerable, cancelar proyecto, no ofrecer servicio. Usar cuando: riesgo demasiado alto y no mitigable cost-effectively. Impacto en negocio debe considerarse.",
+          "icon": "block"
+        },
+        {
+          "label": "Mitigate",
+          "title": "Mitigar/Reducir el Riesgo",
+          "text": "Implementar controles para reducir likelihood o impact. Más común. Ej: firewalls, encryption, training, backups. Objetivo: reducir inherent risk a residual risk aceptable. Costo de control < expected loss.",
+          "icon": "security"
+        },
+        {
+          "label": "Transfer",
+          "title": "Transferir el Riesgo",
+          "text": "Compartir riesgo con tercero. Ej: cyber insurance, outsourcing, contractual agreements. NO elimina riesgo totalmente. Proveedor puede fallar. Útil para riesgos financieros altos pero baja likelihood.",
+          "icon": "swap_horiz"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "Transferencia: Cyber Insurance",
+    "content": {
+      "overview": "Póliza que cubre pérdidas financieras por cyber incidents.",
+      "coverage_types": [
+        {
+          "type": "First-Party",
+          "covers": "Pérdidas directas: business interruption, data recovery, ransom payments, forensics, legal fees, notification costs",
+          "typical_limits": "$5M - $100M"
+        },
+        {
+          "type": "Third-Party",
+          "covers": "Liability: demandas de clientes, regulatory fines, PCI penalties",
+          "typical_limits": "$10M - $50M"
+        }
+      ],
+      "considerations": [
+        "Premium cost: $50K - $500K+ dependiendo de revenue, industry, security posture",
+        "Deductible: $100K - $1M típico",
+        "Exclusions: acts of war, prior known vulnerabilities, gross negligence",
+        "Requirements: security questionnaire, might require MFA, EDR, backups",
+        "Claims process: puede tardar meses, no cubre todo"
+      ],
+      "when_to_use": "Riesgos con high financial impact pero acceptable likelihood. Complementa controles técnicos, NO los reemplaza.",
+      "limitation": "Insurance paga $, no restaura reputation, no previene incident. Treat como backstop, no primary defense."
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "theory_section",
+    "title": "Continuous Monitoring - NIST SP 800-137",
+    "content": {
+      "concept": "Ongoing awareness del estado de security para informar risk decisions dinámicamente.",
+      "why_continuous": "Riesgos cambian: nuevas vulnerabilities (CVEs), threat landscape evoluciona, configs drift, business changes. Annual assessment es insuficiente.",
+      "components": [
+        {
+          "component": "Automated Monitoring",
+          "tools": "SIEM, vulnerability scanners, config management (Puppet, Chef), cloud security posture (CSPM)",
+          "frequency": "Continuous or daily"
+        },
+        {
+          "component": "Metrics and Dashboards",
+          "examples": "% systems patched, mean time to patch, # critical vulns, control compliance %",
+          "audience": "CISO, Board, risk committee"
+        },
+        {
+          "component": "Incident Tracking",
+          "data": "# incidents, MTTD, MTTR, trends over time",
+          "use": "Validate if controls working, adjust risk ratings"
+        },
+        {
+          "component": "Change Management",
+          "process": "Security impact analysis for all changes. Does change introduce new risk? Increase residual risk?",
+          "integration": "ITIL change process with security review"
+        }
+      ],
+      "conmon_benefits": [
+        "Real-time risk awareness vs annual snapshot",
+        "Faster response to new threats",
+        "Demonstrate compliance continuously",
+        "Data-driven risk decisions"
+      ]
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "theory_section",
+    "title": "Supply Chain Risk Management - NIST SP 800-161",
+    "content": {
+      "threat": "Compromise de vendor/supplier afecta tu organización. Ej: SolarWinds, Target (HVAC vendor), Kaseya.",
+      "scm_risks": [
+        "Malicious code en software de vendor",
+        "Compromised updates/patches",
+        "Lack of security in vendor practices",
+        "Vendor data breach exposes tu data",
+        "Vendor bankruptcy/discontinuation"
+      ],
+      "controls": [
+        {
+          "control": "Vendor Assessment",
+          "activities": "Security questionnaires, SOC 2 reports, penetration test results, certifications (ISO 27001)",
+          "frequency": "Pre-contract + annual"
+        },
+        {
+          "control": "Contractual Requirements",
+          "clauses": "SLAs for security, breach notification (24h), right to audit, indemnification, data handling requirements"
+        },
+        {
+          "control": "Least Privilege for Vendors",
+          "implementation": "Separate network segment, VPN with MFA, time-limited access, no persistent credentials, monitor vendor activity"
+        },
+        {
+          "control": "Monitoring",
+          "activities": "Log vendor access, alert on anomalies, periodic review of vendor permissions"
+        }
+      ],
+      "target_lesson": "Target: vendor (Fazio) compromised. Attackers pivoted from vendor network to payment systems. Falta de network segmentation = supply chain risk became enterprise risk."
+    }
+  },
+  {
+    "screen_id": 7,
+    "type": "practical_scenario",
+    "title": "Decide: Estrategia de Tratamiento",
+    "content": {
+      "scenarios": [
+        {
+          "scenario": "Legacy manufacturing system (20 años), no patches disponibles, múltiples critical CVEs. Costo reemplazar $5M. Riesgo ALE $200K.",
+          "options": [
+            "Accept",
+            "Avoid",
+            "Mitigate",
+            "Transfer"
+          ],
+          "analysis": {
+            "accept": "$200K/year < $5M upfront. Pero riesgo aumenta con tiempo. No sostenible long-term.",
+            "avoid": "Retirar sistema detiene producción. Business no acepta.",
+            "mitigate": "Air-gap system, network segmentation, strict access control, monitoring intensivo. Costo $500K.",
+            "transfer": "Cyber insurance cubre parte pero no todo. Insurance no previene incident."
+          },
+          "recommended": "MITIGATE (air-gap + segmentation) SHORT-TERM + plan para REPLACE system en 3 años (budget $5M). Accept residual risk con aprobación de Board."
+        },
+        {
+          "scenario": "GDPR compliance gap. Falta de consent management. Multa potencial €20M. Costo implementar $1M.",
+          "recommended": "MITIGATE. Implementar consent management. Regulatory compliance no es opcional. Cost < potential fine."
+        },
+        {
+          "scenario": "Risk de DDoS contra website. ALE $100K. DDoS mitigation service (Cloudflare) $50K/year.",
+          "recommended": "TRANSFER/MITIGATE híbrido. Use DDoS mitigation service (transfers burden de mitigation). Costo < ALE, ROI positivo."
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 8,
+    "type": "quiz",
+    "title": "Evaluación - Tratamiento de Riesgo",
+    "content": {
+      "question": "Risk ALE $2M. Control cuesta $500K implementar + $100K/year. Reduce risk 60%. ¿Qué hacer?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Accept - control es caro",
+          "is_correct": false,
+          "feedback": "No. Calcular ROI primero."
+        },
+        {
+          "id": "b",
+          "text": "Implement - New ALE $800K (60% reduction). Savings $1.2M/year - $100K = $1.1M/year benefit. ROI positivo.",
+          "is_correct": true,
+          "feedback": "Correcto. $2M × 0.4 (40% remaining) = $800K new ALE. Savings $1.2M - $100K ongoing = $1.1M/year. Payback $500K / $1.1M = 5.5 months. Excellent ROI."
+        },
+        {
+          "id": "c",
+          "text": "Transfer a insurance",
+          "is_correct": false,
+          "feedback": "Posible pero control es más cost-effective con este ROI. Insurance es complemento, no replacement."
+        }
+      ]
+    }
+  }
+]

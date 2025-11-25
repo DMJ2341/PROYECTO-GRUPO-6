@@ -1,0 +1,209 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Equifax - Risk Management Failure",
+    "duration": 120,
+    "content": {
+      "case_name": "Equifax Data Breach (2017)",
+      "date": "Mar-Jul 2017",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Equifax_Logo.svg/1200px-Equifax_Logo.svg.png",
+      "narrative": "CVE-2017-5638 (Apache Struts) crítico publicado en marzo. Equifax tenía 2 meses para parchear. NO lo hicieron. Vulnerability scanner detectó el vulnerability pero equipo ignoró alertas. Fallo masivo de risk management: identificaron el riesgo pero no lo trataron. 147 millones afectados, $1.4B+ en costos.",
+      "stats": [
+        {"label": "Personas Afectadas", "value": "147M", "icon": "group"},
+        {"label": "Tiempo para Parchear", "value": "2 meses", "icon": "schedule"},
+        {"label": "Costo Total", "value": "$1.4B+", "icon": "attach_money"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Fundamentos de Gestión de Riesgos - NIST SP 800-30",
+    "content": {
+      "intro": "Riesgo es la medida de amenazas + vulnerabilidades + impacto. Gestionar riesgos para proteger activos de la organización.",
+      "tabs": [
+        {
+          "label": "Fórmula de Riesgo",
+          "title": "Risk = Threat × Vulnerability × Impact",
+          "text": "Threat: probabilidad de que atacante/evento ocurra. Vulnerability: debilidad explotable. Impact: magnitud del daño. Si cualquier factor es 0, riesgo es 0. Ej: vulnerability sin threat = bajo riesgo.",
+          "icon": "calculate"
+        },
+        {
+          "label": "Riesgo vs Incertidumbre",
+          "title": "Diferencia Clave",
+          "text": "Riesgo: outcome conocido con probabilidad estimable (ej: 30% chance de breach). Incertidumbre: outcome desconocido, no podemos estimar probabilidad (black swans). Risk management maneja riesgos conocidos.",
+          "icon": "help_outline"
+        },
+        {
+          "label": "Inherent vs Residual",
+          "title": "Tipos de Riesgo",
+          "text": "Inherent Risk: riesgo natural sin controles. Residual Risk: riesgo que queda DESPUÉS de aplicar controles. Objetivo: reducir inherent a residual aceptable. Nunca es 0 (costo infinito).",
+          "icon": "trending_down"
+        },
+        {
+          "label": "Appetite vs Tolerance",
+          "title": "Aceptación de Riesgo",
+          "text": "Risk Appetite: cantidad de riesgo que organización está dispuesta a aceptar para lograr objetivos. Risk Tolerance: desviación aceptable del appetite. Board define appetite, CISO lo operacionaliza.",
+          "icon": "balance"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Componentes del Riesgo - NIST SP 800-30 Appendix E",
+    "content": {
+      "components": [
+        {
+          "component": "Threat Sources",
+          "types": [
+            {"type": "Adversarial", "examples": "Nation-states, cybercriminals, hacktivists, insiders maliciosos", "intent": "Deliberado"},
+            {"type": "Accidental", "examples": "Errores de usuarios, misconfiguraciones, insiders negligentes", "intent": "No intencional"},
+            {"type": "Structural", "examples": "Hardware failures, software bugs, equipo obsoleto", "intent": "Falta de componente"},
+            {"type": "Environmental", "examples": "Natural disasters (flood, earthquake, fire), power outages", "intent": "Acto de naturaleza"}
+          ],
+          "icon": "warning"
+        },
+        {
+          "component": "Vulnerabilities",
+          "description": "Debilidades en sistema, proceso o control que pueden ser explotadas.",
+          "examples": [
+            "Technical: CVEs sin parchear, configuraciones por defecto, credenciales débiles",
+            "Operational: Procesos inadecuados, falta de training, no segregation of duties",
+            "Management: Sin políticas, presupuesto insuficiente, no risk awareness"
+          ],
+          "icon": "bug_report"
+        },
+        {
+          "component": "Likelihood",
+          "description": "Probabilidad de que threat explote vulnerability.",
+          "factors": [
+            "Capability del adversario (APT vs script kiddie)",
+            "Intent y motivación",
+            "Targeting (somos objetivo atractivo?)",
+            "Facilidad de explotación (CVSS score)"
+          ],
+          "scale": "Muy bajo (0-10%), Bajo (10-30%), Medio (30-60%), Alto (60-90%), Muy alto (90-100%)",
+          "icon": "percent"
+        },
+        {
+          "component": "Impact",
+          "description": "Magnitud del daño si el riesgo se materializa.",
+          "dimensions": [
+            "Confidencialidad: datos sensibles expuestos",
+            "Integridad: datos/sistemas alterados",
+            "Disponibilidad: downtime, pérdida de servicios",
+            "Financiero: $ pérdidas directas e indirectas",
+            "Reputacional: confianza de clientes, brand damage",
+            "Legal/Compliance: multas, sanciones, demandas"
+          ],
+          "scale": "Muy bajo, Bajo, Medio, Alto, Muy alto",
+          "icon": "crisis_alert"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "Niveles de Gestión de Riesgo - NIST SP 800-39",
+    "content": {
+      "tiers": [
+        {
+          "tier": "Tier 1 - Organizational",
+          "description": "Nivel estratégico. Board, C-level.",
+          "activities": [
+            "Definir risk appetite y tolerance",
+            "Aprobar risk management strategy",
+            "Asignar presupuesto para seguridad",
+            "Governance y oversight"
+          ],
+          "example": "Board decide: aceptamos X% de riesgo de breach para mantener agilidad de negocio",
+          "icon": "corporate_fare"
+        },
+        {
+          "tier": "Tier 2 - Mission/Business Process",
+          "description": "Nivel táctico. Business units, procesos críticos.",
+          "activities": [
+            "Identificar riesgos específicos de procesos de negocio",
+            "Aplicar risk appetite a decisiones operacionales",
+            "Priorizar inversiones de seguridad por impacto al negocio"
+          ],
+          "example": "Finanzas: proteger procesos de pagos es critical. Marketing: web downtime 1 hora es tolerable.",
+          "icon": "business_center"
+        },
+        {
+          "tier": "Tier 3 - Information System",
+          "description": "Nivel operacional. Sistemas IT específicos.",
+          "activities": [
+            "Risk assessment de sistemas individuales",
+            "Implementar controles técnicos",
+            "Monitoring y detección",
+            "Patch management, vulnerability scanning"
+          ],
+          "example": "Sistema de pagos: requiere FIPS 140-2 encryption, HA, backups inmutables",
+          "icon": "computer"
+        }
+      ],
+      "integration": "Los 3 tiers deben estar alineados. Decisiones de Tier 1 guían Tier 2 y 3. Feedback de Tier 3 informa Tier 1.",
+      "equifax_failure": "Tier 3 (IT) identificó vulnerability pero Tier 2 (management) no priorizó patch. Tier 1 (board) no tenía visibility. Breakdown de communication entre tiers."
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "practical_exercise",
+    "title": "Calculadora de Riesgo",
+    "content": {
+      "scenario": "Evalúa riesgo de no parchear CVE crítico en servidor web público de ecommerce",
+      "factors": {
+        "threat": {
+          "question": "¿Qué tan probable es que atacante intente explotar?",
+          "considerations": [
+            "CVE público hace 2 semanas",
+            "Exploit code disponible en GitHub",
+            "Server es público (accesible desde internet)",
+            "Ecommerce es objetivo atractivo (datos de pago)"
+          ],
+          "likelihood": "ALTO (80%)"
+        },
+        "vulnerability": {
+          "question": "¿Existe la debilidad?",
+          "status": "SÍ - servidor usa versión vulnerable de Apache, no parchado",
+          "severity": "CVSS 9.8 (Critical)"
+        },
+        "impact": {
+          "question": "¿Qué pasa si se explota?",
+          "consequences": [
+            "Confidencialidad: 500K registros de clientes (nombres, emails, direcciones) expuestos",
+            "Integridad: posible modificación de precios, órdenes",
+            "Disponibilidad: web caída durante investigación/recovery (pérdida de ventas)",
+            "Financiero: $2M en pérdidas (ventas + multas GDPR + remediación)",
+            "Reputacional: pérdida de confianza de clientes"
+          ],
+          "magnitude": "MUY ALTO"
+        }
+      },
+      "calculation": {
+        "formula": "Risk = Likelihood × Impact",
+        "result": "ALTO × MUY ALTO = RIESGO CRÍTICO",
+        "priority": "INMEDIATO - Parchear en próximas 24-48 horas. Escalar a management si hay resistencia."
+      },
+      "equifax_comparison": "Equifax tuvo este MISMO análisis disponible (scanner identificó CVE-2017-5638) pero no actuaron. Risk management failure."
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "quiz",
+    "title": "Evaluación - Fundamentos de Riesgo",
+    "content": {
+      "question": "Una empresa tiene CVE crítico (CVSS 9.8) en sistema interno NO expuesto a internet, sin exploit público conocido. ¿Cómo evalúas el riesgo?",
+      "options": [
+        {"id": "a", "text": "Riesgo CRÍTICO porque CVSS es 9.8", "is_correct": false, "feedback": "No. CVSS es severidad de vulnerability, NO riesgo. Falta evaluar likelihood (threat)."},
+        {"id": "b", "text": "Riesgo MEDIO-ALTO. Vulnerability severa existe pero likelihood menor (no expuesto, no exploit público)", "is_correct": true, "feedback": "Correcto. Risk = Threat × Vuln × Impact. Threat es menor (internal, no exploit). Vulnerability alta. Impact depende del sistema. Resultado: no tan crítico como si fuera público."},
+        {"id": "c", "text": "Riesgo BAJO porque es sistema interno", "is_correct": false, "feedback": "No tan simple. Insiders y lateral movement post-breach son amenazas. Vulnerability crítica en sistema importante es riesgo significativo."}
+      ]
+    }
+  }
+]

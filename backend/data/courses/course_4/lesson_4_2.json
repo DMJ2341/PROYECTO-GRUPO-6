@@ -1,0 +1,184 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: SolarWinds - Detection Challenges",
+    "duration": 120,
+    "content": {
+      "case_name": "SolarWinds SUNBURST APT29 (2020)",
+      "date": "Mar-Dec 2020",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/SolarWinds_logo.svg/1200px-SolarWinds_logo.svg.png",
+      "narrative": "APT más sofisticado de la década. Supply chain: backdoor en updates de Orion. SUNBURST malware extremadamente sigiloso: dormía 2 semanas, DGA domains, imitaba tráfico legítimo Orion, fileless, living-off-the-land. FireEye lo descubrió por coincidencia tras ser ellos mismos comprometidos. 9 meses sin detectar.",
+      "stats": [
+        {
+          "label": "Dwell Time",
+          "value": "9 meses",
+          "icon": "schedule"
+        },
+        {
+          "label": "Organizations Impacted",
+          "value": "18K",
+          "icon": "business"
+        },
+        {
+          "label": "Gov Agencies Breached",
+          "value": "9+",
+          "icon": "account_balance"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Fuentes de Detección",
+    "content": {
+      "intro": "Múltiples fuentes generan alertas de potenciales incidentes. SIEM agrega y correlaciona.",
+      "tabs": [
+        {
+          "label": "SIEM/SOAR",
+          "title": "Security Info & Event Mgmt",
+          "text": "Agrega logs de firewalls, IDS, endpoints, AD, apps. Correlation rules detectan patterns: failed logins múltiples, privilege escalation, data exfiltration. SOAR (Security Orchestration Automation Response) automatiza workflows. Ejemplos: Splunk, Elastic, QRadar.",
+          "icon": "dashboard"
+        },
+        {
+          "label": "EDR/XDR",
+          "title": "Endpoint/Extended Detection",
+          "text": "EDR: behavioral detection en endpoints (CrowdStrike, SentinelOne). Ve process execution, file changes, network connections, memory. XDR: correlaciona endpoint + network + cloud. Detecta living-off-the-land, fileless malware.",
+          "icon": "computer"
+        },
+        {
+          "label": "IDS/IPS",
+          "title": "Network Intrusion Detection",
+          "text": "Signatures de ataques conocidos. Anomaly detection para desconocidos. Snort, Suricata. Genera muchas alertas - tuning crítico para reducir falsos positivos. SUNBURST evadió signatures imitando tráfico legítimo.",
+          "icon": "sensors"
+        },
+        {
+          "label": "Threat Intel",
+          "title": "Intelligence Feeds",
+          "text": "IOCs compartidos: IPs maliciosas, domains, file hashes. STIX/TAXII protocols. ISACs (sector-specific). CISA alerts. Enriquece alertas con contexto. Threat hunting usa intel para buscar proactivamente.",
+          "icon": "psychology"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Indicators of Compromise (IOCs)",
+    "content": {
+      "ioc_types": [
+        {
+          "type": "Network IOCs",
+          "examples": [
+            "IPs maliciosas: 45.141.84.223",
+            "Domains: avsvmcloud.com (SUNBURST C2)",
+            "URLs",
+            "Unusual ports",
+            "Beaconing patterns"
+          ]
+        },
+        {
+          "type": "Host IOCs",
+          "examples": [
+            "File hashes: SHA256 of malware",
+            "Registry keys created",
+            "Mutexes",
+            "Scheduled tasks",
+            "Services created"
+          ]
+        },
+        {
+          "type": "Behavioral IOCs",
+          "examples": [
+            "Living-off-the-land: PowerShell, WMI, PsExec abuse",
+            "Unusual process parent-child relationships",
+            "Lateral movement patterns",
+            "Data staging in temp folders",
+            "Compression/encryption of data before exfil"
+          ]
+        }
+      ],
+      "sunburst_iocs": {
+        "domains": "DGA algorithm, looked like legit Orion telemetry",
+        "behavior": "Dormant 12-14 days, then called home via DNS/HTTP",
+        "evasion": "Checked for AV/sandboxes, terminated if detected"
+      },
+      "ioc_sharing": "Compartir IOCs vía STIX/TAXII, MISP platforms. Community defense."
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "practical_exercise",
+    "title": "Alert Triage - True vs False Positive",
+    "content": {
+      "scenario": "Eres SOC analyst. Tienes 5 alertas. Prioriza y clasifica.",
+      "alerts": [
+        {
+          "id": 1,
+          "alert": "Failed login: user 'jsmith' - 15 attempts in 5 min from 192.168.1.50",
+          "severity": "Medium",
+          "analysis": "Investigate. Possible brute force or user forgot password. Check if jsmith is valid user, if IP is their usual workstation. Correlate with other jsmith activity.",
+          "verdict": "Likely TRUE POSITIVE if unusual, could be FALSE if user issue"
+        },
+        {
+          "id": 2,
+          "alert": "Outbound connection: workstation 10.0.0.100 → 185.220.101.34:443 (Tor exit node)",
+          "severity": "High",
+          "analysis": "RED FLAG. Corporate workstation no debería contactar Tor. Possible C2, exfiltration, or employee using Tor (policy violation). Investigate immediately. Check process making connection, user logged in.",
+          "verdict": "TRUE POSITIVE - investigate"
+        },
+        {
+          "id": 3,
+          "alert": "Antivirus: Quarantined 'test.exe' on 10.0.0.45",
+          "severity": "Low",
+          "analysis": "AV funcionó. Verify quarantine exitosa. Check si fue descarga de email/web. User awareness si phishing. Monitor for reinfection attempts.",
+          "verdict": "TRUE POSITIVE but contained"
+        },
+        {
+          "id": 4,
+          "alert": "Port scan detected: 203.0.113.50 scanning TCP ports 1-1024 on 192.168.1.0/24",
+          "severity": "High",
+          "analysis": "External reconnaissance. Check firewall blocks. If interno, possible compromised host doing recon. Identify source (internal vs external). Block if malicious.",
+          "verdict": "TRUE POSITIVE - reconnaissance"
+        },
+        {
+          "id": 5,
+          "alert": "Large file transfer: 10.0.0.200 uploaded 5GB to dropbox.com",
+          "severity": "Medium",
+          "analysis": "Could be legitimate (user backing up) or exfiltration. Check user, if files are sensitive, DLP policy. Correlate with other suspicious activity from .200. May be FALSE positive if legit business use.",
+          "verdict": "INVESTIGATE - context needed"
+        }
+      ],
+      "prioritization": "Order: #2 (Tor C2), #4 (Port scan), #1 (Brute force), #5 (Large transfer), #3 (AV contained)"
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - Detection",
+    "content": {
+      "question": "SUNBURST evadió detección 9 meses imitando tráfico legítimo. ¿Qué habría ayudado a detectarlo más temprano?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Behavioral analysis + threat hunting + NetFlow anomaly detection",
+          "is_correct": true,
+          "feedback": "Correcto. Beaconing pattern detectable en NetFlow. Behavioral analysis vs baseline. Threat hunting proactivo buscando anomalías. Signatures no funcionaron porque imitaba legítimo."
+        },
+        {
+          "id": "b",
+          "text": "Solo antivirus signature-based",
+          "is_correct": false,
+          "feedback": "No. SUNBURST era desconocido, fileless. Signatures inútiles contra APT sofisticado."
+        },
+        {
+          "id": "c",
+          "text": "Firewall más restrictivo",
+          "is_correct": false,
+          "feedback": "Parcial. Firewall ayuda pero tráfico parecía legítimo Orion telemetry. Detection requiere behavioral analytics."
+        }
+      ]
+    }
+  }
+]

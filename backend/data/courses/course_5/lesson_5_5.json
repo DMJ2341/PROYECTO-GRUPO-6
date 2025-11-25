@@ -1,0 +1,314 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Multi-Framework Compliance",
+    "duration": 120,
+    "content": {
+      "case_name": "Healthcare Provider - Complex Compliance",
+      "date": "2023",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Compliance_frameworks.svg/1200px-Compliance_frameworks.svg.png",
+      "narrative": "Hospital debe cumplir: HIPAA (federal law - PHI), PCI-DSS (payment cards), GDPR (pacientes EU), state breach laws, NIST CSF (voluntary pero board lo requiere), HITRUST (certification para seguros). Cada framework overlap pero diferencias clave. Implementan NIST CSF como base, mapean otros frameworks. Gap analysis revela 50+ controles faltantes. $5M investment en 2 años.",
+      "stats": [
+        {
+          "label": "Frameworks Aplicables",
+          "value": "6",
+          "icon": "account_tree"
+        },
+        {
+          "label": "Controles Únicos",
+          "value": "300+",
+          "icon": "fact_check"
+        },
+        {
+          "label": "Investment",
+          "value": "$5M",
+          "icon": "attach_money"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "NIST Cybersecurity Framework (CSF) v1.1",
+    "content": {
+      "intro": "Voluntary framework para mejorar ciberseguridad en critical infrastructure. Adoptado por empresas de todos tamaños.",
+      "tabs": [
+        {
+          "label": "5 Functions",
+          "title": "Core Functions",
+          "text": "IDENTIFY (asset management, risk assessment), PROTECT (access control, training), DETECT (monitoring, anomalies), RESPOND (incident response, communications), RECOVER (recovery planning, improvements). Organizan actividades en ciclo completo.",
+          "icon": "donut_large"
+        },
+        {
+          "label": "Implementation Tiers",
+          "title": "Madurez Organizacional",
+          "text": "Tier 1 Partial (reactive, ad-hoc), Tier 2 Risk Informed (risk-aware, no formal), Tier 3 Repeatable (formal policies, regular updates), Tier 4 Adaptive (proactive, continuous improvement). Organización evalúa current tier y define target.",
+          "icon": "stairs"
+        },
+        {
+          "label": "Profiles",
+          "title": "Current vs Target State",
+          "text": "Current Profile: estado actual de implementación. Target Profile: estado deseado según risk appetite y business needs. Gap analysis: diferencia entre current y target. Roadmap para cerrar gaps.",
+          "icon": "compare_arrows"
+        },
+        {
+          "label": "Categories & Subcategories",
+          "title": "Detalle Específico",
+          "text": "23 Categories (ej: Asset Management, Data Security, Incident Response). 108 Subcategories con outcomes específicos. Ej: PR.AC-1: Identities and credentials issued, managed, verified, revoked, audited. Mapea a NIST 800-53, ISO 27001, CIS Controls.",
+          "icon": "category"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Regulaciones de Compliance",
+    "content": {
+      "regulations": [
+        {
+          "regulation": "GDPR",
+          "jurisdiction": "EU (applies globally if EU data)",
+          "focus": "Personal data protection, privacy rights",
+          "key_requirements": [
+            "Lawful basis for processing (consent, legitimate interest)",
+            "Data minimization",
+            "Purpose limitation",
+            "Right to access, rectification, erasure, portability",
+            "Data breach notification 72 hours to authority",
+            "DPO (Data Protection Officer) for certain orgs",
+            "Privacy by design and by default",
+            "DPIA (Data Protection Impact Assessment) for high-risk"
+          ],
+          "penalties": "€20M or 4% global revenue (whichever higher)",
+          "reference": "https://gdpr.eu"
+        },
+        {
+          "regulation": "HIPAA",
+          "jurisdiction": "US Healthcare",
+          "focus": "Protected Health Information (PHI) security and privacy",
+          "key_requirements": [
+            "Security Rule: Administrative, Physical, Technical safeguards",
+            "Privacy Rule: Use/disclosure limits, patient rights",
+            "Breach Notification Rule: 60 days to HHS and affected",
+            "Business Associate Agreements (BAAs) with vendors",
+            "Risk analysis required",
+            "Minimum necessary principle"
+          ],
+          "penalties": "$100 - $50K per violation, max $1.5M/year per category",
+          "reference": "HHS.gov"
+        },
+        {
+          "regulation": "PCI-DSS",
+          "jurisdiction": "Global (payment card industry)",
+          "focus": "Cardholder Data Environment (CDE) security",
+          "key_requirements": [
+            "12 Requirements: Firewall, encryption, access control, monitoring, testing, policies",
+            "Quarterly vulnerability scans (ASV)",
+            "Annual penetration tests",
+            "Compensating controls allowed if justified",
+            "4 Levels based on transaction volume"
+          ],
+          "penalties": "$5K-$100K per month fines by card brands, loss of ability to process cards",
+          "reference": "PCI Security Standards Council"
+        },
+        {
+          "regulation": "SOX",
+          "jurisdiction": "US Public Companies",
+          "focus": "Financial reporting accuracy, internal controls",
+          "key_requirements": [
+            "Section 404: Management assess internal controls",
+            "IT controls relevant: access control, change management, backups",
+            "Auditor attestation",
+            "Criminal penalties for fraud"
+          ],
+          "penalties": "CEO/CFO certification required, jail time for fraud",
+          "reference": "Sarbanes-Oxley Act 2002"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "ISO 27001:2013 Overview",
+    "content": {
+      "note": "ISO 27001 es estándar de pago (no free/public como NIST). Aquí conceptos generales.",
+      "overview": "International standard para ISMS (Information Security Management System). Certifiable - auditor externo certifica compliance.",
+      "isms_process": "Plan-Do-Check-Act (PDCA) cycle: Plan (establish ISMS, risk assessment), Do (implement controls), Check (monitor, audit), Act (improve).",
+      "annex_a": "114 controles organizados en 14 domains: A.5 Policies, A.6 Organization, A.7 Human Resources, A.8 Asset Management, A.9 Access Control, A.10 Cryptography, A.11 Physical Security, A.12 Operations, A.13 Communications, A.14 Development, A.15 Supplier, A.16 Incident, A.17 Continuity, A.18 Compliance.",
+      "certification_benefits": [
+        "Customer confidence (especially EU/international)",
+        "Competitive advantage in tenders",
+        "Structured approach to security",
+        "Annual audits force continuous improvement"
+      ],
+      "vs_nist": "ISO 27001 es certifiable standard. NIST CSF/800-53 son guidelines (no certification official). Muchos controles overlap - se complementan."
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "theory_section",
+    "title": "Framework Mapping y Gap Analysis",
+    "content": {
+      "challenge": "Organización sujeta a múltiples frameworks. Overlap significativo pero diferencias clave. Cómo gestionar?",
+      "strategy": {
+        "approach": "Implement comprehensive framework (NIST CSF o ISO 27001) como base. Mapear otros requerimientos a ese framework. Identificar gaps únicos de cada regulación.",
+        "example_mapping": "NIST CSF PR.AC-1 (identity management) mapea a: ISO 27001 A.9.2.1, HIPAA 164.308(a)(4), PCI-DSS 8.1, GDPR Article 32(1). Implementar una vez, cumplir múltiples."
+      },
+      "gap_analysis_process": [
+        "1. Inventariar todos frameworks aplicables",
+        "2. Mapear requerimientos a framework base elegido",
+        "3. Identificar gaps: controles requeridos por regulación pero no en framework base",
+        "4. Priorizar gaps por: criticality, regulatory penalty, effort",
+        "5. Create roadmap para cerrar gaps (quick wins + long-term)"
+      ],
+      "common_gaps": {
+        "gdpr_specific": "DPIA process, Data retention policies, Right to erasure automation",
+        "hipaa_specific": "BAA management, PHI encryption at rest (not just transit), Audit logs 6 years",
+        "pci_specific": "Quarterly ASV scans, Segmentation of CDE, Compensating controls documentation"
+      },
+      "tools": "GRC (Governance Risk Compliance) platforms: ServiceNow GRC, OneTrust, LogicGate. Automated control mapping y evidence collection."
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "practical_exercise",
+    "title": "Implementa NIST CSF + Gap Analysis",
+    "content": {
+      "scenario": "Fintech startup. Necesita: PCI-DSS (payment processing), GDPR (EU customers), SOX (planning IPO).",
+      "your_task": "Usar NIST CSF como base, identificar gaps para PCI y GDPR.",
+      "step_1": {
+        "action": "Create Current Profile",
+        "assessment": "Rate cada CSF Subcategory 0-4 scale (0=not implemented, 4=fully implemented)",
+        "sample_ratings": {
+          "ID.AM-1 Physical devices inventoried": "2 (partial - manual spreadsheet)",
+          "PR.AC-1 Identities managed": "3 (mostly - have IAM but no MFA)",
+          "DE.CM-1 Network monitored": "1 (minimal - no SIEM)",
+          "RS.CO-2 Incidents reported per requirements": "0 (no formal process)"
+        },
+        "current_tier": "Tier 1-2 (Partial to Risk Informed)"
+      },
+      "step_2": {
+        "action": "Define Target Profile",
+        "business_drivers": "PCI compliance (required), GDPR (legal requirement), SOX (planned IPO in 18 months)",
+        "target_ratings": {
+          "ID.AM-1": "4 (full automation with CMDB)",
+          "PR.AC-1": "4 (MFA for all, PAM for privileged)",
+          "DE.CM-1": "4 (SIEM with 24/7 SOC)",
+          "RS.CO-2": "4 (incident response plan, 72h GDPR notification)"
+        },
+        "target_tier": "Tier 3 (Repeatable)"
+      },
+      "step_3": {
+        "action": "Gap Analysis",
+        "gaps": [
+          {
+            "gap": "MFA not implemented",
+            "current": "Password only",
+            "target": "MFA for all users",
+            "priority": "HIGH (PCI 8.3, GDPR Article 32)",
+            "effort": "Medium ($50K)",
+            "timeline": "Q1"
+          },
+          {
+            "gap": "No SIEM",
+            "current": "Manual log review",
+            "target": "SIEM with real-time monitoring",
+            "priority": "HIGH (PCI 10.6, SOX IT controls)",
+            "effort": "High ($200K)",
+            "timeline": "Q2"
+          },
+          {
+            "gap": "No GDPR DPIA process",
+            "current": "No formal process",
+            "target": "DPIA for high-risk processing",
+            "priority": "MEDIUM (GDPR Article 35)",
+            "effort": "Low ($20K consulting)",
+            "timeline": "Q1"
+          },
+          {
+            "gap": "No immutable backups",
+            "current": "Backups on-site, overwritable",
+            "target": "3-2-1 with offline immutable",
+            "priority": "CRITICAL (ransomware risk + SOX)",
+            "effort": "Medium ($75K)",
+            "timeline": "Q1"
+          }
+        ]
+      },
+      "step_4": {
+        "action": "Create Roadmap",
+        "q1": "MFA, DPIA process, Immutable backups (total $145K)",
+        "q2": "SIEM deployment ($200K)",
+        "q3": "Remaining PCI gaps, audit prep",
+        "q4": "Pre-IPO SOX audit",
+        "total_investment": "$500K over 12 months"
+      }
+    }
+  },
+  {
+    "screen_id": 7,
+    "type": "theory_section",
+    "title": "Audit y Assessment",
+    "content": {
+      "types": [
+        {
+          "type": "Internal Audit",
+          "who": "Internal audit team or hired consultant",
+          "frequency": "Annual or continuous",
+          "purpose": "Self-assessment, identify gaps before external audit",
+          "scope": "Full controls or risk-based sampling",
+          "output": "Internal audit report, remediation recommendations"
+        },
+        {
+          "type": "External Audit",
+          "who": "Independent third-party auditor (Big 4, specialized firms)",
+          "frequency": "Annual for certifications (ISO, SOC 2), as required for compliance",
+          "purpose": "Validate compliance, provide assurance to stakeholders",
+          "scope": "Defined by standard (ISO 27001) or regulation (SOX)",
+          "output": "Audit report, certification (if pass), findings to remediate"
+        }
+      ],
+      "audit_process": [
+        "1. Planning: scope, timing, evidence requests",
+        "2. Fieldwork: interviews, document review, technical testing",
+        "3. Findings: identify gaps, non-conformities",
+        "4. Report: draft findings, management response",
+        "5. Final report: certification or findings to fix"
+      ],
+      "evidence_collection": "Screenshots, policies, logs, training records, meeting minutes, change tickets, vulnerability scans, penetration test reports. Organize evidence in advance.",
+      "soc_2": "Service Organization Control 2. Audit de controles para service providers (SaaS). Type 1 (point in time) vs Type 2 (over period, 6-12 months). Trust Service Criteria: Security, Availability, Processing Integrity, Confidentiality, Privacy."
+    }
+  },
+  {
+    "screen_id": 8,
+    "type": "quiz",
+    "title": "Evaluación - Frameworks y Compliance",
+    "content": {
+      "question": "Startup SaaS en EU, procesa pagos. ¿Qué frameworks/regulations aplicables mínimo?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Solo GDPR porque están en EU",
+          "is_correct": false,
+          "feedback": "No. Procesan pagos → PCI-DSS también. Posiblemente ISO 27001 para customer trust."
+        },
+        {
+          "id": "b",
+          "text": "GDPR (EU data), PCI-DSS (payment cards), considerar ISO 27001 o SOC 2 para customers",
+          "is_correct": true,
+          "feedback": "Correcto. GDPR es legal requirement. PCI-DSS es contractual (card brands). ISO/SOC 2 no mandatory pero customers enterprise lo piden."
+        },
+        {
+          "id": "c",
+          "text": "NIST CSF (es US framework)",
+          "is_correct": false,
+          "feedback": "NIST CSF es voluntary, útil como base pero no requirement. GDPR y PCI son mandatory."
+        }
+      ]
+    }
+  }
+]

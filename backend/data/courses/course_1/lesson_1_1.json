@@ -1,0 +1,128 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Target Data Breach",
+    "duration": 120,
+    "content": {
+      "case_name": "Target Data Breach (2013)",
+      "date": "27 Nov 2013 - Black Friday",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Target_Corporation_logo_%28vector%29.svg/1200px-Target_Corporation_logo_%28vector%29.svg.png",
+      "narrative": "El sistema de punto de venta (POS) empieza a comportarse extraño durante la temporada más crítica del año. Los hackers entraron a través de un proveedor de aire acondicionado (Fazio Mechanical). 40 millones de tarjetas de crédito robadas.",
+      "stats": [
+        {"label": "Tarjetas Robadas", "value": "40M", "icon": "credit_card"},
+        {"label": "Clientes Expuestos", "value": "70M", "icon": "group"},
+        {"label": "Pérdidas Totales", "value": "$292M", "icon": "attach_money"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "La Tríada CIA: Pilares de Seguridad",
+    "content": {
+      "intro": "Los 3 objetivos fundamentales de la seguridad de la información según NIST SP 800-12 Rev. 1.",
+      "tabs": [
+        {
+          "label": "Confidencialidad",
+          "title": "Confidentiality - ¿Quién puede ver los datos?",
+          "text": "Garantizar que la información solo sea accesible para personas autorizadas. Incluye controles técnicos (cifrado, ACLs) y administrativos (clasificación de datos). En Target, los datos de tarjetas fueron accedidos por no autorizados.",
+          "icon": "lock"
+        },
+        {
+          "label": "Integridad",
+          "title": "Integrity - ¿Son los datos correctos?",
+          "text": "Asegurar que la información no ha sido alterada sin autorización. Usa checksums, hashing (SHA-256), firmas digitales. Ejemplo: Ukrainian Power Grid 2015 donde malware modificó configuraciones SCADA.",
+          "icon": "verified"
+        },
+        {
+          "label": "Disponibilidad",
+          "title": "Availability - ¿Podemos acceder al servicio?",
+          "text": "Asegurar que los sistemas funcionen cuando se necesitan. Requiere redundancia, backups, DRP (Disaster Recovery Plan). Ejemplo: Colonial Pipeline 2021 tuvo que cerrar operaciones por ransomware.",
+          "icon": "schedule"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "interactive_concept",
+    "title": "Conceptos AAA Framework",
+    "content": {
+      "description": "Más allá de CIA: Authentication, Authorization, Accounting",
+      "concepts": [
+        {
+          "name": "Authentication",
+          "definition": "Verificar la identidad (¿Quién eres?)",
+          "example": "Password, MFA, biometría",
+          "icon": "fingerprint"
+        },
+        {
+          "name": "Authorization",
+          "definition": "Permisos otorgados (¿Qué puedes hacer?)",
+          "example": "Roles RBAC, ACLs",
+          "icon": "vpn_key"
+        },
+        {
+          "name": "Accounting",
+          "definition": "Registro de actividades (¿Qué hiciste?)",
+          "example": "Logs, auditoría, SIEM",
+          "icon": "history"
+        },
+        {
+          "name": "Non-repudiation",
+          "definition": "No puedes negar que hiciste algo",
+          "example": "Firmas digitales, timestamps",
+          "icon": "verified_user"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "quiz",
+    "title": "Evaluación Rápida - CIA",
+    "content": {
+      "question": "En el ataque a Target, los hackers robaron 40 millones de números de tarjeta. ¿Qué principio de la tríada CIA se violó principalmente?",
+      "options": [
+        {"id": "a", "text": "Disponibilidad", "is_correct": false, "feedback": "Incorrecto. El sistema seguía funcionando, no hubo caída del servicio."},
+        {"id": "b", "text": "Confidencialidad", "is_correct": true, "feedback": "¡Correcto! Datos privados fueron accedidos por personas no autorizadas. Es una violación de confidencialidad."},
+        {"id": "c", "text": "Integridad", "is_correct": false, "feedback": "Incorrecto. Los datos no fueron modificados, fueron robados."}
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "practical_scenario",
+    "title": "Clasificador CIA: Analiza el Escenario",
+    "content": {
+      "instruction": "Para cada situación, identifica qué principio(s) CIA se comprometen:",
+      "scenarios": [
+        {
+          "id": 1,
+          "description": "Un DDoS tumba el sitio web de ecommerce durante Black Friday",
+          "correct_answer": "Disponibilidad",
+          "explanation": "El servicio no está accesible, es disponibilidad."
+        },
+        {
+          "id": 2,
+          "description": "Ransomware cifra archivos de hospital, no pueden acceder a historiales médicos",
+          "correct_answer": "Disponibilidad + Confidencialidad",
+          "explanation": "Disponibilidad (no acceso) y potencial confidencialidad si hay exfiltración."
+        },
+        {
+          "id": 3,
+          "description": "Atacante modifica registros financieros en base de datos",
+          "correct_answer": "Integridad",
+          "explanation": "Datos alterados sin autorización = violación de integridad."
+        },
+        {
+          "id": 4,
+          "description": "Empleado vende lista de clientes a competidor",
+          "correct_answer": "Confidencialidad",
+          "explanation": "Información confidencial divulgada a no autorizados."
+        }
+      ]
+    }
+  }
+]

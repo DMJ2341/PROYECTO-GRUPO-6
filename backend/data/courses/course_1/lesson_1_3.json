@@ -1,0 +1,255 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Log4Shell (Log4j)",
+    "duration": 120,
+    "content": {
+      "case_name": "Log4Shell Vulnerability (2021)",
+      "date": "9 Dec 2021",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Apache_Log4j_Logo.svg/1200px-Apache_Log4j_Logo.svg.png",
+      "narrative": "CVE-2021-44228: Una vulnerabilidad de severidad crítica (CVSS 10.0) en biblioteca Java Log4j usada por millones de aplicaciones. Explotación trivial, impacto masivo. CISA ordena parchar en 5 días.",
+      "stats": [
+        {"label": "CVSS Score", "value": "10.0", "icon": "warning"},
+        {"label": "Apps Vulnerables", "value": "Millones", "icon": "apps"},
+        {"label": "Días para Exploit", "value": "0 (0-day)", "icon": "schedule"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Vulnerabilidades: Fundamentos",
+    "content": {
+      "intro": "Según NIST SP 800-40 Rev. 4, una vulnerabilidad es una debilidad en sistema, procedimiento o control que puede ser explotada.",
+      "tabs": [
+        {
+          "label": "Definición",
+          "title": "¿Qué es una Vulnerabilidad?",
+          "text": "Flaw o debilidad en diseño, implementación, operación o gestión de sistema que puede ser explotada para violar seguridad. Diferente de 'bug' - no todo bug es vulnerabilidad de seguridad.",
+          "icon": "bug_report"
+        },
+        {
+          "label": "Tipos",
+          "title": "Clasificación de Vulnerabilidades",
+          "text": "Buffer Overflow, SQL Injection, XSS, CSRF, Broken Authentication, Sensitive Data Exposure, XXE, Insecure Deserialization, Security Misconfiguration. OWASP Top 10 y CWE (Common Weakness Enumeration).",
+          "icon": "category"
+        },
+        {
+          "label": "CWE",
+          "title": "Common Weakness Enumeration",
+          "text": "Catálogo de debilidades de software/hardware. Ejemplos: CWE-79 (XSS), CWE-89 (SQL Injection), CWE-787 (Out-of-bounds Write). Mantiene MITRE.",
+          "icon": "list_alt"
+        },
+        {
+          "label": "Exploit",
+          "title": "Vulnerabilidad vs Exploit",
+          "text": "Vulnerabilidad = la debilidad. Exploit = código/técnica que aprovecha la vulnerabilidad. Exploit puede ser Proof-of-Concept (PoC) o weaponized.",
+          "icon": "gavel"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "interactive_system",
+    "title": "Sistema CVE: Common Vulnerabilities and Exposures",
+    "content": {
+      "description": "Diccionario de vulnerabilidades conocidas públicamente. Mantenido por MITRE, financiado por CISA.",
+      "cve_structure": {
+        "format": "CVE-YYYY-NNNNN",
+        "example": "CVE-2021-44228",
+        "breakdown": [
+          {"part": "CVE", "meaning": "Common Vulnerabilities and Exposures"},
+          {"part": "2021", "meaning": "Año de asignación (no descubrimiento)"},
+          {"part": "44228", "meaning": "Número secuencial único"}
+        ]
+      },
+      "cve_lifecycle": [
+        {"stage": "Reserved", "description": "CVE ID asignado, detalles no públicos"},
+        {"stage": "Published", "description": "Detalles públicos en CVE.org"},
+        {"stage": "Analyzed", "description": "NVD añade CVSS score, referencias"},
+        {"stage": "Modified", "description": "Actualización de información"},
+        {"stage": "Rejected", "description": "No es vulnerabilidad válida"}
+      ],
+      "databases": [
+        {"name": "CVE.org", "url": "cve.mitre.org", "description": "Base de datos oficial"},
+        {"name": "NVD", "url": "nvd.nist.gov", "description": "NIST National Vulnerability Database con CVSS"},
+        {"name": "CISA KEV", "url": "cisa.gov/known-exploited-vulnerabilities", "description": "Vulnerabilidades activamente explotadas"}
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "CVSS: Common Vulnerability Scoring System",
+    "content": {
+      "intro": "Sistema estandarizado para evaluar severidad de vulnerabilidades. CVSS v3.1 actual. Escala 0.0-10.0.",
+      "metric_groups": [
+        {
+          "group": "Base Metrics",
+          "description": "Características intrínsecas que no cambian con tiempo",
+          "metrics": [
+            {"name": "Attack Vector (AV)", "values": "Network, Adjacent, Local, Physical"},
+            {"name": "Attack Complexity (AC)", "values": "Low, High"},
+            {"name": "Privileges Required (PR)", "values": "None, Low, High"},
+            {"name": "User Interaction (UI)", "values": "None, Required"},
+            {"name": "Scope (S)", "values": "Unchanged, Changed"},
+            {"name": "Confidentiality Impact (C)", "values": "None, Low, High"},
+            {"name": "Integrity Impact (I)", "values": "None, Low, High"},
+            {"name": "Availability Impact (A)", "values": "None, Low, High"}
+          ]
+        },
+        {
+          "group": "Temporal Metrics",
+          "description": "Cambian con el tiempo (exploit disponible, patch, workarounds)",
+          "optional": true
+        },
+        {
+          "group": "Environmental Metrics",
+          "description": "Específicos al entorno del usuario",
+          "optional": true
+        }
+      ],
+      "severity_ratings": [
+        {"score": "0.0", "rating": "None"},
+        {"score": "0.1-3.9", "rating": "Low", "color": "green"},
+        {"score": "4.0-6.9", "rating": "Medium", "color": "yellow"},
+        {"score": "7.0-8.9", "rating": "High", "color": "orange"},
+        {"score": "9.0-10.0", "rating": "Critical", "color": "red"}
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "practical_lab",
+    "title": "Lab NVD: Analiza CVE-2017-0144 (EternalBlue)",
+    "content": {
+      "instruction": "Busca CVE-2017-0144 en NVD (nvd.nist.gov) y responde:",
+      "simulated_nvd_data": {
+        "cve_id": "CVE-2017-0144",
+        "description": "The SMBv1 server in Microsoft Windows Vista SP2; Windows Server 2008 SP2 and R2 SP1; Windows 7 SP1; Windows 8.1; Windows Server 2012 Gold and R2; Windows RT 8.1; and Windows 10 Gold, 1511, and 1607; and Windows Server 2016 allows remote attackers to execute arbitrary code via crafted packets, aka 'Windows SMB Remote Code Execution Vulnerability'.",
+        "cvss_v3": {
+          "score": 8.1,
+          "vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "severity": "HIGH"
+        },
+        "published": "2017-03-17",
+        "cwe": "CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer",
+        "references": [
+          "MS17-010 Security Bulletin",
+          "CISA Alert TA17-132A (WannaCry)"
+        ]
+      },
+      "questions": [
+        {
+          "q": "¿Cuál es el CVSS score base?",
+          "a": "8.1 (High)",
+          "explanation": "Severidad High, casi Critical"
+        },
+        {
+          "q": "¿Qué Attack Vector tiene?",
+          "a": "Network (AV:N)",
+          "explanation": "Explotable remotamente vía red, aumenta peligrosidad"
+        },
+        {
+          "q": "¿Qué impactos causa?",
+          "a": "C:H, I:H, A:H (todos High)",
+          "explanation": "Compromiso total: leer datos, modificar, ejecutar código"
+        },
+        {
+          "q": "¿Qué malware famoso explotó esto?",
+          "a": "WannaCry y NotPetya",
+          "explanation": "Ambos ransomware usaron EternalBlue para propagación"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "interactive_exercise",
+    "title": "Calculadora CVSS: Evalúa Severidad",
+    "content": {
+      "instruction": "Usa los siguientes parámetros para calcular CVSS de una vulnerabilidad SQL Injection en aplicación web:",
+      "scenario": "SQLi en app web de banca que permite extraer toda la base de datos. Explotable desde internet sin autenticación.",
+      "user_selects": [
+        {"metric": "Attack Vector", "options": ["Network", "Adjacent", "Local", "Physical"], "correct": "Network"},
+        {"metric": "Attack Complexity", "options": ["Low", "High"], "correct": "Low"},
+        {"metric": "Privileges Required", "options": ["None", "Low", "High"], "correct": "None"},
+        {"metric": "User Interaction", "options": ["None", "Required"], "correct": "None"},
+        {"metric": "Scope", "options": ["Unchanged", "Changed"], "correct": "Unchanged"},
+        {"metric": "Confidentiality Impact", "options": ["None", "Low", "High"], "correct": "High"},
+        {"metric": "Integrity Impact", "options": ["None", "Low", "High"], "correct": "High"},
+        {"metric": "Availability Impact", "options": ["None", "Low", "High"], "correct": "Low"}
+      ],
+      "calculated_score": {
+        "base_score": 9.4,
+        "severity": "CRITICAL",
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:L",
+        "explanation": "Score crítico porque: explotación remota (AV:N), sin complejidad (AC:L), sin autenticación (PR:N), impacto alto en C e I."
+      }
+    }
+  },
+  {
+    "screen_id": 7,
+    "type": "theory_section",
+    "title": "Ciclo de Vida de Vulnerabilidades",
+    "content": {
+      "timeline": [
+        {
+          "phase": "Discovery",
+          "description": "Investigador o atacante descubre vulnerabilidad",
+          "icon": "search"
+        },
+        {
+          "phase": "Disclosure",
+          "description": "Responsible Disclosure: reportar a vendor (90 días típico). Full Disclosure: publicar inmediatamente.",
+          "icon": "announcement"
+        },
+        {
+          "phase": "CVE Assignment",
+          "description": "Se asigna CVE ID, se publica en bases de datos",
+          "icon": "badge"
+        },
+        {
+          "phase": "Patch Development",
+          "description": "Vendor desarrolla y publica parche/fix",
+          "icon": "build"
+        },
+        {
+          "phase": "Exploitation",
+          "description": "Atacantes desarrollan exploit. Ventana de exposición crítica.",
+          "icon": "warning"
+        },
+        {
+          "phase": "Patch Deployment",
+          "description": "Usuarios aplican parche (lento, problemático)",
+          "icon": "system_update"
+        }
+      ],
+      "zero_day": {
+        "definition": "Vulnerabilidad explotada antes de que vendor tenga parche (0 días para prepararse)",
+        "examples": "Stuxnet (4 zero-days), Operation Aurora (IE zero-day)",
+        "danger": "Vendor y usuarios están ciegos, no hay defensa"
+      },
+      "n_day": {
+        "definition": "Vulnerabilidad con parche disponible pero no aplicado",
+        "risk": "Muchos ataques usan N-days porque organizaciones son lentas parcheando",
+        "example": "Equifax breach: CVE-2017-5638 tenía parche 2 meses antes del ataque"
+      }
+    }
+  },
+  {
+    "screen_id": 8,
+    "type": "quiz",
+    "title": "Evaluación - Vulnerabilidades y CVE",
+    "content": {
+      "question": "Una empresa sufre breach por vulnerabilidad que tiene CVE asignado hace 6 meses y parche disponible hace 4 meses. ¿Qué tipo de vulnerabilidad es?",
+      "options": [
+        {"id": "a", "text": "Zero-day", "is_correct": false, "feedback": "No. Zero-day es sin parche disponible."},
+        {"id": "b", "text": "N-day (Unpatched Known Vulnerability)", "is_correct": true, "feedback": "¡Correcto! Parche disponible pero no aplicado. Fallo de patch management. La mayoría de brechas son N-days, no zero-days."},
+        {"id": "c", "text": "1-day", "is_correct": false, "feedback": "Parcialmente correcto, pero 1-day se refiere a exploit publicado 1 día después de parche."}
+      ]
+    }
+  }
+]

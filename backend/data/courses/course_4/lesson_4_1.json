@@ -1,0 +1,141 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: NotPetya Ransomware",
+    "duration": 120,
+    "content": {
+      "case_name": "NotPetya Global Attack (2017)",
+      "date": "27 Jun 2017",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/NotPetya_Ransomware_screenshot.jpg/800px-NotPetya_Ransomware_screenshot.jpg",
+      "narrative": "Disfrazado como ransomware pero era wiper destructivo. Supply chain: actualizaciones de software contable ucraniano (MeDoc) trojanizadas. Se propagó globalmente vía EternalBlue + PsExec + WMI. Maersk: 4000 servers, 45,000 PCs destruidos. $10B daños totales. Respuesta a incidente crítica: Maersk restauró en 10 días desde backups, héroe del IT.",
+      "stats": [
+        {
+          "label": "Daños Globales",
+          "value": "$10B",
+          "icon": "attach_money"
+        },
+        {
+          "label": "Maersk Recovery",
+          "value": "10 días",
+          "icon": "schedule"
+        },
+        {
+          "label": "Países Afectados",
+          "value": "64",
+          "icon": "public"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "NIST IR Lifecycle - SP 800-61 Rev. 2",
+    "content": {
+      "intro": "Ciclo de vida de respuesta a incidentes según NIST. 4 fases principales.",
+      "tabs": [
+        {
+          "label": "Preparation",
+          "title": "1. Preparación",
+          "text": "ANTES del incidente: formar CSIRT, crear playbooks, entrenar personal, obtener herramientas (forensics, SIEM), establecer comunicaciones, exercises (tabletop, red team). Prevention controls también. Sin preparación, respuesta será caótica.",
+          "icon": "shield"
+        },
+        {
+          "label": "Detection",
+          "title": "2. Detección y Análisis",
+          "text": "Identificar incidente: SIEM alerts, IDS, user reports, threat intel. Triage: true positive? Severidad? Scope? Contener evidencia. Timeline analysis. IOC extraction. Documentar todo. Mean Time to Detect (MTTD) metric crítica.",
+          "icon": "search"
+        },
+        {
+          "label": "Containment",
+          "title": "3. Contención, Erradicación, Recuperación",
+          "text": "Short-term containment (aislar sistema). Long-term (segmentar, monitor). Erradicar: eliminar malware, parchear vulns. Recuperar: restaurar desde backup limpio, validar, monitorear reinfección. Mean Time to Contain (MTTC) y MTTR metrics.",
+          "icon": "healing"
+        },
+        {
+          "label": "Post-Incident",
+          "title": "4. Actividad Post-Incidente",
+          "text": "Lessons learned meeting (toda la CSIRT + management). ¿Qué pasó? ¿Qué funcionó? ¿Qué mejorar? Actualizar playbooks. Reportar a stakeholders, reguladores si aplica. Retener evidencia según requerimientos legales. Continuous improvement.",
+          "icon": "assignment"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "CSIRT - Computer Security Incident Response Team",
+    "content": {
+      "structure": {
+        "roles": [
+          {
+            "role": "Incident Commander",
+            "responsibilities": "Toma decisiones finales, coordina, comunica con management",
+            "icon": "manage_accounts"
+          },
+          {
+            "role": "Security Analysts",
+            "responsibilities": "Triage, análisis técnico, IOC extraction, threat hunting",
+            "icon": "security"
+          },
+          {
+            "role": "Forensics Specialists",
+            "responsibilities": "Preservar evidencia, análisis forense, chain of custody",
+            "icon": "science"
+          },
+          {
+            "role": "Communications Lead",
+            "responsibilities": "Internal/external comms, stakeholder updates, media si necesario",
+            "icon": "campaign"
+          },
+          {
+            "role": "Legal Counsel",
+            "responsibilities": "Compliance, regulatory reporting, law enforcement liaison",
+            "icon": "gavel"
+          },
+          {
+            "role": "IT Operations",
+            "responsibilities": "Containment actions, recovery, restore services",
+            "icon": "settings"
+          }
+        ]
+      },
+      "playbooks": "Procedimientos documentados por tipo de incidente: ransomware, data breach, DDoS, insider threat. Paso a paso. Quién hace qué. Decision trees.",
+      "metrics": [
+        "MTTD: Mean Time to Detect",
+        "MTTR: Mean Time to Respond",
+        "MTTC: Mean Time to Contain",
+        "MTTR: Mean Time to Recover"
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "quiz",
+    "title": "Evaluación - IR Fundamentals",
+    "content": {
+      "question": "Maersk recuperó de NotPetya en 10 días. ¿Qué fase del NIST IR Lifecycle fue crítica para esto?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Preparation: tenían backups offline + playbook de disaster recovery",
+          "is_correct": true,
+          "feedback": "Correcto. Preparación = backups testados, procedimientos documentados. Sin esto, recovery habría tomado meses. Backup de domain controller encontrado en oficina remota de Ghana fue salvador."
+        },
+        {
+          "id": "b",
+          "text": "Detection solamente",
+          "is_correct": false,
+          "feedback": "Detection es importante pero recovery requiere preparación previa (backups, plans)."
+        },
+        {
+          "id": "c",
+          "text": "Post-Incident únicamente",
+          "is_correct": false,
+          "feedback": "Post-Incident es aprendizaje. Recovery actual depende de Preparation y Containment/Recovery phases."
+        }
+      ]
+    }
+  }
+]

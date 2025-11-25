@@ -1,0 +1,156 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Sony Pictures Hack",
+    "duration": 120,
+    "content": {
+      "case_name": "Sony Pictures Entertainment Breach (2014)",
+      "date": "24 Nov 2014",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Sony_Pictures_Entertainment_logo.svg/1200px-Sony_Pictures_Entertainment_logo.svg.png",
+      "narrative": "Atacantes (Guardians of Peace / Lazarus Group) comprometen toda la red corporativa. 100TB de datos robados: películas sin estrenar, emails de ejecutivos, datos de empleados. Falta de segmentación de red y controles preventivos permitió movimiento lateral sin restricción.",
+      "stats": [
+        {"label": "Datos Robados", "value": "100TB", "icon": "storage"},
+        {"label": "Empleados Afectados", "value": "47K", "icon": "badge"},
+        {"label": "Costo Total", "value": "$100M+", "icon": "account_balance"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Controles de Seguridad - NIST SP 800-53",
+    "content": {
+      "intro": "Según NIST SP 800-53 Rev. 5, los controles se clasifican por función y tipo.",
+      "tabs": [
+        {
+          "label": "Por Función",
+          "title": "Clasificación Funcional",
+          "text": "Preventivos (evitar incidentes): firewalls, MFA, cifrado. Detectivos (identificar): IDS, SIEM, logs. Correctivos (reparar): backups, patches, IR plans. Disuasivos (desalentar): avisos legales, cámaras.",
+          "icon": "category"
+        },
+        {
+          "label": "Por Tipo",
+          "title": "Clasificación por Implementación",
+          "text": "Técnicos (technology): firewalls, encryption, MFA. Administrativos (policy/procedure): políticas, training, auditorías. Físicos (physical): guardias, locks, CCTV.",
+          "icon": "dashboard"
+        },
+        {
+          "label": "Familias NIST",
+          "title": "Control Families SP 800-53",
+          "text": "AC (Access Control), AU (Audit), SC (System Communications Protection), IA (Identification & Authentication), IR (Incident Response), RA (Risk Assessment), SI (System Integrity), etc. 20 familias total.",
+          "icon": "family_restroom"
+        },
+        {
+          "label": "Selección",
+          "title": "Proceso de Selección de Controles",
+          "text": "1) Categorizar sistema (FIPS 199). 2) Seleccionar baseline (Low/Moderate/High). 3) Tailoring (ajustar). 4) Supplementar según riesgos. 5) Documentar en SSP.",
+          "icon": "checklist"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "interactive_diagram",
+    "title": "Defense in Depth (Defensa en Profundidad)",
+    "content": {
+      "description": "Estrategia de múltiples capas de seguridad. Si una falla, las otras protegen. Concepto del NSA.",
+      "layers": [
+        {"level": 1, "name": "Políticas, Procedimientos y Awareness", "controls": ["Security policies", "Acceptable Use Policy", "Training programs"], "icon": "policy"},
+        {"level": 2, "name": "Seguridad Física", "controls": ["Guards", "Locks", "CCTV", "Badges"], "icon": "meeting_room"},
+        {"level": 3, "name": "Perímetro de Red", "controls": ["Firewall", "IPS", "DMZ"], "icon": "security"},
+        {"level": 4, "name": "Red Interna", "controls": ["Segmentación (VLANs)", "NAC", "IDS"], "icon": "lan"},
+        {"level": 5, "name": "Host/Endpoint", "controls": ["Antivirus/EDR", "Host firewall", "Patching"], "icon": "computer"},
+        {"level": 6, "name": "Aplicación", "controls": ["WAF", "Input validation", "Secure coding"], "icon": "web"},
+        {"level": 7, "name": "Datos", "controls": ["Encryption at rest/transit", "DLP", "Backups"], "icon": "lock"}
+      ],
+      "sony_failure": "Sony falló en segmentación de red (capa 4). Atacantes se movieron lateralmente desde sistema comprometido a toda la red sin resistencia. También faltaron controles detectivos (capa monitoring)."
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "Zero Trust Architecture (ZTA)",
+    "content": {
+      "intro": "Nuevo paradigma de seguridad según NIST SP 800-207. 'Never trust, always verify'.",
+      "principles": [
+        {
+          "principle": "Verify Explicitly",
+          "description": "Autenticar y autorizar basado en todos los puntos de datos disponibles: identidad, device health, location, data classification.",
+          "icon": "verified_user"
+        },
+        {
+          "principle": "Least Privilege Access",
+          "description": "Just-In-Time y Just-Enough-Access. Limitar acceso al mínimo necesario por tiempo limitado.",
+          "icon": "vpn_lock"
+        },
+        {
+          "principle": "Assume Breach",
+          "description": "Diseñar asumiendo que el perímetro ya está comprometido. Micro-segmentation, encryption everywhere, monitoring.",
+          "icon": "warning"
+        }
+      ],
+      "components": [
+        "Policy Engine (decide access)",
+        "Policy Administrator (enforce access)",
+        "Policy Enforcement Point (where access granted/denied)",
+        "Continuous monitoring and analytics"
+      ],
+      "vs_traditional": {
+        "traditional": "Castle-and-moat: perímetro fuerte, interior confiado",
+        "zero_trust": "No trust boundaries: verify everything, trust nothing"
+      }
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "practical_scenario",
+    "title": "Diseña Controles: Protege Startup Fintech",
+    "content": {
+      "scenario": "Eres CISO de startup fintech de 50 empleados. Tienes app de banca móvil, APIs, base de datos de clientes. Presupuesto limitado $200K/año para seguridad.",
+      "requirements": [
+        "Proteger datos de clientes (PII, financieros)",
+        "Cumplir con regulaciones (PCI-DSS básico)",
+        "Prevenir ataques comunes (phishing, DDoS, SQLi)",
+        "Detectar y responder a incidentes"
+      ],
+      "user_designs": {
+        "instruction": "Selecciona controles priorizando por impacto y costo:",
+        "controls_available": [
+          {"control": "MFA para empleados", "type": "Preventivo/Técnico", "cost": "$5K/año", "priority": "Critical"},
+          {"control": "TLS/HTTPS para app", "type": "Preventivo/Técnico", "cost": "$2K", "priority": "Critical"},
+          {"control": "WAF (Web Application Firewall)", "type": "Preventivo/Técnico", "cost": "$15K/año", "priority": "High"},
+          {"control": "SIEM básico", "type": "Detectivo/Técnico", "cost": "$30K/año", "priority": "High"},
+          {"control": "Security awareness training", "type": "Preventivo/Administrativo", "cost": "$10K/año", "priority": "High"},
+          {"control": "Backup automatizado", "type": "Correctivo/Técnico", "cost": "$8K/año", "priority": "Critical"},
+          {"control": "Vulnerability scanning", "type": "Detectivo/Técnico", "cost": "$12K/año", "priority": "Medium"},
+          {"control": "EDR para endpoints", "type": "Detectivo/Técnico", "cost": "$25K/año", "priority": "Medium"},
+          {"control": "DDoS protection", "type": "Preventivo/Técnico", "cost": "$40K/año", "priority": "Medium"},
+          {"control": "Penetration testing", "type": "Detectivo/Administrativo", "cost": "$20K/año", "priority": "Medium"}
+        ]
+      },
+      "recommended_order": [
+        "1. MFA + TLS (fundamentos de seguridad)",
+        "2. Backups (recuperación ante incidentes)",
+        "3. Security Awareness (factor humano)",
+        "4. WAF (protege app web)",
+        "5. SIEM (detección)",
+        "6. Resto según presupuesto"
+      ]
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "quiz",
+    "title": "Evaluación - Controles de Seguridad",
+    "content": {
+      "question": "Tu empresa implementa un sistema que monitorea logs 24/7 y envía alertas cuando detecta patrones anormales de login. ¿Qué tipo de control es (función y tipo)?",
+      "options": [
+        {"id": "a", "text": "Preventivo - Técnico", "is_correct": false, "feedback": "No. Preventivo evita el ataque. Este solo observa y alerta."},
+        {"id": "b", "text": "Detectivo - Técnico", "is_correct": true, "feedback": "¡Correcto! Es detectivo (identifica incidentes) y técnico (implementado vía tecnología SIEM/log monitoring)."},
+        {"id": "c", "text": "Correctivo - Administrativo", "is_correct": false, "feedback": "No. Correctivo repara daño. Este detecta, no corrige automáticamente."}
+      ]
+    }
+  }
+]

@@ -1,0 +1,290 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Federal Agency RMF Implementation",
+    "duration": 120,
+    "content": {
+      "case_name": "DoD System Authorization (ATO)",
+      "date": "2019-2020",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Seal_of_the_United_States_Department_of_Defense.svg/1200px-Seal_of_the_United_States_Department_of_Defense.svg.png",
+      "narrative": "Sistema de DoD (Department of Defense) para datos clasificados necesita Authorization to Operate (ATO). Debe seguir NIST RMF obligatoriamente. Proceso toma 18 meses: categorizar (FIPS 199), seleccionar 500+ controles (NIST 800-53), implementar, assessment independiente, autorización por oficial senior. Sin ATO, sistema NO puede operar.",
+      "stats": [
+        {"label": "Duración Proceso", "value": "18 meses", "icon": "schedule"},
+        {"label": "Controles Implementados", "value": "500+", "icon": "fact_check"},
+        {"label": "Costo del Proceso", "value": "$2M+", "icon": "attach_money"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "NIST Risk Management Framework (RMF) - SP 800-37 Rev. 2",
+    "content": {
+      "intro": "Framework de 6 pasos para gestionar riesgos de seguridad y privacy en sistemas federales (y adoptado por privados).",
+      "tabs": [
+        {
+          "label": "Overview",
+          "title": "Los 6 Pasos del RMF",
+          "text": "PREPARE → CATEGORIZE → SELECT → IMPLEMENT → ASSESS → AUTHORIZE → MONITOR (continuo). Proceso iterativo, no lineal. Cada paso tiene inputs, actividades, outputs. Governance integrado.",
+          "icon": "account_tree"
+        },
+        {
+          "label": "Obligatorio",
+          "title": "FISMA y Compliance",
+          "text": "FISMA (Federal Information Security Management Act) requiere RMF para sistemas federales. OMB, DoD, DHS, todos deben seguir. Sector privado puede adoptar voluntariamente (best practice). FedRAMP usa RMF para cloud.",
+          "icon": "gavel"
+        },
+        {
+          "label": "Roles",
+          "title": "Participantes Clave",
+          "text": "Authorizing Official (AO): toma decisión de riesgo. System Owner: responsable del sistema. ISSO (Info System Security Officer): implementa controles. Assessor: independiente, evalúa controles.",
+          "icon": "groups"
+        },
+        {
+          "label": "Continuous",
+          "title": "Ongoing Authorization",
+          "text": "RMF no es one-time. Monitoring continuo (Step 6). Re-authorization cada 3 años típico o cuando cambios significativos. ConMon (Continuous Monitoring) es crítico.",
+          "icon": "autorenew"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Step 1: CATEGORIZE - FIPS 199",
+    "content": {
+      "purpose": "Determinar impacto potencial si CIA comprometido. Guía selección de controles.",
+      "fips_199": {
+        "standard": "Federal Information Processing Standard 199",
+        "impact_levels": [
+          {
+            "level": "LOW",
+            "definition": "Pérdida limitada. Ej: minor financial loss, minor harm a individuals, minor non-compliance",
+            "example": "Website informativo público. Si cae, inconveniente menor."
+          },
+          {
+            "level": "MODERATE",
+            "definition": "Pérdida seria. Ej: significant financial loss, significant harm, significant non-compliance",
+            "example": "HR system con datos de empleados. Breach expone PII de 10K empleados."
+          },
+          {
+            "level": "HIGH",
+            "definition": "Pérdida severa/catastrófica. Ej: major financial loss, severe harm/death, serious legal violations",
+            "example": "Sistema de comando militar. Compromise pone en riesgo vidas y seguridad nacional."
+          }
+        ]
+      },
+      "categorization_process": [
+        "1. Identificar información types en sistema (ej: PII, financial, classified)",
+        "2. Para cada type, determinar impacto para C, I, A si comprometido",
+        "3. Sistema categorizado por el HIGHEST impact de cualquier información type",
+        "4. Resultado: 'System X is LOW/MODERATE/HIGH for security'"
+      ],
+      "example": {
+        "system": "Employee Payroll System",
+        "info_types": [
+          {"type": "Employee PII", "C": "MODERATE", "I": "MODERATE", "A": "LOW"},
+          {"type": "Salary info", "C": "MODERATE", "I": "HIGH", "A": "LOW"}
+        ],
+        "categorization": "MODERATE system (highest of any dimension is MODERATE for C and I)",
+        "note": "Availability LOW porque downtime 1 día es tolerable. Integrity HIGH para salary (errores de pago = serio)."
+      }
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "Step 2: SELECT Controls - NIST SP 800-53",
+    "content": {
+      "purpose": "Elegir controles de seguridad apropiados basado en categorización FIPS 199.",
+      "control_baselines": [
+        {
+          "baseline": "LOW",
+          "controls": "~125 controles",
+          "description": "Protecciones mínimas. Low-impact systems.",
+          "example": "Public website sin datos sensibles"
+        },
+        {
+          "baseline": "MODERATE",
+          "controls": "~325 controles",
+          "description": "Mayoría de sistemas empresariales. Balance security/usability.",
+          "example": "HR system, financial apps, internal tools"
+        },
+        {
+          "baseline": "HIGH",
+          "controls": "~420 controles",
+          "description": "High-impact, sistemas críticos. Máxima seguridad.",
+          "example": "Classified systems, critical infrastructure, DoD"
+        }
+      ],
+      "control_families": {
+        "description": "NIST 800-53 organiza controles en 20 familias:",
+        "families": [
+          "AC (Access Control) - 25 controles",
+          "AU (Audit and Accountability) - 16 controles",
+          "AT (Awareness and Training) - 6 controles",
+          "CM (Configuration Management) - 14 controles",
+          "CP (Contingency Planning) - 13 controles",
+          "IA (Identification and Authentication) - 12 controles",
+          "IR (Incident Response) - 10 controles",
+          "SC (System and Communications Protection) - 51 controles",
+          "SI (System and Information Integrity) - 23 controles",
+          "... (total 20 familias)"
+        ]
+      },
+      "tailoring": {
+        "description": "Ajustar baseline a necesidades específicas:",
+        "actions": [
+          "Add: agregar controles por riesgos únicos",
+          "Remove: eliminar controles no aplicables (documentar justificación)",
+          "Modify: ajustar parámetros de controles (ej: password length 12 → 16)",
+          "Compensating controls: si control no implementable, usar alternativa equivalente"
+        ]
+      },
+      "output": "Control baseline tailored → documentar en SSP (System Security Plan)"
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "theory_section",
+    "title": "Steps 3-6: Implement, Assess, Authorize, Monitor",
+    "content": {
+      "step_3": {
+        "name": "IMPLEMENT",
+        "activities": [
+          "Implementar controles seleccionados",
+          "Documentar implementación en SSP (System Security Plan)",
+          "SSP describe: system architecture, boundaries, controles implementados, responsible parties"
+        ],
+        "duration": "6-12 meses típico para sistema MODERATE"
+      },
+      "step_4": {
+        "name": "ASSESS",
+        "activities": [
+          "Assessor independiente evalúa efectividad de controles",
+          "Testing: interviews, document review, technical testing",
+          "Identificar debilidades y deficiencias",
+          "Security Assessment Report (SAR) documenta hallazgos"
+        ],
+        "standard": "NIST SP 800-53A define assessment procedures",
+        "finding_types": ["Satisfied (control works)", "Other than Satisfied (gaps)"]
+      },
+      "step_5": {
+        "name": "AUTHORIZE",
+        "activities": [
+          "Authorizing Official (AO) revisa SAR y residual risks",
+          "Decision: Accept risk y dar Authorization to Operate (ATO), o Deny",
+          "Plan of Action & Milestones (POA&M) para remediar gaps",
+          "ATO típico válido 3 años"
+        ],
+        "risk_decision": "AO acepta residual risk explícitamente. Si riesgo muy alto, puede denegar ATO hasta remediation."
+      },
+      "step_6": {
+        "name": "MONITOR",
+        "activities": [
+          "Ongoing assessment de controles",
+          "Security impact analysis de cambios",
+          "Status reporting de POA&M",
+          "Re-authorization cuando expira o cambios mayores"
+        ],
+        "conmon": "Continuous Monitoring (ConMon): automated compliance checking, SIEM, vulnerability scanning, config monitoring"
+      }
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "practical_scenario",
+    "title": "Ejecuta RMF: Sistema de Finanzas",
+    "content": {
+      "scenario": "Empresa implementa nuevo Financial Reporting System. Contiene datos financieros confidenciales, debe cumplir SOX. Aplica RMF.",
+      "execution": [
+        {
+          "step": "CATEGORIZE",
+          "your_work": "FIPS 199 Impact Analysis",
+          "result": {
+            "info_types": "Financial records (SOX), Employee expenses",
+            "confidentiality": "HIGH (financial data sensible, SOX)",
+            "integrity": "HIGH (errores financieros = serios, SOX compliance)",
+            "availability": "MODERATE (downtime impacta reporting pero no catastrófico)",
+            "categorization": "HIGH SYSTEM (highest dimension)"
+          }
+        },
+        {
+          "step": "SELECT",
+          "your_work": "Choose control baseline + tailor",
+          "result": {
+            "baseline": "HIGH baseline (~420 controles)",
+            "tailoring": [
+              "ADD: AC-2(12) Account monitoring for privileged accounts (SOX requirement)",
+              "ENHANCE: AU-6 Audit review to daily (not weekly) for financial transactions",
+              "COMPENSATING: SC-8 Transmission confidentiality using VPN (no dedicated circuits)"
+            ],
+            "total_controls": "~425 controles después de tailoring"
+          }
+        },
+        {
+          "step": "IMPLEMENT",
+          "your_work": "Deploy controls, document in SSP",
+          "result": {
+            "duration": "12 months",
+            "key_controls": [
+              "MFA for all users (IA-2(1))",
+              "Encryption at rest and transit (SC-8, SC-28)",
+              "SIEM with real-time monitoring (AU-6(1))",
+              "Segregation of duties for financial approvals (AC-5)",
+              "Immutable backups (CP-9)"
+            ]
+          }
+        },
+        {
+          "step": "ASSESS",
+          "your_work": "Independent assessor tests controls",
+          "result": {
+            "findings": [
+              "Control AC-2(12): Other than Satisfied - Automated monitoring not configured",
+              "Control AU-6: Satisfied - Daily audit reviews documented",
+              "Control SC-28: Other than Satisfied - Some data not encrypted (dev environment)"
+            ],
+            "action": "Create POA&M for 2 OTS findings with 60-day remediation"
+          }
+        },
+        {
+          "step": "AUTHORIZE",
+          "your_work": "CFO (Authorizing Official) reviews risks",
+          "result": {
+            "decision": "ATO Granted with conditions (POA&M completion required)",
+            "residual_risk": "MODERATE (after planned remediations)",
+            "ato_period": "3 years, expires 2027-11-24"
+          }
+        },
+        {
+          "step": "MONITOR",
+          "your_work": "Ongoing monitoring",
+          "result": {
+            "activities": [
+              "Monthly POA&M status reviews",
+              "Quarterly vulnerability scans",
+              "Annual control self-assessments",
+              "Continuous SIEM monitoring"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 7,
+    "type": "quiz",
+    "title": "Evaluación - RMF",
+    "content": {
+      "question": "Sistema categorizado como MODERATE. Durante assessment, varios controles HIGH baseline fallan. ¿Qué pasa?",
+      "options": [
+        {"id": "a", "text": "ATO automático, los controles MODERATE son suficientes", "is_correct": false, "feedback": "No. Aunque es MODERATE system, si assessment encuentra gaps significativos, AO puede denegar ATO."},
+        {"id": "b", "text": "Create POA&M para remediar gaps. AO decide: ATO con condiciones o denegar hasta fix", "is_correct": true, "feedback": "Correcto. POA&M documenta plan de remediación. AO evalúa residual risk y decide si es aceptable para ATO condicional o requiere fix primero."},
+        {"id": "c", "text": "Re-categorizar sistema como LOW para reducir controles", "is_correct": false, "feedback": "No. Categorización basada en impacto de datos, no en dificultad de implementar controles. No se cambia para 'facilitar' compliance."}
+      ]
+    }
+  }
+]

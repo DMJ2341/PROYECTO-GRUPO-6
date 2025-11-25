@@ -1,0 +1,146 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Capital One Breach",
+    "duration": 120,
+    "content": {
+      "case_name": "Capital One Data Breach (2019)",
+      "date": "Mar-Jul 2019",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Capital_One_logo.svg/1200px-Capital_One_logo.svg.png",
+      "narrative": "Firewall mal configurado en AWS permitió SSRF (Server-Side Request Forgery). Atacante obtuvo credenciales IAM del metadata service, accedió a 700+ S3 buckets. 100 millones de aplicaciones de tarjetas robadas.",
+      "stats": [
+        {"label": "Personas Afectadas", "value": "100M", "icon": "group"},
+        {"label": "S3 Buckets Comprometidos", "value": "700+", "icon": "storage"},
+        {"label": "Multa", "value": "$80M", "icon": "gavel"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Firewalls - NIST SP 800-41",
+    "content": {
+      "intro": "Dispositivo que controla tráfico entre redes basado en reglas de seguridad.",
+      "tabs": [
+        {
+          "label": "Packet Filtering",
+          "title": "Firewall de Filtrado de Paquetes",
+          "text": "Más básico. Inspecciona headers: IP origen/destino, puertos, protocolo. Stateless: cada paquete independiente. Rápido pero limitado. No ve contenido de aplicación.",
+          "icon": "filter_alt"
+        },
+        {
+          "label": "Stateful",
+          "title": "Stateful Inspection",
+          "text": "Mantiene tabla de estado de conexiones. Sabe qué paquetes pertenecen a sesión establecida. Puede bloquear paquetes que no corresponden a conexión válida. Más seguro que stateless.",
+          "icon": "list_alt"
+        },
+        {
+          "label": "NGFW",
+          "title": "Next-Generation Firewall",
+          "text": "Stateful + inspección profunda de paquetes (DPI) + IPS integrado + Application awareness + SSL/TLS inspection. Puede bloquear por aplicación (ej: bloquear Facebook pero permitir HTTPS). Ejemplos: Palo Alto, Fortinet.",
+          "icon": "security"
+        },
+        {
+          "label": "WAF",
+          "title": "Web Application Firewall",
+          "text": "Específico para HTTP/HTTPS. Protege apps web de OWASP Top 10: SQLi, XSS, CSRF. Opera en capa 7 (aplicación). Puede estar en cloud (Cloudflare) o on-prem.",
+          "icon": "web"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_tabs",
+    "title": "IDS/IPS - NIST SP 800-94",
+    "content": {
+      "intro": "Intrusion Detection/Prevention Systems. Detectan y/o bloquean ataques.",
+      "tabs": [
+        {
+          "label": "IDS vs IPS",
+          "title": "Diferencias Clave",
+          "text": "IDS: Detection only, pasivo, alerta. Como cámara de seguridad. IPS: Prevention, inline, bloquea. Como guardia que detiene intrusos. IPS puede causar falsos positivos que bloquean tráfico legítimo.",
+          "icon": "compare"
+        },
+        {
+          "label": "Signature-based",
+          "title": "Detección por Firmas",
+          "text": "Busca patrones conocidos de ataques (signatures). Como antivirus. Rápido, preciso para ataques conocidos. NO detecta zero-days o variantes nuevas. Requiere updates constantes. Ejemplo: Snort rules.",
+          "icon": "fingerprint"
+        },
+        {
+          "label": "Anomaly-based",
+          "title": "Detección por Anomalías",
+          "text": "Aprende comportamiento normal (baseline), detecta desviaciones. Puede detectar ataques desconocidos. Más falsos positivos. Machine learning usado aquí. Ejemplo: tráfico inusual de red.",
+          "icon": "analytics"
+        },
+        {
+          "label": "NIDS vs HIDS",
+          "title": "Network vs Host",
+          "text": "NIDS: monitorea tráfico de red (span port, tap). Ve todo el tráfico pero no ve datos cifrados. HIDS: agent en host, ve logs del sistema, cambios en archivos. Más visibilidad del host pero más overhead.",
+          "icon": "device_hub"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "VPN - NIST SP 800-77",
+    "content": {
+      "intro": "Virtual Private Network: túnel cifrado sobre red pública (internet).",
+      "types": [
+        {
+          "type": "IPsec VPN",
+          "description": "Opera en capa 3 (IP). Site-to-site (conecta oficinas) o remote access (usuarios remotos). Protocols: ESP (encryption), AH (authentication). Fuerte pero complejo de configurar.",
+          "icon": "vpn_lock"
+        },
+        {
+          "type": "SSL/TLS VPN",
+          "description": "Opera en capa 4-7. Acceso vía browser o thin client. Más fácil para usuarios. No requiere cliente pesado. Ejemplos: OpenVPN, Cisco AnyConnect.",
+          "icon": "https"
+        },
+        {
+          "type": "Split Tunneling",
+          "description": "Solo tráfico corporativo va por VPN, resto directo a internet. Más rápido pero menos seguro. Si laptop comprometida, atacante puede pivotar a red corp. Riesgo evaluado en pandemia con WFH.",
+          "icon": "call_split"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "practical_scenario",
+    "title": "Configura Firewall Rules",
+    "content": {
+      "scenario": "Eres admin de red. Debes crear reglas de firewall para servidor web (192.168.1.100) en DMZ.",
+      "requirements": [
+        "Permitir HTTP (80) y HTTPS (443) desde internet",
+        "Permitir SSH (22) solo desde red de admins (10.0.0.0/24)",
+        "Bloquear todo lo demás",
+        "Default deny policy"
+      ],
+      "your_rules": [
+        {"rule": 1, "action": "ALLOW", "src": "ANY", "dst": "192.168.1.100", "port": "80", "protocol": "TCP"},
+        {"rule": 2, "action": "ALLOW", "src": "ANY", "dst": "192.168.1.100", "port": "443", "protocol": "TCP"},
+        {"rule": 3, "action": "ALLOW", "src": "10.0.0.0/24", "dst": "192.168.1.100", "port": "22", "protocol": "TCP"},
+        {"rule": 4, "action": "DENY", "src": "ANY", "dst": "ANY", "port": "ANY", "protocol": "ANY"}
+      ],
+      "explanation": "Orden importa. Reglas específicas primero, default deny al final. Esto sigue principio de least privilege."
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "quiz",
+    "title": "Evaluación - Dispositivos de Seguridad",
+    "content": {
+      "question": "En Capital One breach, firewall mal configurado permitió acceso no autorizado. ¿Qué habrían ayudado a prevenir?",
+      "options": [
+        {"id": "a", "text": "Reglas de firewall más restrictivas (least privilege) + auditoría regular de config", "is_correct": true, "feedback": "Correcto. Firewall permitía acceso al metadata service desde WAF. Reglas debían ser más restrictivas y auditadas."},
+        {"id": "b", "text": "Usar IDS en lugar de firewall", "is_correct": false, "feedback": "No. IDS solo detecta, no previene. Firewall era necesario pero mal configurado."},
+        {"id": "c", "text": "VPN para todos los accesos", "is_correct": false, "feedback": "No. El problema era configuración del firewall en la infraestructura AWS, no acceso remoto."}
+      ]
+    }
+  }
+]

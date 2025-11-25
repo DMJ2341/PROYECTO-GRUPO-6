@@ -1,111 +1,83 @@
 # backend/services/badge_service.py
-import json
-from database.db import Session
+from database.db import get_session
 from models.badge import Badge
-from models.user import UserBadge
-from models.activity import Activity
-from sqlalchemy import func
-
+from models.user_badge import UserBadge
+from models.user import User
+from models.user_progress import UserCourseProgress, UserLessonProgress
+from datetime import datetime
 
 class BadgeService:
-    def __init__(self):
-        self.db = Session()
-
-    # ---------- MÉDULA DEL CURSO 1 ----------
-    @staticmethod
-    def award_lesson_badges(user_id: int, lesson_id: int):
-        """Otorga medallas al completar lecciones del CURSO 1."""
-        mapping = {
-            1: 1,   # Lección 1 → medalla 1: Primer Respondedor
-            2: 2,   # Lección 2 → medalla 2: Cazador de Phishing
-            3: 3,   # Lección 3 → medalla 3: Contenedor de Ransomware
-            4: 4,   # Lección 4 → medalla 4: Guardián Móvil
-            5: 5,   # Lección 5 → medalla 5: Guardián CIA
-            6: 6    # Lección 6 → medalla 6: Escudo Ciudadano
-        }
-        badge_id = mapping.get(lesson_id)
-        if not badge_id:
-            return
-
-        session = Session()
+    def get_user_badges(self, user_id):
+        session = get_session()
         try:
-            # ¿Ya la tiene?
-            exists = session.query(UserBadge).filter_by(user_id=user_id, badge_id=badge_id).first()
-            if exists:
-                return
-
-            # Entregar
-            ub = UserBadge(user_id=user_id, badge_id=badge_id, earned_at=func.now(), earned_value=1)
-            session.add(ub)
-            session.commit()
-            print(f"🏅 Medalla '{badge_id}' otorgada a usuario {user_id}")
+            user_badges = session.query(UserBadge, Badge).join(
+                Badge, UserBadge.badge_id == Badge.id
+            ).filter(UserBadge.user_id == user_id).all()
+            
+            return [{
+                "id": badge.id,
+                "name": badge.name,
+                "description": badge.description,
+                "icon": badge.icon,
+                "earned_at": ub.earned_at.isoformat()
+            } for ub, badge in user_badges]
         finally:
             session.close()
 
-    # ---------- CRUD BÁSICO ----------
-    def get_all_badges(self):
-        return self.db.query(Badge).all()
+    # 🔥 EL MÉTODO MÁGICO
+    def check_and_award_badges(self, user_id, session):
+        """Revisa si el usuario merece nuevos badges y los otorga. (Usa sesión existente)"""
+        new_badges = []
+        user = session.query(User).get(user_id)
+        if not user: return []
 
-    def get_user_badges(self, user_id: int):
-        return (self.db.query(UserBadge, Badge)
-                       .join(Badge, UserBadge.badge_id == Badge.id)
-                       .filter(UserBadge.user_id == user_id)
-                       .all())
+        # 1. Badges de XP (Ej: 100 XP, 500 XP)
+        xp_badges = session.query(Badge).filter_by(trigger_type='xp_milestone').all()
+        for badge in xp_badges:
+            if user.total_xp >= int(badge.trigger_value):
+                if self._award(user_id, badge, session):
+                    new_badges.append(badge.name)
 
-    def award_badge(self, user_id: int, badge_id: int):
-        existing = self.db.query(UserBadge).filter_by(user_id=user_id, badge_id=badge_id).first()
-        if existing:
-            return existing
-        ub = UserBadge(user_id=user_id, badge_id=badge_id, earned_at=func.now(), earned_value=1)
-        self.db.add(ub)
-        self.db.commit()
-        self.db.refresh(ub)
-        return ub
+        # 2. Badges de Lecciones (Ej: Primera lección)
+        total_lessons = session.query(UserLessonProgress).filter_by(user_id=user_id, completed=True).count()
+        if total_lessons >= 1:
+            first_badge = session.query(Badge).filter_by(trigger_type='first_lesson').first()
+            if first_badge and self._award(user_id, first_badge, session):
+                new_badges.append(first_badge.name)
 
-    def check_and_award_badges(self, user_id: int):
-        """Otorga badges por puntos o actividades (genérico)."""
-        user_badges = []
-        
-        from services.activity_service import ActivityService
-        act = ActivityService()
-        total_points = act.get_user_points(user_id)
-        total_activities = self.db.query(Activity).filter_by(user_id=user_id).count()
+        # 3. Badges de Cursos Completados (Ej: Terminar Curso 1)
+        completed_courses = session.query(UserCourseProgress).filter_by(user_id=user_id, percentage=100).all()
+        for cp in completed_courses:
+            # Busca badge específico para este curso (trigger_value = course_id)
+            c_badge = session.query(Badge).filter_by(
+                trigger_type='course_completed', 
+                trigger_value=str(cp.course_id)
+            ).first()
+            if c_badge and self._award(user_id, c_badge, session):
+                new_badges.append(c_badge.name)
 
-        # Por puntos
-        for badge in self.db.query(Badge).filter(Badge.points_required <= total_points).all():
-            ub = self.award_badge(user_id, badge.id)
-            if ub:
-                user_badges.append(ub)
+        # 4. Badge Maestro (Todos los cursos básicos)
+        # Asumimos que hay 5 cursos en total
+        if len(completed_courses) >= 5:
+            master_badge = session.query(Badge).filter_by(trigger_type='all_basic_courses').first()
+            if master_badge and self._award(user_id, master_badge, session):
+                new_badges.append(master_badge.name)
 
-        # Por actividades (JSON condition)
-        for badge in self.db.query(Badge).all():
-            cond = json.loads(badge.condition) if badge.condition else {}
-            if cond.get("type") == "activities" and cond.get("count", 0) <= total_activities:
-                ub = self.award_badge(user_id, badge.id)
-                if ub:
-                    user_badges.append(ub)
-        
-        # Cerrar sesión del ActivityService
-        act.__del__()
-        return user_badges
+        # 5. Badges de Racha (Streak)
+        streak_badges = session.query(Badge).filter_by(trigger_type='streak').all()
+        for badge in streak_badges:
+            if user.current_streak >= int(badge.trigger_value):
+                if self._award(user_id, badge, session):
+                    new_badges.append(badge.name)
 
-    def get_badge_progress(self, user_id: int):
-        user_badge_ids = [ub.badge_id for ub in self.db.query(UserBadge).filter_by(user_id=user_id).all()]
-        available = self.db.query(Badge).filter(~Badge.id.in_(user_badge_ids)).all()
-        
-        from services.activity_service import ActivityService
-        act = ActivityService()
-        total_points = act.get_user_points(user_id)
-        
-        progress = []
-        for b in available:
-            pct = min(100, (total_points / b.points_required * 100)) if b.points_required else 0
-            progress.append({"badge": b, "progress_percent": pct})
-        
-        # Cerrar sesión del ActivityService
-        act.__del__()
-        return progress
+        return new_badges
 
-    def __del__(self):
-        if hasattr(self, 'db'):
-            self.db.close()
+    def _award(self, user_id, badge, session):
+        """Helper privado para insertar si no existe"""
+        exists = session.query(UserBadge).filter_by(user_id=user_id, badge_id=badge.id).first()
+        if not exists:
+            print(f"🏆 ¡Badge Otorgado! Usuario {user_id} ganó: {badge.name}")
+            new_ub = UserBadge(user_id=user_id, badge_id=badge.id, earned_at=datetime.utcnow())
+            session.add(new_ub)
+            return True
+        return False

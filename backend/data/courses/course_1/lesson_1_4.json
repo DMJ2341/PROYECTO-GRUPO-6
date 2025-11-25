@@ -1,0 +1,259 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: WannaCry Deep Dive",
+    "duration": 120,
+    "content": {
+      "case_name": "WannaCry Ransomware Analysis (2017)",
+      "date": "12 May 2017",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/WannaCry_screenshot.png/800px-WannaCry_screenshot.png",
+      "narrative": "Análisis técnico del crypto-ransomware que paralizó 150 países. Exploit EternalBlue (CVE-2017-0144), capacidad de worm, kill switch accidental. CISA Alert TA17-132A y Microsoft MS17-010.",
+      "stats": [
+        {"label": "Rescate Exigido", "value": "$300-600", "icon": "attach_money"},
+        {"label": "Bitcoin Pagado", "value": "$140K", "icon": "currency_bitcoin"},
+        {"label": "Kill Switch", "value": "1 dominio", "icon": "power_settings_new"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Taxonomía de Malware",
+    "content": {
+      "intro": "Clasificación según NIST SP 800-83 Rev. 1: Malware Incident Prevention and Handling.",
+      "tabs": [
+        {
+          "label": "Virus",
+          "title": "Virus - Requiere Host",
+          "text": "Código malicioso que se adhiere a archivos legítimos. Requiere ejecución del host file. Se replica. Ejemplos clásicos: ILOVEYOU, Melissa. Hoy menos común.",
+          "icon": "coronavirus"
+        },
+        {
+          "label": "Worm",
+          "title": "Worm - Auto-propagación",
+          "text": "Se replica automáticamente sin intervención. Explota vulnerabilidades de red. Ejemplos: WannaCry, Conficker, Morris Worm (1988). Muy peligroso por propagación rápida.",
+          "icon": "device_hub"
+        },
+        {
+          "label": "Trojan",
+          "title": "Trojan - Caballo de Troya",
+          "text": "Se disfraza como software legítimo. No se auto-replica. Ejemplos: Remote Access Trojans (RATs), Banking Trojans. Zeus, Emotet iniciaron como trojans.",
+          "icon": "security"
+        },
+        {
+          "label": "Ransomware",
+          "title": "Ransomware - Extorsión",
+          "text": "Cifra archivos o bloquea sistema, exige rescate. Crypto-ransomware (cifra datos) vs Locker-ransomware (bloquea pantalla). Ejemplos: WannaCry, REvil, DarkSide.",
+          "icon": "lock_clock"
+        },
+        {
+          "label": "Spyware",
+          "title": "Spyware - Espionaje",
+          "text": "Recolecta información sin consentimiento. Keyloggers, screen capturers. Pegasus (NSO Group) es spyware móvil sofisticado.",
+          "icon": "visibility"
+        },
+        {
+          "label": "Rootkit",
+          "title": "Rootkit - Ocultación",
+          "text": "Oculta malware modificando SO. Kernel-mode vs User-mode. Difícil de detectar. Ejemplos: Sony BMG rootkit (2005), TDL4/TDSS.",
+          "icon": "visibility_off"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "kill_chain_analysis",
+    "title": "WannaCry: Cyber Kill Chain",
+    "content": {
+      "description": "Análisis de WannaCry usando el modelo de Lockheed Martin Cyber Kill Chain",
+      "phases": [
+        {
+          "phase": "1. Reconnaissance",
+          "wannacry_action": "Escaneo de red para detectar SMBv1 (puerto 445) vulnerable",
+          "detection": "IDS signatures, anomalous port scanning",
+          "icon": "search"
+        },
+        {
+          "phase": "2. Weaponization",
+          "wannacry_action": "EternalBlue exploit + DoublePulsar backdoor + ransomware payload",
+          "detection": "Threat intelligence sobre EternalBlue",
+          "icon": "build"
+        },
+        {
+          "phase": "3. Delivery",
+          "wannacry_action": "Exploit enviado a puerto 445 SMB",
+          "detection": "Network IDS, SMB traffic monitoring",
+          "icon": "send"
+        },
+        {
+          "phase": "4. Exploitation",
+          "wannacry_action": "Explotación de CVE-2017-0144, ejecución de código remoto",
+          "detection": "EDR, memory anomalies",
+          "icon": "warning"
+        },
+        {
+          "phase": "5. Installation",
+          "wannacry_action": "Instala ransomware, crea servicios persistentes",
+          "detection": "Antivirus, file integrity monitoring",
+          "icon": "download"
+        },
+        {
+          "phase": "6. Command & Control",
+          "wannacry_action": "Contacta kill switch domain (hardcoded). Si no existe, continúa",
+          "detection": "DNS monitoring, firewall logs",
+          "icon": "settings_remote"
+        },
+        {
+          "phase": "7. Actions on Objectives",
+          "wannacry_action": "Cifra archivos con AES-128, muestra nota de rescate, propaga lateralmente",
+          "detection": "File activity monitoring, behavioral analysis",
+          "icon": "gavel"
+        }
+      ],
+      "kill_switch_discovery": "Marcus Hutchins (@MalwareTechBlog) registró el dominio kill switch, deteniendo propagación accidentalmente."
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_tabs",
+    "title": "Técnicas de Ataque Comunes",
+    "content": {
+      "intro": "Métodos frecuentes según MITRE ATT&CK® y threat intelligence.",
+      "tabs": [
+        {
+          "label": "Phishing",
+          "title": "Phishing & Spear Phishing",
+          "text": "Email malicioso (attachments, links). Spear phishing es dirigido a individuo específico. 90% de brechas comienzan con phishing (Verizon DBIR). Ejemplo: John Podesta Gmail 2016.",
+          "icon": "phishing"
+        },
+        {
+          "label": "Drive-by",
+          "title": "Drive-by Downloads",
+          "text": "Malware descargado automáticamente al visitar sitio comprometido. Exploit kits (Angler, RIG). Usuario no necesita clic.",
+          "icon": "cloud_download"
+        },
+        {
+          "label": "Watering Hole",
+          "title": "Watering Hole Attacks",
+          "text": "Comprometer sitio que target visita frecuentemente. Luego infectar visitantes. APTs usan esta táctica. Ejemplo: Attacks contra Forbes.com 2015.",
+          "icon": "water_drop"
+        },
+        {
+          "label": "Supply Chain",
+          "title": "Supply Chain Compromise",
+          "text": "Comprometer software/hardware de proveedor confiable. Ejemplos: SolarWinds Orion (2020), CCleaner (2017), NotPetya vía software de contabilidad ucraniano.",
+          "icon": "account_tree"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "theory_section",
+    "title": "Command & Control (C2)",
+    "content": {
+      "intro": "Infraestructura que permite al atacante controlar malware. MITRE ATT&CK® Tactic TA0011.",
+      "concepts": [
+        {
+          "name": "C2 Infraestructura",
+          "description": "Servidores que reciben conexiones de malware. Pueden ser: servidores dedicados, hacked websites, P2P networks, cloud services (AWS, Azure)",
+          "icon": "dns"
+        },
+        {
+          "name": "Beaconing",
+          "description": "Malware 'llama a casa' periódicamente para recibir comandos. Patrón regular detectable. Jitter (variación aleatoria) para evasión.",
+          "detection": "Analizar periodicidad en logs, unusual outbound connections",
+          "icon": "cell_tower"
+        },
+        {
+          "name": "Protocolos C2",
+          "description": "HTTP/HTTPS (más común, se mezcla con tráfico legítimo), DNS tunneling, ICMP tunneling, Twitter/Telegram (steganography)",
+          "icon": "router"
+        },
+        {
+          "name": "Exfiltración",
+          "description": "Robo de datos vía C2. Técnicas: compressed archives, encrypted channels, steganography, slow exfiltration (evade DLP)",
+          "detection": "Unusual data volumes, connections to suspicious IPs",
+          "icon": "upload"
+        }
+      ],
+      "c2_frameworks": {
+        "description": "Herramientas usadas por red teams y atacantes:",
+        "examples": ["Cobalt Strike", "Metasploit", "Empire", "Covenant"]
+      }
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "practical_lab",
+    "title": "Lab Forense: Analiza WannaCry (Simulado)",
+    "content": {
+      "instruction": "Analiza artefactos de una infección WannaCry simulada:",
+      "artifacts": [
+        {
+          "type": "Archivo Ejecutable",
+          "filename": "mssecsvc.exe",
+          "location": "C:\\Windows\\mssecsvc.exe",
+          "hash_sha256": "ed01ebfbc9eb5bbea545af4d01bf5f1071661840480439c6e5babe8e080e41aa",
+          "analysis": "PE32 executable, creates service 'mssecsvc', svchost.exe",
+          "ioc": "✓ Nombre de servicio sospechoso"
+        },
+        {
+          "type": "Archivos Cifrados",
+          "extension": ".WNCRY",
+          "analysis": "Archivos con extensión .WNCRY agregada",
+          "ioc": "✓ Extensión característica de WannaCry"
+        },
+        {
+          "type": "Nota de Rescate",
+          "filename": "@WanaDecryptor@.exe",
+          "content": "Oops, your files have been encrypted!",
+          "bitcoin_addresses": ["13AM4VW2dhxYgXeQepoHkHSQuy6NgaEb94"],
+          "ioc": "✓ Bitcoin wallet conocido de WannaCry"
+        },
+        {
+          "type": "Conexión de Red",
+          "domain": "iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com",
+          "analysis": "Kill switch domain check",
+          "ioc": "✓ Kill switch domain de WannaCry"
+        },
+        {
+          "type": "Tráfico SMB",
+          "port": "445",
+          "analysis": "Múltiples conexiones SMB a IPs internas",
+          "ioc": "✓ Propagación lateral vía EternalBlue"
+        }
+      ],
+      "questions": [
+        {
+          "q": "¿Qué IOCs confirman que es WannaCry?",
+          "a": "Extensión .WNCRY, kill switch domain, Bitcoin address específica, mssecsvc.exe"
+        },
+        {
+          "q": "¿Cómo se propaga?",
+          "a": "EternalBlue exploit (CVE-2017-0144) vía SMB port 445"
+        },
+        {
+          "q": "¿Cómo detenerlo?",
+          "a": "Registrar kill switch domain, bloquear SMB 445, aplicar MS17-010 patch"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 7,
+    "type": "quiz",
+    "title": "Evaluación - Malware",
+    "content": {
+      "question": "Un malware se disfraza como actualizador de Flash, roba credenciales bancarias, envía a servidor del atacante. No se auto-replica. ¿Qué tipo de malware es principalmente?",
+      "options": [
+        {"id": "a", "text": "Worm", "is_correct": false, "feedback": "No. Worms se auto-replican, este no lo hace."},
+        {"id": "b", "text": "Banking Trojan", "is_correct": true, "feedback": "¡Correcto! Se disfraza (trojan), objetivo específico (banking), no se replica. Ejemplo: Zeus, Emotet en fase inicial."},
+        {"id": "c", "text": "Ransomware", "is_correct": false, "feedback": "No. Ransomware cifra y extorsiona, este roba credenciales."},
+        {"id": "d", "text": "Rootkit", "is_correct": false, "feedback": "No. Rootkit oculta malware, este es el malware primario."}
+      ]
+    }
+  }
+]

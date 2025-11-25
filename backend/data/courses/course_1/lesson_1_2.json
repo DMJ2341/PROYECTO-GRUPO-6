@@ -1,0 +1,180 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: WannaCry Ransomware",
+    "duration": 120,
+    "content": {
+      "case_name": "WannaCry Global Attack (2017)",
+      "date": "12 May 2017",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/WannaCry_screenshot.png/800px-WannaCry_screenshot.png",
+      "narrative": "En solo 4 horas, hospitales en UK cancelan cirugías, Telefónica paraliza operaciones, FedEx detiene envíos. Un ransomware explota EternalBlue (CVE-2017-0144) robado a la NSA. 230,000 computadoras en 150 países infectadas.",
+      "stats": [
+        {"label": "Países Afectados", "value": "150+", "icon": "public"},
+        {"label": "Computadoras", "value": "230K", "icon": "computer"},
+        {"label": "Daños Estimados", "value": "$4B", "icon": "trending_down"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Threat Actors: Actores de Amenaza",
+    "content": {
+      "intro": "Clasificación de atacantes según NIST SP 800-30 Appendix E y CISA Threat Intelligence.",
+      "tabs": [
+        {
+          "label": "Nation-State",
+          "title": "APT (Advanced Persistent Threat)",
+          "text": "Grupos patrocinados por gobiernos. Altamente sofisticados, objetivos estratégicos a largo plazo. Ejemplos: Lazarus Group (Corea del Norte), APT28 (Rusia), APT29. Documentados en MITRE ATT&CK®.",
+          "icon": "public"
+        },
+        {
+          "label": "Cybercriminals",
+          "title": "Crimen Organizado",
+          "text": "Motivación financiera. Ransomware-as-a-Service, fraude, robo de datos. Ejemplos: DarkSide (Colonial Pipeline), REvil. Grupos organizados con infraestructura profesional.",
+          "icon": "account_balance"
+        },
+        {
+          "label": "Hacktivists",
+          "title": "Activismo Digital",
+          "text": "Motivación ideológica o política. DDoS, defacements, leaks. Ejemplos: Anonymous, LulzSec. Menos sofisticados pero ruidosos.",
+          "icon": "campaign"
+        },
+        {
+          "label": "Insiders",
+          "title": "Amenaza Interna",
+          "text": "Empleados, contratistas con acceso legítimo. Maliciosos (venganza, espionaje) o Negligentes (errores, phishing). 34% de brechas según Verizon DBIR. Caso: Edward Snowden.",
+          "icon": "person"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "interactive_diagram",
+    "title": "Introducción a MITRE ATT&CK® Framework",
+    "content": {
+      "description": "Knowledge base de tácticas y técnicas de adversarios basada en observaciones del mundo real.",
+      "diagram_type": "matrix_preview",
+      "concepts": [
+        {
+          "name": "Tácticas",
+          "definition": "El 'por qué' - Objetivo táctico",
+          "examples": "Initial Access, Execution, Persistence, Privilege Escalation, Defense Evasion, Credential Access, Discovery, Lateral Movement, Collection, Command and Control, Exfiltration, Impact",
+          "icon": "view_module"
+        },
+        {
+          "name": "Técnicas",
+          "definition": "El 'cómo' - Método para lograr táctica",
+          "examples": "Phishing (T1566), PowerShell (T1059.001), Pass the Hash (T1550.002)",
+          "icon": "code"
+        },
+        {
+          "name": "Grupos APT",
+          "definition": "Threat actors documentados",
+          "examples": "Lazarus Group (G0032), APT29/Cozy Bear (G0016)",
+          "icon": "groups"
+        }
+      ],
+      "wannacry_example": {
+        "description": "WannaCry mapeado a ATT&CK®:",
+        "tactics": [
+          {"id": "TA0001", "name": "Initial Access", "technique": "T1190 - Exploit Public-Facing Application"},
+          {"id": "TA0002", "name": "Execution", "technique": "T1059 - Command and Scripting Interpreter"},
+          {"id": "TA0008", "name": "Lateral Movement", "technique": "T1021.002 - SMB/Windows Admin Shares"}
+        ]
+      }
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "Attack Vectors: Vectores de Ataque",
+    "content": {
+      "intro": "Rutas o métodos que usan atacantes para comprometer sistemas. Según MITRE ATT&CK® Initial Access (TA0001).",
+      "vectors": [
+        {
+          "name": "Email-based",
+          "description": "Phishing, malicious attachments, spear phishing",
+          "prevalence": "90% de brechas empiezan aquí (Verizon DBIR)",
+          "example": "John Podesta Gmail hack 2016",
+          "icon": "email"
+        },
+        {
+          "name": "Web-based",
+          "description": "Drive-by downloads, watering hole attacks, malicious ads",
+          "example": "Exploit kits como Angler",
+          "icon": "language"
+        },
+        {
+          "name": "Network-based",
+          "description": "Exploits de vulnerabilidades, brute force SSH/RDP",
+          "example": "EternalBlue en WannaCry",
+          "icon": "router"
+        },
+        {
+          "name": "Physical",
+          "description": "USB drops, tailgating, rogue devices",
+          "example": "Stuxnet propagación vía USB",
+          "icon": "usb"
+        },
+        {
+          "name": "Supply Chain",
+          "description": "Comprometer proveedor/software de terceros",
+          "example": "SolarWinds Orion 2020",
+          "icon": "inventory_2"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Identifica el Threat Actor",
+    "content": {
+      "question": "Un ataque sofisticado persiste 18 meses sin detectarse, roba propiedad intelectual de empresa aeroespacial. Sin demandas de rescate. ¿Qué tipo de threat actor es más probable?",
+      "options": [
+        {"id": "a", "text": "Cybercriminal", "is_correct": false, "feedback": "No. Criminales buscan ganancia rápida, no persistencia larga sin monetización."},
+        {"id": "b", "text": "Nation-State APT", "is_correct": true, "feedback": "¡Correcto! Características: sofisticación, persistencia larga, objetivo estratégico (IP aeroespacial), sin monetización directa."},
+        {"id": "c", "text": "Hacktivist", "is_correct": false, "feedback": "No. Hacktivists buscan visibilidad pública, no espionaje silencioso."},
+        {"id": "d", "text": "Script kiddie", "is_correct": false, "feedback": "No. Carecen de la sofisticación para persistencia de 18 meses."}
+      ]
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "practical_exercise",
+    "title": "Explorador ATT&CK®: Mapea WannaCry",
+    "content": {
+      "instruction": "Identifica las tácticas MITRE ATT&CK® usadas por WannaCry:",
+      "attack_chain": [
+        {
+          "step": 1,
+          "description": "Explota SMB vulnerability (EternalBlue)",
+          "user_selects": ["Initial Access", "Execution"],
+          "correct": ["TA0001 - Initial Access: T1190 Exploit Public-Facing Application"]
+        },
+        {
+          "step": 2,
+          "description": "Ejecuta código malicioso en memoria",
+          "user_selects": ["Execution", "Persistence"],
+          "correct": ["TA0002 - Execution: T1059 Command and Scripting Interpreter"]
+        },
+        {
+          "step": 3,
+          "description": "Se propaga a otras máquinas en la red vía SMB",
+          "user_selects": ["Lateral Movement", "Discovery"],
+          "correct": ["TA0008 - Lateral Movement: T1021.002 SMB/Windows Admin Shares"]
+        },
+        {
+          "step": 4,
+          "description": "Cifra archivos y muestra nota de rescate",
+          "user_selects": ["Impact", "Collection"],
+          "correct": ["TA0040 - Impact: T1486 Data Encrypted for Impact"]
+        }
+      ],
+      "learning_point": "WannaCry es un ejemplo clásico de ransomware con capacidad de worm. La táctica de Lateral Movement lo hizo devastador."
+    }
+  }
+]

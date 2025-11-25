@@ -1,0 +1,120 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Mirai Botnet DDoS",
+    "duration": 120,
+    "content": {
+      "case_name": "Mirai Botnet Attack (2016)",
+      "date": "21 Oct 2016",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/DDoS_attack.svg/1200px-DDoS_attack.svg.png",
+      "narrative": "Botnet de 600K dispositivos IoT compromete Dyn DNS, tumba Twitter, Netflix, GitHub, Reddit. 1.2 Tbps de tráfico. Explotó Telnet con credenciales por defecto en cámaras IP y DVRs.",
+      "stats": [
+        {"label": "Peak Traffic", "value": "1.2 Tbps", "icon": "speed"},
+        {"label": "Devices Infectados", "value": "600K", "icon": "router"},
+        {"label": "Sitios Afectados", "value": "80+", "icon": "language"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Modelo TCP/IP y Protocolos",
+    "content": {
+      "intro": "Fundamentos de networking según RFC 1122. Cada capa tiene vulnerabilidades específicas.",
+      "tabs": [
+        {
+          "label": "Modelo TCP/IP",
+          "title": "4 Capas vs OSI",
+          "text": "Application (HTTP, DNS, SMTP), Transport (TCP, UDP), Internet (IP, ICMP), Network Access (Ethernet, WiFi). Encapsulación: cada capa agrega header.",
+          "icon": "layers"
+        },
+        {
+          "label": "TCP",
+          "title": "Transmission Control Protocol",
+          "text": "RFC 793. Orientado a conexión, reliable. 3-way handshake: SYN → SYN-ACK → ACK. Vulnerabilidades: SYN floods (saturar con SYNs), session hijacking (predecir sequence numbers).",
+          "icon": "sync_alt"
+        },
+        {
+          "label": "UDP",
+          "title": "User Datagram Protocol",
+          "text": "RFC 768. No conexión, no reliable, rápido. DNS, NTP, SNMP usan UDP. Vulnerable a amplification attacks: atacante envía request pequeño, servidor responde con respuesta grande a víctima (IP spoofing).",
+          "icon": "flash_on"
+        },
+        {
+          "label": "IP",
+          "title": "Internet Protocol",
+          "text": "RFC 791. IPv4: 32-bit addresses. IPv6: 128-bit. IP spoofing: falsificar IP origen. Sin autenticación inherente. IPsec añade seguridad (encryption, authentication).",
+          "icon": "public"
+        },
+        {
+          "label": "DNS",
+          "title": "Domain Name System",
+          "text": "RFC 1035. Traduce dominios → IPs. Puerto 53 UDP/TCP. Vulnerabilities: cache poisoning (inyectar entradas falsas), DNS tunneling (C2 oculto), amplification DDoS. DNSSEC mitiga con firmas digitales.",
+          "icon": "dns"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Puertos y Servicios Comunes",
+    "content": {
+      "intro": "Well-known ports (0-1023) vs Registered (1024-49151) vs Dynamic (49152-65535)",
+      "common_ports": [
+        {"port": 20, "service": "FTP (Data)", "protocol": "TCP", "vuln": "Cleartext, anonymous login"},
+        {"port": 21, "service": "FTP (Control)", "protocol": "TCP", "vuln": "Cleartext, anonymous login"},
+        {"port": 22, "service": "SSH", "protocol": "TCP", "vuln": "Brute force si weak passwords"},
+        {"port": 23, "service": "Telnet", "protocol": "TCP", "vuln": "Cleartext - NO USAR. Mirai explotó esto"},
+        {"port": 25, "service": "SMTP", "protocol": "TCP", "vuln": "Open relay, spoofing"},
+        {"port": 53, "service": "DNS", "protocol": "UDP/TCP", "vuln": "Cache poisoning, amplification"},
+        {"port": 80, "service": "HTTP", "protocol": "TCP", "vuln": "Cleartext, MITM"},
+        {"port": 443, "service": "HTTPS", "protocol": "TCP", "vuln": "SSL/TLS vulns (Heartbleed)"},
+        {"port": 445, "service": "SMB", "protocol": "TCP", "vuln": "EternalBlue (WannaCry)"},
+        {"port": 3389, "service": "RDP", "protocol": "TCP", "vuln": "BlueKeep, brute force"}
+      ],
+      "mirai_vector": "Mirai escaneaba Telnet (23) con 60+ combos de usuario/contraseña por defecto: admin/admin, root/12345, etc."
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "practical_lab",
+    "title": "Lab: Análisis de Tráfico TCP",
+    "content": {
+      "instruction": "Analiza este 3-way handshake capturado:",
+      "pcap_simulation": [
+        {"packet": 1, "src": "192.168.1.10", "dst": "192.168.1.1", "flags": "SYN", "seq": "1000", "ack": "0"},
+        {"packet": 2, "src": "192.168.1.1", "dst": "192.168.1.10", "flags": "SYN,ACK", "seq": "2000", "ack": "1001"},
+        {"packet": 3, "src": "192.168.1.10", "dst": "192.168.1.1", "flags": "ACK", "seq": "1001", "ack": "2001"}
+      ],
+      "questions": [
+        {
+          "q": "¿Qué dispositivo inició la conexión?",
+          "a": "192.168.1.10 (envió primer SYN)"
+        },
+        {
+          "q": "¿Cuál es el sequence number inicial del servidor?",
+          "a": "2000"
+        },
+        {
+          "q": "Si un atacante envía millones de SYNs sin completar handshake, ¿qué ataque es?",
+          "a": "SYN flood DDoS - satura tabla de conexiones"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - Protocolos",
+    "content": {
+      "question": "Mirai usó principalmente qué protocolo/puerto para infectar dispositivos IoT?",
+      "options": [
+        {"id": "a", "text": "HTTP port 80", "is_correct": false, "feedback": "No. HTTP no se usó para propagación inicial."},
+        {"id": "b", "text": "Telnet port 23", "is_correct": true, "feedback": "¡Correcto! Mirai escaneaba Telnet con credenciales por defecto (admin/admin, root/root, etc.). Telnet transmite en cleartext."},
+        {"id": "c", "text": "SSH port 22", "is_correct": false, "feedback": "No. SSH es más seguro que Telnet y no era el vector principal."}
+      ]
+    }
+  }
+]

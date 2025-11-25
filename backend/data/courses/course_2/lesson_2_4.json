@@ -1,0 +1,126 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Target 2013 - Network Segmentation Failure",
+    "duration": 120,
+    "content": {
+      "case_name": "Target Data Breach - Network Architecture Flaw",
+      "date": "Nov-Dec 2013",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Target_Corporation_logo_%28vector%29.svg/1200px-Target_Corporation_logo_%28vector%29.svg.png",
+      "narrative": "Atacantes comprometieron Fazio Mechanical (vendor HVAC) con credenciales robadas. Desde red de vendors, pivotaron lateralmente a red corporativa sin restricciones. NO había segmentación entre vendor network y payment systems. Accedieron a 40M tarjetas.",
+      "stats": [
+        {"label": "Entry Point", "value": "Vendor Network", "icon": "business"},
+        {"label": "Lack of Segmentation", "value": "Critical", "icon": "warning"},
+        {"label": "Tarjetas Robadas", "value": "40M", "icon": "credit_card"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Segmentación de Red",
+    "content": {
+      "intro": "Dividir red en segmentos aislados para limitar blast radius y movimiento lateral.",
+      "tabs": [
+        {
+          "label": "VLANs",
+          "title": "Virtual LANs",
+          "text": "Layer 2 segmentation. Separa broadcast domains. VLAN para users, servers, guests, IoT. Requiere trunk ports entre switches. 802.1Q tagging. No cruza VLANs sin router.",
+          "icon": "lan"
+        },
+        {
+          "label": "DMZ",
+          "title": "Demilitarized Zone",
+          "text": "Zona neutral entre internet y red interna. Coloca servidores públicos (web, email) aquí. Firewall entre internet-DMZ y DMZ-internal. Si DMZ comprometida, interno protegido.",
+          "icon": "security"
+        },
+        {
+          "label": "Micro-segmentation",
+          "title": "Software-Defined Segmentation",
+          "text": "Granular segmentation hasta nivel de workload/app. Políticas basadas en identidad, no IPs. Usado en Zero Trust. Ejemplo: VMware NSX, Cisco ACI. Previene lateral movement.",
+          "icon": "grid_view"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Zero Trust Architecture - NIST SP 800-207",
+    "content": {
+      "principles": [
+        {
+          "name": "Never Trust, Always Verify",
+          "description": "No confiar basado en ubicación. Verificar cada access request. No hay 'trusted network'.",
+          "icon": "verified_user"
+        },
+        {
+          "name": "Least Privilege Access",
+          "description": "Mínimo acceso necesario por tiempo limitado. Just-In-Time (JIT). Revocar cuando ya no se necesita.",
+          "icon": "vpn_lock"
+        },
+        {
+          "name": "Assume Breach",
+          "description": "Diseñar asumiendo que atacante ya está dentro. Micro-segmentation, encryption everywhere, extensive logging.",
+          "icon": "shield"
+        },
+        {
+          "name": "Verify Explicitly",
+          "description": "Authn/authz basado en: user identity, device health, location, data classification, application.",
+          "icon": "fact_check"
+        }
+      ],
+      "components": [
+        "Policy Engine: decide access",
+        "Policy Administrator: enforce decisions",
+        "Policy Enforcement Point: gate donde se aplica",
+        "SIEM/Analytics para continuous monitoring"
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "practical_exercise",
+    "title": "Diseña Arquitectura Segura",
+    "content": {
+      "scenario": "Empresa fintech con: web app (customer-facing), API servers, database, internal corporate network, guest WiFi.",
+      "requirements": [
+        "Segmentar por función y sensibilidad",
+        "Aplicar Zero Trust principles",
+        "Proteger datos de clientes",
+        "Permitir acceso remoto seguro"
+      ],
+      "your_design": {
+        "zones": [
+          {"zone": "Internet Edge", "devices": ["NGFW", "IPS", "DDoS mitigation"]},
+          {"zone": "DMZ", "devices": ["Web servers", "Load balancers", "WAF"]},
+          {"zone": "Application Tier", "devices": ["API servers", "App servers"], "access": "From DMZ only"},
+          {"zone": "Data Tier", "devices": ["Databases", "File servers"], "access": "From App Tier only, encrypted"},
+          {"zone": "Corporate", "devices": ["Employee workstations", "Internal apps"], "access": "Via NAC 802.1X"},
+          {"zone": "Guest WiFi", "devices": ["Guest devices"], "access": "Internet only, no corporate"}
+        ],
+        "controls": [
+          "Firewalls entre cada zona",
+          "VPN + MFA para remote access",
+          "Micro-segmentation dentro de zones",
+          "Encryption in transit (TLS) and at rest",
+          "SIEM monitoring all zones"
+        ]
+      }
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - Arquitectura",
+    "content": {
+      "question": "En Target breach, ¿qué habría prevenido el movimiento lateral desde vendor network a payment systems?",
+      "options": [
+        {"id": "a", "text": "Network segmentation con firewalls entre vendor y critical systems", "is_correct": true, "feedback": "Correcto. Vendor network debía estar aislada de payment systems. Firewalls con least privilege entre segmentos."},
+        {"id": "b", "text": "Antivirus en todos los endpoints", "is_correct": false, "feedback": "Ayudaría pero no previene movimiento lateral si ya están dentro."},
+        {"id": "c", "text": "Contraseñas más fuertes", "is_correct": false, "feedback": "Parcial. Contraseñas fuertes + MFA para vendor access, pero segmentación es control arquitectónico clave."}
+      ]
+    }
+  }
+]

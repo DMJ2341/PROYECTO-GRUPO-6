@@ -1,0 +1,152 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Twitter Hack 2020",
+    "duration": 120,
+    "content": {
+      "case_name": "Twitter Bitcoin Scam - Social Engineering + SIM Swap",
+      "date": "15 Jul 2020",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/1200px-Logo_of_Twitter.svg.png",
+      "narrative": "Atacantes hicieron vishing (llamadas) a empleados de Twitter, obtuvieron acceso a internal tools. Luego SIM swapping para bypass MFA vía SMS. Comprometieron cuentas de Obama, Biden, Musk, Gates. Postearon scam de Bitcoin.",
+      "stats": [
+        {"label": "Cuentas High-Profile", "value": "130", "icon": "verified"},
+        {"label": "Bitcoin Robado", "value": "$117K", "icon": "currency_bitcoin"},
+        {"label": "Vector", "value": "Vishing + SIM Swap", "icon": "phone"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Factores de Autenticación - NIST SP 800-63B",
+    "content": {
+      "intro": "Según NIST Digital Identity Guidelines, autenticación puede usar 5 factores.",
+      "tabs": [
+        {
+          "label": "Knowledge",
+          "title": "Algo que Sabes",
+          "text": "Passwords, PINs, security questions. Factor más débil: phishable, reusable, olvidable. Ataques: brute force, dictionary, credential stuffing, phishing. NIST recomienda >8 caracteres, no rotación forzada.",
+          "icon": "password"
+        },
+        {
+          "label": "Possession",
+          "title": "Algo que Tienes",
+          "text": "Hardware token (YubiKey), smartphone (authenticator app), smart card. Genera OTP (One-Time Password). TOTP (Time-based - RFC 6238), HOTP (Counter-based - RFC 4226). Más seguro que knowledge solo.",
+          "icon": "phonelink_lock"
+        },
+        {
+          "label": "Inherence",
+          "title": "Algo que Eres",
+          "text": "Biometría: huella dactilar, facial recognition, iris scan, voice. FAR (False Accept Rate) vs FRR (False Reject Rate). No cambias si comprometida. Privacy concerns. NIST SP 800-63B Section 5.2.3.",
+          "icon": "fingerprint"
+        },
+        {
+          "label": "Location",
+          "title": "Dónde Estás",
+          "text": "Geolocation, IP address, GPS. Context-aware. Ejemplo: bloquear login desde país inusual. Impossible travel detection. Puede ser spoofed (VPN).",
+          "icon": "location_on"
+        },
+        {
+          "label": "Behavior",
+          "title": "Cómo te Comportas",
+          "text": "Typing rhythm, mouse movements, gait analysis. Continuous authentication. Behavioral biometrics. Emergente, no ampliamente desplegado aún.",
+          "icon": "psychology"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Multi-Factor Authentication (MFA)",
+    "content": {
+      "intro": "Usar 2+ factores de categorías diferentes. Dramatically aumenta seguridad.",
+      "mfa_types": [
+        {
+          "type": "SMS/Voice OTP",
+          "security": "Baja",
+          "description": "Código enviado via SMS o llamada. Vulnerable a SIM swapping (Twitter hack), SS7 attacks, phishing. NIST deprecated en SP 800-63B. NO usar si hay mejor opción.",
+          "icon": "sms"
+        },
+        {
+          "type": "Authenticator Apps",
+          "security": "Media-Alta",
+          "description": "TOTP en app (Google Authenticator, Microsoft Authenticator, Authy). Código rota cada 30 seg. Offline. Vulnerable a phishing real-time (AitM).",
+          "icon": "apps"
+        },
+        {
+          "type": "Push Notifications",
+          "security": "Alta",
+          "description": "Notificación push a smartphone. Aprobar/denegar. Duo, Okta Verify. Vulnerable a MFA fatigue (bombardear con prompts hasta que usuario acepta por error).",
+          "icon": "notifications"
+        },
+        {
+          "type": "Hardware Tokens",
+          "security": "Muy Alta",
+          "description": "FIDO2/WebAuthn (YubiKey). Phishing-resistant: challenge-response criptográfico. No funciona en sitio falso. Gold standard. Requiere soporte del sitio.",
+          "icon": "vpn_key"
+        },
+        {
+          "type": "Biometric + PIN",
+          "security": "Alta",
+          "description": "Huella + PIN (algo que eres + sabes). Usado en Windows Hello, smartphones. Conveniente y seguro si implementado bien.",
+          "icon": "fingerprint"
+        }
+      ],
+      "twitter_lesson": "Twitter usó SMS OTP que fue bypasseado vía SIM swap. Si hubieran usado FIDO2/hardware tokens para empleados, ataque habría fallado."
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "practical_exercise",
+    "title": "Configura MFA por Sensibilidad",
+    "content": {
+      "scenario": "Tienes 4 tipos de usuarios. Asigna método MFA apropiado.",
+      "users": [
+        {
+          "role": "Employees - General",
+          "access": "Email, internal apps",
+          "risk": "Medium",
+          "recommended_mfa": "Authenticator App (TOTP) o Push Notifications",
+          "rationale": "Balance seguridad-usabilidad. TOTP es suficiente para acceso standard."
+        },
+        {
+          "role": "IT Admins",
+          "access": "Privileged systems, production",
+          "risk": "Critical",
+          "recommended_mfa": "Hardware Token (FIDO2 YubiKey) REQUIRED",
+          "rationale": "Phishing-resistant essential. Privileged access no puede usar SMS."
+        },
+        {
+          "role": "Executives",
+          "access": "Sensitive data, M&A info",
+          "risk": "High",
+          "recommended_mfa": "Hardware Token o Biometric + Push (redundante)",
+          "rationale": "High-value targets. Phishing-resistant preferido."
+        },
+        {
+          "role": "External Contractors",
+          "access": "Limited project tools",
+          "risk": "Medium",
+          "recommended_mfa": "Authenticator App, tiempo-limitado",
+          "rationale": "No SMS. App-based acceptable. Access auto-revoke al terminar contrato."
+        }
+      ],
+      "never_use": ["SMS OTP para privileged access", "Security questions (phishable)", "Email OTP como único factor"]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - MFA",
+    "content": {
+      "question": "¿Por qué SIM swapping permitió bypass MFA en Twitter hack?",
+      "options": [
+        {"id": "a", "text": "Porque Twitter usaba SMS OTP. SIM swap redirige SMS al atacante.", "is_correct": true, "feedback": "Correcto. SMS OTP es vulnerable a SIM swapping. Atacante convence a carrier de transferir número a nueva SIM. Recibe OTPs."},
+        {"id": "b", "text": "Porque MFA estaba deshabilitada", "is_correct": false, "feedback": "No. MFA estaba habilitada pero usaba SMS que es vulnerable."},
+        {"id": "c", "text": "Porque passwords eran débiles", "is_correct": false, "feedback": "No. El problema no eran passwords sino el método MFA vulnerable (SMS)."}
+      ]
+    }
+  }
+]

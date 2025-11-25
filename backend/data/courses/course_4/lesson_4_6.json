@@ -1,0 +1,261 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Lessons Learned from Major Breach",
+    "duration": 120,
+    "content": {
+      "case_name": "Post-Incident Review - Maersk NotPetya (2017)",
+      "date": "Jun 2017",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Maersk_Group_Logo.svg/1200px-Maersk_Group_Logo.svg.png",
+      "narrative": "NotPetya ransomware devastó Maersk (shipping giant). $300M pérdidas. Post-incident review reveló: backups en mismo dominio AD (también cifrados), falta de DR plan probado, no segmentación OT/IT. ÚNICO DC en Ghana sobrevivió (estaba offline por apagón). Lessons learned documentadas salvaron futuras operaciones.",
+      "stats": [
+        {"label": "Pérdidas", "value": "$300M", "icon": "attach_money"},
+        {"label": "Sistemas Afectados", "value": "45K", "icon": "computer"},
+        {"label": "Recovery Time", "value": "10 días", "icon": "schedule"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Lessons Learned Meeting - NIST SP 800-61",
+    "content": {
+      "intro": "Sesión post-mortem para extraer aprendizajes y mejorar respuesta futura. Crítico según NIST IR lifecycle.",
+      "tabs": [
+        {
+          "label": "Quién Participa",
+          "title": "Stakeholders Necesarios",
+          "text": "CSIRT members, IT operations, management, legal, PR, affected business units. Facilitador neutral. Ambiente sin culpas (blameless post-mortem). Foco en procesos, no personas.",
+          "icon": "groups"
+        },
+        {
+          "label": "Cuándo",
+          "title": "Timing de la Reunión",
+          "text": "Dentro de 1-2 semanas después de recovery completo. No inmediatamente (equipo exhausto). No muy tarde (pierden memoria de detalles). Típico: 1 semana después.",
+          "icon": "schedule"
+        },
+        {
+          "label": "Preguntas Clave",
+          "title": "Qué Discutir",
+          "text": "¿Qué pasó? (timeline) ¿Por qué pasó? (root cause) ¿Qué funcionó bien? ¿Qué falló? ¿Qué cambiar? ¿Cómo prevenir recurrencia? ¿Métricas: MTTD, MTTR, MTTC?",
+          "icon": "question_answer"
+        },
+        {
+          "label": "Documentación",
+          "title": "Output del Meeting",
+          "text": "Lessons Learned document: incident summary, timeline, root cause analysis, what worked/failed, recommendations priorizadas, action items con owners y deadlines.",
+          "icon": "description"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Root Cause Analysis",
+    "content": {
+      "techniques": [
+        {
+          "name": "5 Whys",
+          "description": "Preguntar 'por qué' 5 veces para llegar a causa raíz.",
+          "example": [
+            "Problema: Ransomware cifró todos los sistemas",
+            "Por qué? → Phishing email con macro malicioso",
+            "Por qué se ejecutó? → Usuario habilitó macros",
+            "Por qué lo hizo? → No tenía training de security awareness",
+            "Por qué no hay training? → No está en presupuesto",
+            "Por qué? → Management no prioriza seguridad",
+            "Root Cause: Falta de inversión en security awareness"
+          ]
+        },
+        {
+          "name": "Fishbone Diagram",
+          "description": "Ishikawa diagram. Categorías: People, Process, Technology, Environment. Identificar causas contribuyentes en cada categoría.",
+          "categories": [
+            "People: Security awareness, staffing, skills",
+            "Process: Playbooks outdated, no drills, poor communication",
+            "Technology: Unpatched systems, no EDR, weak backups",
+            "Environment: Budget constraints, regulatory pressure"
+          ]
+        }
+      ],
+      "maersk_root_causes": [
+        "Technical: Backups en mismo AD domain que production",
+        "Process: DR plan no probado regularmente",
+        "Architectural: No segmentación IT/OT, dominio AD único global",
+        "Cultural: Over-reliance en antivirus, security underfunded"
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "Incident Report Writing - NIST Appendix B",
+    "content": {
+      "report_types": [
+        {
+          "type": "Executive Summary",
+          "audience": "C-level, Board",
+          "content": "What happened (1 paragraph), business impact ($, reputation, customers), immediate actions taken, high-level recommendations",
+          "length": "1 page",
+          "tone": "Non-technical, business-focused"
+        },
+        {
+          "type": "Technical Report",
+          "audience": "IT, security team, auditors",
+          "content": "Detailed timeline, IOCs, TTPs (MITRE ATT&CK® mapping), forensic findings, full technical analysis, logs excerpts",
+          "length": "10-50 pages",
+          "tone": "Technical, detailed"
+        },
+        {
+          "type": "Legal/Compliance Report",
+          "audience": "Legal, regulators, law enforcement",
+          "content": "Breach notification timeline, data affected (PII count), regulatory requirements met, chain of custody documentation",
+          "length": "Varies",
+          "tone": "Formal, precise"
+        }
+      ],
+      "sections": [
+        "1. Executive Summary",
+        "2. Incident Overview (who, what, when, where, why)",
+        "3. Timeline of Events (detailed chronology)",
+        "4. Attack Analysis (TTPs, IOCs, MITRE ATT&CK® mapping)",
+        "5. Impact Assessment (systems, data, financial, reputational)",
+        "6. Response Actions (containment, eradication, recovery)",
+        "7. Root Cause Analysis",
+        "8. Lessons Learned",
+        "9. Recommendations (prioritized, with timeline)",
+        "10. Appendices (IOCs, logs, forensic evidence)"
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "theory_section",
+    "title": "Mejora Continua",
+    "content": {
+      "areas": [
+        {
+          "area": "Playbooks and Runbooks",
+          "action": "Actualizar con lecciones aprendidas. Añadir pasos que faltaron. Clarificar ambigüedades descubiertas durante incidente.",
+          "icon": "menu_book"
+        },
+        {
+          "area": "Training",
+          "action": "Identificar gaps de skills. Entrenar en herramientas que faltaron (ej: memory forensics). Tabletop exercises simulando incident.",
+          "icon": "school"
+        },
+        {
+          "area": "Technology",
+          "action": "Implementar controles que faltaron. EDR, SIEM, backups immutable, segmentación de red. Patch management mejorado.",
+          "icon": "build"
+        },
+        {
+          "area": "Process",
+          "action": "Mejorar communication plan. Escalation procedures claros. Roles y responsabilidades definidos. On-call rotations.",
+          "icon": "settings"
+        }
+      ],
+      "metrics": [
+        "MTTD (Mean Time to Detect): ¿Cuánto tardamos en detectar? Reducir.",
+        "MTTR (Mean Time to Respond): ¿Cuánto tardamos en responder? Reducir.",
+        "MTTC (Mean Time to Contain): ¿Cuánto tardamos en contener? Reducir.",
+        "Recovery Time: ¿Cuánto tardamos en recuperar operaciones?"
+      ],
+      "maersk_improvements": [
+        "Backups offline, en región geográfica separada, immutable",
+        "DR drills trimestrales con full recovery test",
+        "Segmentación IT/OT, múltiples AD forests",
+        "Investment masivo en security: EDR, SIEM, threat hunting team"
+      ]
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "theory_section",
+    "title": "Retención de Evidencia y Threat Intelligence Sharing",
+    "content": {
+      "retention": {
+        "policy": "Retener evidencia según requerimientos legales, regulatorios y de negocio.",
+        "timelines": [
+          "Legal hold: Indefinido si hay litigation",
+          "Regulatory: 3-7 años típico (GDPR, SOX, HIPAA)",
+          "Business: 1-2 años para análisis trends"
+        ],
+        "destruction": "Secure deletion cuando expire retention. Documentar destrucción (chain of custody cierra)."
+      },
+      "sharing": {
+        "why": "Compartir IOCs y TTPs ayuda comunidad a defenderse. Collective defense.",
+        "channels": [
+          {
+            "channel": "ISACs",
+            "description": "Information Sharing and Analysis Centers. Por sector: FS-ISAC (financial), H-ISAC (health), etc.",
+            "benefit": "Threat intel específico del sector"
+          },
+          {
+            "channel": "CISA",
+            "description": "US Cybersecurity Infrastructure Security Agency. Reportar incidentes significativos.",
+            "benefit": "Governmental awareness, puede emitir alerts"
+          },
+          {
+            "channel": "Private Sharing",
+            "description": "Grupos privados de CISOs, security vendors, trusted partners.",
+            "benefit": "Intel más detallado, confianza mutua"
+          }
+        ],
+        "tlp": "Traffic Light Protocol: WHITE (public), GREEN (community), AMBER (limited), RED (private). Marca sensibilidad al compartir."
+      }
+    }
+  },
+  {
+    "screen_id": 7,
+    "type": "practical_exercise",
+    "title": "Facilita Lessons Learned Meeting",
+    "content": {
+      "scenario": "Eres facilitador de lessons learned después de ransomware que afectó 200 systems, downtime 3 días, $500K pérdidas.",
+      "agenda": [
+        {"time": "0-10 min", "topic": "Intro: Ground rules (no blame, focus on process)", "facilitator_action": "Set tone, explain purpose"},
+        {"time": "10-30 min", "topic": "Incident Timeline Review", "facilitator_action": "Walk through timeline, ask clarifying questions"},
+        {"time": "30-50 min", "topic": "What Went Well", "facilitator_action": "Brainstorm positives (IR team response time, communication, backups worked)"},
+        {"time": "50-70 min", "topic": "What Went Wrong", "facilitator_action": "Identify failures (patching delay, no EDR, backups too old)"},
+        {"time": "70-90 min", "topic": "Root Cause Analysis", "facilitator_action": "5 Whys technique for top 3 failures"},
+        {"time": "90-110 min", "topic": "Recommendations", "facilitator_action": "Brainstorm improvements, prioritize (quick wins vs long-term)"},
+        {"time": "110-120 min", "topic": "Action Items", "facilitator_action": "Assign owners, deadlines. Schedule follow-up."}
+      ],
+      "output": {
+        "what_worked": [
+          "IR team activated within 2 hours",
+          "Backups available (though 7 days old)",
+          "Communication to executives was clear"
+        ],
+        "what_failed": [
+          "Detection took 36 hours (ransomware was encrypting)",
+          "No EDR, only signature AV",
+          "Patching was 3 months behind",
+          "IR playbook outdated (referenced tools we don't have)"
+        ],
+        "recommendations": [
+          "HIGH: Deploy EDR across all endpoints (Owner: IT Director, Deadline: 30 days)",
+          "HIGH: Improve patch cadence to 30 days (Owner: Sys Admin, Deadline: Ongoing)",
+          "MEDIUM: Update IR playbook (Owner: CISO, Deadline: 14 days)",
+          "MEDIUM: Increase backup frequency to daily (Owner: Backup Admin, Deadline: 30 days)",
+          "LOW: Tabletop exercise quarterly (Owner: Security Manager, Deadline: Q1 next year)"
+        ]
+      }
+    }
+  },
+  {
+    "screen_id": 8,
+    "type": "quiz",
+    "title": "Evaluación - Post-Incidente",
+    "content": {
+      "question": "¿Cuál es el objetivo PRINCIPAL de un lessons learned meeting?",
+      "options": [
+        {"id": "a", "text": "Identificar personas responsables del incidente y aplicar disciplina", "is_correct": false, "feedback": "No. Esto crea cultura de miedo. Meetings deben ser 'blameless' enfocados en procesos, no personas."},
+        {"id": "b", "text": "Extraer aprendizajes para mejorar procesos y prevenir recurrencia", "is_correct": true, "feedback": "Correcto. Objetivo es mejorar continuamente: actualizar playbooks, identificar gaps, fortalecer defenses."},
+        {"id": "c", "text": "Crear documentación para auditores y reguladores", "is_correct": false, "feedback": "Parcial. Documentation es output, pero no el objetivo principal. Objetivo es aprender y mejorar."}
+      ]
+    }
+  }
+]

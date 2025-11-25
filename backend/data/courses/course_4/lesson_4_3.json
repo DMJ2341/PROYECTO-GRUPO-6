@@ -1,0 +1,138 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Colonial Pipeline Ransomware",
+    "duration": 120,
+    "content": {
+      "case_name": "Colonial Pipeline - DarkSide Ransomware (2021)",
+      "date": "7 May 2021",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Colonialp_ipe_route.png/800px-Colonialp_ipe_route.png",
+      "narrative": "DarkSide ransomware vía VPN sin MFA. 100GB exfiltrados antes de cifrado (double extortion). Colonial tomó decisión crítica: shutdown completo del pipeline (prevenir spread a OT systems). 5500 millas de pipeline detenido. Pánico de gasolina en East Coast. Pagaron $4.4M en Bitcoin. FBI recuperó $2.3M.",
+      "stats": [
+        {
+          "label": "Rescate Pagado",
+          "value": "$4.4M BTC",
+          "icon": "currency_bitcoin"
+        },
+        {
+          "label": "Pipeline Parado",
+          "value": "6 días",
+          "icon": "local_gas_station"
+        },
+        {
+          "label": "FBI Recuperó",
+          "value": "$2.3M",
+          "icon": "policy"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Estrategias de Contención",
+    "content": {
+      "intro": "Limitar daño y prevenir spread. Trade-off entre velocidad y preservar evidencia.",
+      "tabs": [
+        {
+          "label": "Short-term",
+          "title": "Contención Inmediata",
+          "text": "Aislar sistemas comprometidos de red. Disconnect ethernet, disable WiFi. NO apagar (pierdes RAM). Cambiar passwords. Bloquear IPs maliciosas en firewall. Deshabilitar cuentas comprometidas. Goal: stop the bleeding.",
+          "icon": "block"
+        },
+        {
+          "label": "Long-term",
+          "title": "Contención Sostenida",
+          "text": "Segmentar red para monitoring continuo. Honeypot/honeynet para observar atacante. Permite recolectar más intel. Requiere recursos. Colonial optó por shutdown total (más seguro pero disruptivo).",
+          "icon": "grid_on"
+        },
+        {
+          "label": "Decision Factors",
+          "title": "Consideraciones",
+          "text": "Business impact vs security. Evidencia forense vs speed. Legal/regulatory requirements. Comunicación con stakeholders. Colonial: OT safety > business continuity → shutdown. Correcta decisión dado riesgo de explosión/spill.",
+          "icon": "balance"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Erradicación y Recuperación",
+    "content": {
+      "eradication": [
+        "Eliminar malware: antivirus, EDR, manual removal",
+        "Parchear vulnerabilidades explotadas",
+        "Rebuild systems desde conocido bueno (gold image)",
+        "Cambiar todas las credenciales",
+        "Cerrar backdoors, eliminar persistence mechanisms"
+      ],
+      "recovery": [
+        "Restaurar desde backups limpios (pre-infección)",
+        "Validar integridad de backups (no están infectados)",
+        "Restore en orden: DC primero, luego servers, luego workstations",
+        "Test functionality antes de producción",
+        "Monitorear agresivamente por reinfección",
+        "Comunicar plan de recovery a stakeholders"
+      ],
+      "colonial_recovery": "6 días para restaurar pipeline. FBI ayudó rastreando Bitcoin wallet, recuperaron $2.3M explotando private key de DarkSide."
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_tabs",
+    "title": "Ransomware: To Pay or Not to Pay",
+    "content": {
+      "intro": "Decisión más difícil. Pros y cons de pagar rescate.",
+      "tabs": [
+        {
+          "label": "Arguments AGAINST",
+          "title": "Por qué NO Pagar",
+          "text": "Financia crim organizado. No garantiza decrypt (30% no reciben key). Puede re-atacar (saben que pagas). Ilegal en algunos casos (OFAC sanctions). Incentiva más ataques. FBI/CISA recomiendan NO pagar.",
+          "icon": "block"
+        },
+        {
+          "label": "Arguments FOR",
+          "title": "Por qué SÍ Pagar",
+          "text": "Faster recovery que rebuild. Business continuity crítica (hospital, utilities). Backups destruidos/cifrados también. Doble extorsión: pagan para no leak data. Decisión business, no security. Insurance puede cubrir.",
+          "icon": "payment"
+        },
+        {
+          "label": "Best Practice",
+          "title": "Preparación > Pago",
+          "text": "Backups 3-2-1 offline/immutable. Incident response plan. Cyber insurance. Patch management. Network segmentation. Si preparado bien, NO necesitas pagar. Colonial pagó porque no preparado adecuadamente.",
+          "icon": "shield"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - Contención",
+    "content": {
+      "question": "Colonial Pipeline hizo shutdown completo del pipeline. ¿Fue decisión correcta?",
+      "options": [
+        {
+          "id": "a",
+          "text": "SÍ. OT systems safety-critical. Shutdown previno potential explosión/environmental disaster.",
+          "is_correct": true,
+          "feedback": "Correcto. Decisión difícil pero apropiada. Safety > business continuity en OT. Segmentar OT de IT habría prevenido necesidad de shutdown total."
+        },
+        {
+          "id": "b",
+          "text": "NO. Debieron seguir operando arriesgándose",
+          "is_correct": false,
+          "feedback": "Incorrecto. Riesgo de explosión, spills ambientales, vidas humanas. Shutdown fue prudente dado unknowns."
+        },
+        {
+          "id": "c",
+          "text": "Debieron pagar más rápido para evitar shutdown",
+          "is_correct": false,
+          "feedback": "No. Pagar no garantiza recovery inmediato. Shutdown fue para proteger OT systems, no relacionado con pago."
+        }
+      ]
+    }
+  }
+]

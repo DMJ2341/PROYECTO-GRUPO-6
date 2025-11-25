@@ -1,0 +1,168 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Equifax Data Breach",
+    "duration": 120,
+    "content": {
+      "case_name": "Equifax Data Breach (2017)",
+      "date": "Mar-Jul 2017",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Equifax_Logo.svg/1200px-Equifax_Logo.svg.png",
+      "narrative": "CVE-2017-5638 en Apache Struts sin parchear. Factor humano crítico: equipos ignoraron múltiples alertas, certificado SSL expirado impidió detección, credenciales admin no rotadas. 147 millones de personas afectadas.",
+      "stats": [
+        {"label": "Personas Afectadas", "value": "147M", "icon": "group"},
+        {"label": "Multa FTC", "value": "$575M", "icon": "gavel"},
+        {"label": "Días Sin Detectar", "value": "76", "icon": "schedule"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Ingeniería Social: Psicología del Ataque",
+    "content": {
+      "intro": "Manipulación psicológica para que víctimas divulguen información o realicen acciones inseguras. 82% de brechas involucran elemento humano (Verizon DBIR 2022).",
+      "tabs": [
+        {
+          "label": "Principios Cialdini",
+          "title": "6 Principios de Persuasión",
+          "text": "Authority (autoridad), Scarcity (escasez), Social Proof (prueba social), Liking (afinidad), Commitment (compromiso), Reciprocity (reciprocidad). Atacantes explotan estos sesgos cognitivos.",
+          "icon": "psychology"
+        },
+        {
+          "label": "Phishing",
+          "title": "Phishing - Email-based",
+          "text": "Email malicioso con link/attachment. Spear phishing (dirigido), Whaling (ejecutivos). Clone phishing (replica email legítimo). Business Email Compromise (BEC) - $43B perdidos 2016-2021 (FBI).",
+          "icon": "email"
+        },
+        {
+          "label": "Vishing",
+          "title": "Vishing - Voice-based",
+          "text": "Llamada telefónica engañosa. Caller ID spoofing. IRS scams, tech support scams. Ejemplo: Twitter 2020 hack empezó con vishing a empleados.",
+          "icon": "phone"
+        },
+        {
+          "label": "Smishing",
+          "title": "Smishing - SMS-based",
+          "text": "SMS maliciosos. Links acortados, urgencia (cuenta bloqueada, paquete delivery). Ejemplo: smishing bancario muy común.",
+          "icon": "sms"
+        },
+        {
+          "label": "Pretexting",
+          "title": "Pretexting - Escenario Falso",
+          "text": "Crear escenario inventado para obtener información. Ejemplo: hacerse pasar por IT support, proveedor, auditor. Usado en ataques dirigidos.",
+          "icon": "theater_comedy"
+        },
+        {
+          "label": "Física",
+          "title": "Ataques Físicos",
+          "text": "Baiting (USB maliciosos dejados), Tailgating (seguir a empleado autorizado), Shoulder surfing (observar contraseñas), Dumpster diving (basura con información).",
+          "icon": "meeting_room"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "practical_exercise",
+    "title": "Simulador de Phishing: Detecta 10 Emails",
+    "content": {
+      "instruction": "Para cada email, determina si es legítimo o phishing y explica por qué:",
+      "emails": [
+        {
+          "id": 1,
+          "from": "security@paypaI.com",
+          "subject": "Urgent: Verify your account",
+          "body": "Your account will be suspended in 24 hours. Click here to verify.",
+          "is_phishing": true,
+          "red_flags": ["Domain usa 'I' mayúscula en lugar de 'l'", "Urgencia artificial", "Suspensión amenazada"]
+        },
+        {
+          "id": 2,
+          "from": "ceo@company.com",
+          "subject": "Wire Transfer Needed ASAP",
+          "body": "I'm in a meeting, need you to wire $50K to vendor. Details attached.",
+          "is_phishing": true,
+          "red_flags": ["CEO Fraud / BEC attack", "Urgencia + autoridad", "Saltarse procesos normales"]
+        },
+        {
+          "id": 3,
+          "from": "no-reply@amazon.com",
+          "subject": "Your order #123-4567890 has shipped",
+          "body": "Track your package here: [legitimate amazon link]",
+          "is_phishing": false,
+          "legitimate_indicators": ["Domain correcto", "No pide credenciales", "Link a amazon.com real"]
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "theory_section",
+    "title": "Defensas contra Ingeniería Social",
+    "content": {
+      "layers": [
+        {
+          "layer": "People",
+          "controls": [
+            "Security Awareness Training (SAT) - NIST SP 800-50",
+            "Phishing simulations periódicas",
+            "Reporting mechanisms (botón 'Reportar Phishing')",
+            "Cultura de verificación (callback, out-of-band verification)"
+          ],
+          "icon": "school"
+        },
+        {
+          "layer": "Process",
+          "controls": [
+            "Políticas de verificación para solicitudes inusuales",
+            "Dual control para transacciones financieras",
+            "Procedimientos de escalación",
+            "Incident response para phishing"
+          ],
+          "icon": "rule"
+        },
+        {
+          "layer": "Technology",
+          "controls": [
+            "Email filtering (SPF, DKIM, DMARC)",
+            "Anti-phishing browser extensions",
+            "MFA (resistente a phishing: FIDO2)",
+            "URL reputation services",
+            "Sandboxing de attachments"
+          ],
+          "icon": "security"
+        }
+      ],
+      "key_principle": "Defense in Depth: No depender de un solo control. Humanos fallan, tech falla, necesitas capas."
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - Ingeniería Social",
+    "content": {
+      "question": "Recibes llamada de 'IT Support' diciendo que detectaron malware en tu PC y necesitan tu contraseña para 'limpiarla remotamente'. ¿Qué tipo de ataque es y cómo respondes?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vishing. Cuelgo y llamo a IT real usando número del directorio",
+          "is_correct": true,
+          "feedback": "¡Correcto! Es vishing (voice phishing). NUNCA des contraseña por teléfono. Verifica usando canal independiente."
+        },
+        {
+          "id": "b",
+          "text": "Phishing. Reporto el email",
+          "is_correct": false,
+          "feedback": "Es vishing (voz), no phishing (email). Pero la idea de reportar es buena."
+        },
+        {
+          "id": "c",
+          "text": "Le doy contraseña temporal y la cambio después",
+          "is_correct": false,
+          "feedback": "¡No! IT real nunca pide contraseña. Esta respuesta entrega credenciales al atacante."
+        }
+      ]
+    }
+  }
+]

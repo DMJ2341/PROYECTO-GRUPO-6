@@ -1,32 +1,22 @@
-# backend/models/lesson.py - CORREGIDO CON JSONB Y FK INTEGER
-from database.db import db
-from datetime import datetime
+# backend/models/lesson.py
+from database.db import Base
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
-class Lesson(db.Model):
+class Lesson(Base):
     __tablename__ = 'lessons'
-    __table_args__ = {'extend_existing': True}
     
-    id = db.Column(db.String(100), primary_key=True)
-    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=True)  # ✅ Integer FK
-    title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    content = db.Column(db.Text)
-    order_index = db.Column(db.Integer, nullable=False)
-    type = db.Column(db.String(20), default='interactive')
-    duration_minutes = db.Column(db.Integer)
-    xp_reward = db.Column(db.Integer, default=0)
-    total_screens = db.Column(db.Integer, default=1)
-    screens = db.Column(JSONB)  # ✅ CAMBIADO de Text a JSONB
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    id = Column(String, primary_key=True)  # ID string como "fundamentos_leccion_1"
+    course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)
+    title = Column(String(200), nullable=False)
+    description = Column(String(500))
+    type = Column(String(50))
+    content = Column(JSONB, nullable=False)  # JSONB para todo el contenido interactivo
+    screens = Column(JSONB)  # JSONB para pantallas (tabs, timelines, labs)
+    total_screens = Column(Integer, default=0)
+    duration_minutes = Column(Integer, default=15)
+    xp_reward = Column(Integer, default=50)
+    order_index = Column(Integer, nullable=False)
     
-    def __repr__(self):
-        return f'<Lesson {self.id}: {self.title}>'
-    
-    def get_screens_data(self):
-        """Obtener screens directamente (ya es dict/list con JSONB)"""
-        return self.screens if self.screens else []
-    
-    def set_screens_data(self, screens_list):
-        """Guardar screens directamente (SQLAlchemy maneja JSONB)"""
-        self.screens = screens_list
+    course = relationship("Course", backref="lessons")

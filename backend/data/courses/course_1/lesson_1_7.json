@@ -1,0 +1,337 @@
+[
+  {
+    "screen_id": 1,
+    "type": "final_exam_intro",
+    "title": "Evaluación Final: Operación Defensa Digital",
+    "duration": 120,
+    "content": {
+      "scenario": "Una PYME de 100 empleados (retail + ecommerce) ha sufrido un incidente de seguridad. Ransomware cifró 500GB de datos incluyendo base de datos de clientes. Como analista junior, debes investigar y proponer soluciones.",
+      "your_role": "Junior Security Analyst - Equipo CSIRT",
+      "objectives": [
+        "Analizar el incidente completo: vectores, vulnerabilidades CVE, IOCs",
+        "Evaluar impacto en CIA Triad",
+        "Mapear técnicas a MITRE ATT&CK®",
+        "Identificar controles NIST faltantes",
+        "Proponer arquitectura defensiva"
+      ],
+      "time_limit": "120 minutos",
+      "passing_score": "70%",
+      "total_points": 100
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "incident_timeline",
+    "title": "Línea de Tiempo del Incidente",
+    "content": {
+      "timeline": [
+        {
+          "time": "Día 1 - 09:15",
+          "event": "Contadora recibe email de 'proveedor' con factura adjunta Excel con macros",
+          "severity": "low",
+          "icon": "email"
+        },
+        {
+          "time": "Día 1 - 09:20",
+          "event": "Usuario abre archivo y habilita macros. PowerShell ejecuta payload",
+          "severity": "high",
+          "icon": "warning"
+        },
+        {
+          "time": "Día 1 - 09:25",
+          "event": "Conexión saliente a 185.220.101.34 (Tor exit node)",
+          "severity": "high",
+          "icon": "cloud_upload"
+        },
+        {
+          "time": "Día 1 - 09:30-15:00",
+          "event": "Reconocimiento interno: escaneo de red, descubrimiento de shares SMB",
+          "severity": "medium",
+          "icon": "search"
+        },
+        {
+          "time": "Día 1 - 15:00-02:00",
+          "event": "Exfiltración de 50GB de datos sensibles vía HTTPS",
+          "severity": "critical",
+          "icon": "upload_file"
+        },
+        {
+          "time": "Día 2 - 02:15",
+          "event": "Ransomware se despliega en 25 workstations y 2 servers",
+          "severity": "critical",
+          "icon": "lock"
+        },
+        {
+          "time": "Día 2 - 06:00",
+          "event": "Empleados reportan archivos .locked y nota de rescate",
+          "severity": "critical",
+          "icon": "report_problem"
+        }
+      ],
+      "evidence": {
+        "email": "De: facturas@provedor-abc.com (typo intencional)",
+        "attachment": "Factura_Nov_2024.xlsm",
+        "hash": "SHA256: a3f5e2d8b1c4f7e9...",
+        "c2_server": "185.220.101.34",
+        "ransom_demand": "5 BTC (~$200K USD)"
+      }
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "analysis_questions",
+    "title": "Fase 1: Análisis del Ataque (30 puntos)",
+    "content": {
+      "questions": [
+        {
+          "id": 1,
+          "question": "¿Qué vector de ataque inicial se utilizó según MITRE ATT&CK®?",
+          "type": "multiple_choice",
+          "points": 5,
+          "options": [
+            {"id": "a", "text": "T1566.001 - Spearphishing Attachment", "is_correct": true},
+            {"id": "b", "text": "T1190 - Exploit Public-Facing Application", "is_correct": false},
+            {"id": "c", "text": "T1078 - Valid Accounts", "is_correct": false}
+          ],
+          "feedback": "Correcto. Email con attachment malicioso (macro) es spearphishing attachment."
+        },
+        {
+          "id": 2,
+          "question": "Identifica 3 IOCs (Indicators of Compromise) del incidente:",
+          "type": "text_input",
+          "points": 10,
+          "expected_answers": [
+            "IP 185.220.101.34",
+            "Domain provedor-abc.com (typo)",
+            "Hash SHA256 del archivo",
+            "Extensión .locked",
+            "Beaconing cada 10 min"
+          ]
+        },
+        {
+          "id": 3,
+          "question": "¿Qué principios de la Tríada CIA fueron violados y en qué orden?",
+          "type": "ordered_list",
+          "points": 10,
+          "correct_order": [
+            "Integridad (macro modificó sistema)",
+            "Confidencialidad (50GB exfiltrados)",
+            "Disponibilidad (ransomware cifró datos)"
+          ]
+        },
+        {
+          "id": 4,
+          "question": "Mapea 5 tácticas MITRE ATT&CK® utilizadas:",
+          "type": "matching",
+          "points": 5,
+          "pairs": [
+            {"tactic": "TA0001 Initial Access", "technique": "T1566.001 Phishing Attachment"},
+            {"tactic": "TA0002 Execution", "technique": "T1059.001 PowerShell"},
+            {"tactic": "TA0007 Discovery", "technique": "T1018 Remote System Discovery"},
+            {"tactic": "TA0010 Exfiltration", "technique": "T1041 Exfiltration Over C2"},
+            {"tactic": "TA0040 Impact", "technique": "T1486 Data Encrypted for Impact"}
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "control_assessment",
+    "title": "Fase 2: Controles NIST Faltantes (25 puntos)",
+    "content": {
+      "instruction": "Identifica qué controles NIST SP 800-53 faltaban y cómo habrían prevenido el ataque:",
+      "controls": [
+        {
+          "family": "AC - Access Control",
+          "control_id": "AC-3",
+          "name": "Least Privilege",
+          "finding": "Usuarios tenían privilegios de admin local, permitió ejecución de macros",
+          "impact": "Alto",
+          "recommendation": "Implementar least privilege, remover derechos admin de usuarios estándar"
+        },
+        {
+          "family": "SI - System Integrity",
+          "control_id": "SI-3",
+          "name": "Malicious Code Protection",
+          "finding": "Antivirus desactualizado, no detectó macro malicioso",
+          "impact": "Crítico",
+          "recommendation": "EDR con behavioral detection, actualización automática"
+        },
+        {
+          "family": "AU - Audit",
+          "control_id": "AU-6",
+          "name": "Audit Review and Analysis",
+          "finding": "No SIEM, beaconing pasó desapercibido 17 horas",
+          "impact": "Alto",
+          "recommendation": "SIEM con alertas para actividad anómala de red"
+        },
+        {
+          "family": "SC - System Communications",
+          "control_id": "SC-7",
+          "name": "Boundary Protection",
+          "finding": "Firewall permitía todo outbound, Tor no bloqueado",
+          "impact": "Alto",
+          "recommendation": "Whitelist outbound, bloquear Tor/VPN, proxy con inspección SSL"
+        },
+        {
+          "family": "CP - Contingency Planning",
+          "control_id": "CP-9",
+          "name": "System Backup",
+          "finding": "Backups en red compartida, también fueron cifrados",
+          "impact": "Crítico",
+          "recommendation": "Backups offline/immutable, regla 3-2-1, test restores"
+        }
+      ],
+      "task": "Para cada control, explica cómo habría mitigado o prevenido el ataque (5 pts c/u)"
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "architecture_design",
+    "title": "Fase 3: Defensa en Profundidad (25 puntos)",
+    "content": {
+      "instruction": "Diseña arquitectura de seguridad con las 7 capas de Defense in Depth",
+      "layers": [
+        {
+          "layer": 1,
+          "name": "Políticas y Awareness",
+          "required_elements": [
+            "Security Awareness Training con simulaciones",
+            "Política AUP - prohibición de macros no autorizadas",
+            "Incident Response Plan documentado"
+          ],
+          "points": 3
+        },
+        {
+          "layer": 2,
+          "name": "Seguridad Física",
+          "required_elements": [
+            "Control de acceso a server room",
+            "Backup tapes en caja fuerte offsite"
+          ],
+          "points": 2
+        },
+        {
+          "layer": 3,
+          "name": "Perímetro",
+          "required_elements": [
+            "Next-Gen Firewall con IPS",
+            "Email gateway con sandbox para attachments",
+            "SPF, DKIM, DMARC enforced"
+          ],
+          "points": 5
+        },
+        {
+          "layer": 4,
+          "name": "Red Interna",
+          "required_elements": [
+            "Segmentación con VLANs (users/servers/guest)",
+            "NAC 802.1X",
+            "IDS monitoreando lateral movement"
+          ],
+          "points": 5
+        },
+        {
+          "layer": 5,
+          "name": "Endpoint",
+          "required_elements": [
+            "EDR en todas las workstations",
+            "Application whitelisting",
+            "Patch management automatizado"
+          ],
+          "points": 5
+        },
+        {
+          "layer": 6,
+          "name": "Aplicación",
+          "required_elements": [
+            "Deshabilitar macros en emails externos (GPO)",
+            "WAF para apps web"
+          ],
+          "points": 3
+        },
+        {
+          "layer": 7,
+          "name": "Datos",
+          "required_elements": [
+            "Encryption at rest",
+            "DLP para prevenir exfiltración",
+            "Backups 3-2-1 immutable"
+          ],
+          "points": 2
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 6,
+    "type": "theoretical_questions",
+    "title": "Fase 4: Conocimientos Teóricos (20 puntos)",
+    "content": {
+      "questions": [
+        {
+          "q": "Explica la diferencia entre vulnerabilidad, exploit y zero-day. Da un ejemplo de cada uno.",
+          "points": 5,
+          "expected": "Vulnerabilidad = debilidad (CVE-2017-0144), Exploit = código que aprovecha (EternalBlue), Zero-day = vuln sin parche disponible (Stuxnet tuvo 4)"
+        },
+        {
+          "q": "Un malware se auto-replica por la red sin intervención humana. ¿Es virus, worm o trojan? Justifica.",
+          "points": 3,
+          "expected": "Worm. Auto-replicación es característica clave. Virus necesita host, trojan no se replica."
+        },
+        {
+          "q": "¿Por qué NO se debe cifrar contraseñas con AES? ¿Qué se debe usar?",
+          "points": 4,
+          "expected": "Cifrado es reversible con clave. Usar hash + salt (bcrypt, Argon2) - irreversible."
+        },
+        {
+          "q": "CVE crítico (CVSS 9.8) con parche disponible hace 2 meses. Empresa no lo aplicó y sufre breach. ¿Es zero-day?",
+          "points": 3,
+          "expected": "No. Es N-day (known vuln unpatched). Fallo de vulnerability management, no zero-day."
+        },
+        {
+          "q": "Lista 5 principios de ingeniería social según Cialdini",
+          "points": 5,
+          "expected": "Authority, Urgency/Scarcity, Social Proof, Liking, Reciprocity, Commitment"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 7,
+    "type": "final_deliverable",
+    "title": "Entregable: Informe Ejecutivo",
+    "content": {
+      "instruction": "Crea un informe ejecutivo de 1-2 páginas para el CEO (audiencia no técnica)",
+      "required_sections": [
+        {
+          "section": "Executive Summary",
+          "content": "Qué pasó, impacto en negocio (datos, $, reputación)",
+          "max_length": "150 palabras"
+        },
+        {
+          "section": "Root Cause",
+          "content": "Por qué pasó - factores humanos y técnicos",
+          "format": "3-4 bullets"
+        },
+        {
+          "section": "Immediate Actions",
+          "content": "Qué se hizo para contener",
+          "format": "3-4 bullets"
+        },
+        {
+          "section": "Recommendations",
+          "content": "Top 5 inversiones para prevenir recurrencia con ROI",
+          "format": "5 bullets con costo estimado"
+        }
+      ],
+      "evaluation_criteria": [
+        "Claridad para audiencia no técnica",
+        "Enfoque en impacto de negocio",
+        "Recomendaciones priorizadas y justificadas",
+        "Profesionalismo"
+      ]
+    }
+  }
+]

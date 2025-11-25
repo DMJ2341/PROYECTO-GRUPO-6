@@ -1,0 +1,581 @@
+{
+  "Red Team": {
+    "theme": {
+      "primary": "#EF5350",
+      "secondary": "#C62828",
+      "bg": "#FFEBEE",
+      "gradient": "linear-gradient(135deg, #EF5350 0%, #C62828 100%)",
+      "icon": "security",
+      "badge_color": "#FF1744"
+    },
+    "sections": [
+      {
+        "type": "hero_card",
+        "title": "🔴 Eres un Operador Red Team",
+        "subtitle": "Offensive Security Specialist",
+        "description": "Tu mentalidad se enfoca en encontrar grietas antes que el adversario. Piensas creativamente para romper sistemas y mejorar defensas.",
+        "stats": {
+          "mindset": "Ofensivo",
+          "approach": "Creativo",
+          "focus": "Exploitation"
+        }
+      },
+      {
+        "type": "why_this_result",
+        "title": "¿Por qué este resultado?",
+        "bullets": [
+          "Pensamiento ofensivo natural - prefieres encontrar vulnerabilidades",
+          "Creatividad para resolver problemas de formas no convencionales",
+          "Interés en herramientas de exploitation (Metasploit, Burp Suite)",
+          "Fascinación por casos de ataque complejos (WannaCry, SolarWinds)"
+        ]
+      },
+      {
+        "type": "skills_required",
+        "title": "🛠️ Skills Necesarias",
+        "categories": [
+          {
+            "label": "Técnicos (Must-have)",
+            "skills": [
+              "Networking: TCP/IP, protocols, subnetting",
+              "Scripting: Python, Bash, PowerShell",
+              "Web: OWASP Top 10, injection attacks",
+              "OS: Linux commands, Windows internals",
+              "Exploitation: Metasploit framework basics"
+            ]
+          },
+          {
+            "label": "Deseables",
+            "skills": [
+              "Exploit development",
+              "Binary analysis",
+              "Active Directory attacks",
+              "Cloud security (AWS, Azure)"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "tools",
+        "title": "🧰 Herramientas del Trade",
+        "tool_categories": [
+          {
+            "category": "Reconnaissance",
+            "tools": ["Nmap", "Masscan", "Amass", "Subfinder"]
+          },
+          {
+            "category": "Exploitation",
+            "tools": ["Metasploit Framework", "Burp Suite", "SQLmap"]
+          },
+          {
+            "category": "Post-Exploitation",
+            "tools": ["Mimikatz", "BloodHound", "PowerShell Empire"]
+          },
+          {
+            "category": "Custom",
+            "tools": ["Python scripts", "Go for tooling"]
+          }
+        ]
+      },
+      {
+        "type": "certifications",
+        "title": "🎓 Certificaciones Recomendadas",
+        "roadmap": [
+          {
+            "level": "Nivel 0 - GRATUITAS",
+            "icon": "verified",
+            "certs": [
+              {
+                "name": "CyberLearn Fundamentals",
+                "status": "✓ Completado",
+                "duration": "-",
+                "cost": "GRATIS"
+              },
+              {
+                "name": "Google Cybersecurity Certificate",
+                "status": "Recomendado",
+                "duration": "6 meses",
+                "cost": "GRATIS con financial aid",
+                "link": "coursera.org/google-cybersecurity"
+              }
+            ]
+          },
+          {
+            "level": "Nivel 1 - BÁSICAS ($)",
+            "icon": "school",
+            "certs": [
+              {
+                "name": "CompTIA Security+",
+                "priority": "HIGH",
+                "duration": "3 meses",
+                "cost": "$370 USD",
+                "why": "Fundamento antes de offensive"
+              },
+              {
+                "name": "eJPT (eLearnSecurity Junior PT)",
+                "priority": "HIGH",
+                "duration": "2 meses",
+                "cost": "$249 USD",
+                "why": "Práctica real, hands-on, buen entry point"
+              }
+            ]
+          },
+          {
+            "level": "Nivel 2 - AVANZADAS ($$)",
+            "icon": "emoji_events",
+            "certs": [
+              {
+                "name": "OSCP",
+                "priority": "GOLD STANDARD",
+                "duration": "3-6 meses prep",
+                "cost": "$1,500 USD",
+                "why": "24h exam real, muy respetada globalmente"
+              },
+              {
+                "name": "OSWE",
+                "priority": "MEDIUM",
+                "duration": "4 meses",
+                "cost": "$1,600 USD",
+                "why": "Especialización en web app pentesting"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "practice_labs",
+        "title": "🔬 Práctica Recomendada",
+        "phases": [
+          {
+            "phase": "Fase 1: Fundamentos GRATIS (Meses 1-2)",
+            "platforms": [
+              {
+                "name": "TryHackMe - Free Tier",
+                "rating": 5,
+                "paths": [
+                  "Pre Security (40 hrs) - GRATIS",
+                  "Introduction to Cyber Security (24 hrs) - GRATIS"
+                ],
+                "why": "Interfaz guiada, beginner-friendly",
+                "link": "tryhackme.com"
+              },
+              {
+                "name": "OverTheWire - Bandit",
+                "rating": 5,
+                "description": "Terminal-based, aprende Linux jugando",
+                "link": "overthewire.org/wargames",
+                "cost": "GRATIS"
+              },
+              {
+                "name": "PicoCTF",
+                "rating": 4,
+                "description": "CTF permanente, categorías claras",
+                "link": "picoctf.org",
+                "cost": "GRATIS"
+              }
+            ]
+          },
+          {
+            "phase": "Fase 2: Premium ($10-20/mes) (Meses 3-6)",
+            "platforms": [
+              {
+                "name": "TryHackMe Premium",
+                "cost": "$10/mes",
+                "paths": [
+                  "Offensive Pentesting (47 hrs)",
+                  "Red Teaming (48 hrs)"
+                ],
+                "when": "Después de completar contenido gratuito"
+              },
+              {
+                "name": "HackTheBox VIP",
+                "cost": "$20/mes",
+                "features": [
+                  "300+ retired machines",
+                  "OSCP Prep track",
+                  "Starting Point GRATIS"
+                ],
+                "when": "Después de 2-3 meses en THM"
+              },
+              {
+                "name": "PentesterLab",
+                "cost": "$20/mes",
+                "focus": "Web exploitation especializado",
+                "link": "pentesterlab.com"
+              }
+            ]
+          },
+          {
+            "phase": "Fase 3: Avanzado (Meses 7-12)",
+            "activities": [
+              "HTB: 10+ máquinas Easy",
+              "Participar en CTFs mensuales (ctftime.org)",
+              "VulnHub: Máquinas descargables GRATIS",
+              "Crear writeups en GitHub (portfolio)"
+            ]
+          }
+        ],
+        "additional_resources": {
+          "youtube": [
+            "IppSec (HTB walkthroughs) - OBLIGATORIO",
+            "John Hammond",
+            "The Cyber Mentor"
+          ],
+          "communities": [
+            "Discord: TryHackMe, HackTheBox servers",
+            "Reddit: r/hacking, r/oscp",
+            "Twitter: #infosec community"
+          ]
+        }
+      }
+    ]
+  },
+
+  "Blue Team": {
+    "theme": {
+      "primary": "#42A5F5",
+      "secondary": "#1976D2",
+      "bg": "#E3F2FD",
+      "gradient": "linear-gradient(135deg, #42A5F5 0%, #1976D2 100%)",
+      "icon": "shield",
+      "badge_color": "#2196F3"
+    },
+    "sections": [
+      {
+        "type": "hero_card",
+        "title": "🔵 Eres un Defensor Blue Team",
+        "subtitle": "Cyber Defense & Incident Response",
+        "description": "Tu fortaleza es la detección, análisis y resiliencia. Construyes defensas sólidas y cazas amenazas.",
+        "stats": {
+          "mindset": "Defensivo",
+          "approach": "Analítico",
+          "focus": "Detection & Response"
+        }
+      },
+      {
+        "type": "why_this_result",
+        "title": "¿Por qué este resultado?",
+        "bullets": [
+          "Mentalidad defensiva - prefieres proteger y detectar amenazas",
+          "Pensamiento analítico y metódico para investigar incidentes",
+          "Interés en herramientas de monitoreo (SIEM, EDR, IDS)",
+          "Fascinación por casos de incident response (Colonial Pipeline, Maersk)"
+        ]
+      },
+      {
+        "type": "skills_required",
+        "title": "🛠️ Skills Necesarias",
+        "categories": [
+          {
+            "label": "Técnicos (Must-have)",
+            "skills": [
+              "SIEM: Splunk, ELK Stack queries",
+              "Networking: Traffic analysis, packet capture",
+              "Forensics: Memory, disk, network forensics",
+              "Incident Response: NIST SP 800-61 framework",
+              "Threat Intel: IOCs, TTPs, MITRE ATT&CK®"
+            ]
+          },
+          {
+            "label": "Deseables",
+            "skills": [
+              "Malware analysis",
+              "Python for automation",
+              "Cloud security monitoring",
+              "Threat hunting"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "tools",
+        "title": "🧰 Herramientas del Trade",
+        "tool_categories": [
+          {
+            "category": "SIEM/Monitoring",
+            "tools": ["Splunk", "ELK Stack", "Graylog"]
+          },
+          {
+            "category": "Detection",
+            "tools": ["Suricata", "Snort", "Zeek (Bro)", "YARA rules"]
+          },
+          {
+            "category": "Forensics",
+            "tools": ["Volatility (memory)", "Autopsy (disk)", "Wireshark (network)"]
+          },
+          {
+            "category": "Response",
+            "tools": ["TheHive", "Cortex", "MISP"]
+          }
+        ]
+      },
+      {
+        "type": "certifications",
+        "title": "🎓 Certificaciones Recomendadas",
+        "roadmap": [
+          {
+            "level": "Nivel 0 - GRATUITAS",
+            "certs": [
+              {
+                "name": "CyberLearn Fundamentals",
+                "status": "✓ Completado"
+              },
+              {
+                "name": "IBM Cybersecurity Analyst (Coursera)",
+                "cost": "GRATIS con financial aid",
+                "duration": "8 meses"
+              }
+            ]
+          },
+          {
+            "level": "Nivel 1 - BÁSICAS ($)",
+            "certs": [
+              {
+                "name": "CompTIA Security+",
+                "cost": "$370 USD",
+                "priority": "HIGH"
+              },
+              {
+                "name": "CompTIA CySA+",
+                "cost": "$380 USD",
+                "why": "Enfoque en detección y análisis"
+              },
+              {
+                "name": "Blue Team Level 1 (BTL1)",
+                "cost": "$400 USD",
+                "why": "100% práctica, labs reales"
+              }
+            ]
+          },
+          {
+            "level": "Nivel 2 - AVANZADAS ($$)",
+            "certs": [
+              {
+                "name": "GCIH (GIAC Incident Handler)",
+                "cost": "$2,000 USD",
+                "why": "SANS training, gold standard para IR"
+              },
+              {
+                "name": "GCIA (Intrusion Analyst)",
+                "cost": "$2,000 USD",
+                "why": "Network traffic analysis avanzado"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "practice_labs",
+        "title": "🔬 Práctica Recomendada",
+        "phases": [
+          {
+            "phase": "Fase 1: Fundamentos GRATIS (Meses 1-2)",
+            "platforms": [
+              {
+                "name": "CyberDefenders",
+                "rating": 5,
+                "description": "ÚNICO enfoque Blue Team gratis",
+                "challenges": [
+                  "Network Forensics",
+                  "SIEM challenges",
+                  "Memory forensics",
+                  "Incident Response scenarios"
+                ],
+                "link": "cyberdefenders.org",
+                "cost": "GRATIS"
+              },
+              {
+                "name": "TryHackMe - Free Blue Team Rooms",
+                "rooms": [
+                  "Windows Forensics",
+                  "Linux Forensics",
+                  "Intro to SIEM"
+                ]
+              }
+            ]
+          },
+          {
+            "phase": "Fase 2: Premium (Meses 3-6)",
+            "platforms": [
+              {
+                "name": "TryHackMe Premium - SOC Level 1",
+                "cost": "$10/mes",
+                "duration": "30 horas",
+                "path": "SOC Level 1 + Cyber Defense"
+              },
+              {
+                "name": "Blue Team Labs Online",
+                "cost": "$15/mes",
+                "focus": "100% defensive labs",
+                "content": [
+                  "SIEM investigations",
+                  "Threat hunting",
+                  "Digital Forensics"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  "Purple Team": {
+    "theme": {
+      "primary": "#AB47BC",
+      "secondary": "#7B1FA2",
+      "bg": "#F3E5F5",
+      "gradient": "linear-gradient(135deg, #AB47BC 0%, #7B1FA2 100%)",
+      "icon": "sync",
+      "badge_color": "#9C27B0"
+    },
+    "sections": [
+      {
+        "type": "hero_card",
+        "title": "🟣 Eres un Estratega Purple Team",
+        "subtitle": "Collaborative Security & Strategy",
+        "description": "Entiendes ambos mundos. Usas técnicas ofensivas para fortalecer defensas y mejoras la comunicación entre equipos.",
+        "stats": {
+          "mindset": "Estratégico",
+          "approach": "Híbrido",
+          "focus": "Integration & Improvement"
+        }
+      },
+      {
+        "type": "why_this_result",
+        "title": "¿Por qué este resultado?",
+        "bullets": [
+          "Balance entre pensamiento ofensivo y defensivo",
+          "Interés en el big picture y arquitecturas completas",
+          "Fascinación por frameworks (NIST, MITRE ATT&CK®)",
+          "Habilidad para ver sistemas desde múltiples perspectivas"
+        ]
+      },
+      {
+        "type": "skills_required",
+        "title": "🛠️ Skills Necesarias",
+        "categories": [
+          {
+            "label": "Técnicos (Must-have)",
+            "skills": [
+              "Offensive + Defensive (conocimiento de ambos)",
+              "MITRE ATT&CK® framework (profundo)",
+              "Risk assessment frameworks",
+              "Security architecture",
+              "Communication skills (crítico)"
+            ]
+          },
+          {
+            "label": "Deseables",
+            "skills": [
+              "GRC tools y frameworks",
+              "Compliance (ISO, NIST, PCI-DSS)",
+              "Program management",
+              "Team leadership"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "tools",
+        "title": "🧰 Herramientas del Trade",
+        "tool_categories": [
+          {
+            "category": "Frameworks",
+            "tools": ["MITRE ATT&CK® Navigator", "MITRE Caldera"]
+          },
+          {
+            "category": "Assessment",
+            "tools": ["Red team tools (conocimiento)", "Blue team tools (conocimiento)"]
+          },
+          {
+            "category": "GRC",
+            "tools": ["Risk assessment tools", "Compliance frameworks"]
+          }
+        ]
+      },
+      {
+        "type": "certifications",
+        "title": "🎓 Certificaciones Recomendadas",
+        "roadmap": [
+          {
+            "level": "Nivel 0 - GRATUITAS",
+            "certs": [
+              {
+                "name": "CyberLearn Fundamentals",
+                "status": "✓ Completado"
+              },
+              {
+                "name": "Google + IBM Certs",
+                "cost": "GRATIS"
+              }
+            ]
+          },
+          {
+            "level": "Nivel 1 - BÁSICAS ($)",
+            "certs": [
+              {
+                "name": "Security+",
+                "cost": "$370 USD",
+                "why": "Fundamento para todos"
+              },
+              {
+                "name": "CySA+",
+                "cost": "$380 USD",
+                "why": "Balance offense/defense"
+              },
+              {
+                "name": "CRISC (ISACA)",
+                "cost": "$575 USD",
+                "why": "Risk management focus"
+              }
+            ]
+          },
+          {
+            "level": "Nivel 2 - AVANZADAS ($$)",
+            "certs": [
+              {
+                "name": "CISSP",
+                "cost": "$749 USD",
+                "why": "Management level, requiere 5 años experiencia"
+              },
+              {
+                "name": "CISM",
+                "cost": "$575 USD",
+                "why": "Strategic security management"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "practice_labs",
+        "title": "🔬 Práctica Recomendada",
+        "note": "Purple Team requiere experiencia en AMBOS lados. Practica Red + Blue.",
+        "phases": [
+          {
+            "phase": "Fase 1: Fundamentos de ambos lados",
+            "red_practice": "TryHackMe Offensive paths",
+            "blue_practice": "CyberDefenders + TryHackMe SOC",
+            "framework": "Estudiar MITRE ATT&CK® Navigator"
+          },
+          {
+            "phase": "Fase 2: Integración",
+            "platforms": [
+              {
+                "name": "MITRE Caldera",
+                "description": "Automated adversary emulation",
+                "cost": "GRATIS (open-source)"
+              },
+              {
+                "name": "Atomic Red Team",
+                "description": "Test detection con técnicas ATT&CK®",
+                "cost": "GRATIS"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,163 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Healthcare HIPAA Violation",
+    "duration": 120,
+    "content": {
+      "case_name": "Hospital Data Breach - Access Control Failure",
+      "date": "2018",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Health_Insurance_Portability_and_Accountability_Act_Logo.svg/1200px-Health_Insurance_Portability_and_Accountability_Act_Logo.svg.png",
+      "narrative": "Hospital usaba DAC (Discretionary Access Control) inapropiado. Enfermeras podían ver cualquier record de paciente, incluso fuera de su departamento. Empleada accedió 14,000 records sin razón médica legítima (celebrity snooping). HIPAA requiere controls más estrictos.",
+      "stats": [
+        {"label": "Records Accedidos", "value": "14K", "icon": "description"},
+        {"label": "Multa HIPAA", "value": "$3M", "icon": "gavel"},
+        {"label": "Control Faltante", "value": "MAC/RBAC", "icon": "policy"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Modelos de Control de Acceso",
+    "content": {
+      "intro": "Diferentes paradigmas para determinar quién accede qué. Cada uno apropiado para diferentes contextos.",
+      "tabs": [
+        {
+          "label": "DAC",
+          "title": "Discretionary Access Control",
+          "text": "Owner del recurso decide permisos. Flexible. Ejemplos: Windows NTFS ACLs, Linux file permissions (chmod). Usuario propietario puede compartir. Problema: permissive creep, difícil de auditar. No adecuado para datos altamente sensibles.",
+          "icon": "person"
+        },
+        {
+          "label": "MAC",
+          "title": "Mandatory Access Control",
+          "text": "Sistema operativo enforces, usuario no puede cambiar. Security labels/classifications (Top Secret, Secret, Confidential, Unclassified). Bell-LaPadula (confidentiality): no read up, no write down. Biba (integrity): no write up, no read down. Usado en militar, gov. Ejemplo: SELinux.",
+          "icon": "security"
+        },
+        {
+          "label": "RBAC",
+          "title": "Role-Based Access Control",
+          "text": "Permisos asignados a roles, usuarios asignados a roles. Roles como: Doctor, Nurse, Admin. Escalable. Role hierarchies. SoD enforced (roles mutuamente exclusivos). NIST RBAC standard. Más común en enterprise.",
+          "icon": "groups"
+        },
+        {
+          "label": "ABAC",
+          "title": "Attribute-Based Access Control",
+          "text": "Decision basada en atributos: subject (user role, clearance), object (data classification), environment (time, location). Policy engine evalúa. Muy granular y flexible. XACML. NIST SP 800-162. Usado en Zero Trust. Ejemplo: 'Allow IF doctor AND patient-assigned AND business-hours'.",
+          "icon": "tune"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Bell-LaPadula vs Biba Models",
+    "content": {
+      "bell_lapadula": {
+        "focus": "Confidentiality (prevenir disclosure)",
+        "rules": [
+          "Simple Security: No Read Up (TS user no puede leer Secret)",
+          "* Property: No Write Down (TS user no puede escribir a Confidential - leakage)",
+          "Strong * Property: Read/Write en mismo nivel"
+        ],
+        "use_case": "Clasificación militar/gov. Prevenir espionaje.",
+        "icon": "visibility_off"
+      },
+      "biba": {
+        "focus": "Integrity (prevenir modificación no autorizada)",
+        "rules": [
+          "Simple Integrity: No Read Down (High integrity no lee Low - contamination)",
+          "* Integrity: No Write Up (Low integrity no escribe a High - corruption)",
+          "Invocation Property: ejecutar proceso de mismo/menor nivel"
+        ],
+        "use_case": "Sistemas críticos donde integridad > confidencialidad. Ej: financial transactions.",
+        "icon": "verified"
+      },
+      "comparison": "Bell-LaPadula y Biba son duales. BLP protege confidentiality (secreto), Biba protege integrity (corrección). A veces conflictan - tradeoff."
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "practical_scenario",
+    "title": "Diseña RBAC para Hospital",
+    "content": {
+      "scenario": "Hospital necesita RBAC que cumpla HIPAA. Define roles y permisos.",
+      "roles": [
+        {
+          "role": "Doctor",
+          "permissions": [
+            "Read/Write Patient Records (solo pacientes asignados)",
+            "Order medications",
+            "View lab results",
+            "Discharge patients"
+          ],
+          "restrictions": [
+            "NO acceso a records fuera de sus pacientes",
+            "Logged access (audit trail)",
+            "MFA required"
+          ]
+        },
+        {
+          "role": "Nurse",
+          "permissions": [
+            "Read Patient Records (solo su dept/shift)",
+            "Update vital signs",
+            "View medications",
+            "Chart notes"
+          ],
+          "restrictions": [
+            "NO write prescriptions",
+            "NO discharge",
+            "NO acceso fuera de dept"
+          ]
+        },
+        {
+          "role": "Billing Clerk",
+          "permissions": [
+            "Read demographics",
+            "Read insurance info",
+            "Read billing codes"
+          ],
+          "restrictions": [
+            "NO medical details (diagnoses, treatments)",
+            "Read-only",
+            "Minimum necessary principle"
+          ]
+        },
+        {
+          "role": "Auditor",
+          "permissions": [
+            "Read ALL access logs",
+            "View de-identified data",
+            "Generate compliance reports"
+          ],
+          "restrictions": [
+            "Read-only ALWAYS",
+            "No PHI unless justified",
+            "Cannot modify logs"
+          ]
+        }
+      ],
+      "sod_rules": [
+        "Doctor no puede ser Billing (conflict)",
+        "Auditor no puede tener write access",
+        "Quien crea record no puede delete log"
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - Modelos de Control",
+    "content": {
+      "question": "Hospital permitía enfermeras ver cualquier patient record (DAC). ¿Qué modelo habría prevenido el celebrity snooping?",
+      "options": [
+        {"id": "a", "text": "RBAC con Need-to-Know: enfermera solo accede pacientes de su dept", "is_correct": true, "feedback": "Correcto. RBAC con restricción a 'assigned patients' o 'current dept'. O ABAC con atributo 'patient-assigned = true'."},
+        {"id": "b", "text": "Passwords más fuertes", "is_correct": false, "feedback": "No. Empleada tenía credenciales legítimas. Problema era exceso de permisos, no autenticación."},
+        {"id": "c", "text": "Encryption", "is_correct": false, "feedback": "No. Encryption protege data at rest/transit, pero empleada autenticada podría descifrar. Problema era autorización excesiva."}
+      ]
+    }
+  }
+]

@@ -1,0 +1,133 @@
+[
+  {
+    "screen_id": 1,
+    "type": "story_hook",
+    "title": "Caso Real: Edward Snowden NSA Leak",
+    "duration": 120,
+    "content": {
+      "case_name": "Edward Snowden - Insider Threat (2013)",
+      "date": "Jun 2013",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/NSA_logo.svg/1200px-NSA_logo.svg.png",
+      "narrative": "Contractor de NSA con acceso privilegiado excesivo. Violó Separation of Duties, Need to Know. Descargó 1.7 millones de documentos clasificados usando credenciales de colegas. Fallo de Least Privilege y privilege abuse detection. Mayor leak de inteligencia en historia de USA.",
+      "stats": [
+        {"label": "Documentos Filtrados", "value": "1.7M", "icon": "description"},
+        {"label": "Nivel de Acceso", "value": "Top Secret", "icon": "lock"},
+        {"label": "Tipo de Amenaza", "value": "Insider", "icon": "person"}
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "theory_tabs",
+    "title": "Principios de Control de Acceso - NIST SP 800-53",
+    "content": {
+      "intro": "Fundamentos de AC (Access Control) family según NIST SP 800-53 Rev. 5.",
+      "tabs": [
+        {
+          "label": "AAA Framework",
+          "title": "Authentication, Authorization, Accounting",
+          "text": "Authentication: ¿Quién eres? (passwords, MFA, certs). Authorization: ¿Qué puedes hacer? (permisos, roles). Accounting: ¿Qué hiciste? (logs, auditoría). Tres pilares del control de acceso.",
+          "icon": "verified_user"
+        },
+        {
+          "label": "Least Privilege",
+          "title": "Principio de Mínimo Privilegio",
+          "text": "Usuario/proceso solo tiene permisos mínimos necesarios para su función. Nada más. Reduce blast radius si comprometido. AC-6 en NIST. Snowden violó esto: acceso excesivo innecesario para su rol.",
+          "icon": "vpn_lock"
+        },
+        {
+          "label": "Separation of Duties",
+          "title": "Segregación de Funciones (SoD)",
+          "text": "Ninguna persona puede completar proceso crítico sola. Requiere 2+ personas. Ejemplo: quien aprueba pago no puede ejecutarlo. Previene fraude interno. Dual control. AC-5 en NIST.",
+          "icon": "people"
+        },
+        {
+          "label": "Need to Know",
+          "title": "Necesidad de Saber",
+          "text": "Acceso solo a información necesaria para trabajo específico. Clasificación de datos: Public, Internal, Confidential, Secret. Clearance no implica acceso automático a todo. Compartimentalización.",
+          "icon": "visibility_off"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "theory_section",
+    "title": "Privileged Access Management (PAM)",
+    "content": {
+      "intro": "Gestión de cuentas con privilegios elevados (admin, root, domain admin).",
+      "concepts": [
+        {
+          "name": "Admin Account Risks",
+          "description": "Cuentas admin son high-value targets. Si comprometidas, atacante tiene llaves del reino. Pass-the-Hash, Golden Ticket attacks.",
+          "icon": "warning"
+        },
+        {
+          "name": "Just-In-Time (JIT) Access",
+          "description": "Elevar privilegios solo cuando necesario, por tiempo limitado. Auto-revoke después. Reduce ventana de exposición. Azure AD PIM, AWS IAM temporal credentials.",
+          "icon": "schedule"
+        },
+        {
+          "name": "Password Vaulting",
+          "description": "Almacenar credenciales privilegiadas en vault cifrado. Check-out/check-in. Rotación automática. Session recording. Ejemplos: CyberArk, HashiCorp Vault, BeyondTrust.",
+          "icon": "lock"
+        },
+        {
+          "name": "Break-Glass Procedures",
+          "description": "Cuentas de emergencia para cuando IAM/PAM falla. Selladas, monitoreadas. Uso genera alerta inmediata. Require multiple approvals.",
+          "icon": "emergency"
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 4,
+    "type": "practical_scenario",
+    "title": "Aplica Least Privilege",
+    "content": {
+      "scenario": "Empresa tiene 3 roles: Developer, DBA, Auditor. Define permisos siguiendo Least Privilege y SoD.",
+      "resources": [
+        {"resource": "Source Code Repo", "sensitivity": "High"},
+        {"resource": "Production Database", "sensitivity": "Critical"},
+        {"resource": "Test Database", "sensitivity": "Medium"},
+        {"resource": "Audit Logs", "sensitivity": "High"},
+        {"resource": "User Management System", "sensitivity": "Critical"}
+      ],
+      "correct_permissions": {
+        "Developer": {
+          "allow": ["Read/Write Source Code", "Read/Write Test DB"],
+          "deny": ["Production DB Write", "Audit Logs", "User Management"],
+          "rationale": "Necesita código y test. NO producción."
+        },
+        "DBA": {
+          "allow": ["Read/Write Production DB", "Read Test DB", "Read Audit Logs of DB"],
+          "deny": ["Source Code", "User Management", "Modify Audit Logs"],
+          "rationale": "Gestiona DBs. Puede ver logs de DB pero no modificar. No gestiona usuarios."
+        },
+        "Auditor": {
+          "allow": ["Read-Only ALL Audit Logs", "Read User Management"],
+          "deny": ["Write anything", "Execute commands"],
+          "rationale": "Solo observa para compliance. Read-only total."
+        }
+      },
+      "sod_violations": [
+        "❌ DBA no puede ser Auditor (conflict of interest)",
+        "❌ Developer no puede aprobar deploy a production (quien crea no deploya)",
+        "❌ Auditor no puede tener write access (compromete independencia)"
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - Control de Acceso",
+    "content": {
+      "question": "Snowden usó credenciales de 20-25 colegas para acceder documentos. ¿Qué principios se violaron?",
+      "options": [
+        {"id": "a", "text": "Least Privilege + Need to Know + inadecuado monitoring de privilege abuse", "is_correct": true, "feedback": "Correcto. Tuvo acceso excesivo (Least Privilege), accedió info fuera de su necesidad (Need to Know), y nadie detectó el abuso de credenciales."},
+        {"id": "b", "text": "Solo passwords débiles", "is_correct": false, "feedback": "No. El problema no era fortaleza de passwords sino exceso de privilegios y falta de monitoring."},
+        {"id": "c", "text": "Falta de encryption", "is_correct": false, "feedback": "No. Datos estaban clasificados pero accesibles por alguien con clearance excesivo."}
+      ]
+    }
+  }
+]
