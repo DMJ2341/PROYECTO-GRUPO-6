@@ -1,5 +1,3 @@
-// app/src/main/java/com/example/cyberlearnapp/network/models/DailyTermModels.kt
-
 package com.example.cyberlearnapp.network.models
 
 import kotlinx.serialization.Serializable

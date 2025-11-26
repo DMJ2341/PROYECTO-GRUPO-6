@@ -1,6 +1,5 @@
-// app/src/main/java/com/example/cyberlearnapp/ui/components/DailyTermCard.kt
 
-package com.example.cyberlearnapp.ui.components
+package com.example.cyberlearnapp.network.models
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
