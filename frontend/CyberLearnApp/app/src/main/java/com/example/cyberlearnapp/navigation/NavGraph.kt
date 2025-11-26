@@ -1,6 +1,9 @@
 package com.example.cyberlearnapp.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -13,13 +16,15 @@ import com.example.cyberlearnapp.viewmodel.*
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: String = "auth"
+    startDestination: String = "auth",
+    paddingValues: PaddingValues // Acepta el padding del Scaffold
 ) {
     val authViewModel: AuthViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        modifier = Modifier.padding(paddingValues) // APLICA EL PADDING AQUÍ
     ) {
 
         // --- AUTH ---

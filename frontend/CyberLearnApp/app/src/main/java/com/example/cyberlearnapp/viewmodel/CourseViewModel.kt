@@ -41,17 +41,6 @@ class CourseViewModel @Inject constructor(
             _error.value = null
             try {
                 val result = repository.getCourses()
-<<<<<<< HEAD
-                if (result.isNotEmpty()) {
-                    _courses.value = result
-                } else {
-                    // Opcional: _error.value = "No se encontraron cursos."
-                    // Dejamos la lista vacía si el backend devuelve []
-                    _courses.value = emptyList()
-                }
-            } catch (e: Exception) {
-                _error.value = "Error al cargar cursos: ${e.message}"
-=======
                 // repository.getCourses() devuelve List<Course> directamente (según tu código)
                 if (result.isNotEmpty()) {
                     _courses.value = result
@@ -60,7 +49,6 @@ class CourseViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _error.value = "Error: ${e.message}"
->>>>>>> main
             } finally {
                 _isLoading.value = false
             }
@@ -70,24 +58,16 @@ class CourseViewModel @Inject constructor(
     fun loadLessons(courseId: Int) {
         viewModelScope.launch {
             _isLoading.value = true
-<<<<<<< HEAD
-            _lessons.value = emptyList() // Limpiamos la lista anterior para que no se vea la del curso previo
-            _error.value = null
-
-            try {
-                // Llamamos al repositorio
-                val result = repository.getCourseLessons(courseId)
-
-=======
             _lessons.value = emptyList()
             try {
-                // ✅ CORRECCIÓN AQUÍ: Usamos el nombre correcto 'getCourseLessons'
+                // ✅ Usa el método correcto del repositorio para obtener lecciones
                 val result = repository.getCourseLessons(courseId)
 
->>>>>>> main
                 if (result.isNotEmpty()) {
                     _lessons.value = result
                 } else {
+                    // Evita un error si la lista está vacía, solo notifica al usuario.
+                    _lessons.value = emptyList()
                     _error.value = "Este curso no tiene lecciones disponibles aún."
                 }
             } catch (e: Exception) {
