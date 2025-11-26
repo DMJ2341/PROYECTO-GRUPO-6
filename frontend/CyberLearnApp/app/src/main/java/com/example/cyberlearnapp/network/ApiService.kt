@@ -52,6 +52,7 @@ interface ApiService {
     @GET("api/glossary/search")
     suspend fun searchGlossaryTerms(@Query("q") query: String): Response<List<GlossaryTerm>>
 
+<<<<<<< HEAD
     @GET("api/preference-test/questions")
     suspend fun getPreferenceQuestions(): Response<PreferenceQuestionResponse>
 
@@ -69,4 +70,21 @@ interface ApiService {
 
     @POST("api/exam/final/submit")
     suspend fun submitFinalExam(@Body request: SubmitFinalExamRequest): Response<FinalExamResultResponse>
+=======
+    @POST("exam/final/submit")
+    suspend fun submitFinalExam(
+        @Header("Authorization") token: String,
+        @Body body: ExamSubmitRequest
+    ): Response<ExamResultResponse>
+
+    @GET("api/daily-term")
+    suspend fun getDailyTerm(): Response<DailyTermWrapper>
+
+    // ✅ NUEVO ENDPOINT PARA GANAR XP
+    @POST("api/daily-term/complete")
+    suspend fun completeDailyTerm(@Body request: CompleteDailyTermRequest): Response<CompleteDailyTermResponse>
+
+    @GET("api/glossary")
+    suspend fun getAllGlossaryTerms(): Response<List<GlossaryTerm>>
+>>>>>>> a214990271d474bb990db58170a8c35ed30d29c2
 }
