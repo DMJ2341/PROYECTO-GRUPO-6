@@ -89,4 +89,4 @@ def complete_daily_term(user_id, term_id, xp_amount=5):
         sentry_sdk.capture_exception(e)
         return {"success": False, "xp_earned": 0, "message": "Error interno al procesar el término."}
     finally:
-        session.remove()
+        session.close()

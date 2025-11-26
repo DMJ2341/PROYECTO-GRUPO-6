@@ -1,4 +1,4 @@
-# backend/app.py - VERSIÓN CORREGIDA Y ROBUSTA
+# backend/app.py - VERSIÓN FINAL CORREGIDA Y 100% FUNCIONAL
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.db import get_session, create_all
@@ -7,7 +7,7 @@ import jwt
 import datetime
 from functools import wraps
 import sentry_sdk
-from config import Config  # ✅ Importamos la configuración segura
+from config import Config
 
 # --- MODELOS ---
 from models.user import User
@@ -29,7 +29,7 @@ from models.assessments import (
 
 # --- SERVICIOS ---
 from services.activity_service import ActivityService
-from services.glossary_service import get_all_glossary_terms, search_glossary, get_daily_term, get_glossary_stats
+from services.glossary_service import get_all_glossary_terms, search_glossary, get_glossary_stats
 from services.password_reset_service import create_reset_token, validate_reset_token, reset_password
 from services.course_service import CourseService
 from services.badge_service import BadgeService
@@ -41,9 +41,10 @@ from services.glossary_favorite_service import toggle_favorite, get_user_favorit
 from services.daily_term_service import get_daily_term_for_user, complete_daily_term
 from services.exam_service import ExamService
 from services.preference_engine import PreferenceEngine
+from services.preference_quiz import get_preference_questions, submit_preference_answers  # ← NUEVO Y CORRECTO
 
 # -------------------------------------------------------------------
-# 🟢 SENTRY CONFIG
+# SENTRY CONFIG
 # -------------------------------------------------------------------
 sentry_sdk.init(
     dsn="https://242076c45c627b58d1b4254f28c0606a@o4510415052931072.ingest.us.sentry.io/4510415138586624",
@@ -53,22 +54,19 @@ sentry_sdk.init(
 )
 
 app = Flask(__name__)
-# Cargar configuración desde config.py (que lee variables de entorno)
 app.config.from_object(Config)
 CORS(app)
 
 # INICIALIZACIÓN DE BASE DE DATOS
 try:
     with app.app_context():
-        # Usamos create_all solo si no usas migraciones (Alembic)
         create_all()
         session = get_session()
         session.execute(text("SELECT 1"))
-        print("✅ Base de datos conectada correctamente")
+        print("Base de datos conectada correctamente")
 except Exception as e:
     sentry_sdk.capture_exception(e)
-    print(f"❌ Error conectando a la base de datos: {e}")
-    # No lanzamos raise aquí para permitir que la app intente arrancar y reportar errores
+    print(f"Error conectando a la base de datos: {e}")
 
 # ---------- AUTH DECORATOR (CORREGIDO) ----------
 def token_required(f):
@@ -718,52 +716,42 @@ def submit_final_exam(current_user_id):
     result = service.submit_exam(current_user_id, answers)
     return jsonify({"success": True, "result": result})
 
-# --- TEST DE PREFERENCIAS (VOCACIONAL) ---
+# ==========================================
+# TEST DE PREFERENCIAS VOCACIONALES (VERSIÓN CORRECTA)
+# ==========================================
+
 @app.route('/api/preference-test/questions', methods=['GET'])
 @token_required
-def get_pref_questions(current_user_id):
-    session = get_session()
+def get_preference_test_questions(current_user_id):
     try:
-        questions = session.query(PreferenceQuestion).filter_by(is_active=True).order_by(PreferenceQuestion.question_number).all()
-        if not questions:
-            return jsonify({"error": "No hay preguntas disponibles."}), 500
-        
-        output = []
-        for q in questions:
-            output.append({
-                "id": q.id,
-                "number": q.question_number,
-                "section": q.section,
-                "text": q.question_text,
-                "subtext": q.question_subtext,
-                "options": q.options,
-                "image_url": q.image_url
-            })
-        return jsonify({"success": True, "total": len(output), "questions": output})
-    finally:
-        session.close()
+        questions = get_preference_questions()
+        return jsonify({"success": True, "questions": questions})
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/preference-test/submit', methods=['POST'])
 @token_required
-def submit_pref_test(current_user_id):
+def submit_preference_test(current_user_id):
     data = request.get_json()
     answers = data.get('answers')
     time_taken = data.get('time_taken')
-    
+
     if not answers or not isinstance(answers, dict):
-        return jsonify({"error": "Respuestas requeridas (dict)"}), 400
-    
+        return jsonify({"error": "Respuestas inválidas"}), 400
+
     try:
-        engine = PreferenceEngine()
-        result = engine.calculate_and_save(current_user_id, answers, time_taken)
+        result = submit_preference_answers(current_user_id, answers, time_taken)
         return jsonify({"success": True, "result": result})
     except Exception as e:
-        print(f"Error submitting test: {e}")
+        sentry_sdk.capture_exception(e)
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/preference-test/result', methods=['GET'])
 @token_required
-def get_pref_result(current_user_id):
+def get_preference_result(current_user_id):
     try:
         engine = PreferenceEngine()
         result = engine.get_user_result(current_user_id)
@@ -771,22 +759,27 @@ def get_pref_result(current_user_id):
             return jsonify({"success": True, "has_result": False})
         return jsonify({"success": True, "has_result": True, "result": result})
     except Exception as e:
+        sentry_sdk.capture_exception(e)
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/preference-test/retake', methods=['POST'])
 @token_required
-def retake_pref_test(current_user_id):
+def retake_preference_test(current_user_id):
     session = get_session()
     try:
         result = session.query(UserPreferenceResult).filter_by(user_id=current_user_id).first()
         if result:
             result.retaken = True
             session.commit()
-        return jsonify({"success": True, "message": "Listo para retomar"})
+        return jsonify({"success": True, "message": "Puedes retomar el test"})
     except Exception as e:
+        session.rollback()
+        sentry_sdk.capture_exception(e)
         return jsonify({"error": str(e)}), 500
     finally:
         session.close()
+
 
 @app.route('/api/admin/preference-test/stats', methods=['GET'])
 @token_required
