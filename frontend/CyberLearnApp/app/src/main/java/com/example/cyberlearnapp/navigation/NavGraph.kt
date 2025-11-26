@@ -61,16 +61,15 @@ fun NavGraph(
 
             CourseDetailScreen(
                 courseId = courseId,
-                navController = navController // Pasamos el controller para que pueda navegar a la lección
+                navController = navController
             )
         }
 
         // --- LECCIÓN (SISTEMA NUEVO) ---
-        // ✅ ESTA ES LA RUTA QUE FALTABA Y SOLUCIONA EL PROBLEMA
         composable(
             route = "lesson/{lessonId}",
             arguments = listOf(
-                navArgument("lessonId") { type = NavType.StringType } // ID es String ("1_1")
+                navArgument("lessonId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""

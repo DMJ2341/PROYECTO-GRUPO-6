@@ -19,17 +19,12 @@ fun LessonDetailScreen(
     viewModel: LessonViewModel = hiltViewModel()
 ) {
     LaunchedEffect(lessonId) { viewModel.loadLesson(lessonId) }
-
     val lessonState by viewModel.lesson.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-
-    // Control de Paginación local
     var currentScreenIndex by remember { mutableIntStateOf(0) }
 
     if (isLoading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-            CircularProgressIndicator()
-        }
+        Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { CircularProgressIndicator() }
         return
     }
 
@@ -48,67 +43,31 @@ fun LessonDetailScreen(
 
     Scaffold(
         topBar = {
-            Column {
-                // Barra de Progreso Superior
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier.fillMaxWidth().height(6.dp),
-                    color = Color(0xFF00E676),
-                    trackColor = Color(0xFFEEEEEE)
-                )
-            }
+            LinearProgressIndicator(progress = { progress }, modifier = Modifier.fillMaxWidth().height(6.dp))
         },
         bottomBar = {
-            // Botonera de Navegación
-            Surface(shadowElevation = 8.dp) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    // Botón Atrás
+            Surface(shadowElevation = 16.dp) {
+                Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                     if (currentScreenIndex > 0) {
-                        OutlinedButton(onClick = { currentScreenIndex-- }) {
-                            Text("Anterior")
-                        }
-                    } else {
-                        Spacer(Modifier.width(10.dp)) // Espaciador si no hay botón
-                    }
+                        OutlinedButton(onClick = { currentScreenIndex-- }) { Text("Anterior") }
+                    } else { Spacer(Modifier.width(1.dp)) }
 
-                    // Botón Siguiente / Finalizar
-                    Button(
-                        onClick = {
-                            if (currentScreenIndex < screens.size - 1) {
-                                currentScreenIndex++
-                            } else {
-                                viewModel.completeLesson(lessonId)
-                                navController.popBackStack()
-                            }
+                    Button(onClick = {
+                        if (currentScreenIndex < screens.size - 1) currentScreenIndex++
+                        else {
+                            viewModel.completeLesson(lessonId)
+                            navController.popBackStack()
                         }
-                    ) {
+                    }) {
                         Text(if (currentScreenIndex < screens.size - 1) "Siguiente" else "Finalizar")
                     }
                 }
             }
         }
     ) { padding ->
-        Box(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(Color(0xFFFAFAFA)) // Fondo gris muy suave
-                .padding(16.dp)
-        ) {
+        Box(Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
             if (currentScreenData != null) {
-                // LLAMADA AL RENDERIZADOR MAESTRO QUE TE DI ANTES
-                LessonScreenRender(
-                    screenData = currentScreenData,
-                    onQuizAnswer = { isCorrect ->
-                        // Opcional: Podrías bloquear el botón "Siguiente" hasta que responda bien
-                        // Por ahora, solo damos feedback visual en el Quiz
-                    }
-                )
+                LessonScreenRender(screenData = currentScreenData, onQuizAnswer = {})
             }
         }
     }
