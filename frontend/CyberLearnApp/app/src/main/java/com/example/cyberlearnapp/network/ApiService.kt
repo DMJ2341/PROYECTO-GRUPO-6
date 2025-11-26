@@ -80,4 +80,14 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body body: ExamSubmitRequest
     ): Response<ExamResultResponse>
+
+    @GET("api/daily-term")
+    suspend fun getDailyTerm(): Response<DailyTermWrapper>
+
+    // ✅ NUEVO ENDPOINT PARA GANAR XP
+    @POST("api/daily-term/complete")
+    suspend fun completeDailyTerm(@Body request: CompleteDailyTermRequest): Response<CompleteDailyTermResponse>
+
+    @GET("api/glossary")
+    suspend fun getAllGlossaryTerms(): Response<List<GlossaryTerm>>
 }
