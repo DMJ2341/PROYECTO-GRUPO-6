@@ -1,128 +1,96 @@
 package com.example.cyberlearnapp.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
-import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamIntroScreen
-import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamResultScreen
-import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamScreen
-import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceResultScreen
-import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceTestScreen
+import com.example.cyberlearnapp.viewmodel.*
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: String = Screens.Auth.route
+    startDestination: String = "auth",
+    paddingValues: PaddingValues // Acepta el padding del Scaffold
 ) {
+    val authViewModel: AuthViewModel = hiltViewModel()
+
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        modifier = Modifier.padding(paddingValues) // APLICA EL PADDING AQUÍ
     ) {
-        // --- AUTENTICACIÓN ---
-        composable(route = Screens.Auth.route) {
+
+        // --- AUTH ---
+        composable("auth") {
             AuthScreen(
+                viewModel = authViewModel,
                 onLoginSuccess = {
-                    navController.navigate(Screens.Dashboard.route) {
-                        popUpTo(Screens.Auth.route) { inclusive = true }
+                    navController.navigate("dashboard") {
+                        popUpTo("auth") { inclusive = true }
                     }
                 }
             )
         }
 
-        // --- DASHBOARD (HOME) ---
-        composable(route = Screens.Dashboard.route) {
+        // --- DASHBOARD ---
+        composable("dashboard") {
             DashboardScreen(navController = navController)
         }
 
-        // --- LISTA DE CURSOS ---
-        composable(route = Screens.Courses.route) {
-            CoursesScreen(
-                onCourseClick = { courseId ->
-                    navController.navigate(Screens.CourseDetail.createRoute(courseId))
-                },
-                onBackClick = {
-                    navController.popBackStack()
+        // --- COURSES ---
+        composable("courses") {
+            val courseViewModel: CourseViewModel = hiltViewModel()
+            CoursesScreen(navController = navController, viewModel = courseViewModel)
+        }
+
+        // --- ✅ GLOSARIO ---
+        composable("glossary") {
+            val glossaryViewModel: GlossaryViewModel = hiltViewModel()
+            GlossaryScreen(navController = navController, viewModel = glossaryViewModel)
+        }
+
+        // --- PROFILE ---
+        composable("profile") {
+            ProfileScreen(
+                onBackClick = { navController.popBackStack() },
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate("auth") { popUpTo(0) { inclusive = true } }
                 }
             )
         }
 
-        // --- DETALLE DEL CURSO (Lista de lecciones) ---
+        // --- DETALLE CURSO ---
         composable(
-            route = Screens.CourseDetail.route,
-            arguments = listOf(
-                navArgument("courseId") { type = NavType.IntType }
-            )
+            route = "course_detail/{courseId}",
+            arguments = listOf(navArgument("courseId") { type = NavType.IntType })
         ) { backStackEntry ->
-            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 1
-
+            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+            val courseViewModel: CourseViewModel = hiltViewModel()
             CourseDetailScreen(
-                courseId = courseId,
-                navController = navController
+                navController = navController,
+                viewModel = courseViewModel,
+                courseId = courseId
             )
         }
 
-        // --- LECCIÓN (SISTEMA NUEVO) ---
+        // --- DETALLE LECCIÓN ---
         composable(
-            route = "lesson/{lessonId}",
-            arguments = listOf(
-                navArgument("lessonId") { type = NavType.StringType }
-            )
+            route = "lesson_detail/{lessonId}",
+            arguments = listOf(navArgument("lessonId") { type = NavType.StringType })
         ) { backStackEntry ->
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
-
+            // LessonViewModel se inyecta dentro de la pantalla
             LessonDetailScreen(
-                lessonId = lessonId,
-                navController = navController
-            )
-        }
-
-        // --- TEST VOCACIONAL ---
-        composable("preference_test") {
-            PreferenceTestScreen(navController = navController)
-        }
-
-        composable("preference_result") {
-            PreferenceResultScreen(
-                profileType = "saved",
-                navController = navController
-            )
-        }
-
-        // --- EXAMEN FINAL INTEGRADOR ---
-        composable("final_exam/intro") {
-            FinalExamIntroScreen(navController)
-        }
-        composable("final_exam/take") {
-            FinalExamScreen(navController)
-        }
-        composable("final_exam/result") {
-            FinalExamResultScreen(navController)
-        }
-
-        // --- LOGROS ---
-        composable(route = Screens.Achievements.route) {
-            AchievementsScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        // --- PERFIL ---
-        composable(route = Screens.Profile.route) {
-            ProfileScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                onLogout = {
-                    navController.navigate(Screens.Auth.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }
+                navController = navController,
+                lessonId = lessonId
             )
         }
     }

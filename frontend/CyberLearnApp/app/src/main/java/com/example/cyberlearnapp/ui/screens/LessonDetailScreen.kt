@@ -1,11 +1,16 @@
 package com.example.cyberlearnapp.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -14,60 +19,88 @@ import com.example.cyberlearnapp.viewmodel.LessonViewModel
 
 @Composable
 fun LessonDetailScreen(
-    lessonId: String,
     navController: NavController,
-    viewModel: LessonViewModel = hiltViewModel()
+    viewModel: LessonViewModel = hiltViewModel(),
+    lessonId: String
 ) {
-    LaunchedEffect(lessonId) { viewModel.loadLesson(lessonId) }
-    val lessonState by viewModel.lesson.collectAsState()
+    LaunchedEffect(lessonId) {
+        viewModel.loadLesson(lessonId)
+    }
+
+    val lessonResponse by viewModel.lesson.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
+    val completionResult by viewModel.completionResult.collectAsState()
+
     var currentScreenIndex by remember { mutableIntStateOf(0) }
 
-    if (isLoading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { CircularProgressIndicator() }
-        return
-    }
-
-    val lesson = lessonState
-    if (lesson == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-            Text("No se pudo cargar la lección")
-            Button(onClick = { viewModel.loadLesson(lessonId) }) { Text("Reintentar") }
-        }
-        return
-    }
-
-    val screens = lesson.screens
-    val currentScreenData = screens.getOrNull(currentScreenIndex)
-    val progress = if (screens.isNotEmpty()) (currentScreenIndex + 1).toFloat() / screens.size else 0f
-
-    Scaffold(
-        topBar = {
-            LinearProgressIndicator(progress = { progress }, modifier = Modifier.fillMaxWidth().height(6.dp))
-        },
-        bottomBar = {
-            Surface(shadowElevation = 16.dp) {
-                Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    if (currentScreenIndex > 0) {
-                        OutlinedButton(onClick = { currentScreenIndex-- }) { Text("Anterior") }
-                    } else { Spacer(Modifier.width(1.dp)) }
-
-                    Button(onClick = {
-                        if (currentScreenIndex < screens.size - 1) currentScreenIndex++
-                        else {
-                            viewModel.completeLesson(lessonId)
-                            navController.popBackStack()
-                        }
-                    }) {
-                        Text(if (currentScreenIndex < screens.size - 1) "Siguiente" else "Finalizar")
-                    }
+    // ✅ Diálogo de Victoria / XP
+    if (completionResult != null) {
+        AlertDialog(
+            onDismissRequest = { }, // No permitir cerrar sin botón
+            icon = { Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green, modifier = Modifier.size(48.dp)) },
+            title = { Text("¡Lección Completada!") },
+            text = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                    Text("¡Excelente trabajo!")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        "+${completionResult?.xp_earned} XP",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    navController.popBackStack() // Volver al menú
+                }) {
+                    Text("Continuar")
                 }
             }
-        }
-    ) { padding ->
-        Box(Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
-            if (currentScreenData != null) {
-                LessonScreenRender(screenData = currentScreenData, onQuizAnswer = {})
+        )
+    }
+
+    Scaffold { padding ->
+        Box(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isLoading && lessonResponse == null) {
+                CircularProgressIndicator()
+            } else if (error != null) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
+                    Icon(Icons.Default.Lock, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(64.dp))
+                    Text("Acceso Bloqueado", style = MaterialTheme.typography.titleLarge)
+                    Text("Completa las lecciones anteriores primero.", textAlign = TextAlign.Center)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = { navController.popBackStack() }) { Text("Volver") }
+                }
+            } else if (lessonResponse != null) {
+                val totalScreens = lessonResponse!!.screens.size
+
+                LessonScreenRender(
+                    lesson = lessonResponse!!,
+                    screenIndex = currentScreenIndex,
+                    onNext = {
+                        if (currentScreenIndex < totalScreens - 1) {
+                            currentScreenIndex++
+                        } else {
+                            // ✅ Al terminar, llamamos al backend
+                            // Y esperamos a que 'completionResult' cambie para mostrar el diálogo
+                            if (completionResult == null) {
+                                viewModel.completeLesson(lessonId)
+                            }
+                        }
+                    },
+                    onPrev = {
+                        if (currentScreenIndex > 0) currentScreenIndex--
+                    },
+                    isLastScreen = currentScreenIndex == totalScreens - 1
+                )
             }
         }
     }

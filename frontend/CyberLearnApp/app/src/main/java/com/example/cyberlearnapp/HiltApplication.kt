@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class HiltApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        // ✅ Inicializamos AuthManager aquí para que esté listo antes que nada
+        // ✅ Inicializamos el AuthManager con el contexto de la aplicación
         AuthManager.init(this)
     }
 }

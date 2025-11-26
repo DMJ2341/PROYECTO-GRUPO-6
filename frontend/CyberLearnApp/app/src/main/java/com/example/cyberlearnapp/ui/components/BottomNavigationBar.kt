@@ -14,7 +14,8 @@ fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         Triple("Inicio", Screens.Dashboard.route, Icons.Default.Home),
         Triple("Cursos", Screens.Courses.route, Icons.Default.School),
-        Triple("Logros", Screens.Achievements.route, Icons.Default.EmojiEvents),
+        // Triple("Logros", Screens.Achievements.route, Icons.Default.EmojiEvents), // Eliminado
+        Triple("Glosario", Screens.Glossary.route, Icons.Default.MenuBook), // ✅ Glosario con ícono de libro
         Triple("Perfil", Screens.Profile.route, Icons.Default.Person)
     )
 
