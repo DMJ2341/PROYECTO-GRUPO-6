@@ -1,38 +1,36 @@
 package com.example.cyberlearnapp.di
 
+import android.content.Context
 import com.example.cyberlearnapp.network.ApiService
+import com.example.cyberlearnapp.network.RetrofitInstance
+import com.example.cyberlearnapp.utils.AuthManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // ✅ CAMBIO CLAVE: Usamos la IP directa para evitar errores de DNS de DuckDNS.
-    // Cuando el dominio funcione, solo cambias esta línea por "https://cyberlearn1.duckdns.org/api/"
-    private const val BASE_URL = "http://172.232.188.183/api/"
-
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    fun provideApiService(): ApiService {
+        // Usamos la instancia Singleton que ya configuramos con Kotlinx Serialization
+        return RetrofitInstance.api
     }
 
+    // Inicializar AuthManager al arranque
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
+    fun provideAuthManager(@ApplicationContext context: Context): AuthManager {
+        AuthManager.init(context)
+        return AuthManager
     }
 
-    // 🚀 MEJORA: No necesitamos proveer los Repositorios aquí (UserRepository, PreferenceRepository, etc.)
-    // porque ya usan "@Inject constructor" en sus propias clases.
-    // Hilt los encuentra y los inyecta automáticamente. ¡Menos código, más limpio!
+    // NOTA: No hace falta proveer los Repositorios (LessonRepository, etc.)
+    // explícitamente aquí porque ya tienen @Inject constructor() y @Singleton
+    // en sus propias clases. Hilt los encontrará automáticamente.
 }

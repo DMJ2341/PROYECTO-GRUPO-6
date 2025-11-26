@@ -1,21 +1,22 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose) // ✅ Correcto para Kotlin 2.0
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.parcelize)
-    alias(libs.plugins.kotlin.serialization) // <-- NUEVO: para JSON fácil
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "com.example.cyberlearnapp"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.cyberlearnapp"
         minSdk = 24
         targetSdk = 35
-        versionCode = 12   // <-- Sube uno por cada release
+        versionCode = 12
         versionName = "1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -47,9 +48,8 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.17" // ← Versión compatible con AGP 8.5+
-    }
+    // ⚠️ CORRECCIÓN: Eliminado kotlinCompilerExtensionVersion porque usas Kotlin 2.0
+    // El compilador de Compose ahora usa la misma versión que Kotlin automáticamente.
 
     packaging {
         resources {
@@ -59,46 +59,42 @@ android {
 }
 
 dependencies {
-
-    // === Compose BOM (recomendado 2025) ===
+    // === Compose BOM ===
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.material.icons.extended)
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)
-    implementation(libs.androidx.security.crypto)
-    debugImplementation(libs.ui.tooling)
-    debugImplementation(libs.ui.test.manifest)
 
-    // === ViewModel + Lifecycle ===
+    // === Lifecycle ===
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
 
     // === Hilt ===
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose) // ← CLAVE para @HiltViewModel en Compose
+    implementation(libs.hilt.navigation.compose)
 
-    // === Retrofit + Gson/Json Serialization ===
+    // === Retrofit + Serialization ===
     implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.kotlinx.serialization.json) // ← Nuevo: para parsear JSON grandes (preference_results_visual.json)
+    // Asegúrate de actualizar el TOML como te indiqué arriba para usar el oficial
+    implementation(libs.retrofit.kotlinx.serialization)
+    implementation(libs.kotlinx.serialization.json)
 
-    // === Coroutines ===
-    implementation(libs.kotlinx.coroutines.android)
+    // === OkHttp ===
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
 
-    // === Coil (imágenes) ===
+    // === Imágenes & Animaciones ===
     implementation(libs.coil.compose)
+    implementation(libs.lottie.compose)
 
-    // === Accompanist (opcional pero útil) ===
-    implementation(libs.accompanist.systemuicontroller)
+    // === Accompanist ===
     implementation(libs.accompanist.pager)
     implementation(libs.accompanist.pager.indicators)
-
-    // === Lottie (animaciones confetti) ===
-    implementation(libs.lottie.compose) // ← Para el confetti explosion
 
     // === Testing ===
     testImplementation(libs.junit)
@@ -106,4 +102,8 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
+    debugImplementation(libs.ui.tooling)
+    debugImplementation(libs.ui.test.manifest)
+
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 }

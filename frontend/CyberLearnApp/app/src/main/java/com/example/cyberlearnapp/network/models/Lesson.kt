@@ -1,21 +1,20 @@
 package com.example.cyberlearnapp.network.models
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-/**
- * Modelo para una lección individual dentro de un curso.
- * Contiene la información básica para mostrar en una lista.
- */
+@Serializable
 data class Lesson(
-    @SerializedName("id")
-    val id: Int,
-
-    @SerializedName("title")
+    val id: String, // String para soportar "1_1"
+    @SerialName("course_id") val courseId: Int,
     val title: String,
-
-    @SerializedName("type")
-    val type: String = "text", // Puede ser "text" o "interactive"
-
-    @SerializedName("is_completed")
-    val isCompleted: Boolean = false
+    val description: String? = null,
+    val type: String,
+    @SerialName("duration_minutes") val durationMinutes: Int,
+    @SerialName("xp_reward") val xpReward: Int,
+    @SerialName("order_index") val orderIndex: Int,
+    // Estos campos suelen venir de la lógica de negocio o un join en el backend
+    @SerialName("is_completed") var isCompleted: Boolean = false,
+    // Si el backend no envía is_locked, lo calculamos en el ViewModel, así que default false
+    var isLocked: Boolean = false
 )

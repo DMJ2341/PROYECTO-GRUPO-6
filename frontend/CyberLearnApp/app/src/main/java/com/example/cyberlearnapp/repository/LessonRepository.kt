@@ -1,58 +1,34 @@
 package com.example.cyberlearnapp.repository
 
 import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.models.InteractiveLesson
+import com.example.cyberlearnapp.network.models.LessonResponse
+import com.example.cyberlearnapp.utils.AuthManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Repositorio para manejar lecciones interactivas
- */
 @Singleton
 class LessonRepository @Inject constructor(
     private val apiService: ApiService
 ) {
+    // Obtiene la lección completa (con su JSON de pantallas)
+    suspend fun getLesson(lessonId: String): LessonResponse {
+        val token = "Bearer ${AuthManager.getToken() ?: ""}"
+        val response = apiService.getLesson(token, lessonId)
 
-    /**
-     * Obtener lección interactiva por ID
-     */
-    suspend fun getInteractiveLesson(lessonId: Int): InteractiveLesson {
-        return apiService.getInteractiveLesson(lessonId)
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!
+        } else {
+            throw Exception("Error ${response.code()}: No se pudo cargar la lección")
+        }
     }
 
-    /**
-     * Completar una lección y enviar resultados
-     */
-    suspend fun completeLesson(
-        lessonId: Int,
-        score: Int,
-        xpEarned: Int
-    ) {
-        val completionData = mapOf(
-            "lesson_id" to lessonId,
-            "score" to score,
-            "xp_earned" to xpEarned,
-            "completed_at" to System.currentTimeMillis()
-        )
+    // Marca la lección como terminada
+    suspend fun markLessonComplete(lessonId: String) {
+        val token = "Bearer ${AuthManager.getToken() ?: ""}"
+        val response = apiService.completeLesson(token, lessonId)
 
-        apiService.completeLesson(completionData)
-    }
-
-    /**
-     * Registrar actividad de usuario en una lección
-     */
-    suspend fun recordActivity(
-        lessonId: Int,
-        screenNumber: Int,
-        isCorrect: Boolean
-    ) {
-        val activityData = mapOf(
-            "lesson_id" to lessonId,
-            "screen_number" to screenNumber,
-            "is_correct" to isCorrect,
-            "timestamp" to System.currentTimeMillis()
-        )
-
-        apiService.recordLessonActivity(activityData)
+        if (!response.isSuccessful) {
+            throw Exception("Error al guardar el progreso: ${response.message()}")
+        }
     }
 }

@@ -1,27 +1,21 @@
 package com.example.cyberlearnapp
 
 import android.os.Bundle
+import androidx.compose.ui.Modifier
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.cyberlearnapp.navigation.NavGraph
 import com.example.cyberlearnapp.navigation.Screens
-import com.example.cyberlearnapp.navigation.mainGraph
 import com.example.cyberlearnapp.ui.components.BottomNavigationBar
-import com.example.cyberlearnapp.ui.screens.AuthScreen
 import com.example.cyberlearnapp.ui.theme.CyberLearnAppTheme
 import com.example.cyberlearnapp.viewmodel.AuthViewModel
-import com.example.cyberlearnapp.viewmodel.CourseViewModel
-import com.example.cyberlearnapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,76 +34,41 @@ class MainActivity : ComponentActivity() {
 fun CyberLearnApp() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
-    val userViewModel: UserViewModel = hiltViewModel()
-    val courseViewModel: CourseViewModel = hiltViewModel()
 
+    // Observamos al usuario actual para redirección automática
     val currentUser by authViewModel.currentUser.collectAsState()
-    val shouldNavigateToMain by authViewModel.shouldNavigateToMain.collectAsState()
-    val isLoading by authViewModel.isLoading.collectAsState()
 
-    // 🔍 DEBUG EXTENDIDO
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
-    LaunchedEffect(currentRoute) {
-        println("📍 [ROUTE-DEBUG] Ruta actual: $currentRoute")
-        println("👤 [USER-DEBUG] Usuario: ${currentUser?.email ?: "NULL"}")
-        println("🚀 [NAV-DEBUG] ShouldNavigateToMain: $shouldNavigateToMain")
-        println("⏳ [NAV-DEBUG] isLoading: $isLoading")
-    }
-
-    // ✅ Navegación con DEBUG
-    LaunchedEffect(currentUser, shouldNavigateToMain) {
-        println("🔄 [NAV-TRIGGER] currentUser: ${currentUser != null}, shouldNavigateToMain: $shouldNavigateToMain")
-
-        if ((currentUser != null || shouldNavigateToMain) &&
-            currentRoute != Screens.Main.route &&
-            !isLoading) {
-
-            println("🎯 [NAV-EXECUTING] Navegando a Main...")
-            navController.navigate(Screens.Main.route) {
-                launchSingleTop = true
+    LaunchedEffect(currentUser) {
+        if (currentUser != null) {
+            // Si ya hay sesión, saltamos directo al Dashboard y borramos Auth del historial
+            navController.navigate(Screens.Dashboard.route) {
                 popUpTo(Screens.Auth.route) { inclusive = true }
+                launchSingleTop = true
             }
-            authViewModel.resetNavigation()
         }
     }
 
     Scaffold(
         bottomBar = {
-            // ✅ SOLUCIÓN TEMPORAL: Mostrar siempre para debug
-            val showBottomBar = true // currentRoute?.startsWith("main/") == true
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
+            // Lista blanca: Pantallas donde SÍ queremos ver la barra de abajo
+            val showBottomBar = currentRoute in listOf(
+                Screens.Dashboard.route,
+                Screens.Courses.route,
+                Screens.Achievements.route,
+                Screens.Profile.route
+            )
 
             if (showBottomBar) {
-                println("📱 [BOTTOMBAR] ✅ MOSTRANDO - Ruta: $currentRoute")
                 BottomNavigationBar(navController = navController)
-            } else {
-                println("📱 [BOTTOMBAR] ❌ OCULTANDO - Ruta: $currentRoute")
             }
         }
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Screens.Auth.route,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(Screens.Auth.route) {
-                AuthScreen(
-                    viewModel = authViewModel,
-                    onLoginSuccess = {
-                        println("✅ [AUTH] Login exitoso, navegando a Main")
-                        navController.navigate(Screens.Main.route) {
-                            launchSingleTop = true
-                            popUpTo(Screens.Auth.route) { inclusive = true }
-                        }
-                    }
-                )
-            }
-
-            mainGraph(
-                navController = navController,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                courseViewModel = courseViewModel
-            )
+        // Contenedor principal que respeta el espacio de la barra de navegación
+        Box(modifier = Modifier.padding(innerPadding)) {
+            NavGraph(navController = navController)
         }
     }
 }

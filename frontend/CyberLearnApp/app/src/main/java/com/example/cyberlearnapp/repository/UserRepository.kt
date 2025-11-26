@@ -1,66 +1,40 @@
 package com.example.cyberlearnapp.repository
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.User
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
+import com.example.cyberlearnapp.network.models.DashboardData
+import com.example.cyberlearnapp.network.models.User
+import com.example.cyberlearnapp.utils.AuthManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class UserRepository @Inject constructor(
-    private val apiService: ApiService,
-    private val dataStore: DataStore<Preferences>
+    private val apiService: ApiService
 ) {
-    private object PreferencesKeys {
-        val AUTH_TOKEN = stringPreferencesKey("auth_token")
-        val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
-        val USER_NAME = stringPreferencesKey("user_name")
-        val USER_EMAIL = stringPreferencesKey("user_email")
-    }
+    private fun getToken(): String = "Bearer ${AuthManager.getToken() ?: ""}"
 
-    suspend fun saveLoginData(token: String, user: User) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.AUTH_TOKEN] = token
-            preferences[PreferencesKeys.IS_LOGGED_IN] = true
-            preferences[PreferencesKeys.USER_NAME] = user.name ?: ""
-            preferences[PreferencesKeys.USER_EMAIL] = user.email
+    // Obtener perfil de usuario
+    suspend fun getUserProfile(): User {
+        val response = apiService.getUserProfile(getToken())
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!.user
+        } else {
+            throw Exception("Error al obtener perfil")
         }
     }
 
-    suspend fun clearLoginData() {
-        dataStore.edit { preferences ->
-            preferences.clear()
+    // Obtener datos del Dashboard (XP, Nivel, Badges)
+    suspend fun getDashboard(): DashboardData {
+        val response = apiService.getDashboard(getToken())
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!.dashboard
+        } else {
+            throw Exception("Error al cargar dashboard")
         }
     }
 
-    fun getToken(): Flow<String?> {
-        return dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.AUTH_TOKEN]
-        }
-    }
-
-    fun getUserData(): Flow<User?> {
-        return dataStore.data.map { preferences ->
-            val name = preferences[PreferencesKeys.USER_NAME]
-            val email = preferences[PreferencesKeys.USER_EMAIL]
-            if (name != null && email != null) {
-                User(id = 0, email = email, name = name)
-            } else {
-                null
-            }
-        }
-    }
-
-    suspend fun isLoggedIn(): Boolean {
-        return dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.IS_LOGGED_IN] ?: false
-        }.firstOrNull() ?: false
+    // El AuthManager maneja el logout local, aquí podríamos llamar al backend si existiera endpoint de logout
+    fun logout() {
+        AuthManager.clear()
     }
 }
