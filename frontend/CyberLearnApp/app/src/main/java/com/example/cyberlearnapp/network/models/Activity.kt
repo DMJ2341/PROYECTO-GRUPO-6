@@ -1,22 +1,21 @@
 package com.example.cyberlearnapp.network.models
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class CompleteActivityRequest(
-    @SerializedName("type") val type: String,
-    @SerializedName("lesson_id") val lessonId: String? = null,
-    @SerializedName("difficulty") val difficulty: Int = 1
-)
-
-data class CompleteActivityResponse(
-    @SerializedName("success") val success: Boolean,
-    @SerializedName("activity_result") val activityResult: ActivityResult,
-    @SerializedName("new_badges") val newBadges: List<String> = emptyList()
-)
-
+@Serializable
 data class ActivityResult(
-    @SerializedName("xp_earned") val xpEarned: Int,
-    @SerializedName("new_total_xp") val newTotalXp: Int,
-    @SerializedName("new_level") val newLevel: Int,
-    @SerializedName("streak") val streak: Int
+    @SerialName("xp_earned") val xpEarned: Int,
+    @SerialName("new_total_xp") val newTotalXp: Int,
+    @SerialName("new_level") val newLevel: Int,
+    @SerialName("streak") val streak: Int
+)
+
+@Serializable
+data class ActivityLog(
+    val id: Int,
+    val type: String,
+    val description: String,
+    @SerialName("xp_gained") val xpGained: Int,
+    @SerialName("created_at") val createdAt: String
 )

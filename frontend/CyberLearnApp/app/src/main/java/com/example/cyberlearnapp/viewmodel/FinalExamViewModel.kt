@@ -3,11 +3,9 @@ package com.example.cyberlearnapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.example.cyberlearnapp.network.models.assessments.ExamResultResponse
-import com.example.cyberlearnapp.network.models.assessments.FinalExamQuestion
+import com.example.cyberlearnapp.network.models.assessments.*
 import com.example.cyberlearnapp.repository.ExamRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -22,6 +20,8 @@ class FinalExamViewModel @Inject constructor(
     val state: StateFlow<ExamState> = _state
 
     fun startExam() {
+        if (_state.value.questions.isNotEmpty()) return // Evitar recargar si rota la pantalla
+
         viewModelScope.launch {
             _state.value = _state.value.copy(loading = true, error = null)
             try {
@@ -32,27 +32,7 @@ class FinalExamViewModel @Inject constructor(
                     loading = false
                 )
             } catch (e: Exception) {
-                _state.value = _state.value.copy(error = e.message, loading = false)
-            }
-        }
-    }
-
-    fun submit(navController: NavController) {
-        viewModelScope.launch {
-            _state.value = _state.value.copy(submitting = true, error = null)
-            try {
-                val result = repo.submitExam(_state.value.answers)
-                _state.value = _state.value.copy(
-                    result = result,
-                    submitting = false
-                )
-                if (result.passed) {
-                    navController.navigate("final_exam/result") {
-                        popUpTo("final_exam/take") { inclusive = true }
-                    }
-                }
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(error = "Error al enviar: ${e.message}", submitting = false)
+                _state.value = _state.value.copy(error = e.message ?: "Error desconocido", loading = false)
             }
         }
     }
@@ -61,6 +41,27 @@ class FinalExamViewModel @Inject constructor(
         val current = _state.value.answers.toMutableMap()
         current[qId] = answer
         _state.value = _state.value.copy(answers = current)
+    }
+
+    fun submit(navController: NavController) {
+        if (_state.value.submitting) return
+
+        viewModelScope.launch {
+            _state.value = _state.value.copy(submitting = true, error = null)
+            try {
+                val result = repo.submitExam(_state.value.answers)
+                _state.value = _state.value.copy(
+                    result = result,
+                    submitting = false
+                )
+                // Navegación segura al hilo principal
+                navController.navigate("final_exam/result") {
+                    popUpTo("final_exam/take") { inclusive = true }
+                }
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(error = e.message, submitting = false)
+            }
+        }
     }
 }
 

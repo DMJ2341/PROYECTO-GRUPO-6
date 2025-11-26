@@ -1,106 +1,57 @@
 package com.example.cyberlearnapp.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.cyberlearnapp.network.models.Course
 
 @Composable
 fun CourseCard(
-    emoji: String,       // ✅ Recibimos el Emoji directamente
-    title: String,
-    description: String,
-    level: String,
-    xp: Int,
-    progress: Int,
-    onCourseClick: () -> Unit
+    course: Course,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp) // Un poco de espacio vertical entre tarjetas
-            .clickable { onCourseClick() },
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            .padding(vertical = 8.dp)
+            .clickable { onClick() },
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 🎨 Círculo con Emoji
-            Box(
-                modifier = Modifier
-                    .size(56.dp) // Tamaño del círculo
-                    .clip(CircleShape)
-                    // Fondo suave del color primario
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = emoji,
-                    fontSize = 28.sp, // Emoji grande y claro
-                    textAlign = TextAlign.Center
+            // Imagen o Icono Placeholder
+            if (course.imageUrl != null) {
+                AsyncImage(
+                    model = course.imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier.size(64.dp)
                 )
+            } else {
+                Text("📚", style = MaterialTheme.typography.displayMedium)
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // 📝 Contenido de Texto
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column {
+                Text(course.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    course.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // 🏷️ Etiquetas (Chips)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    InfoChip(text = level)
-                    InfoChip(text = "$xp XP")
-                }
+                Text("Nivel: ${course.level} • +${course.xpReward} XP", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
             }
         }
-    }
-}
-
-// Componente auxiliar para las etiquetas pequeñas
-@Composable
-private fun InfoChip(text: String) {
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
-        modifier = Modifier.wrapContentSize()
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-        )
     }
 }

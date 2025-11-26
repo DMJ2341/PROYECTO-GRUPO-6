@@ -1,17 +1,21 @@
 package com.example.cyberlearnapp.ui.screens.preference_test
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.cyberlearnapp.network.models.assessments.PreferenceQuestion
-import com.example.cyberlearnapp.network.models.assessments.PreferenceOption
 
 @Composable
 fun PreferenceQuestionScreen(
@@ -22,79 +26,85 @@ fun PreferenceQuestionScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Top
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = question.section.replace("_", " ").uppercase(),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        // Imagen opcional (si el backend la envía)
+        if (question.imageUrl != null) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(bottom = 16.dp),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                AsyncImage(
+                    model = question.imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
 
+        // Sección / Categoría
+        question.section?.let {
+            Text(
+                text = it.uppercase(),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        // Texto de la Pregunta
         Text(
-            text = question.question_text,
-            style = MaterialTheme.typography.headlineSmall
+            text = question.questionText,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
 
-        if (question.question_subtext != null) {
+        // Subtexto (Contexto adicional)
+        if (question.questionSubtext != null) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = question.question_subtext,
+                text = question.questionSubtext,
                 style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
                 color = Color.Gray
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Opciones
-        Column(Modifier.selectableGroup()) {
-            question.options.forEach { option ->
-                PreferenceOptionItem(
-                    option = option,
-                    isSelected = selectedOption == option.id,
-                    onClick = { onOptionSelected(option.id) }
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        }
-    }
-}
+        question.options.forEach { option ->
+            val isSelected = selectedOption == option.id
 
-@Composable
-fun PreferenceOptionItem(
-    option: PreferenceOption,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .selectable(
-                selected = isSelected,
-                onClick = onClick,
-                role = Role.RadioButton
-            ),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            else MaterialTheme.colorScheme.surfaceVariant
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 4.dp else 1.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RadioButton(
-                selected = isSelected,
-                onClick = null // Manejado por selectable
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = option.text,
-                style = MaterialTheme.typography.bodyLarge
-            )
+            OutlinedButton(
+                onClick = { onOptionSelected(option.id) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp),
+                shape = RoundedCornerShape(12.dp),
+                border = if (isSelected)
+                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                else
+                    BorderStroke(1.dp, Color.LightGray),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) else Color.Transparent,
+                    contentColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Black
+                )
+            ) {
+                Text(
+                    text = option.text,
+                    modifier = Modifier.padding(8.dp),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
     }
 }

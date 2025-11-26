@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,33 +17,33 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CircularProgress(
-    progress: Float,
+    progress: Float, // 0.0 a 1.0
+    modifier: Modifier = Modifier,
     size: Dp = 60.dp,
-    strokeWidth: Dp = 6.dp,
-    backgroundColor: Color = Color.LightGray.copy(alpha = 0.3f),
-    foregroundColor: Color = MaterialTheme.colorScheme.primary
+    color: Color = MaterialTheme.colorScheme.primary,
+    strokeWidth: Dp = 8.dp
 ) {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(size)) {
-        Canvas(modifier = Modifier.size(size)) {
+    Box(modifier = modifier.size(size), contentAlignment = Alignment.Center) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
             drawArc(
-                color = backgroundColor,
-                startAngle = -90f,
+                color = Color.LightGray.copy(alpha = 0.3f),
+                startAngle = 0f,
                 sweepAngle = 360f,
                 useCenter = false,
-                style = Stroke(strokeWidth.toPx(), cap = StrokeCap.Round)
+                style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
             )
             drawArc(
-                color = foregroundColor,
+                color = color,
                 startAngle = -90f,
-                sweepAngle = 360f * progress,
+                sweepAngle = progress * 360f,
                 useCenter = false,
-                style = Stroke(strokeWidth.toPx(), cap = StrokeCap.Round)
+                style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
             )
         }
         Text(
             text = "${(progress * 100).toInt()}%",
             style = MaterialTheme.typography.labelSmall,
-            color = foregroundColor
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

@@ -7,6 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
+import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamIntroScreen
+import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamResultScreen
+import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamScreen
 import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceResultScreen
 import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceTestScreen
 
@@ -19,7 +22,7 @@ fun NavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
-        // --- AUTH ---
+        // --- AUTENTICACIÓN ---
         composable(route = Screens.Auth.route) {
             AuthScreen(
                 onLoginSuccess = {
@@ -30,29 +33,12 @@ fun NavGraph(
             )
         }
 
-        // --- DASHBOARD ---
+        // --- DASHBOARD (HOME) ---
         composable(route = Screens.Dashboard.route) {
-            DashboardScreen(
-                navController = navController // Pasamos el navController directo para manejar las rutas nuevas
-            )
+            DashboardScreen(navController = navController)
         }
 
-        // --- PREFERENCE TEST (Paso 1: Rutas Nuevas) ---
-        composable("preference_test") {
-            PreferenceTestScreen(
-                navController = navController
-            )
-        }
-
-        composable("preference_result") {
-            // Asumimos que si navega directo, cargará el resultado guardado
-            PreferenceResultScreen(
-                profileType = "saved", // "saved" indicará al ViewModel cargar desde backend
-                navController = navController
-            )
-        }
-
-        // --- CURSOS ---
+        // --- LISTA DE CURSOS ---
         composable(route = Screens.Courses.route) {
             CoursesScreen(
                 onCourseClick = { courseId ->
@@ -64,7 +50,7 @@ fun NavGraph(
             )
         }
 
-        // --- DETALLE DE CURSO ---
+        // --- DETALLE DEL CURSO (Lista de lecciones) ---
         composable(
             route = Screens.CourseDetail.route,
             arguments = listOf(
@@ -72,31 +58,50 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val courseId = backStackEntry.arguments?.getInt("courseId") ?: 1
+
             CourseDetailScreen(
                 courseId = courseId,
-                onLessonClick = { lessonId ->
-                    navController.navigate(Screens.InteractiveLesson.createRoute(lessonId))
-                },
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                navController = navController // Pasamos el controller para que pueda navegar a la lección
             )
         }
 
-        // --- LECCIÓN INTERACTIVA ---
+        // --- LECCIÓN (SISTEMA NUEVO) ---
+        // ✅ ESTA ES LA RUTA QUE FALTABA Y SOLUCIONA EL PROBLEMA
         composable(
-            route = Screens.InteractiveLesson.route,
+            route = "lesson/{lessonId}",
             arguments = listOf(
-                navArgument("lessonId") { type = NavType.IntType }
+                navArgument("lessonId") { type = NavType.StringType } // ID es String ("1_1")
             )
         ) { backStackEntry ->
-            val lessonId = backStackEntry.arguments?.getInt("lessonId") ?: 1
-            InteractiveLessonScreen(
+            val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
+
+            LessonDetailScreen(
                 lessonId = lessonId,
-                onComplete = {
-                    navController.popBackStack()
-                }
+                navController = navController
             )
+        }
+
+        // --- TEST VOCACIONAL ---
+        composable("preference_test") {
+            PreferenceTestScreen(navController = navController)
+        }
+
+        composable("preference_result") {
+            PreferenceResultScreen(
+                profileType = "saved",
+                navController = navController
+            )
+        }
+
+        // --- EXAMEN FINAL INTEGRADOR ---
+        composable("final_exam/intro") {
+            FinalExamIntroScreen(navController)
+        }
+        composable("final_exam/take") {
+            FinalExamScreen(navController)
+        }
+        composable("final_exam/result") {
+            FinalExamResultScreen(navController)
         }
 
         // --- LOGROS ---

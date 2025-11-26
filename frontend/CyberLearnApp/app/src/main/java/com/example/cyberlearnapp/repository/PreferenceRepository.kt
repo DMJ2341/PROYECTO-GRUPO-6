@@ -1,10 +1,10 @@
 package com.example.cyberlearnapp.repository
 
 import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.models.assessments.*
-import com.example.cyberlearnapp.utils.safeApiCall
-import com.example.cyberlearnapp.utils.AuthManager // Asegúrate de importar AuthManager
-import kotlinx.coroutines.Dispatchers
+import com.example.cyberlearnapp.network.models.assessments.PreferenceQuestion
+import com.example.cyberlearnapp.network.models.assessments.SubmitPreferenceRequest
+import com.example.cyberlearnapp.network.models.assessments.UserPreferenceResult
+import com.example.cyberlearnapp.utils.AuthManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,31 +12,34 @@ import javax.inject.Singleton
 class PreferenceRepository @Inject constructor(
     private val apiService: ApiService
 ) {
-    // ... (El resto del código es idéntico al que me pasaste, es correcto) ...
-    // Solo asegúrate de que getAuthToken() llame a AuthManager.getToken()
+    private fun getToken(): String = "Bearer ${AuthManager.getToken() ?: ""}"
 
     suspend fun getQuestions(): List<PreferenceQuestion> {
-        return safeApiCall(Dispatchers.IO) {
-            apiService.getPreferenceQuestions("Bearer ${getAuthToken()}")
+        val response = apiService.getPreferenceQuestions(getToken())
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!.questions
+        } else {
+            throw Exception("Error cargando preguntas")
         }
     }
 
-    suspend fun submitTest(answers: Map<String, String>, timeTakenSeconds: Int? = null): UserPreferenceResult {
-        val request = SubmitPreferenceRequest(answers = answers, time_taken = timeTakenSeconds)
-        val response = safeApiCall(Dispatchers.IO) {
-            apiService.submitPreferenceTest("Bearer ${getAuthToken()}", request)
+    suspend fun submitTest(answers: Map<String, String>, timeTaken: Int? = null): UserPreferenceResult {
+        val request = SubmitPreferenceRequest(answers, timeTaken)
+        val response = apiService.submitPreferenceTest(getToken(), request)
+
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!.result
+        } else {
+            throw Exception("Error enviando test")
         }
-        return response.result
     }
 
     suspend fun getSavedResult(): UserPreferenceResult? {
-        val response = safeApiCall(Dispatchers.IO) {
-            apiService.getPreferenceResult("Bearer ${getAuthToken()}")
+        val response = apiService.getPreferenceResult(getToken())
+        if (response.isSuccessful && response.body() != null) {
+            val wrapper = response.body()!!
+            return if (wrapper.hasResult) wrapper.result else null
         }
-        return if (response.has_result) response.result else null
-    }
-
-    private fun getAuthToken(): String {
-        return AuthManager.getToken() ?: ""
+        return null
     }
 }
