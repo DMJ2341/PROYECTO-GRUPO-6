@@ -1,4 +1,4 @@
-# backend/app.py - VERSIÓN DEFINITIVA MAESTRA (V3.1 - CORREGIDA)
+# backend/app.py - VERSIÓN CORREGIDA Y COMPLETA
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.db import get_session, create_all
@@ -7,6 +7,7 @@ import jwt
 import datetime
 from functools import wraps
 import sentry_sdk
+from config import Config  # ✅ Importamos la config centralizada
 
 # --- MODELOS ---
 from models.user import User
@@ -21,7 +22,6 @@ from models.badge import Badge
 from models.password_reset_token import PasswordResetToken
 from models.user_glossary_favorite import UserGlossaryFavorite
 from models.daily_term_log import DailyTermLog
-# ✅ CORRECCIÓN: Importamos solo lo que existe en models/assessments.py
 from models.assessments import (
     FinalExamQuestion, UserExamAttempt, 
     PreferenceQuestion, UserPreferenceResult
@@ -53,8 +53,9 @@ sentry_sdk.init(
 )
 
 app = Flask(__name__)
+# Cargar configuración desde config.py
+app.config.from_object(Config)
 CORS(app)
-app.config['SECRET_KEY'] = 'cyberlearn_super_secret_key_2024_change_in_production'
 
 # INICIALIZACIÓN DE BASE DE DATOS
 try:
@@ -77,6 +78,7 @@ def token_required(f):
         try:
             if token.startswith('Bearer '):
                 token = token[7:]
+            # Usamos la clave secreta desde la configuración
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             current_user_id = data['user_id']
             

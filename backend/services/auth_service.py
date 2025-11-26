@@ -4,15 +4,16 @@ from models.refresh_token import RefreshToken
 import bcrypt
 import jwt
 from datetime import datetime, timedelta, timezone
+from config import Config  # ✅ Importar configuración
 
 class AuthService:
     def __init__(self):
-        self.secret_key = 'cyberlearn_super_secret_key_2024_change_in_production'
-        self.access_expires = timedelta(minutes=30)      # Token corto (Acceso)
-        self.refresh_expires = timedelta(days=30)        # Refresh largo (Sesión)
+        # ✅ Usar la clave centralizada
+        self.secret_key = Config.SECRET_KEY 
+        self.access_expires = timedelta(minutes=30)
+        self.refresh_expires = timedelta(days=30)
 
     def _create_token(self, user_id: int, expires_delta: timedelta, is_refresh=False):
-        # Usamos timezone.utc para evitar advertencias de fecha
         expire = datetime.now(timezone.utc) + expires_delta
         payload = {
             "user_id": user_id,
@@ -42,11 +43,9 @@ class AuthService:
             session.commit()
             session.refresh(user)
 
-            # Generar ambos tokens
             access_token, _ = self._create_token(user.id, self.access_expires)
             refresh_token, refresh_expire = self._create_token(user.id, self.refresh_expires, is_refresh=True)
 
-            # Guardar refresh token en DB
             refresh_expire_naive = refresh_expire.replace(tzinfo=None)
 
             rt = RefreshToken(
@@ -57,7 +56,6 @@ class AuthService:
             session.add(rt)
             session.commit()
 
-            # ✅ CORRECCIÓN AQUÍ: Estructura anidada 'user'
             return {
                 "access_token": access_token,
                 "refresh_token": refresh_token,
@@ -101,7 +99,6 @@ class AuthService:
     def refresh(self, refresh_token_str: str):
         session = get_session()
         try:
-            # 1. Buscar token en DB
             rt = session.query(RefreshToken).filter_by(token=refresh_token_str).first()
             
             if not rt:
@@ -111,7 +108,6 @@ class AuthService:
             if rt.is_expired():
                 raise ValueError("Token expirado")
 
-            # 2. Verificar firma criptográfica
             try:
                 payload = jwt.decode(refresh_token_str, self.secret_key, algorithms=["HS256"])
             except:
@@ -119,7 +115,6 @@ class AuthService:
                 session.commit()
                 raise ValueError("Token corrupto o inválido")
 
-            # 3. Rotación de tokens (Seguridad Máxima)
             rt.revoked = True
             
             new_access, _ = self._create_token(payload["user_id"], self.access_expires)

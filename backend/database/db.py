@@ -1,18 +1,20 @@
-# backend/database/db.py - CORRECCIÓN FINAL PARA ATTRIBUTEERROR 'SESSION'
+# backend/database/db.py
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.ext.declarative import declarative_base
 
-load_dotenv()  # Carga .env automáticamente
+load_dotenv()
 
-# Conexión desde .env (seguro para servidor)
-DB_URL = os.getenv('DATABASE_URL', 'postgresql://app_cyberlearn:CyberLearn2025*@172.232.188.183:5432/cyberlearn_db')  # Fallback local si no .env
+# Es mejor fallar si no hay URL en producción que dejar una contraseña hardcodeada,
+# pero si mantienes el fallback, asegúrate de que sea solo para desarrollo.
+DB_URL = os.getenv('DATABASE_URL', 'postgresql://app_cyberlearn:CyberLearn2025*@172.232.188.183:5432/cyberlearn_db')
 
-engine = create_engine(DB_URL)
-pool_pre_ping=True,  # <--- AGREGA ESTO
-SessionLocal = sessionmaker(bind=engine)  # Añadido para compatibilidad si otros códigos lo usan
+# ✅ CORRECCIÓN: pool_pre_ping dentro de los paréntesis
+engine = create_engine(DB_URL, pool_pre_ping=True)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Session = scoped_session(SessionLocal)
 Base = declarative_base()
 
