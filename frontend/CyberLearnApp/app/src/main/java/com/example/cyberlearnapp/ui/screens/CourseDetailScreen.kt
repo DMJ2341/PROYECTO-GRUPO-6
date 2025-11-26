@@ -1,108 +1,137 @@
 package com.example.cyberlearnapp.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyberlearnapp.viewmodel.CourseViewModel
+import com.example.cyberlearnapp.network.models.Lesson
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseDetailScreen(
-    courseId: Int,
     navController: NavController,
-    viewModel: CourseViewModel = hiltViewModel()
+    viewModel: CourseViewModel,
+    courseId: Int
 ) {
+    // 1. Cargar lecciones al entrar a la pantalla
     LaunchedEffect(courseId) {
-        viewModel.loadCourseDetails(courseId)
+        viewModel.loadLessons(courseId)
     }
 
-    val state by viewModel.state.collectAsState()
-    val course = state.selectedCourse
-    val lessons = state.lessons
+    // 2. Observar el estado
+    val lessons by viewModel.lessons.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
-    if (state.isLoading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-        return
-    }
+    // Buscamos el curso actual en la lista cargada previamente para obtener el título
+    val courses by viewModel.courses.collectAsState()
+    val currentCourse = courses.find { it.id == courseId }
 
-    if (course == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No se pudo cargar el curso")
-        }
-        return
-    }
-
-    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        // Cabecera
-        item {
-            Text(course.title, style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            Text(course.description, style = MaterialTheme.typography.bodyLarge, color = Color.Gray)
-            Spacer(Modifier.height(24.dp))
-
-            // Progreso
-            val completedCount = lessons.count { it.isCompleted }
-            val progress = if (lessons.isNotEmpty()) completedCount.toFloat() / lessons.size else 0f
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Progreso", fontWeight = FontWeight.Bold)
-                Text("$completedCount / ${lessons.size} lecciones")
-            }
-            Spacer(Modifier.height(8.dp))
-            LinearProgressIndicator(
-                progress = { progress },
-                modifier = Modifier.fillMaxWidth().height(10.dp),
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-            Spacer(Modifier.height(32.dp))
-        }
-
-        // Lista de Lecciones
-        items(lessons.sortedBy { it.orderIndex }) { lesson ->
-            val isUnlocked = !lesson.isLocked || lesson.isCompleted
-
-            ListItem(
-                headlineContent = {
-                    Text(lesson.title, fontWeight = if (lesson.isCompleted) FontWeight.Bold else FontWeight.Normal)
-                },
-                supportingContent = {
-                    Text("+${lesson.xpReward} XP • ${lesson.durationMinutes} min", color = MaterialTheme.colorScheme.primary)
-                },
-                leadingContent = {
-                    Icon(
-                        imageVector = when {
-                            lesson.isCompleted -> Icons.Default.CheckCircle
-                            isUnlocked -> Icons.Default.PlayArrow
-                            else -> Icons.Default.Lock
-                        },
-                        contentDescription = null,
-                        tint = if (lesson.isCompleted) Color(0xFF4CAF50) else if (isUnlocked) MaterialTheme.colorScheme.primary else Color.Gray
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(enabled = isUnlocked) {
-                        navController.navigate("lesson/${lesson.id}")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(currentCourse?.title ?: "Detalle del Curso") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás")
                     }
-                    .alpha(if (isUnlocked) 1f else 0.5f)
+                }
             )
-            HorizontalDivider()
         }
-        item { Spacer(Modifier.height(80.dp)) }
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else if (lessons.isEmpty()) {
+                // Si no carga y no hay error, mostramos mensaje
+                Text(
+                    text = error ?: "No hay lecciones disponibles.",
+                    modifier = Modifier.align(Alignment.Center),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            } else {
+                // 3. Renderizar la lista
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item {
+                        Text(
+                            text = currentCourse?.description ?: "",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        Divider(modifier = Modifier.padding(bottom = 16.dp))
+                        Text(
+                            text = "Lecciones",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+
+                    items(lessons) { lesson ->
+                        LessonItem(lesson = lesson, onClick = {
+                            // Navegar a la lección
+                            // Asegúrate de que tu NavGraph maneje esta ruta
+                            navController.navigate("lesson_detail/${lesson.id}")
+                        })
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LessonItem(lesson: Lesson, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth().clickable { onClick() },
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Icono de estado
+            Icon(
+                imageVector = if (lesson.isCompleted) Icons.Default.CheckCircle else Icons.Default.PlayArrow,
+                contentDescription = null,
+                tint = if (lesson.isCompleted) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column {
+                Text(
+                    text = "${lesson.orderIndex}. ${lesson.title}",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "${lesson.durationMinutes} min • ${lesson.xpReward} XP",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
+            }
+        }
     }
 }

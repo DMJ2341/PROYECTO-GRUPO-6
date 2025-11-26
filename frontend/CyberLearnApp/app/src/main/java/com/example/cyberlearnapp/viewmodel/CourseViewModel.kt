@@ -17,52 +17,63 @@ class CourseViewModel @Inject constructor(
     private val repository: CourseRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(CourseState())
-    val state: StateFlow<CourseState> = _state.asStateFlow()
+    // Lista de cursos (Pantalla principal)
+    private val _courses = MutableStateFlow<List<Course>>(emptyList())
+    val courses: StateFlow<List<Course>> = _courses.asStateFlow()
+
+    // Lista de lecciones (Pantalla de detalle)
+    private val _lessons = MutableStateFlow<List<Lesson>>(emptyList())
+    val lessons: StateFlow<List<Lesson>> = _lessons.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
+
+    init {
+        loadCourses()
+    }
 
     fun loadCourses() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
+            _isLoading.value = true
+            _error.value = null
             try {
-                val courses = repository.getCourses()
-                _state.value = _state.value.copy(courses = courses, isLoading = false)
+                val result = repository.getCourses()
+                // repository.getCourses() devuelve List<Course> directamente (según tu código)
+                if (result.isNotEmpty()) {
+                    _courses.value = result
+                } else {
+                    _error.value = "No se encontraron cursos."
+                }
             } catch (e: Exception) {
-                _state.value = _state.value.copy(isLoading = false, error = e.message)
+                _error.value = "Error: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
-    fun loadCourseDetails(courseId: Int) {
+    fun loadLessons(courseId: Int) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
+            _isLoading.value = true
+            _lessons.value = emptyList()
             try {
-                // Cargamos lecciones
-                val lessons = repository.getCourseLessons(courseId)
-                // Buscamos el curso en la lista ya cargada para tener el título
-                val course = _state.value.courses.find { it.id == courseId }
+                // ✅ CORRECCIÓN AQUÍ: Usamos el nombre correcto 'getCourseLessons'
+                val result = repository.getCourseLessons(courseId)
 
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    selectedCourse = course,
-                    lessons = lessons
-                )
+                if (result.isNotEmpty()) {
+                    _lessons.value = result
+                } else {
+                    _error.value = "Este curso no tiene lecciones disponibles aún."
+                }
             } catch (e: Exception) {
-                _state.value = _state.value.copy(isLoading = false, error = e.message)
+                _error.value = "Error al cargar lecciones: ${e.message}"
+                e.printStackTrace()
+            } finally {
+                _isLoading.value = false
             }
         }
-    }
-
-    // Helper para saber si una lección está completada (simple check en memoria por ahora)
-    fun isLessonCompleted(lessonId: String): Boolean {
-        return _state.value.lessons.find { it.id == lessonId }?.isCompleted == true
     }
 }
-
-data class CourseState(
-    val isLoading: Boolean = false,
-    val courses: List<Course> = emptyList(),
-    val selectedCourse: Course? = null,
-    val lessons: List<Lesson> = emptyList(),
-    val courseProgress: Float = 0f, // Se podría calcular
-    val error: String? = null
-)

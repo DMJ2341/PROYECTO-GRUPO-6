@@ -1,73 +1,86 @@
 package com.example.cyberlearnapp.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.* // ✅ IMPORTANTE: Incluye getValue, setValue, collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyberlearnapp.ui.screens.lessons.LessonScreenRender
 import com.example.cyberlearnapp.viewmodel.LessonViewModel
+// No necesitamos importar 'Lesson' aquí porque usamos 'LessonResponse' que viene del VM
 
 @Composable
 fun LessonDetailScreen(
-    lessonId: String,
     navController: NavController,
-    viewModel: LessonViewModel = hiltViewModel()
+    viewModel: LessonViewModel = hiltViewModel(),
+    lessonId: String
 ) {
-    LaunchedEffect(lessonId) { viewModel.loadLesson(lessonId) }
-    val lessonState by viewModel.lesson.collectAsState()
+    LaunchedEffect(lessonId) {
+        viewModel.loadLesson(lessonId)
+    }
+
+    // Ahora 'by' funcionará porque importamos androidx.compose.runtime.*
+    val lessonResponse by viewModel.lesson.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
+
     var currentScreenIndex by remember { mutableIntStateOf(0) }
 
-    if (isLoading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) { CircularProgressIndicator() }
-        return
-    }
+    Scaffold { padding ->
+        Box(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else if (error != null) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(32.dp)
+                ) {
+                    if (error?.contains("403") == true || error?.contains("bloqueada") == true) {
+                        Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.error)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Lección Bloqueada", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.error)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Debes completar las lecciones anteriores.", textAlign = TextAlign.Center)
+                    } else {
+                        Text(text = error ?: "Error desconocido", color = MaterialTheme.colorScheme.error)
+                    }
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Button(onClick = { navController.popBackStack() }) {
+                        Text("Volver")
+                    }
+                }
+            } else if (lessonResponse != null) {
+                // Obtenemos el total de pantallas real desde la respuesta
+                val totalScreens = lessonResponse!!.screens.size
 
-    val lesson = lessonState
-    if (lesson == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-            Text("No se pudo cargar la lección")
-            Button(onClick = { viewModel.loadLesson(lessonId) }) { Text("Reintentar") }
-        }
-        return
-    }
-
-    val screens = lesson.screens
-    val currentScreenData = screens.getOrNull(currentScreenIndex)
-    val progress = if (screens.isNotEmpty()) (currentScreenIndex + 1).toFloat() / screens.size else 0f
-
-    Scaffold(
-        topBar = {
-            LinearProgressIndicator(progress = { progress }, modifier = Modifier.fillMaxWidth().height(6.dp))
-        },
-        bottomBar = {
-            Surface(shadowElevation = 16.dp) {
-                Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    if (currentScreenIndex > 0) {
-                        OutlinedButton(onClick = { currentScreenIndex-- }) { Text("Anterior") }
-                    } else { Spacer(Modifier.width(1.dp)) }
-
-                    Button(onClick = {
-                        if (currentScreenIndex < screens.size - 1) currentScreenIndex++
-                        else {
+                LessonScreenRender(
+                    lesson = lessonResponse!!, // Pasamos LessonResponse (coincide con el cambio en Render)
+                    screenIndex = currentScreenIndex,
+                    onNext = {
+                        if (currentScreenIndex < totalScreens - 1) {
+                            currentScreenIndex++
+                        } else {
+                            // Fin de la lección
                             viewModel.completeLesson(lessonId)
                             navController.popBackStack()
                         }
-                    }) {
-                        Text(if (currentScreenIndex < screens.size - 1) "Siguiente" else "Finalizar")
-                    }
-                }
-            }
-        }
-    ) { padding ->
-        Box(Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
-            if (currentScreenData != null) {
-                LessonScreenRender(screenData = currentScreenData, onQuizAnswer = {})
+                    },
+                    onPrev = {
+                        if (currentScreenIndex > 0) currentScreenIndex--
+                    },
+                    isLastScreen = currentScreenIndex == totalScreens - 1
+                )
             }
         }
     }

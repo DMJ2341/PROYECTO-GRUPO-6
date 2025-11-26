@@ -5,16 +5,30 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Lesson(
-    val id: String, // String para soportar "1_1"
-    @SerialName("course_id") val courseId: Int,
+    // El log muestra "c1_l1", así que debe ser String, no Int
+    val id: String,
+
+    @SerialName("course_id")
+    val courseId: Int,
+
     val title: String,
-    val description: String? = null,
-    val type: String,
-    @SerialName("duration_minutes") val durationMinutes: Int,
-    @SerialName("xp_reward") val xpReward: Int,
-    @SerialName("order_index") val orderIndex: Int,
-    // Estos campos suelen venir de la lógica de negocio o un join en el backend
-    @SerialName("is_completed") var isCompleted: Boolean = false,
-    // Si el backend no envía is_locked, lo calculamos en el ViewModel, así que default false
-    var isLocked: Boolean = false
+
+    val description: String,
+
+    @SerialName("content") // A veces el backend no lo manda en la lista, lo hacemos nullable
+    val content: String? = null,
+
+    @SerialName("order_index")
+    val orderIndex: Int,
+
+    @SerialName("duration_minutes")
+    val durationMinutes: Int,
+
+    @SerialName("xp_reward")
+    val xpReward: Int,
+
+    @SerialName("is_completed")
+    val isCompleted: Boolean = false,
+
+    val type: String // "interactive", "video", etc.
 )
