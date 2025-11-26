@@ -1,132 +1,242 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Edward Snowden NSA Leak",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "Caso: SolarWinds Supply Chain (2020)",
+    "duration": 240,
     "content": {
-      "case_name": "Edward Snowden - Insider Threat (2013)",
-      "date": "Jun 2013",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/NSA_logo.svg/1200px-NSA_logo.svg.png",
-      "narrative": "Contractor de NSA con acceso privilegiado excesivo. Violó Separation of Duties, Need to Know. Descargó 1.7 millones de documentos clasificados usando credenciales de colegas. Fallo de Least Privilege y privilege abuse detection. Mayor leak de inteligencia en historia de USA.",
-      "stats": [
-        {"label": "Documentos Filtrados", "value": "1.7M", "icon": "description"},
-        {"label": "Nivel de Acceso", "value": "Top Secret", "icon": "lock"},
-        {"label": "Tipo de Amenaza", "value": "Insider", "icon": "person"}
+      "story_title": "SolarWinds: Nation-State Supply Chain Attack",
+      "story_intro": "APT29 (Cozy Bear) compromised 18K+ organizations vía trojanized update",
+      "steps": [
+        {
+          "id": "1",
+          "icon": "security",
+          "title": "El Vector: Orion Software Update",
+          "content": "SolarWinds Orion: Network monitoring usado por Fortune 500, gobierno US. Atacantes (APT29/Russia) comprometieron build system. Inyectaron backdoor SUNBURST en update legítimo.",
+          "insight": "Supply chain attack bypassa ALL perimeter defenses. Víctimas instalan malware voluntariamente."
+        },
+        {
+          "id": "2",
+          "icon": "download",
+          "title": "Infection: 18,000 Organizations",
+          "content": "18,000 customers descargaron update trojanizado. SUNBURST backdoor dormant por 2 semanas antes de activar. FireEye, Microsoft, Departamento de Justicia, Tesoro US comprometidos.",
+          "insight": "Dormancy period evade detection inicial. C2 traffic usaba dominios legítimos (avsvmcloud)."
+        },
+        {
+          "id": "3",
+          "icon": "vpn_key",
+          "title": "Privilege Escalation",
+          "content": "SUNBURST permitió robar credentials de admin. Atacantes pivotaron a cloud (O365, Azure AD). Golden SAML attacks: forjar SAML tokens para impersonate any user.",
+          "insight": "On-prem compromise → cloud compromise. Hybrid environments amplify attack surface."
+        },
+        {
+          "id": "4",
+          "icon": "visibility",
+          "title": "Detección: 9 Meses Después",
+          "content": "FireEye detectó en Dic 2020. Breach comenzó en Mar 2020. 9 meses de acceso sin detectar. APT29 exfiltró emails, documentos classified de gobierno.",
+          "insight": "Dwell time promedio de nation-state: 200+ días. Detection es el challenge."
+        },
+        {
+          "id": "5",
+          "icon": "gavel",
+          "title": "Aftermath: Zero Trust Mandate",
+          "content": "Biden Executive Order 14028: Federal agencies deben implementar Zero Trust. SolarWinds CEO testified ante Congreso. Enfoque en supply chain security. SBOM (Software Bill of Materials) requirement.",
+          "insight": "SolarWinds aceleró adopción de Zero Trust architecture en gobierno y enterprise."
+        }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Principios de Control de Acceso - NIST SP 800-53",
+    "type": "memory_cards",
+    "title": "Authentication Fundamentals",
+    "duration": 240,
     "content": {
-      "intro": "Fundamentos de AC (Access Control) family según NIST SP 800-53 Rev. 5.",
-      "tabs": [
+      "cards": [
         {
-          "label": "AAA Framework",
-          "title": "Authentication, Authorization, Accounting",
-          "text": "Authentication: ¿Quién eres? (passwords, MFA, certs). Authorization: ¿Qué puedes hacer? (permisos, roles). Accounting: ¿Qué hiciste? (logs, auditoría). Tres pilares del control de acceso.",
-          "icon": "verified_user"
+          "id": "1",
+          "front": {
+            "icon": "password",
+            "term": "Something You Know",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Factor 1: Passwords, PINs, security questions. Más común pero más vulnerable. Phishing, credential stuffing, brute force.",
+            "example": "Password: Solo knowledge-based. Vulnerable a: keyloggers, phishing, database leaks (Have I Been Pwned). Requiere complexity rules, rotation policies.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "Least Privilege",
-          "title": "Principio de Mínimo Privilegio",
-          "text": "Usuario/proceso solo tiene permisos mínimos necesarios para su función. Nada más. Reduce blast radius si comprometido. AC-6 en NIST. Snowden violó esto: acceso excesivo innecesario para su rol.",
-          "icon": "vpn_lock"
+          "id": "2",
+          "front": {
+            "icon": "phonelink_lock",
+            "term": "Something You Have",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Factor 2: Physical token, smartphone, smart card, hardware key. Possession-based. Más seguro que passwords solo.",
+            "example": "FIDO2 keys (YubiKey), TOTP apps (Google Authenticator), push notifications (Duo). SolarWinds: Stolen creds inútiles con MFA hardware.",
+            "color": "#66BB6A"
+          }
         },
         {
-          "label": "Separation of Duties",
-          "title": "Segregación de Funciones (SoD)",
-          "text": "Ninguna persona puede completar proceso crítico sola. Requiere 2+ personas. Ejemplo: quien aprueba pago no puede ejecutarlo. Previene fraude interno. Dual control. AC-5 en NIST.",
-          "icon": "people"
+          "id": "3",
+          "front": {
+            "icon": "fingerprint",
+            "term": "Something You Are",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Factor 3: Biometrics. Fingerprint, face recognition, iris scan, voice. Inherence-based. No se puede 'olvidar' pero no se puede cambiar si compromised.",
+            "example": "Touch ID, Face ID, Windows Hello. Spoofing risk con high-res photos. False accept/reject rates. GDPR concerns con biometric data storage.",
+            "color": "#FFB74D"
+          }
         },
         {
-          "label": "Need to Know",
-          "title": "Necesidad de Saber",
-          "text": "Acceso solo a información necesaria para trabajo específico. Clasificación de datos: Public, Internal, Confidential, Secret. Clearance no implica acceso automático a todo. Compartimentalización.",
-          "icon": "visibility_off"
+          "id": "4",
+          "front": {
+            "icon": "location_on",
+            "term": "Contextual Factors",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Factor adicional: Location (GPS, IP), time of day, device posture, behavior analytics. Risk-based authentication.",
+            "example": "Login desde Russia cuando user normalmente en US = block. Impossible travel. Device fingerprinting. Adaptive MFA aumenta friction solo cuando risk alto.",
+            "color": "#BA68C8"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "Privileged Access Management (PAM)",
+    "type": "progress_checklist",
+    "title": "Multi-Factor Authentication (MFA)",
+    "duration": 300,
     "content": {
-      "intro": "Gestión de cuentas con privilegios elevados (admin, root, domain admin).",
-      "concepts": [
+      "items": [
         {
-          "name": "Admin Account Risks",
-          "description": "Cuentas admin son high-value targets. Si comprometidas, atacante tiene llaves del reino. Pass-the-Hash, Golden Ticket attacks.",
-          "icon": "warning"
+          "id": "mfa1",
+          "task": "MFA Types Comparison",
+          "subtitle": "Efectividad y usabilidad",
+          "icon": "compare",
+          "unlock_content": {
+            "title": "MFA Spectrum",
+            "points": [
+              "SMS/Voice (Least secure): SIM swapping, SS7 attacks. Mejor que nada.",
+              "TOTP Apps (Medium): Google Auth, Authy. Phishing-resistant NO. Codes can be phished.",
+              "Push Notifications (Better): Duo, Okta Verify. UX bueno. Push bombing risk.",
+              "Hardware Tokens (Best): FIDO2, YubiKey. Phishing-resistant. Public key crypto.",
+              "Biometrics (Device-local): Touch/Face ID. Convenient pero device-dependent."
+            ],
+            "bonus_fact": "Microsoft: MFA blocks 99.9% of automated attacks. FIDO2 blocks 100% of phishing."
+          }
         },
         {
-          "name": "Just-In-Time (JIT) Access",
-          "description": "Elevar privilegios solo cuando necesario, por tiempo limitado. Auto-revoke después. Reduce ventana de exposición. Azure AD PIM, AWS IAM temporal credentials.",
-          "icon": "schedule"
+          "id": "mfa2",
+          "task": "FIDO2/WebAuthn",
+          "subtitle": "Phishing-resistant standard",
+          "icon": "key",
+          "unlock_content": {
+            "title": "Modern Authentication",
+            "points": [
+              "FIDO2: Public key cryptography. Private key never leaves device.",
+              "WebAuthn: Browser API standard. Works con YubiKey, Windows Hello, Touch ID.",
+              "Phishing-resistant: Attacker no puede replay credentials. Domain-bound.",
+              "Passwordless: Can replace passwords entirely. Microsoft, Google, Apple support.",
+              "SolarWinds defense: Hardware MFA hubiera bloqueado credential theft."
+            ],
+            "bonus_fact": "FIDO2 adoption growing 50%/year. Passkeys (Apple/Google) are FIDO2-based."
+          }
         },
         {
-          "name": "Password Vaulting",
-          "description": "Almacenar credenciales privilegiadas en vault cifrado. Check-out/check-in. Rotación automática. Session recording. Ejemplos: CyberArk, HashiCorp Vault, BeyondTrust.",
-          "icon": "lock"
-        },
-        {
-          "name": "Break-Glass Procedures",
-          "description": "Cuentas de emergencia para cuando IAM/PAM falla. Selladas, monitoreadas. Uso genera alerta inmediata. Require multiple approvals.",
-          "icon": "emergency"
+          "id": "mfa3",
+          "task": "MFA Bypass Techniques",
+          "subtitle": "Attackers adapt",
+          "icon": "warning",
+          "unlock_content": {
+            "title": "Know the Enemy",
+            "points": [
+              "Push bombing/fatigue: Spam push notifications hasta que user acepta.",
+              "Session hijacking: Steal session token post-MFA. MFA protects login, no session.",
+              "Social engineering: Call helpdesk, reset MFA device claiming 'lost phone'.",
+              "AiTM (Adversary-in-The-Middle): Proxy phishing, relay MFA codes real-time.",
+              "Defense: FIDO2 (no relay possible), anomaly detection, rate limiting MFA attempts."
+            ],
+            "bonus_fact": "Twitter 2020 hack: Insiders bypassed MFA via internal tools. Insider threat is MFA weakness."
+          }
         }
       ]
     }
   },
   {
     "screen_id": 4,
-    "type": "practical_scenario",
-    "title": "Aplica Least Privilege",
+    "type": "memory_cards",
+    "title": "Single Sign-On (SSO)",
+    "duration": 180,
     "content": {
-      "scenario": "Empresa tiene 3 roles: Developer, DBA, Auditor. Define permisos siguiendo Least Privilege y SoD.",
-      "resources": [
-        {"resource": "Source Code Repo", "sensitivity": "High"},
-        {"resource": "Production Database", "sensitivity": "Critical"},
-        {"resource": "Test Database", "sensitivity": "Medium"},
-        {"resource": "Audit Logs", "sensitivity": "High"},
-        {"resource": "User Management System", "sensitivity": "Critical"}
-      ],
-      "correct_permissions": {
-        "Developer": {
-          "allow": ["Read/Write Source Code", "Read/Write Test DB"],
-          "deny": ["Production DB Write", "Audit Logs", "User Management"],
-          "rationale": "Necesita código y test. NO producción."
+      "cards": [
+        {
+          "id": "1",
+          "front": {
+            "icon": "apps",
+            "term": "SAML 2.0",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Security Assertion Markup Language. XML-based. IdP (Identity Provider) autentica user, emite SAML assertion, SP (Service Provider) confía.",
+            "example": "Corporate SSO: Okta (IdP) → G Suite, Salesforce, Slack (SPs). SolarWinds attack: Golden SAML forged tokens, bypassed authentication.",
+            "color": "#42A5F5"
+          }
         },
-        "DBA": {
-          "allow": ["Read/Write Production DB", "Read Test DB", "Read Audit Logs of DB"],
-          "deny": ["Source Code", "User Management", "Modify Audit Logs"],
-          "rationale": "Gestiona DBs. Puede ver logs de DB pero no modificar. No gestiona usuarios."
-        },
-        "Auditor": {
-          "allow": ["Read-Only ALL Audit Logs", "Read User Management"],
-          "deny": ["Write anything", "Execute commands"],
-          "rationale": "Solo observa para compliance. Read-only total."
+        {
+          "id": "2",
+          "front": {
+            "icon": "verified_user",
+            "term": "OAuth 2.0 + OIDC",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "OAuth: Authorization framework (access delegation). OIDC: Authentication layer on OAuth. JSON-based, RESTful. Modern alternative a SAML.",
+            "example": "'Sign in with Google/Apple/Facebook'. OAuth grants access tokens. OIDC adds ID tokens (JWT) con user info. Widely adopted por developers.",
+            "color": "#66BB6A"
+          }
         }
-      },
-      "sod_violations": [
-        "❌ DBA no puede ser Auditor (conflict of interest)",
-        "❌ Developer no puede aprobar deploy a production (quien crea no deploya)",
-        "❌ Auditor no puede tener write access (compromete independencia)"
       ]
     }
   },
   {
     "screen_id": 5,
     "type": "quiz",
-    "title": "Evaluación - Control de Acceso",
+    "title": "Evaluación - Authentication",
+    "duration": 90,
     "content": {
-      "question": "Snowden usó credenciales de 20-25 colegas para acceder documentos. ¿Qué principios se violaron?",
+      "question": "¿Por qué FIDO2/YubiKey es superior a TOTP apps para MFA?",
       "options": [
-        {"id": "a", "text": "Least Privilege + Need to Know + inadecuado monitoring de privilege abuse", "is_correct": true, "feedback": "Correcto. Tuvo acceso excesivo (Least Privilege), accedió info fuera de su necesidad (Need to Know), y nadie detectó el abuso de credenciales."},
-        {"id": "b", "text": "Solo passwords débiles", "is_correct": false, "feedback": "No. El problema no era fortaleza de passwords sino exceso de privilegios y falta de monitoring."},
-        {"id": "c", "text": "Falta de encryption", "is_correct": false, "feedback": "No. Datos estaban clasificados pero accesibles por alguien con clearance excesivo."}
+        {
+          "id": "a",
+          "text": "FIDO2 es más barato",
+          "is_correct": false,
+          "feedback": "Incorrecto. YubiKeys cuestan $25-50, apps son free. Ventaja NO es costo."
+        },
+        {
+          "id": "b",
+          "text": "FIDO2 es phishing-resistant; TOTP codes pueden ser phished/relayed",
+          "is_correct": true,
+          "feedback": "CORRECTO! FIDO2 usa public key crypto. Private key NUNCA sale del hardware token. Domain-bound: solo funciona en sitio legítimo, no en phishing site. TOTP: 6-digit code puede ser phished (user ingresa en fake site) y relayed a sitio real en real-time. SolarWinds: FIDO2 hubiera prevenido credential reuse incluso si passwords leaked."
+        },
+        {
+          "id": "c",
+          "text": "FIDO2 no requiere internet",
+          "is_correct": false,
+          "feedback": "Incorrecto. Ambos pueden funcionar offline/online. Diferencia es phishing resistance."
+        },
+        {
+          "id": "d",
+          "text": "TOTP es más seguro",
+          "is_correct": false,
+          "feedback": "Incorrecto. TOTP es menos seguro. Codes son phishable. FIDO2 es cryptographically secure y phishing-resistant."
+        }
       ]
     }
   }

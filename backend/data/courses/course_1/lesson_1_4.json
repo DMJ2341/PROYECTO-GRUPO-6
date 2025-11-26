@@ -1,243 +1,550 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: WannaCry Deep Dive",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "WannaCry: Anatomía de un Ataque Global",
+    "duration": 300,
     "content": {
-      "case_name": "WannaCry Ransomware Analysis (2017)",
-      "date": "12 May 2017",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/WannaCry_screenshot.png/800px-WannaCry_screenshot.png",
-      "narrative": "Análisis técnico del crypto-ransomware que paralizó 150 países. Exploit EternalBlue (CVE-2017-0144), capacidad de worm, kill switch accidental. CISA Alert TA17-132A y Microsoft MS17-010.",
-      "stats": [
-        {"label": "Rescate Exigido", "value": "$300-600", "icon": "attach_money"},
-        {"label": "Bitcoin Pagado", "value": "$140K", "icon": "currency_bitcoin"},
-        {"label": "Kill Switch", "value": "1 dominio", "icon": "power_settings_new"}
+      "story_title": "Disección Técnica: Cómo WannaCry Paralizó el Mundo",
+      "story_intro": "Más allá de la historia, analicemos la mecánica técnica del malware que infectó 200,000 sistemas en 48 horas.",
+      "steps": [
+        {
+          "id": "1",
+          "icon": "bug_report",
+          "title": "Componente 1: Dropper/Downloader",
+          "content": "WannaCry comienza como un ejecutable pequeño (~3.6MB) que contiene: exploit EternalBlue, backdoor DoublePulsar, payload de ransomware cifrado, kill switch check. El dropper verifica conectividad al dominio kill switch. Si no resuelve, procede. Si resuelve, se auto-destruye (anti-sandbox).",
+          "insight": "Los malware modernos son multi-stage: dropper inicial es pequeño y genérico para evadir detección. El payload real se descarga después si el ambiente parece 'seguro' (no sandbox)."
+        },
+        {
+          "id": "2",
+          "icon": "router",
+          "title": "Componente 2: Worm de Propagación",
+          "content": "Scanner de red: Genera IPs aleatorias, escanea puerto 445/TCP (SMB). EternalBlue exploit: Buffer overflow en srv.sys, obtiene ejecución en kernel mode. DoublePulsar backdoor: Instala implante en memoria, no en disco. Auto-replicación: Copia de sí mismo a nueva máquina, repite proceso. Velocidad: 10,000 sistemas/hora en peak.",
+          "insight": "Worms son devastadores porque son exponenciales: 1 infecta 10, esos 10 infectan 100, etc. WannaCry no necesitaba phishing ni user interaction. Completamente autónomo."
+        },
+        {
+          "id": "3",
+          "icon": "lock",
+          "title": "Componente 3: Ransomware Payload",
+          "content": "Crypto: AES-128-CBC para cifrar archivos (rápido). RSA-2048 para proteger AES keys (seguro). Targets: 176 tipos de archivos (.doc, .xls, .pdf, .jpg, etc). Exclusiones: Archivos de sistema Windows (para mantener SO funcionando). Extensión: Agrega .WNCRY. Key management: Keys AES únicas por archivo, protegidas por RSA master key hardcoded.",
+          "insight": "Ransomware usa crypto híbrido: simétrico para velocidad, asimétrico para seguridad. Impossib le descifrar sin private key del atacante. Backup offline es única defensa real."
+        },
+        {
+          "id": "4",
+          "icon": "attach_money",
+          "title": "Componente 4: Ransom Mechanism",
+          "content": "UI: Pantalla roja con contador regresivo. Demanda inicial: $300 USD en Bitcoin. Escalación: $600 después de 3 días. Deadline: 7 días antes de 'borrar archivos permanentemente' (bluff). Bitcoin wallets: 3 direcciones hardcoded. Sin sistema de payment tracking: No podían verificar quién pagó. Víctimas que pagaron: ~338 transacciones, $140K total.",
+          "insight": "La infraestructura de pago de WannaCry era HORRIBLE. Muchos pagaron pero nunca recuperaron archivos porque no había sistema automático. Los creadores eran técnicamente brillantes pero operacionalmente incompetentes."
+        },
+        {
+          "id": "5",
+          "icon": "shield",
+          "title": "Defensas que Fallaron",
+          "content": "Antivirus: No detectó porque era zero-day variant. Firewalls: Puerto 445 estaba abierto en LANs internas. IDS/IPS: Signatures no existían aún. Segmentación: Redes planas permitieron propagación lateral ilimitada. Backups: Muchos no tenían o estaban en red (también cifrados). Patch management: MS17-010 disponible por 58 días, ignorado.",
+          "insight": "Defense-in-depth falló en cascada. Una sola defensa (patch MS17-010) hubiera detenido todo. Pero dependían del antivirus únicamente. Lesson: Nunca confiar en una sola capa."
+        },
+        {
+          "id": "6",
+          "icon": "build",
+          "title": "Post-Mortem: Lecciones Técnicas",
+          "content": "1) Deshabilitar SMBv1 (obsoleto desde 2014). 2) Bloquear puerto 445 en firewall perimetral. 3) Network segmentation: VLANs, microsegmentation. 4) Backups air-gapped: Offline, immutable, testados. 5) EDR con behavioral analysis (hubiera detectado crypto mass). 6) Patch management: SLA de 48h para critical CVEs. 7) Incident response plan: Procedimientos de aislamiento rápido.",
+          "insight": "Todas estas medidas existían ANTES de WannaCry. Ninguna era nueva. Las organizaciones simplemente no las implementaban por 'comodidad' o presupuesto. WannaCry fue evitable al 100%."
+        }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Taxonomía de Malware",
+    "type": "memory_cards",
+    "title": "Taxonomía de Malware: Tipos y Características",
+    "duration": 360,
     "content": {
-      "intro": "Clasificación según NIST SP 800-83 Rev. 1: Malware Incident Prevention and Handling.",
-      "tabs": [
+      "description": "Diferentes familias de malware con propósitos y comportamientos únicos",
+      "cards": [
         {
-          "label": "Virus",
-          "title": "Virus - Requiere Host",
-          "text": "Código malicioso que se adhiere a archivos legítimos. Requiere ejecución del host file. Se replica. Ejemplos clásicos: ILOVEYOU, Melissa. Hoy menos común.",
-          "icon": "coronavirus"
+          "id": "1",
+          "front": {
+            "icon": "coronavirus",
+            "term": "Virus",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Malware que se adjunta a archivos legítimos (host files) y se replica cuando el archivo infectado se ejecuta. Requiere acción humana para propagarse. Infecta: ejecutables, documentos con macros, boot sectors. Histórico: primer tipo de malware, común en era de diskettes.",
+            "example": "ILOVEYOU (2000): Virus de email que se disfrazaba como carta de amor. Infectó 50M sistemas. CIH/Chernobyl (1998): Sobrescribía BIOS, brickeaba motherboards. Cascade virus: Hacía que letras 'cayeran' en pantalla MS-DOS.",
+            "color": "#EF5350"
+          }
         },
         {
-          "label": "Worm",
-          "title": "Worm - Auto-propagación",
-          "text": "Se replica automáticamente sin intervención. Explota vulnerabilidades de red. Ejemplos: WannaCry, Conficker, Morris Worm (1988). Muy peligroso por propagación rápida.",
-          "icon": "device_hub"
+          "id": "2",
+          "front": {
+            "icon": "pest_control",
+            "term": "Worm",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "Malware autónomo que se propaga sin host file y sin intervención humana. Explota vulnerabilidades de red para saltar entre sistemas. Auto-replicante. Consume ancho de banda masivamente. Velocidad de propagación: minutos/horas globalmente.",
+            "example": "WannaCry (2017): EternalBlue SMB worm. Conficker (2008): Infectó 9M+ sistemas Windows, usaba múltiples vectores. Morris Worm (1988): Primer worm de internet, causó 10% de internet offline. Slammer (2003): 75K sistemas en 10 minutos.",
+            "color": "#FFB74D"
+          }
         },
         {
-          "label": "Trojan",
-          "title": "Trojan - Caballo de Troya",
-          "text": "Se disfraza como software legítimo. No se auto-replica. Ejemplos: Remote Access Trojans (RATs), Banking Trojans. Zeus, Emotet iniciaron como trojans.",
-          "icon": "security"
+          "id": "3",
+          "front": {
+            "icon": "theater_comedy",
+            "term": "Trojan",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Malware disfrazado como software legítimo o útil. Engaña al usuario para instalación voluntaria. NO se auto-replica. Puede contener: backdoors, keyloggers, info stealers. Nombre de 'Caballo de Troya': parece benigno pero oculta malicia.",
+            "example": "Emotet (2014-2021): Se distribuía como invoice falso, luego descargaba ransomware. Zeus/Zbot: Banking trojan, robó millones. MacDefender: Fake antivirus para Mac. Tiny Banker: 24KB de puro banking theft.",
+            "color": "#BA68C8"
+          }
         },
         {
-          "label": "Ransomware",
-          "title": "Ransomware - Extorsión",
-          "text": "Cifra archivos o bloquea sistema, exige rescate. Crypto-ransomware (cifra datos) vs Locker-ransomware (bloquea pantalla). Ejemplos: WannaCry, REvil, DarkSide.",
-          "icon": "lock_clock"
+          "id": "4",
+          "front": {
+            "icon": "lock",
+            "term": "Ransomware",
+            "color": "#C62828"
+          },
+          "back": {
+            "definition": "Cifra archivos de víctima y exige pago por descifrado. Crypto-ransomware (cifra) vs locker-ransomware (bloquea acceso). Doble extorsión: cifrar + amenazar con publicar datos robados. RaaS (Ransomware-as-a-Service): affiliates rentan malware, comparten ganancias.",
+            "example": "REvil/Sodinokibi: $200M+ en ransoms, atacó JBS, Kaseya. Conti: Operación criminal organizada, 1000+ víctimas. LockBit: Ransomware más rápido, cifra en minutos. Ryuk: Healthcare specialist, causó muertes indirectas.",
+            "color": "#E53935"
+          }
         },
         {
-          "label": "Spyware",
-          "title": "Spyware - Espionaje",
-          "text": "Recolecta información sin consentimiento. Keyloggers, screen capturers. Pegasus (NSO Group) es spyware móvil sofisticado.",
-          "icon": "visibility"
+          "id": "5",
+          "front": {
+            "icon": "visibility",
+            "term": "Spyware",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Monitorea actividades sin conocimiento del usuario. Captura: keystrokes (keylogger), screenshots, clipboard, webcam/mic, ubicación GPS. Exfiltra a servidor C2. Usado para: espionaje corporativo, stalking, law enforcement. Puede ser legal (parental control) o ilegal.",
+            "example": "Pegasus (NSO Group): Spyware móvil de grado militar, infectaba iPhones sin click (zero-click). FinFisher: Commercial spyware vendido a gobiernos. DarkHotel: APT targeting ejecutivos en hoteles de lujo vía WiFi.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "Rootkit",
-          "title": "Rootkit - Ocultación",
-          "text": "Oculta malware modificando SO. Kernel-mode vs User-mode. Difícil de detectar. Ejemplos: Sony BMG rootkit (2005), TDL4/TDSS.",
-          "icon": "visibility_off"
+          "id": "6",
+          "front": {
+            "icon": "hub",
+            "term": "Rootkit",
+            "color": "#424242"
+          },
+          "back": {
+            "definition": "Oculta su presencia y la de otros malwares modificando el sistema operativo. Nivel kernel (ring 0) o bootloader. Intercepta system calls para esconderse. Invisible a antivirus tradicionales. Persistencia extrema. Difícil de remover sin re-imagen completa.",
+            "example": "Sony BMG Rootkit (2005): CDs de música instalaban rootkit para DRM. Creó vulnerabilidades masivas. TDL4: Bootkit que sobrevivía reinstalación de OS. Stuxnet: Incluía rootkit sofisticado para esconderse en PLCs de Siemens.",
+            "color": "#757575"
+          }
+        },
+        {
+          "id": "7",
+          "front": {
+            "icon": "computer",
+            "term": "RAT (Remote Access Trojan)",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Backdoor que da control remoto completo del sistema infectado. Funciones: ver pantalla (VNC-style), acceder cámara/mic, ejecutar comandos, keylogging, file transfer, lateral movement. Usado por APTs para long-term persistence. Commercial RATs disponibles en underground.",
+            "example": "DarkComet: RAT gratis muy popular en underground. njRAT: Usado por APT33 (Irán). Gh0st RAT: APT usado por grupos chinos. TeamViewer/AnyDesk: Legítimos pero abusados por atacantes con credenciales robadas.",
+            "color": "#66BB6A"
+          }
+        },
+        {
+          "id": "8",
+          "front": {
+            "icon": "ads_click",
+            "term": "Adware",
+            "color": "#FBC02D"
+          },
+          "back": {
+            "definition": "Muestra ads no deseados. Rango: molesto (pop-ups) hasta malicioso (redirige navegación, instala más malware). Modelo de negocio: pay-per-click fraudulento. Bundled con freeware. Técnicamente no es malware si es transparente, pero boundary es difusa.",
+            "example": "Fireball (2017): Adware chino infectó 250M sistemas. Secuestraba navegadores, inyectaba ads. Superfish (Lenovo): Venía preinstalado, rompía HTTPS con certificado raíz malicioso. Gator: Spyware/adware combo.",
+            "color": "#FFF176"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "kill_chain_analysis",
-    "title": "WannaCry: Cyber Kill Chain",
+    "type": "progress_checklist",
+    "title": "Cyber Kill Chain: Fases del Ataque (WannaCry)",
+    "duration": 300,
     "content": {
-      "description": "Análisis de WannaCry usando el modelo de Lockheed Martin Cyber Kill Chain",
-      "phases": [
+      "title": "Mapea WannaCry al Framework Lockheed Martin Cyber Kill Chain",
+      "items": [
         {
-          "phase": "1. Reconnaissance",
-          "wannacry_action": "Escaneo de red para detectar SMBv1 (puerto 445) vulnerable",
-          "detection": "IDS signatures, anomalous port scanning",
-          "icon": "search"
+          "id": "recon",
+          "task": "Fase 1: Reconnaissance",
+          "subtitle": "WannaCry: Escaneo masivo de internet",
+          "icon": "search",
+          "unlock_content": {
+            "title": "Reconocimiento Automatizado",
+            "points": [
+              "WannaCry generaba rangos de IP aleatorios globalmente",
+              "Escaneaba puerto 445/TCP (SMB) en búsqueda de sistemas vulnerables",
+              "No targeted recon: ataque de 'spray and pray'",
+              "Fingerprinting: Identificaba versión de Windows (vulnerable vs parcheada)",
+              "Sin OSINT ni social engineering (típico de worms)",
+              "Detección: Massive spike en tráfico SMB port 445 globalmente",
+              "Defensa: Rate limiting, IDS para port scanning, honeypots"
+            ],
+            "bonus_fact": "El escaneo de WannaCry fue tan agresivo que ISPs vieron tráfico anormal en port 445 horas antes del cifrado masivo. Fue detectable pero pocos actuaron a tiempo."
+          }
         },
         {
-          "phase": "2. Weaponization",
-          "wannacry_action": "EternalBlue exploit + DoublePulsar backdoor + ransomware payload",
-          "detection": "Threat intelligence sobre EternalBlue",
-          "icon": "build"
+          "id": "weaponization",
+          "task": "Fase 2: Weaponization",
+          "subtitle": "EternalBlue + DoublePulsar + Ransomware",
+          "icon": "build",
+          "unlock_content": {
+            "title": "Arsenal Combinado",
+            "points": [
+              "Exploit: EternalBlue (NSA leak) para MS17-010 vulnerability",
+              "Backdoor: DoublePulsar para persistencia y staging",
+              "Payload: Ransomware con AES+RSA hybrid crypto",
+              "Packaging: Todo en ejecutable de 3.6MB auto-contenido",
+              "Kill switch: Domain check anti-sandbox mechanism",
+              "Obfuscation: Código ofuscado para evadir análisis estático",
+              "Defensa: N/A (ocurre antes del ataque, en manos del atacante)"
+            ],
+            "bonus_fact": "La weaponización de WannaCry probablemente tomó meses. EternalBlue fue filtrado en abril 2017, WannaCry apareció en mayo. Los autores tuvieron tiempo de integrarlo perfectamente."
+          }
         },
         {
-          "phase": "3. Delivery",
-          "wannacry_action": "Exploit enviado a puerto 445 SMB",
-          "detection": "Network IDS, SMB traffic monitoring",
-          "icon": "send"
+          "id": "delivery",
+          "task": "Fase 3: Delivery",
+          "subtitle": "Auto-propagación vía red SMB",
+          "icon": "send",
+          "unlock_content": {
+            "title": "Vector de Entrega: Worm",
+            "points": [
+              "Método: Network-based worm, NO email/phishing",
+              "Protocolo: SMB (Server Message Block) sobre TCP/445",
+              "Initial vector desconocido: ¿Patient zero? Nunca identificado con certeza",
+              "Teorías: Phishing inicial O exploit scan O insider",
+              "Post-initial: Completamente auto-propagado sin humanos",
+              "Velocidad: Exponencial, 10K sistemas/hora en peak",
+              "Defensa: Firewall bloquear 445, patch MS17-010, network segmentation"
+            ],
+            "bonus_fact": "El patient zero de WannaCry nunca fue identificado con 100% certeza. Pudo haber sido en Asia (primeros reportes) pero el worm se propagó tan rápido que el origen se perdió en el ruido."
+          }
         },
         {
-          "phase": "4. Exploitation",
-          "wannacry_action": "Explotación de CVE-2017-0144, ejecución de código remoto",
-          "detection": "EDR, memory anomalies",
-          "icon": "warning"
+          "id": "exploitation",
+          "task": "Fase 4: Exploitation",
+          "subtitle": "Buffer overflow en srv.sys kernel driver",
+          "icon": "bug_report",
+          "unlock_content": {
+            "title": "Explotación de MS17-010",
+            "points": [
+              "Target: srv.sys (SMB driver en Windows kernel)",
+              "Técnica: Buffer overflow con paquetes SMB craftados maliciosamente",
+              "Efecto: Code execution en kernel mode (ring 0, máximo privilegio)",
+              "Bypass: ASLR, DEP evadidos por EternalBlue",
+              "Payload staging: DoublePulsar backdoor instalado en memoria",
+              "Shellcode: Descarga y ejecuta ransomware main payload",
+              "Defensa: Patch MS17-010, EDR con exploit detection, virtual patching"
+            ],
+            "bonus_fact": "EternalBlue era tan confiable (98%+ success rate) que la NSA lo usó por años sin ser detectado. Cuando fue filtrado, cambió el landscape de ciberseguridad para siempre."
+          }
         },
         {
-          "phase": "5. Installation",
-          "wannacry_action": "Instala ransomware, crea servicios persistentes",
-          "detection": "Antivirus, file integrity monitoring",
-          "icon": "download"
+          "id": "installation",
+          "task": "Fase 5: Installation",
+          "subtitle": "DoublePulsar + Ransomware deployment",
+          "icon": "download",
+          "unlock_content": {
+            "title": "Instalación Furtiva",
+            "points": [
+              "DoublePulsar: Backdoor implantado en memoria (fileless)",
+              "Payload drop: Ransomware ejecutable en C:\\Windows\\",
+              "Service creation: Registered como Windows service para auto-start",
+              "Registry keys: Persistence vía Run keys (aunque innecesario para worm)",
+              "File placement: Múltiples copias en diferentes locations",
+              "Anti-forensics: Intenta borrar logs de eventos",
+              "Defensa: EDR con memory scanning, file integrity monitoring, logging remoto"
+            ],
+            "bonus_fact": "DoublePulsar era tan sofisticado que podía infectar sistemas sin dejar casi rastro en disco. Era backdoor puramente en memoria. Aún después de WannaCry, cientos de miles de sistemas quedaron con DoublePulsar activo."
+          }
         },
         {
-          "phase": "6. Command & Control",
-          "wannacry_action": "Contacta kill switch domain (hardcoded). Si no existe, continúa",
-          "detection": "DNS monitoring, firewall logs",
-          "icon": "settings_remote"
+          "id": "c2",
+          "task": "Fase 6: Command & Control (C2)",
+          "subtitle": "WannaCry tenía C2 HORRIBLE",
+          "icon": "router",
+          "unlock_content": {
+            "title": "C2 Disfuncional",
+            "points": [
+              "Kill switch domain: iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com (check inicial)",
+              "Bitcoin wallets: 3 direcciones hardcoded (no C2 real)",
+              "NO reporting: Malware no reportaba infecciones exitosas",
+              "NO tracking: No podían saber quién pagó vs quién no",
+              "Descentralizado: Cada instancia operaba independientemente",
+              "Payment verification: MANUAL, via blockchain explorer",
+              "Resultado: Muchos pagaron pero nunca fueron 'atendidos'"
+            ],
+            "bonus_fact": "La infraestructura C2 de WannaCry fue PÉSIMA. Comparada con ransomware moderno (REvil, Conti) que tienen dashboards completos, customer support, y payment tracking automático, WannaCry era amateur hour."
+          }
         },
         {
-          "phase": "7. Actions on Objectives",
-          "wannacry_action": "Cifra archivos con AES-128, muestra nota de rescate, propaga lateralmente",
-          "detection": "File activity monitoring, behavioral analysis",
-          "icon": "gavel"
+          "id": "actions",
+          "task": "Fase 7: Actions on Objectives",
+          "subtitle": "Cifrado masivo y extorsión",
+          "icon": "lock",
+          "unlock_content": {
+            "title": "Objetivo Final: Ransomware",
+            "points": [
+              "Crypto: AES-128 para 176 tipos de archivos (.doc, .pdf, .jpg, etc)",
+              "Key management: RSA-2048 para proteger AES keys",
+              "UI: Pantalla roja con countdown timer y instrucciones de pago",
+              "Ransom: $300 USD → $600 después de 3 días, 'delete' en 7 días",
+              "Data destruction threat: Bluff, no había auto-delete implementado",
+              "Financial goal: Falló miserablemente, solo ~$140K cobrados",
+              "Real impact: $4B+ en daños operacionales, NO financieros para atacantes"
+            ],
+            "bonus_fact": "WannaCry demostró que ransomware NO es solo sobre crypto skills. La monetización requiere infraestructura: payment processing, customer support, decryption delivery. Los autores fallaron en esto completamente."
+          }
         }
-      ],
-      "kill_switch_discovery": "Marcus Hutchins (@MalwareTechBlog) registró el dominio kill switch, deteniendo propagación accidentalmente."
+      ]
     }
   },
   {
     "screen_id": 4,
-    "type": "theory_tabs",
+    "type": "memory_cards",
     "title": "Técnicas de Ataque Comunes",
+    "duration": 240,
     "content": {
-      "intro": "Métodos frecuentes según MITRE ATT&CK® y threat intelligence.",
-      "tabs": [
+      "description": "Tácticas y técnicas frecuentemente usadas por malware",
+      "cards": [
         {
-          "label": "Phishing",
-          "title": "Phishing & Spear Phishing",
-          "text": "Email malicioso (attachments, links). Spear phishing es dirigido a individuo específico. 90% de brechas comienzan con phishing (Verizon DBIR). Ejemplo: John Podesta Gmail 2016.",
-          "icon": "phishing"
+          "id": "1",
+          "front": {
+            "icon": "code",
+            "term": "Code Injection",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Inyectar código malicioso en proceso legítimo en ejecución. Process hollowing: vaciar proceso legítimo y reemplazar con malicioso. DLL injection: forzar carga de DLL maliciosa. Thread injection: crear thread en otro proceso. Evasión: parece proceso legítimo para antivirus.",
+            "example": "WannaCry usaba process injection para ejecutarse en contexto de lsass.exe (legítimo). Muchos malwares inyectan en explorer.exe, svchost.exe. Mimikatz usa injection para extraer passwords de memoria de lsass.exe.",
+            "color": "#EF5350"
+          }
         },
         {
-          "label": "Drive-by",
-          "title": "Drive-by Downloads",
-          "text": "Malware descargado automáticamente al visitar sitio comprometido. Exploit kits (Angler, RIG). Usuario no necesita clic.",
-          "icon": "cloud_download"
+          "id": "2",
+          "front": {
+            "icon": "shield_moon",
+            "term": "Obfuscation",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Ofuscar código para dificultar análisis estático. Técnicas: string encoding, packing/compression, encryption, control flow obfuscation, junk code insertion. Objetivo: evadir signatures de antivirus y dificultar reverse engineering. Común: UPX packer, custom packers.",
+            "example": "Emotet cambiaba hash cada iteración mediante polimorfismo. Zeus/Zbot usaba custom packer. Stuxnet tenía múltiples capas de encryption. Metamorphic malware reescribe su propio código en cada infección.",
+            "color": "#BA68C8"
+          }
         },
         {
-          "label": "Watering Hole",
-          "title": "Watering Hole Attacks",
-          "text": "Comprometer sitio que target visita frecuentemente. Luego infectar visitantes. APTs usan esta táctica. Ejemplo: Attacks contra Forbes.com 2015.",
-          "icon": "water_drop"
+          "id": "3",
+          "front": {
+            "icon": "memory",
+            "term": "Living off the Land (LoL)",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "Usar herramientas legítimas del OS en vez de malware custom. PowerShell, WMI, certutil, bitsadmin, regsvr32. Ventajas: no deja binarios maliciosos en disco, difícil de bloquear sin romper funcionalidad, evasión de antivirus. Fileless malware usa esta técnica extensivamente.",
+            "example": "PowerShell Empire: Framework completo de LoL. APTs usan WMI para lateral movement. Certutil.exe para descargar payloads (abuso de herramienta legítima). PsExec (Sysinternals) abusado para movimiento lateral.",
+            "color": "#FFB74D"
+          }
         },
         {
-          "label": "Supply Chain",
-          "title": "Supply Chain Compromise",
-          "text": "Comprometer software/hardware de proveedor confiable. Ejemplos: SolarWinds Orion (2020), CCleaner (2017), NotPetya vía software de contabilidad ucraniano.",
-          "icon": "account_tree"
+          "id": "4",
+          "front": {
+            "icon": "vpn_key",
+            "term": "Credential Dumping",
+            "color": "#0288D1"
+          },
+          "back": {
+            "definition": "Extraer passwords y hashes de memoria, registry o disco. Targets: LSASS process (passwords en plaintext), SAM database (NTLM hashes), credential manager, browsers. Herramientas legítimas abusadas: Mimikatz, ProcDump, Secretsdump.py (Impacket).",
+            "example": "Mimikatz: Extrae passwords de lsass.exe memory. Pass-the-hash: Usar hash NTLM sin crackear password. Golden ticket: Forja Kerberos TGT usando KRBTGT hash. APTs usan esto para lateral movement y privilege escalation.",
+            "color": "#42A5F5"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 5,
-    "type": "theory_section",
-    "title": "Command & Control (C2)",
+    "type": "memory_cards",
+    "title": "Command & Control (C2): Arquitecturas",
+    "duration": 240,
     "content": {
-      "intro": "Infraestructura que permite al atacante controlar malware. MITRE ATT&CK® Tactic TA0011.",
-      "concepts": [
+      "description": "Cómo el malware se comunica con su creador",
+      "cards": [
         {
-          "name": "C2 Infraestructura",
-          "description": "Servidores que reciben conexiones de malware. Pueden ser: servidores dedicados, hacked websites, P2P networks, cloud services (AWS, Azure)",
-          "icon": "dns"
+          "id": "1",
+          "front": {
+            "icon": "dns",
+            "term": "C2 Centralizado",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Modelo tradicional: malware se conecta a servidor(es) C2 específico controlado por atacante. Comunicación: HTTP/HTTPS, DNS, IRC, custom protocols. Ventaja: simple, control centralizado. Desventaja: single point of failure, fácil de bloquear/sinkhole.",
+            "example": "Zeus botnet usaba C2 centralizado vía HTTP. Cuando LE tomaba servidores, botnet moría. Mirai botnet tenía hardcoded C2 IPs. Cuando researcher registró kill switch domain de WannaCry, fue sinkhole centralizado.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "name": "Beaconing",
-          "description": "Malware 'llama a casa' periódicamente para recibir comandos. Patrón regular detectable. Jitter (variación aleatoria) para evasión.",
-          "detection": "Analizar periodicidad en logs, unusual outbound connections",
-          "icon": "cell_tower"
+          "id": "2",
+          "front": {
+            "icon": "hub",
+            "term": "P2P C2",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Red peer-to-peer: bots se comunican entre sí, no hay servidor central. Cada bot puede ser C2 para otros. Resiliente: tomar uno no mata la red. Updates y commands se propagan bot-a-bot. Usado por botnets sofisticados. Difícil de desmantelar completamente.",
+            "example": "Gameover Zeus: P2P + DGA (Domain Generation Algorithm). Sobrevivió múltiples takedown attempts. Conficker: Híbrido P2P + HTTP C2. Sality: Botnet P2P masivo, millones de bots. Requirió operación coordinada global para desmantelar.",
+            "color": "#66BB6A"
+          }
         },
         {
-          "name": "Protocolos C2",
-          "description": "HTTP/HTTPS (más común, se mezcla con tráfico legítimo), DNS tunneling, ICMP tunneling, Twitter/Telegram (steganography)",
-          "icon": "router"
+          "id": "3",
+          "front": {
+            "icon": "public",
+            "term": "C2 vía Servicios Legítimos",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Abusar servicios públicos legítimos como C2: Twitter, Gmail, Pastebin, GitHub, Telegram, Discord. Malware polling periódicamente. Ventajas: tráfico parece legítimo, difícil de bloquear sin afectar users legítimos, HTTPS cifrado end-to-end.",
+            "example": "Hammertoss (APT29): Usaba Twitter para C2, imágenes con steganografía. Varios malwares usan Telegram bots. Pastebin abusado para stage payloads. GitHub repos con 'issues' como commands. Discord webhooks para exfiltración.",
+            "color": "#FFB74D"
+          }
         },
         {
-          "name": "Exfiltración",
-          "description": "Robo de datos vía C2. Técnicas: compressed archives, encrypted channels, steganography, slow exfiltration (evade DLP)",
-          "detection": "Unusual data volumes, connections to suspicious IPs",
-          "icon": "upload"
+          "id": "4",
+          "front": {
+            "icon": "shuffle",
+            "term": "Domain Generation Algorithm (DGA)",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Algoritmo que genera miles de dominios aleatorios diariamente. Malware intenta conectarse a todos. Atacante solo necesita registrar uno. Evasión: imposible blacklist todos los dominios futuros. Requiere seed (fecha, constante) para sincronizar bot y C2.",
+            "example": "Conficker generaba 50K dominios/día usando fecha como seed. Cryptolocker DGA generaba 1K dominios/día. Defensa: Sinkholing masivo (registrar dominios antes que atacantes), DGA detection vía ML (entropía de strings).",
+            "color": "#BA68C8"
+          }
         }
-      ],
-      "c2_frameworks": {
-        "description": "Herramientas usadas por red teams y atacantes:",
-        "examples": ["Cobalt Strike", "Metasploit", "Empire", "Covenant"]
-      }
+      ]
     }
   },
   {
     "screen_id": 6,
-    "type": "practical_lab",
+    "type": "progress_checklist",
     "title": "Lab Forense: Analiza WannaCry (Simulado)",
+    "duration": 300,
     "content": {
-      "instruction": "Analiza artefactos de una infección WannaCry simulada:",
-      "artifacts": [
+      "title": "Análisis Post-Mortem de Sistema Infectado",
+      "items": [
         {
-          "type": "Archivo Ejecutable",
-          "filename": "mssecsvc.exe",
-          "location": "C:\\Windows\\mssecsvc.exe",
-          "hash_sha256": "ed01ebfbc9eb5bbea545af4d01bf5f1071661840480439c6e5babe8e080e41aa",
-          "analysis": "PE32 executable, creates service 'mssecsvc', svchost.exe",
-          "ioc": "✓ Nombre de servicio sospechoso"
+          "id": "artifact_1",
+          "task": "Artifact 1: Archivos Maliciosos en Disco",
+          "subtitle": "C:\\Windows\\mssecsvc.exe, tasksche.exe",
+          "icon": "folder",
+          "unlock_content": {
+            "title": "Dropper y Payloads",
+            "points": [
+              "mssecsvc.exe: Componente principal de WannaCry, dropper",
+              "tasksche.exe: Launcher, ejecutado como scheduled task",
+              "SHA-256: Match con hashes conocidos de WannaCry en VirusTotal",
+              "Tamaño: ~3.6MB aproximadamente",
+              "Ubicación: C:\\Windows\\ (requiere privilegios elevados)",
+              "Timestamps: Correlacionar con logs para timeline",
+              "VirusTotal: 60+ engines detectan como WannaCry/Ransom.Wanna",
+              "Preservar: Hash, copia forense, submit a sandbox (any.run)"
+            ],
+            "bonus_fact": "Los nombres mssecsvc y tasksche fueron elegidos para parecer servicios legítimos de Microsoft. Camuflaje básico pero efectivo para usuarios no técnicos."
+          }
         },
         {
-          "type": "Archivos Cifrados",
-          "extension": ".WNCRY",
-          "analysis": "Archivos con extensión .WNCRY agregada",
-          "ioc": "✓ Extensión característica de WannaCry"
+          "id": "artifact_2",
+          "task": "Artifact 2: Archivos Cifrados .WNCRY",
+          "subtitle": "Evidencia de cifrado exitoso",
+          "icon": "lock",
+          "unlock_content": {
+            "title": "Data Encryption Evidence",
+            "points": [
+              "Extensión: .WNCRY agregada a archivos originales",
+              "Ejemplo: document.docx → document.docx.WNCRY",
+              "Tipos afectados: 176 extensiones (docs, pdfs, imgs, databases)",
+              "Magic bytes: Archivos cifrados tienen header específico",
+              "Key files: 00000000.eky, 00000000.pky, 00000000.res",
+              "eky: AES key cifrada con RSA public key del atacante",
+              "Sin estos key files + private key atacante = irrecuperable",
+              "Forensics: Timeline de cifrado vía timestamps de archivos"
+            ],
+            "bonus_fact": "Los archivos .eky contienen las AES keys cifradas con RSA. Sin la private key del atacante, matemáticamente imposible descifrar. Por eso backups offline son la ÚNICA solución real contra ransomware."
+          }
         },
         {
-          "type": "Nota de Rescate",
-          "filename": "@WanaDecryptor@.exe",
-          "content": "Oops, your files have been encrypted!",
-          "bitcoin_addresses": ["13AM4VW2dhxYgXeQepoHkHSQuy6NgaEb94"],
-          "ioc": "✓ Bitcoin wallet conocido de WannaCry"
+          "id": "artifact_3",
+          "task": "Artifact 3: Nota de Rescate",
+          "subtitle": "@Please_Read_Me@.txt, pantalla roja",
+          "icon": "description",
+          "unlock_content": {
+            "title": "Ransom Note Analysis",
+            "points": [
+              "Archivos: @Please_Read_Me@.txt, @WanaDecryptor@.exe",
+              "Contenido: Instrucciones de pago en Bitcoin",
+              "Bitcoin wallets: 3 direcciones hardcoded",
+              "Monto: $300 inicial, $600 después de 3 días",
+              "Deadline: 7 días (threat de borrado, era bluff)",
+              "Languages: 28 idiomas disponibles (targeting global)",
+              "GUI: Aplicación Windows con countdown timer visible",
+              "Blockchain analysis: Seguir transacciones en wallets"
+            ],
+            "bonus_fact": "Las 3 Bitcoin wallets de WannaCry están públicas y monitoreadas. Puedes ver en tiempo real cada pago en blockchain explorer. Total histórico: ~$140K en 338 transacciones. Poca gente pagó."
+          }
         },
         {
-          "type": "Conexión de Red",
-          "domain": "iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com",
-          "analysis": "Kill switch domain check",
-          "ioc": "✓ Kill switch domain de WannaCry"
+          "id": "artifact_4",
+          "task": "Artifact 4: Network Activity",
+          "subtitle": "Conexiones SMB masivas, kill switch check",
+          "icon": "router",
+          "unlock_content": {
+            "title": "Análisis de Tráfico de Red",
+            "points": [
+              "SMB scanning: Conexiones masivas a port 445 IPs aleatorias",
+              "Kill switch: DNS query a iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com",
+              "Si resuelve: Malware se auto-destruye (era sandbox check)",
+              "Si no resuelve: Procede con propagación",
+              "C2: NO había C2 real, solo Bitcoin blockchain",
+              "Lateral movement: SMB connections a otras máquinas en LAN",
+              "IDS signatures: Tráfico EternalBlue detecta ble con Snort/Suricata rules",
+              "Forensics: PCAP analysis con Wireshark, Zeek logs"
+            ],
+            "bonus_fact": "El kill switch domain fue registrado por Marcus Hutchins por $10.69. Ese registro salvó literalmente millones de sistemas. La NSA tenía analistas monitoreando el ataque en tiempo real pero no intervinieron hasta que Marcus actuó."
+          }
         },
         {
-          "type": "Tráfico SMB",
-          "port": "445",
-          "analysis": "Múltiples conexiones SMB a IPs internas",
-          "ioc": "✓ Propagación lateral vía EternalBlue"
-        }
-      ],
-      "questions": [
-        {
-          "q": "¿Qué IOCs confirman que es WannaCry?",
-          "a": "Extensión .WNCRY, kill switch domain, Bitcoin address específica, mssecsvc.exe"
-        },
-        {
-          "q": "¿Cómo se propaga?",
-          "a": "EternalBlue exploit (CVE-2017-0144) vía SMB port 445"
-        },
-        {
-          "q": "¿Cómo detenerlo?",
-          "a": "Registrar kill switch domain, bloquear SMB 445, aplicar MS17-010 patch"
+          "id": "artifact_5",
+          "task": "Artifact 5: Windows Event Logs",
+          "subtitle": "Scheduled tasks, service creation, SMB logs",
+          "icon": "article",
+          "unlock_content": {
+            "title": "Timeline Reconstruction",
+            "points": [
+              "Security log (4688): Process creation de mssecsvc.exe",
+              "Task Scheduler: tasksche.exe registrado como task",
+              "Services: mssecsvc intentó registrarse como Windows service",
+              "SMB logs (5140): File shares accessed durante propagación",
+              "Application log: Crashes de aplicaciones al intentar abrir .WNCRY files",
+              "System log (7045): New service installation attempts",
+              "Event ID 4624: Successful logon (si propagó via stolen credentials)",
+              "Correlación: Timestamps para timeline completo del incidente"
+            ],
+            "bonus_fact": "WannaCry intentaba borrar logs con 'wevtutil cl' command pero raramente lo lograba completamente. Los logs de Windows fueron críticos para investigaciones forenses post-incidente en el NHS."
+          }
         }
       ]
     }
@@ -246,13 +553,34 @@
     "screen_id": 7,
     "type": "quiz",
     "title": "Evaluación - Malware",
+    "duration": 90,
     "content": {
-      "question": "Un malware se disfraza como actualizador de Flash, roba credenciales bancarias, envía a servidor del atacante. No se auto-replica. ¿Qué tipo de malware es principalmente?",
+      "question": "¿Cuál es la diferencia PRINCIPAL entre un Virus y un Worm?",
       "options": [
-        {"id": "a", "text": "Worm", "is_correct": false, "feedback": "No. Worms se auto-replican, este no lo hace."},
-        {"id": "b", "text": "Banking Trojan", "is_correct": true, "feedback": "¡Correcto! Se disfraza (trojan), objetivo específico (banking), no se replica. Ejemplo: Zeus, Emotet en fase inicial."},
-        {"id": "c", "text": "Ransomware", "is_correct": false, "feedback": "No. Ransomware cifra y extorsiona, este roba credenciales."},
-        {"id": "d", "text": "Rootkit", "is_correct": false, "feedback": "No. Rootkit oculta malware, este es el malware primario."}
+        {
+          "id": "a",
+          "text": "Virus son más peligrosos que Worms",
+          "is_correct": false,
+          "feedback": "Incorrecto. La 'peligrosidad' depende del payload, no del mecanismo de propagación. Worms pueden ser igualmente o más devastadores (ej: WannaCry). La diferencia no es severidad sino cómo se propagan."
+        },
+        {
+          "id": "b",
+          "text": "Virus requieren host file y acción humana; Worms se auto-replican sin intervención humana",
+          "is_correct": true,
+          "feedback": "¡CORRECTO! Virus se adjuntan a archivos legítimos y necesitan que el usuario ejecute el archivo infectado. Worms son standalone y se propagan automáticamente explotando vulnerabilidades de red. WannaCry era worm porque se propagaba solo vía EternalBlue."
+        },
+        {
+          "id": "c",
+          "text": "Virus cifran archivos, Worms no",
+          "is_correct": false,
+          "feedback": "Incorrecto. Tanto virus como worms pueden tener cualquier payload (ransomware, spyware, etc). El cifrado de archivos es función del payload, no del mecanismo de propagación. WannaCry era worm CON ransomware."
+        },
+        {
+          "id": "d",
+          "text": "Worms solo existen en Windows, Virus en todos los OS",
+          "is_correct": false,
+          "feedback": "Incorrecto. Ambos pueden existir en cualquier sistema operativo. Hay worms para Linux (Slapper), macOS, IoT devices. La plataforma no define si es virus o worm, el comportamiento de replicación sí."
+        }
       ]
     }
   }

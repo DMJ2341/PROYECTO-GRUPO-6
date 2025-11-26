@@ -1,139 +1,339 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: NotPetya Ransomware",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "Caso: Colonial Pipeline Ransomware (2021)",
+    "duration": 240,
     "content": {
-      "case_name": "NotPetya Global Attack (2017)",
-      "date": "27 Jun 2017",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/NotPetya_Ransomware_screenshot.jpg/800px-NotPetya_Ransomware_screenshot.jpg",
-      "narrative": "Disfrazado como ransomware pero era wiper destructivo. Supply chain: actualizaciones de software contable ucraniano (MeDoc) trojanizadas. Se propagó globalmente vía EternalBlue + PsExec + WMI. Maersk: 4000 servers, 45,000 PCs destruidos. $10B daños totales. Respuesta a incidente crítica: Maersk restauró en 10 días desde backups, héroe del IT.",
-      "stats": [
+      "story_title": "Colonial Pipeline: $4.4M Ransom Paid",
+      "story_intro": "DarkSide ransomware, 5,500 miles pipeline offline, East Coast fuel crisis",
+      "steps": [
         {
-          "label": "Daños Globales",
-          "value": "$10B",
-          "icon": "attach_money"
+          "id": "1",
+          "icon": "local_gas_station",
+          "title": "Critical Infrastructure Target",
+          "content": "Colonial Pipeline: 45% de combustible de East Coast US (gasolina, diesel, jet fuel). 5,500 miles desde Texas hasta NY. Single point of failure para East Coast.",
+          "insight": "Critical infrastructure = high-value target. Ransomware gangs know orgs will pay to restore service."
         },
         {
-          "label": "Maersk Recovery",
-          "value": "10 días",
-          "icon": "schedule"
+          "id": "2",
+          "icon": "vpn_key",
+          "title": "Vector: VPN Password Leaked",
+          "content": "Mayo 2021. Attackers usaron leaked VPN password (dark web, credential dump anterior). No MFA en VPN. Acceso remoto → deploy DarkSide ransomware. IT systems cifrados.",
+          "insight": "Password reuse + no MFA = disaster. VPN sin MFA es puerta abierta."
         },
         {
-          "label": "Países Afectados",
-          "value": "64",
-          "icon": "public"
+          "id": "3",
+          "icon": "power_off",
+          "title": "Shutdown Decision: 6 Days",
+          "content": "CEO decidió shutdown preventivo de pipeline completo. Temor: ransomware spread a OT systems (SCADA, control systems). Better safe than catastrophic failure. 6 días offline.",
+          "insight": "Containment > continuity cuando OT está en riesgo. Pipeline explosion sería peor que 6-day outage."
+        },
+        {
+          "id": "4",
+          "icon": "payments",
+          "title": "Ransom: $4.4M Pagado",
+          "content": "Colonial pagó 75 Bitcoin ($4.4M) en horas. DarkSide entregó decryption key (lento, barely usable). FBI recuperó $2.3M después (seized DarkSide Bitcoin wallet).",
+          "insight": "Pagar ransom NO garantiza recovery rápido. Backups son mejor que decryption key."
+        },
+        {
+          "id": "5",
+          "icon": "local_shipping",
+          "title": "Impact: Fuel Panic",
+          "content": "East Coast panic buying. Gas stations sin combustible. Airlines cancelaron flights. Precios subieron 20%. $4.4M ransom < $100M+ en economic impact.",
+          "insight": "Ransomware en critical infrastructure tiene cascading effects. National security issue."
+        },
+        {
+          "id": "6",
+          "icon": "gavel",
+          "title": "Aftermath: Regulation",
+          "content": "TSA mandó cybersecurity requirements para pipelines. CISA guidance. DarkSide gang shutdown (pressure from Russia). Colonial CEO testified ante Congreso.",
+          "insight": "Major incidents drive regulation. OT security ahora mandatory, no optional."
         }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "NIST IR Lifecycle - SP 800-61 Rev. 2",
+    "type": "memory_cards",
+    "title": "Incident Response Phases",
+    "duration": 240,
     "content": {
-      "intro": "Ciclo de vida de respuesta a incidentes según NIST. 4 fases principales.",
-      "tabs": [
+      "cards": [
         {
-          "label": "Preparation",
-          "title": "1. Preparación",
-          "text": "ANTES del incidente: formar CSIRT, crear playbooks, entrenar personal, obtener herramientas (forensics, SIEM), establecer comunicaciones, exercises (tabletop, red team). Prevention controls también. Sin preparación, respuesta será caótica.",
-          "icon": "shield"
+          "id": "1",
+          "front": {
+            "icon": "shield",
+            "term": "1. Preparation",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Antes del incident. IR plan, playbooks, tools, training. CSIRT team formado. Contact lists actualizadas. Backups tested. Incident categories defined.",
+            "example": "Colonial faltó: VPN MFA, network segmentation (IT/OT), tested backups. Preparation gaps = longer recovery.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "Detection",
-          "title": "2. Detección y Análisis",
-          "text": "Identificar incidente: SIEM alerts, IDS, user reports, threat intel. Triage: true positive? Severidad? Scope? Contener evidencia. Timeline analysis. IOC extraction. Documentar todo. Mean Time to Detect (MTTD) metric crítica.",
-          "icon": "search"
+          "id": "2",
+          "front": {
+            "icon": "search",
+            "term": "2. Detection & Analysis",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "Detectar incident. SIEM alerts, user reports, anomaly detection. Triage: severity, scope, type. Initial containment decisions.",
+            "example": "Colonial: Detectó ransomware cuando systems started encrypting. Mean time to detect (MTTD): minutes to hours ideal. Faster detection = less damage.",
+            "color": "#FFB74D"
+          }
         },
         {
-          "label": "Containment",
-          "title": "3. Contención, Erradicación, Recuperación",
-          "text": "Short-term containment (aislar sistema). Long-term (segmentar, monitor). Erradicar: eliminar malware, parchear vulns. Recuperar: restaurar desde backup limpio, validar, monitorear reinfección. Mean Time to Contain (MTTC) y MTTR metrics.",
-          "icon": "healing"
+          "id": "3",
+          "front": {
+            "icon": "block",
+            "term": "3. Containment",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Stop spread. Short-term: isolate compromised systems. Long-term: patch, harden, monitor. Balance: containment vs business continuity.",
+            "example": "Colonial: Shutdown entire pipeline (aggressive containment). Prevented OT compromise pero 6 days outage. Trade-off.",
+            "color": "#EF5350"
+          }
         },
         {
-          "label": "Post-Incident",
-          "title": "4. Actividad Post-Incidente",
-          "text": "Lessons learned meeting (toda la CSIRT + management). ¿Qué pasó? ¿Qué funcionó? ¿Qué mejorar? Actualizar playbooks. Reportar a stakeholders, reguladores si aplica. Retener evidencia según requerimientos legales. Continuous improvement.",
-          "icon": "assignment"
+          "id": "4",
+          "front": {
+            "icon": "delete_sweep",
+            "term": "4. Eradication",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Remove threat completely. Delete malware, close backdoors, patch vulnerabilities, rotate compromised credentials. Verify no persistence.",
+            "example": "Colonial: Needed to ensure DarkSide removed from ALL systems antes de restart. Forensics to find all infected systems.",
+            "color": "#BA68C8"
+          }
+        },
+        {
+          "id": "5",
+          "front": {
+            "icon": "restore",
+            "term": "5. Recovery",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Restore to normal operations. Rebuild systems, restore from backups, validation, gradual bring-up. Monitor closely for reinfection.",
+            "example": "Colonial: Restore from backups + decryption key (slow). Gradual restart pipeline. 6 days total recovery time.",
+            "color": "#66BB6A"
+          }
+        },
+        {
+          "id": "6",
+          "front": {
+            "icon": "assignment",
+            "term": "6. Lessons Learned",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Post-mortem. What went wrong? What went right? Update IR plan, implement fixes, train staff. Blameless culture.",
+            "example": "Colonial post-mortem: Implement MFA on VPN, segment IT/OT, improve backups, test DR plan quarterly. Share lessons.",
+            "color": "#FFB74D"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "CSIRT - Computer Security Incident Response Team",
+    "type": "progress_checklist",
+    "title": "Ransomware Response Playbook",
+    "duration": 360,
     "content": {
-      "structure": {
-        "roles": [
-          {
-            "role": "Incident Commander",
-            "responsibilities": "Toma decisiones finales, coordina, comunica con management",
-            "icon": "manage_accounts"
-          },
-          {
-            "role": "Security Analysts",
-            "responsibilities": "Triage, análisis técnico, IOC extraction, threat hunting",
-            "icon": "security"
-          },
-          {
-            "role": "Forensics Specialists",
-            "responsibilities": "Preservar evidencia, análisis forense, chain of custody",
-            "icon": "science"
-          },
-          {
-            "role": "Communications Lead",
-            "responsibilities": "Internal/external comms, stakeholder updates, media si necesario",
-            "icon": "campaign"
-          },
-          {
-            "role": "Legal Counsel",
-            "responsibilities": "Compliance, regulatory reporting, law enforcement liaison",
-            "icon": "gavel"
-          },
-          {
-            "role": "IT Operations",
-            "responsibilities": "Containment actions, recovery, restore services",
-            "icon": "settings"
+      "items": [
+        {
+          "id": "ransom1",
+          "task": "Immediate Actions (First Hour)",
+          "subtitle": "Stop the bleeding",
+          "icon": "emergency",
+          "unlock_content": {
+            "title": "Hour 0-1",
+            "points": [
+              "Isolate infected systems: Disconnect from network (unplug ethernet, disable WiFi)",
+              "DO NOT power off: RAM forensics needed. Disk encryption happens on shutdown.",
+              "Alert CSIRT: Activate incident response team",
+              "Notify management: C-suite needs to know ASAP",
+              "Preserve evidence: Take photos of ransom note, don't delete anything",
+              "Check backups: Are they accessible? Encrypted too?"
+            ],
+            "bonus_fact": "First hour is critical. Ransomware spreads via network. Isolation prevents lateral movement."
           }
-        ]
-      },
-      "playbooks": "Procedimientos documentados por tipo de incidente: ransomware, data breach, DDoS, insider threat. Paso a paso. Quién hace qué. Decision trees.",
-      "metrics": [
-        "MTTD: Mean Time to Detect",
-        "MTTR: Mean Time to Respond",
-        "MTTC: Mean Time to Contain",
-        "MTTR: Mean Time to Recover"
+        },
+        {
+          "id": "ransom2",
+          "task": "Investigation (Hours 1-6)",
+          "subtitle": "Understand scope",
+          "icon": "search",
+          "unlock_content": {
+            "title": "Hours 1-6",
+            "points": [
+              "Identify ransomware variant: Check ransom note for indicators. ID Ransomware tool.",
+              "Determine patient zero: Which system infected first? How did it enter?",
+              "Map spread: Network traffic analysis. Which systems touched?",
+              "Check for exfiltration: Did attackers steal data? (Double extortion)",
+              "Legal counsel: Notify lawyers. Determine disclosure obligations.",
+              "Law enforcement: FBI, local cyber crime unit. IC3 complaint."
+            ],
+            "bonus_fact": "Modern ransomware = double extortion. Encrypt + threaten to leak stolen data. Check for exfil."
+          }
+        },
+        {
+          "id": "ransom3",
+          "task": "Containment & Eradication (Hours 6-24)",
+          "subtitle": "Remove threat",
+          "icon": "delete_forever",
+          "unlock_content": {
+            "title": "Hours 6-24",
+            "points": [
+              "Segment network: Block ransomware C2 domains. Contain affected VLANs.",
+              "Credential rotation: Change ALL passwords, especially admin accounts.",
+              "Patch vulnerabilities: Close entry point (e.g., VPN without MFA).",
+              "Remove malware: EDR tools, format infected systems if needed.",
+              "Verify clean: Scan entire network. Hunt for persistence mechanisms.",
+              "Decision point: Pay ransom or restore from backup?"
+            ],
+            "bonus_fact": "Colonial paid but also restored from backups. Decryption keys are often buggy/slow."
+          }
+        },
+        {
+          "id": "ransom4",
+          "task": "Recovery & Validation (Days 1-7)",
+          "subtitle": "Restore operations",
+          "icon": "restore",
+          "unlock_content": {
+            "title": "Days 1-7",
+            "points": [
+              "Restore priority systems: Critical first, then tier 2, then tier 3.",
+              "Test thoroughly: Validate integrity. Ensure no reinfection.",
+              "Monitor closely: Enhanced logging. Watch for C2 beaconing.",
+              "Communication: Update stakeholders regularly. Transparency.",
+              "Document everything: Timeline, decisions made, costs incurred.",
+              "Business continuity: Manual workarounds while systems recover."
+            ],
+            "bonus_fact": "Colonial took 6 days full recovery. Some orgs take weeks. Tested backups = faster recovery."
+          }
+        },
+        {
+          "id": "ransom5",
+          "task": "Post-Incident (Week 2+)",
+          "subtitle": "Improve defenses",
+          "icon": "shield",
+          "unlock_content": {
+            "title": "Week 2+",
+            "points": [
+              "Post-mortem: Blameless review. What can improve?",
+              "Implement fixes: MFA, segmentation, backup improvements, EDR deployment.",
+              "Threat hunting: Look for other compromises we missed.",
+              "Update IR playbook: Incorporate lessons learned.",
+              "Training: Security awareness. Phishing simulation.",
+              "Insurance claim: Cyber insurance may cover ransom/recovery costs."
+            ],
+            "bonus_fact": "Post-incident improvements prevent next attack. Colonial now has MFA, better segmentation, tested DR."
+          }
+        }
       ]
     }
   },
   {
     "screen_id": 4,
-    "type": "quiz",
-    "title": "Evaluación - IR Fundamentals",
+    "type": "memory_cards",
+    "title": "Ransomware Economics",
+    "duration": 180,
     "content": {
-      "question": "Maersk recuperó de NotPetya en 10 días. ¿Qué fase del NIST IR Lifecycle fue crítica para esto?",
+      "cards": [
+        {
+          "id": "1",
+          "front": {
+            "icon": "attach_money",
+            "term": "Pay or Don't Pay?",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Debate eterno. Pagar financia crime, no garantiza recovery, keys pueden fallar. No pagar = prolonged downtime, data loss. Decision business, no técnica.",
+            "example": "Colonial pagó ($4.4M). Garmin pagó ($10M). Cities NO pagan (policy). FBI: Don't pay, pero entiende business reality. Average ransom 2024: $200K-$2M.",
+            "color": "#EF5350"
+          }
+        },
+        {
+          "id": "2",
+          "front": {
+            "icon": "group",
+            "term": "RaaS - Ransomware as a Service",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Business model. Developers create ransomware, affiliates deploy it. Revenue split 70/30. Lowered barrier to entry. DarkSide, REvil, LockBit = RaaS.",
+            "example": "Affiliate (low skill) buys access from initial access broker, deploys ransomware. Developer gets 30%, affiliate 70%. Professionalized cybercrime.",
+            "color": "#BA68C8"
+          }
+        },
+        {
+          "id": "3",
+          "front": {
+            "icon": "cloud_upload",
+            "term": "Double Extortion",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "Tactic 1: Encrypt data (traditional). Tactic 2: Exfiltrate data + threaten to publish. Pay or data leaks. Increases pressure to pay.",
+            "example": "Ransomware gangs run 'leak sites'. Post stolen data if not paid. GDPR fines + reputation damage. 80%+ of ransomware now double extortion.",
+            "color": "#FFB74D"
+          }
+        },
+        {
+          "id": "4",
+          "front": {
+            "icon": "savings",
+            "term": "Cyber Insurance",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Coverage para ransom payments, recovery costs, legal fees, notification costs, business interruption. Premiums rising 50%+ due to claims.",
+            "example": "Colonial likely had insurance (paid $4.4M without flinching). Coverage $1M-$100M depending on size. Requires security controls (MFA, backups, EDR).",
+            "color": "#66BB6A"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - Ransomware Response",
+    "duration": 90,
+    "content": {
+      "question": "Colonial Pipeline: ¿Decision correcta shutdown entire pipeline?",
       "options": [
         {
           "id": "a",
-          "text": "Preparation: tenían backups offline + playbook de disaster recovery",
-          "is_correct": true,
-          "feedback": "Correcto. Preparación = backups testados, procedimientos documentados. Sin esto, recovery habría tomado meses. Backup de domain controller encontrado en oficina remota de Ghana fue salvador."
+          "text": "No, overreaction. Debieron mantener operando.",
+          "is_correct": false,
+          "feedback": "Incorrecto. Ransomware en IT systems con potential spread a OT = catastrophic risk. Pipeline explosion > 6-day outage."
         },
         {
           "id": "b",
-          "text": "Detection solamente",
-          "is_correct": false,
-          "feedback": "Detection es importante pero recovery requiere preparación previa (backups, plans)."
+          "text": "Sí, containment aggressive previno potential OT compromise y disaster físico",
+          "is_correct": true,
+          "feedback": "CORRECTO! IT systems infectados. Riesgo: ransomware spread a SCADA/OT systems que controlan pipeline físico. OT compromise = potential explosion, spills, safety hazards. 6-day shutdown (aggressive containment) < physical disaster. Better safe than sorry cuando vidas están en riesgo. Criticism: Debieron tener IT/OT segmentation para evitar esta decision."
         },
         {
           "id": "c",
-          "text": "Post-Incident únicamente",
+          "text": "No debieron pagar ransom",
           "is_correct": false,
-          "feedback": "Post-Incident es aprendizaje. Recovery actual depende de Preparation y Containment/Recovery phases."
+          "feedback": "Separate issue. Shutdown decision fue sobre containment. Ransom payment fue business decision. Ambos pueden ser justificados dado las circunstancias."
+        },
+        {
+          "id": "d",
+          "text": "Debieron consultar con FBI primero",
+          "is_correct": false,
+          "feedback": "Incorrecto. Emergency containment no espera. CEO tiene authority para shutdown. FBI notificado después para investigation."
         }
       ]
     }

@@ -1,119 +1,194 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Mirai Botnet DDoS",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "Evaluación Final: Diseña Network Segura",
+    "duration": 240,
     "content": {
-      "case_name": "Mirai Botnet Attack (2016)",
-      "date": "21 Oct 2016",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/DDoS_attack.svg/1200px-DDoS_attack.svg.png",
-      "narrative": "Botnet de 600K dispositivos IoT compromete Dyn DNS, tumba Twitter, Netflix, GitHub, Reddit. 1.2 Tbps de tráfico. Explotó Telnet con credenciales por defecto en cámaras IP y DVRs.",
-      "stats": [
-        {"label": "Peak Traffic", "value": "1.2 Tbps", "icon": "speed"},
-        {"label": "Devices Infectados", "value": "600K", "icon": "router"},
-        {"label": "Sitios Afectados", "value": "80+", "icon": "language"}
+      "story_title": "Scenario: Startup E-Commerce Security",
+      "story_intro": "Eres Network Security Engineer. Diseña arquitectura para startup con 100 empleados, e-commerce site, customer data",
+      "steps": [
+        {
+          "id": "1",
+          "icon": "business",
+          "title": "Requirements",
+          "content": "E-commerce: 10K transactions/day, credit cards (PCI DSS), customer PII. Employees: Remote + office hybrid. Dev team necesita prod access. Budget: $200K/year.",
+          "insight": "Compliance (PCI DSS) drives architecture. Security + performance + cost trade-off."
+        },
+        {
+          "id": "2",
+          "icon": "architecture",
+          "title": "Tu Misión",
+          "content": "Diseñar: 1) Network topology (DMZ, VLANs, segmentation). 2) Firewall rules y policies. 3) Remote access solution. 4) Monitoring strategy. 5) Incident response plan.",
+          "insight": "No existe 'perfect' architecture, solo trade-offs. Defense in depth es key."
+        }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Modelo TCP/IP y Protocolos",
+    "type": "progress_checklist",
+    "title": "Architecture Design",
+    "duration": 360,
     "content": {
-      "intro": "Fundamentos de networking según RFC 1122. Cada capa tiene vulnerabilidades específicas.",
-      "tabs": [
+      "items": [
         {
-          "label": "Modelo TCP/IP",
-          "title": "4 Capas vs OSI",
-          "text": "Application (HTTP, DNS, SMTP), Transport (TCP, UDP), Internet (IP, ICMP), Network Access (Ethernet, WiFi). Encapsulación: cada capa agrega header.",
-          "icon": "layers"
+          "id": "arch1",
+          "task": "Perimeter Defense",
+          "subtitle": "Internet boundary",
+          "icon": "shield",
+          "unlock_content": {
+            "title": "Design",
+            "points": [
+              "NGFW: Palo Alto o Fortinet ($50K/year)",
+              "WAF: Cloudflare Pro ($2K/year) para e-commerce",
+              "DDoS protection: Cloudflare included",
+              "IDS/IPS: Suricata on firewall"
+            ],
+            "bonus_fact": "WAF es mandatory para PCI DSS. NGFW detecta malware, blocks C2."
+          }
         },
         {
-          "label": "TCP",
-          "title": "Transmission Control Protocol",
-          "text": "RFC 793. Orientado a conexión, reliable. 3-way handshake: SYN → SYN-ACK → ACK. Vulnerabilidades: SYN floods (saturar con SYNs), session hijacking (predecir sequence numbers).",
-          "icon": "sync_alt"
+          "id": "arch2",
+          "task": "DMZ + Segmentation",
+          "subtitle": "Separate tiers",
+          "icon": "lan",
+          "unlock_content": {
+            "title": "Design",
+            "points": [
+              "DMZ: Web servers, API gateway",
+              "VLAN 10: Database servers (PCI scope)",
+              "VLAN 20: Employee workstations",
+              "VLAN 30: Dev/test environment",
+              "VLAN 40: Guest WiFi",
+              "Firewalls between VLANs, least privilege rules"
+            ],
+            "bonus_fact": "PCI DSS: Cardholder data must be segmented. Smaller scope = easier compliance."
+          }
         },
         {
-          "label": "UDP",
-          "title": "User Datagram Protocol",
-          "text": "RFC 768. No conexión, no reliable, rápido. DNS, NTP, SNMP usan UDP. Vulnerable a amplification attacks: atacante envía request pequeño, servidor responde con respuesta grande a víctima (IP spoofing).",
-          "icon": "flash_on"
+          "id": "arch3",
+          "task": "Remote Access",
+          "subtitle": "WFH employees",
+          "icon": "vpn_key",
+          "unlock_content": {
+            "title": "Design",
+            "points": [
+              "ZTNA: Cloudflare Access ($3/user/month = $3.6K/year)",
+              "MFA: Duo Security ($3/user/month = $3.6K/year)",
+              "No traditional VPN (ZTNA replace)",
+              "Split by role: Devs access VLAN 30, regular employees access apps only"
+            ],
+            "bonus_fact": "ZTNA cheaper + more secure than VPN at scale. No VPN bottleneck."
+          }
         },
         {
-          "label": "IP",
-          "title": "Internet Protocol",
-          "text": "RFC 791. IPv4: 32-bit addresses. IPv6: 128-bit. IP spoofing: falsificar IP origen. Sin autenticación inherente. IPsec añade seguridad (encryption, authentication).",
-          "icon": "public"
-        },
-        {
-          "label": "DNS",
-          "title": "Domain Name System",
-          "text": "RFC 1035. Traduce dominios → IPs. Puerto 53 UDP/TCP. Vulnerabilities: cache poisoning (inyectar entradas falsas), DNS tunneling (C2 oculto), amplification DDoS. DNSSEC mitiga con firmas digitales.",
-          "icon": "dns"
+          "id": "arch4",
+          "task": "Monitoring",
+          "subtitle": "Visibility",
+          "icon": "monitor_heart",
+          "unlock_content": {
+            "title": "Design",
+            "points": [
+              "SIEM: Splunk Cloud ($5K/GB/year, ~$50K/year)",
+              "EDR: CrowdStrike ($50/endpoint/year = $5K)",
+              "Network monitoring: Zeek (free), flow analysis",
+              "Log retention: 1 year (PCI requirement)"
+            ],
+            "bonus_fact": "SIEM is expensive pero mandatory para compliance y IR. Cloud SIEM scales better."
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "Puertos y Servicios Comunes",
+    "type": "progress_checklist",
+    "title": "Incident Response Plan",
+    "duration": 240,
     "content": {
-      "intro": "Well-known ports (0-1023) vs Registered (1024-49151) vs Dynamic (49152-65535)",
-      "common_ports": [
-        {"port": 20, "service": "FTP (Data)", "protocol": "TCP", "vuln": "Cleartext, anonymous login"},
-        {"port": 21, "service": "FTP (Control)", "protocol": "TCP", "vuln": "Cleartext, anonymous login"},
-        {"port": 22, "service": "SSH", "protocol": "TCP", "vuln": "Brute force si weak passwords"},
-        {"port": 23, "service": "Telnet", "protocol": "TCP", "vuln": "Cleartext - NO USAR. Mirai explotó esto"},
-        {"port": 25, "service": "SMTP", "protocol": "TCP", "vuln": "Open relay, spoofing"},
-        {"port": 53, "service": "DNS", "protocol": "UDP/TCP", "vuln": "Cache poisoning, amplification"},
-        {"port": 80, "service": "HTTP", "protocol": "TCP", "vuln": "Cleartext, MITM"},
-        {"port": 443, "service": "HTTPS", "protocol": "TCP", "vuln": "SSL/TLS vulns (Heartbleed)"},
-        {"port": 445, "service": "SMB", "protocol": "TCP", "vuln": "EternalBlue (WannaCry)"},
-        {"port": 3389, "service": "RDP", "protocol": "TCP", "vuln": "BlueKeep, brute force"}
-      ],
-      "mirai_vector": "Mirai escaneaba Telnet (23) con 60+ combos de usuario/contraseña por defecto: admin/admin, root/12345, etc."
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "practical_lab",
-    "title": "Lab: Análisis de Tráfico TCP",
-    "content": {
-      "instruction": "Analiza este 3-way handshake capturado:",
-      "pcap_simulation": [
-        {"packet": 1, "src": "192.168.1.10", "dst": "192.168.1.1", "flags": "SYN", "seq": "1000", "ack": "0"},
-        {"packet": 2, "src": "192.168.1.1", "dst": "192.168.1.10", "flags": "SYN,ACK", "seq": "2000", "ack": "1001"},
-        {"packet": 3, "src": "192.168.1.10", "dst": "192.168.1.1", "flags": "ACK", "seq": "1001", "ack": "2001"}
-      ],
-      "questions": [
+      "items": [
         {
-          "q": "¿Qué dispositivo inició la conexión?",
-          "a": "192.168.1.10 (envió primer SYN)"
+          "id": "ir1",
+          "task": "IR Team",
+          "subtitle": "Roles and responsibilities",
+          "icon": "groups",
+          "unlock_content": {
+            "title": "Structure",
+            "points": [
+              "IR Lead: CTO (startup = limited headcount)",
+              "Technical: Sr. Engineers (2)",
+              "Communications: Marketing/PR",
+              "Legal: Outside counsel on retainer",
+              "24/7 on-call rotation"
+            ],
+            "bonus_fact": "Startup IR: Lean team, clear roles. No SOC yet, rely on vendor support (CrowdStrike, Cloudflare)."
+          }
         },
         {
-          "q": "¿Cuál es el sequence number inicial del servidor?",
-          "a": "2000"
+          "id": "ir2",
+          "task": "Playbooks",
+          "subtitle": "Document procedures",
+          "icon": "menu_book",
+          "unlock_content": {
+            "title": "Key Scenarios",
+            "points": [
+              "Ransomware: Isolate, backup check, negotiate decision tree",
+              "DDoS: Activate Cloudflare, scale infrastructure",
+              "Data breach: Forensics, notification (PCI 72 hours), PR",
+              "Insider threat: Disable access, HR involvement, legal"
+            ],
+            "bonus_fact": "Playbooks save hours in crisis. Update quarterly with lessons learned."
+          }
         },
         {
-          "q": "Si un atacante envía millones de SYNs sin completar handshake, ¿qué ataque es?",
-          "a": "SYN flood DDoS - satura tabla de conexiones"
+          "id": "ir3",
+          "task": "Testing",
+          "subtitle": "Practice makes perfect",
+          "icon": "science",
+          "unlock_content": {
+            "title": "Drills",
+            "points": [
+              "Tabletop exercises: Quarterly (4 hours)",
+              "Red team: Annual penetration test ($20K)",
+              "Purple team: Semi-annual (internal + vendor)",
+              "Phishing simulation: Monthly (KnowBe4)"
+            ],
+            "bonus_fact": "Companies que test IR respond 50% faster to real incidents. Budget $30K/year for testing."
+          }
         }
       ]
     }
   },
   {
-    "screen_id": 5,
-    "type": "quiz",
-    "title": "Evaluación - Protocolos",
+    "screen_id": 4,
+    "type": "progress_checklist",
+    "title": "Budget Breakdown",
+    "duration": 120,
     "content": {
-      "question": "Mirai usó principalmente qué protocolo/puerto para infectar dispositivos IoT?",
-      "options": [
-        {"id": "a", "text": "HTTP port 80", "is_correct": false, "feedback": "No. HTTP no se usó para propagación inicial."},
-        {"id": "b", "text": "Telnet port 23", "is_correct": true, "feedback": "¡Correcto! Mirai escaneaba Telnet con credenciales por defecto (admin/admin, root/root, etc.). Telnet transmite en cleartext."},
-        {"id": "c", "text": "SSH port 22", "is_correct": false, "feedback": "No. SSH es más seguro que Telnet y no era el vector principal."}
+      "items": [
+        {
+          "id": "budget",
+          "task": "Security Budget Summary",
+          "subtitle": "Total: ~$170K/year",
+          "icon": "attach_money",
+          "unlock_content": {
+            "title": "Cost Analysis",
+            "points": [
+              "NGFW: $50K",
+              "WAF + DDoS: $2K",
+              "ZTNA: $3.6K",
+              "MFA: $3.6K",
+              "SIEM: $50K",
+              "EDR: $5K",
+              "Training: $10K",
+              "Pen testing: $20K",
+              "Compliance audit: $25K",
+              "Total: $169.2K (within $200K budget)"
+            ],
+            "bonus_fact": "15-20% of IT budget should be security. This = 85% of budget, leaving buffer for incidents."
+          }
+        }
       ]
     }
   }

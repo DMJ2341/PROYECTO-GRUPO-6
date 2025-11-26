@@ -1,523 +1,162 @@
 [
   {
     "screen_id": 1,
-    "type": "final_exam_intro",
-    "title": "Evaluación Final Curso 5: Risk Manager Empresarial",
-    "duration": 180,
+    "type": "step_revelation",
+    "title": "Evaluación Final: Risk Program Design",
+    "duration": 240,
     "content": {
-      "scenario": "Eres Chief Risk Officer de fintech de 200 empleados. Compañía: Neobank (banca digital), app móvil, 100K clientes, procesa pagos ($50M/año), almacena PII/financial data. Board te pide: risk assessment completo, implementar NIST CSF, lograr PCI-DSS compliance (requieren auditores), gap analysis para GDPR (expandirse a EU).",
-      "your_role": "Chief Risk Officer (CRO)",
-      "objectives": [
-        "Realizar risk assessment completo (qualitative + quantitative)",
-        "Implementar NIST CSF framework",
-        "Lograr PCI-DSS compliance (v4.0)",
-        "Gap analysis GDPR",
-        "Presentar a Board recomendaciones priorizadas con budget"
-      ],
-      "deliverables": [
-        "Risk Assessment Report (top 10 riesgos + ALE)",
-        "NIST CSF Profile (current + target + gaps)",
-        "PCI-DSS Gap Analysis + remediation plan",
-        "GDPR readiness assessment",
-        "Executive presentation con budget request"
-      ],
-      "time_limit": "180 minutos",
-      "passing_score": "70%",
-      "total_points": "100"
+      "story_title": "Scenario: Design Risk Management Program",
+      "story_intro": "1000-employee company, healthcare sector. No formal risk program. Build from scratch.",
+      "steps": [
+        {
+          "id": "1",
+          "icon": "local_hospital",
+          "title": "Company Profile",
+          "content": "Healthcare tech company. 1000 employees. Revenue $200M. Products: EHR software (cloud SaaS), patient portal. Data: 500K patient PHI. Compliance: HIPAA mandatory.",
+          "insight": "Healthcare = high risk. PHI breach = $10M+ cost. HIPAA fines. Reputation damage. Risk program is critical."
+        },
+        {
+          "id": "2",
+          "icon": "shield",
+          "title": "Your Mission",
+          "content": "Design: 1) Risk governance structure. 2) Risk assessment process. 3) Vulnerability management. 4) Third-party risk program. 5) BCP/DR. 6) Metrics & reporting. Budget: $2M/year.",
+          "insight": "Comprehensive risk program touches: governance, technical controls, processes, people, vendors, resilience."
+        }
+      ]
     }
   },
   {
     "screen_id": 2,
-    "type": "risk_assessment_phase",
-    "title": "PARTE 1: Risk Assessment Completo (30 puntos)",
+    "type": "progress_checklist",
+    "title": "Risk Program Design",
+    "duration": 360,
     "content": {
-      "step_1": {
-        "task": "Identificar Assets Críticos",
-        "assets": [
-          {
-            "asset": "Customer Database",
-            "description": "100K customers, PII + financial data",
-            "value": "$20M (GDPR fines €20M + customer loss + reputation)"
-          },
-          {
-            "asset": "Mobile Banking App",
-            "description": "iOS/Android, transaction processing",
-            "value": "$5M (downtime losses + recovery + App Store reputation)"
-          },
-          {
-            "asset": "Payment Gateway Integration",
-            "description": "Stripe, handles $50M/year",
-            "value": "$10M (PCI fines + fraud liability + loss of payment capability)"
-          },
-          {
-            "asset": "Core Banking System",
-            "description": "Account management, ledger",
-            "value": "$15M (business continuity + regulatory)"
-          },
-          {
-            "asset": "Employee Workstations",
-            "description": "50 laptops, access to admin panels",
-            "value": "$1M (entry point to other systems)"
+      "items": [
+        {
+          "id": "prog1",
+          "task": "Governance Structure",
+          "subtitle": "Who's accountable?",
+          "icon": "account_tree",
+          "unlock_content": {
+            "title": "Org Structure",
+            "points": [
+              "CISO: Reports to CEO or CRO. NOT to CIO (conflict of interest).",
+              "GRC team: 1 Director, 2 risk analysts, 1 compliance analyst ($600K/year).",
+              "Risk committee: Quarterly. CISO, CFO, CTO, General Counsel, CEO.",
+              "Board reporting: Quarterly risk report to Board. Cyber risk = board-level.",
+              "Policies: Risk management policy, acceptable use, incident response."
+            ],
+            "bonus_fact": "CISO reporting to CIO = problem. Budget/priority conflicts. CISO should be peer to CIO."
           }
-        ],
-        "points": 5
-      },
-      "step_2": {
-        "task": "Threat Modeling",
-        "threats": [
-          {
-            "threat": "Ransomware",
-            "threat_actor": "Cybercriminals",
-            "motivation": "Financial",
-            "capability": "Medium-High (commodity ransomware available)",
-            "likelihood": "HIGH (fintech targets, 40% SMBs hit annually)"
-          },
-          {
-            "threat": "Data breach (SQL injection, misconfiguration)",
-            "threat_actor": "Cybercriminals",
-            "motivation": "Sell data, fraud",
-            "capability": "Medium",
-            "likelihood": "MEDIUM (common in fintech, 25% have vulnerabilities)"
-          },
-          {
-            "threat": "Insider threat (malicious)",
-            "threat_actor": "Disgruntled employee",
-            "motivation": "Revenge, theft",
-            "capability": "High (has access)",
-            "likelihood": "LOW (5% of organizations annually)"
-          },
-          {
-            "threat": "DDoS attack",
-            "threat_actor": "Competitors, extortionists",
-            "motivation": "Disruption, extortion",
-            "capability": "Medium",
-            "likelihood": "MEDIUM (15% fintech experience DDoS)"
-          },
-          {
-            "threat": "Supply chain compromise",
-            "threat_actor": "APT, cybercriminals",
-            "motivation": "Backdoor, espionage",
-            "capability": "High (sophisticated)",
-            "likelihood": "LOW (5%, but increasing trend)"
+        },
+        {
+          "id": "prog2",
+          "task": "Risk Assessment",
+          "subtitle": "Understand landscape",
+          "icon": "assessment",
+          "unlock_content": {
+            "title": "Assessment Cadence",
+            "points": [
+              "Annual: Comprehensive risk assessment. All assets, threats, vulns.",
+              "Quarterly: Risk register review. Update statuses, new risks.",
+              "Ad-hoc: Trigger events (new system, M&A, major threat).",
+              "Methodology: NIST RMF. Categorize (High for PHI), Select controls, Assess.",
+              "Tools: GRC platform (ServiceNow GRC, RSA Archer). $150K/year."
+            ],
+            "bonus_fact": "Risk assessment WITHOUT remediation = waste. Must have accountability for risk treatment."
           }
-        ],
-        "points": 8
-      },
-      "step_3": {
-        "task": "Calcular ALE para Top 5 Riesgos",
-        "calculations": [
-          {
-            "risk": "Ransomware on core systems",
-            "asset_value": "$15M",
-            "exposure_factor": "60%",
-            "sle": "$9M",
-            "aro": "0.4",
-            "ale": "$3.6M/year",
-            "priority": "CRITICAL"
-          },
-          {
-            "risk": "Customer DB breach",
-            "asset_value": "$20M",
-            "exposure_factor": "50%",
-            "sle": "$10M",
-            "aro": "0.25",
-            "ale": "$2.5M/year",
-            "priority": "CRITICAL"
-          },
-          {
-            "risk": "Mobile app compromise (malware injection)",
-            "asset_value": "$5M",
-            "exposure_factor": "80%",
-            "sle": "$4M",
-            "aro": "0.15",
-            "ale": "$600K/year",
-            "priority": "HIGH"
-          },
-          {
-            "risk": "Payment gateway fraud",
-            "asset_value": "$10M",
-            "exposure_factor": "30%",
-            "sle": "$3M",
-            "aro": "0.2",
-            "ale": "$600K/year",
-            "priority": "HIGH"
-          },
-          {
-            "risk": "DDoS downtime",
-            "asset_value": "$5M",
-            "exposure_factor": "100%",
-            "sle": "$5M",
-            "aro": "0.1",
-            "ale": "$500K/year",
-            "priority": "MEDIUM"
+        },
+        {
+          "id": "prog3",
+          "task": "Vulnerability Management",
+          "subtitle": "Close technical gaps",
+          "icon": "bug_report",
+          "unlock_content": {
+            "title": "VM Program",
+            "points": [
+              "Scanning: Tenable, Qualys. Weekly authenticated scans. $100K/year.",
+              "Prioritization: CVSS + exploitability + asset criticality.",
+              "SLA: Critical 7 days, High 30 days, Medium 90 days.",
+              "Exception process: Must document, approve, compensating controls.",
+              "Metrics: MTTP, vulnerability debt, SLA compliance.",
+              "Equifax lesson: VM program only works if enforced."
+            ],
+            "bonus_fact": "MTTP is THE metric. Target: Critical <7 days. Track monthly. Executive visibility."
           }
-        ],
-        "points": 12
-      },
-      "step_4": {
-        "task": "Risk Matrix Qualitative",
-        "instructions": "Plot top 5 risks en risk matrix (Likelihood vs Impact)",
-        "matrix": "[Create visual 5x5 matrix with risks plotted]",
-        "critical_zone": "Ransomware, DB breach in RED zone (high likelihood × high impact)",
-        "points": 5
-      }
-    }
-  },
-  {
-    "screen_id": 3,
-    "type": "nist_csf_implementation",
-    "title": "PARTE 2: NIST CSF Implementation (25 puntos)",
-    "content": {
-      "current_profile": {
-        "assessment": "Rate 108 subcategories. Sample:",
-        "ratings": [
-          {
-            "subcategory": "ID.AM-1: Physical devices inventoried",
-            "current": "2 (manual, incomplete)",
-            "target": "4 (CMDB automated)"
-          },
-          {
-            "subcategory": "PR.AC-1: Identities managed",
-            "current": "2 (basic IAM, no MFA)",
-            "target": "4 (SSO + MFA + PAM)"
-          },
-          {
-            "subcategory": "PR.DS-1: Data at rest protected",
-            "current": "1 (some encryption, not all)",
-            "target": "4 (full disk encryption + database encryption)"
-          },
-          {
-            "subcategory": "DE.CM-1: Network monitored",
-            "current": "1 (firewall logs only)",
-            "target": "4 (SIEM + IDS + EDR)"
-          },
-          {
-            "subcategory": "RS.CO-2: Incidents reported",
-            "current": "0 (no formal process)",
-            "target": "4 (IR plan + 72h GDPR notification)"
+        },
+        {
+          "id": "prog4",
+          "task": "Third-Party Risk",
+          "subtitle": "Vendor security",
+          "icon": "handshake",
+          "unlock_content": {
+            "title": "TPRM Program",
+            "points": [
+              "Inventory: All vendors. Classify by criticality (access to PHI = critical).",
+              "Assessment: SIG questionnaire, SOC 2 review, security ratings.",
+              "Contracts: Security clauses (breach notification, audit rights, liability).",
+              "Monitoring: Annual re-assessment, continuous ratings (BitSight $50K/year).",
+              "Tools: OneTrust, ProcessUnity for vendor tracking. $100K/year.",
+              "Target lesson: Small vendor = big risk. Assess ALL."
+            ],
+            "bonus_fact": "Critical vendors: Annual on-site audit or third-party assessment. Don't just trust questionnaire."
           }
-        ],
-        "current_tier": "Tier 1 (Partial - ad-hoc, reactive)",
-        "points": 8
-      },
-      "target_profile": {
-        "rationale": "Fintech requires Tier 3 (Repeatable) minimum for investor confidence, regulatory expectations, customer trust.",
-        "target_tier": "Tier 3 (Repeatable)",
-        "key_improvements": [
-          "All subcategories rated 3-4",
-          "Formal policies and procedures",
-          "Regular training and drills",
-          "Continuous monitoring",
-          "Incident response tested quarterly"
-        ],
-        "points": 5
-      },
-      "gap_analysis": {
-        "major_gaps": [
-          {
-            "gap": "No MFA",
-            "impact": "Easy account compromise",
-            "remediation": "Implement Okta SSO + MFA",
-            "cost": "$50K",
-            "timeline": "Q1"
-          },
-          {
-            "gap": "No SIEM",
-            "impact": "Delayed detection",
-            "remediation": "Deploy Splunk SIEM",
-            "cost": "$200K",
-            "timeline": "Q2"
-          },
-          {
-            "gap": "Incomplete encryption",
-            "impact": "Data breach exposure",
-            "remediation": "Full disk encryption + TDE for databases",
-            "cost": "$75K",
-            "timeline": "Q1"
-          },
-          {
-            "gap": "No formal IR plan",
-            "impact": "Chaotic response, GDPR violation",
-            "remediation": "Develop IR plan, train team, quarterly drills",
-            "cost": "$40K",
-            "timeline": "Q1"
-          },
-          {
-            "gap": "No EDR",
-            "impact": "Ransomware detection delay",
-            "remediation": "Deploy CrowdStrike EDR",
-            "cost": "$100K",
-            "timeline": "Q2"
+        },
+        {
+          "id": "prog5",
+          "task": "BCP/DR",
+          "subtitle": "Resilience",
+          "icon": "restore",
+          "unlock_content": {
+            "title": "Continuity Planning",
+            "points": [
+              "BIA: Define RTOs/RPOs. EHR system = Tier 1 (RTO 4 hours).",
+              "Backups: 3-2-1 rule. Veeam backup solution $200K/year.",
+              "DR site: AWS multi-region for DR. Estimated $300K/year.",
+              "Testing: Annual full DR test. Quarterly tabletop.",
+              "Insurance: Cyber liability $10M coverage. $150K/year premium.",
+              "Colonial lesson: DR plan must be tested. Backups must work."
+            ],
+            "bonus_fact": "Cyber insurance: Requires MFA, EDR, backups, IR plan. Ensures baseline security."
           }
-        ],
-        "total_cost": "$465K",
-        "points": 12
-      }
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "pci_dss_compliance",
-    "title": "PARTE 3: PCI-DSS Compliance (20 puntos)",
-    "content": {
-      "overview": "PCI-DSS v4.0 tiene 12 requirements. Fintech procesa $50M/year → Level 2 merchant (requires annual SAQ + quarterly ASV scans).",
-      "gap_assessment": {
-        "req_1": "Install and maintain network security controls",
-        "status": "PARTIAL - Firewall exists but no WAF, no CDE segmentation",
-        "gap": "Segment Cardholder Data Environment (CDE), deploy WAF",
-        "cost": "$80K"
-      },
-      "req_2": {
-        "apply_secure_configurations": "status: PARTIAL - Some hardening, no automation",
-        "gap": "Automated config management (Puppet), documented baselines",
-        "cost": "$40K"
-      },
-      "req_3": {
-        "protect_stored_cardholder_data": "status: GAP - Stored in DB without encryption",
-        "gap": "Implement tokenization (Stripe tokens), encrypt CVV in transit only (never store)",
-        "cost": "$50K"
-      },
-      "req_4": {
-        "protect_cardholder_data_transmission": "status: OK - TLS 1.3 implemented",
-        "gap": "None",
-        "cost": "$0"
-      },
-      "req_5": {
-        "protect_systems_from_malware": "status: PARTIAL - AV on servers but no EDR",
-        "gap": "Deploy EDR (overlaps with NIST CSF gap)",
-        "cost": "Included in $100K EDR"
-      },
-      "req_6": {
-        "develop_secure_systems": "status: GAP - No SDLC security, no code review",
-        "gap": "Implement secure SDLC, SAST/DAST tools, pen test",
-        "cost": "$100K"
-      },
-      "req_7": {
-        "restrict_access_to_cardholder_data": "status: PARTIAL - RBAC exists but too permissive",
-        "gap": "Implement least privilege, document access matrix",
-        "cost": "$20K"
-      },
-      "req_8": {
-        "identify_users_authenticate_access": "status: GAP - No MFA for admin access to CDE",
-        "gap": "MFA for CDE access (overlaps NIST CSF)",
-        "cost": "Included in $50K MFA"
-      },
-      "req_9": {
-        "restrict_physical_access": "status: OK - Cloud-only, datacenter is AWS (compliant)",
-        "gap": "None",
-        "cost": "$0"
-      },
-      "req_10": {
-        "log_monitor_access": "status: GAP - Logs exist but no central monitoring",
-        "gap": "SIEM with PCI-specific dashboards (overlaps)",
-        "cost": "Included in $200K SIEM"
-      },
-      "req_11": {
-        "test_security_regularly": "status: GAP - No quarterly ASV scans, no annual pen test",
-        "gap": "Contract with ASV (quarterly), pen test (annual)",
-        "cost": "$30K/year"
-      },
-      "req_12": {
-        "support_info_sec_policies": "status: PARTIAL - Policies exist but not PCI-specific",
-        "gap": "Update policies for PCI, annual security awareness",
-        "cost": "$20K"
-      },
-      "total_pci_unique_cost": "$340K (some overlaps with NIST CSF)",
-      "timeline": "12-18 months to full compliance",
-      "points": 12,
-      "action_plan": {
-        "q1-q2": "Remediate critical gaps (3, 6, 8)",
-        "q3": "Complete remaining gaps",
-        "q4": "Pre-assessment with QSA (Qualified Security Assessor)",
-        "year_2_q1": "Official PCI audit, achieve compliance",
-        "points": 8
-      }
-    }
-  },
-  {
-    "screen_id": 5,
-    "type": "gdpr_gap_analysis",
-    "title": "PARTE 4: GDPR Readiness (15 puntos)",
-    "content": {
-      "applicability": "Expanding to EU → GDPR applies to processing of EU residents' data.",
-      "key_requirements_gaps": [
-        {
-          "requirement": "Lawful basis for processing",
-          "status": "GAP - No documented legal basis",
-          "gap": "Document lawful basis (likely: contract performance for banking, legitimate interest for fraud prevention)",
-          "effort": "Low"
         },
         {
-          "requirement": "Consent management",
-          "status": "GAP - No consent flows for marketing",
-          "gap": "Implement consent management (OneTrust, Cookiebot), cookie banner, preferences center",
-          "effort": "Medium",
-          "cost": "$40K"
+          "id": "prog6",
+          "task": "Metrics & Reporting",
+          "subtitle": "Measure & improve",
+          "icon": "analytics",
+          "unlock_content": {
+            "title": "Metrics Dashboard",
+            "points": [
+              "Key metrics: MTTP, vulnerability debt, control effectiveness, incident count.",
+              "Executive dashboard: Real-time. Red/yellow/green status.",
+              "Quarterly board report: Risk trends, top risks, mitigation status.",
+              "Annual attestation: CEO/CISO sign attestation of risk program effectiveness.",
+              "Continuous improvement: Review metrics quarterly, adjust targets."
+            ],
+            "bonus_fact": "Board wants: Are we secure? What are top risks? What's being done? Keep simple."
+          }
         },
         {
-          "requirement": "Privacy notices",
-          "status": "PARTIAL - Generic privacy policy",
-          "gap": "GDPR-compliant privacy notice, layered approach, clear language",
-          "effort": "Low",
-          "cost": "$10K legal"
-        },
-        {
-          "requirement": "Data subject rights",
-          "status": "GAP - No process for access, erasure, portability requests",
-          "gap": "Build portal for DSR (Data Subject Requests), workflows, SLAs (30 days)",
-          "effort": "High",
-          "cost": "$100K"
-        },
-        {
-          "requirement": "Data breach notification",
-          "status": "GAP - No 72-hour process",
-          "gap": "Update IR plan with GDPR notification procedure, DPO assignment",
-          "effort": "Low",
-          "cost": "Included in IR plan"
-        },
-        {
-          "requirement": "DPIA (Data Protection Impact Assessment)",
-          "status": "GAP - Never done",
-          "gap": "Conduct DPIA for high-risk processing (profiling for credit decisions)",
-          "effort": "Medium",
-          "cost": "$30K consulting"
-        },
-        {
-          "requirement": "DPO (Data Protection Officer)",
-          "status": "GAP - No DPO",
-          "gap": "Designate DPO (can be external consultant for small org)",
-          "effort": "Low",
-          "cost": "$50K/year"
-        },
-        {
-          "requirement": "Privacy by design",
-          "status": "PARTIAL - Not formalized",
-          "gap": "Integrate privacy in SDLC, privacy impact assessments for new features",
-          "effort": "Medium",
-          "cost": "Training + process"
-        },
-        {
-          "requirement": "Vendor management",
-          "status": "PARTIAL - Some DPAs exist",
-          "gap": "Data Processing Agreements (DPAs) with all processors, vendor assessments",
-          "effort": "Medium",
-          "cost": "$20K"
+          "id": "prog7",
+          "task": "Budget Summary",
+          "subtitle": "$2M allocation",
+          "icon": "attach_money",
+          "unlock_content": {
+            "title": "Cost Breakdown",
+            "points": [
+              "People: GRC team $600K",
+              "Tools: GRC platform $150K, Scanner $100K, Vendor mgmt $100K, BitSight $50K",
+              "DR: AWS multi-region $300K, Veeam $200K",
+              "Cyber insurance: $150K",
+              "Training: Security awareness $100K, GRC certs $50K",
+              "Consulting: Annual risk assessment $150K",
+              "Misc/contingency: $200K",
+              "Total: $2M"
+            ],
+            "bonus_fact": "30% people, 25% tools, 25% DR/insurance, 20% services/training. Typical distribution."
+          }
         }
-      ],
-      "total_gdpr_cost": "$250K one-time + $50K/year DPO",
-      "timeline": "6 months to readiness before EU launch",
-      "points": 10,
-      "critical_items": "DSR portal, DPO, DPIA, consent management"
-    }
-  },
-  {
-    "screen_id": 6,
-    "type": "budget_presentation",
-    "title": "PARTE 5: Executive Presentation (10 puntos)",
-    "content": {
-      "slide_1": {
-        "title": "Executive Summary",
-        "bullets": [
-          "Identified $7.8M in annual risk (top 5 risks ALE)",
-          "Current state: Tier 1 (ad-hoc), significant gaps in security",
-          "Target state: Tier 3 (repeatable), PCI compliant, GDPR ready",
-          "Investment required: $1.05M over 18 months",
-          "ROI: Risk reduction $5M+ annually, enables EU expansion (new revenue)"
-        ]
-      },
-      "slide_2": {
-        "title": "Top Risks & Mitigation",
-        "table": [
-          {
-            "risk": "Ransomware",
-            "ale": "$3.6M",
-            "mitigation": "EDR, immutable backups, IR plan",
-            "cost": "$140K",
-            "risk_reduction": "75%"
-          },
-          {
-            "risk": "Data breach",
-            "ale": "$2.5M",
-            "mitigation": "Encryption, SIEM, access controls",
-            "cost": "$295K",
-            "risk_reduction": "60%"
-          },
-          {
-            "risk": "App compromise",
-            "ale": "$600K",
-            "mitigation": "Secure SDLC, pen testing",
-            "cost": "$100K",
-            "risk_reduction": "70%"
-          }
-        ]
-      },
-      "slide_3": {
-        "title": "Compliance Roadmap",
-        "timeline": [
-          "Q1 2025: MFA, encryption, IR plan (CRITICAL)",
-          "Q2 2025: SIEM, EDR deployment",
-          "Q3 2025: PCI remaining gaps, GDPR implementation",
-          "Q4 2025: Pre-assessments",
-          "Q1 2026: PCI audit, GDPR ready for EU launch"
-        ]
-      },
-      "slide_4": {
-        "title": "Budget Request",
-        "breakdown": [
-          {
-            "category": "NIST CSF Implementation",
-            "amount": "$465K"
-          },
-          {
-            "category": "PCI-DSS Compliance",
-            "amount": "$340K (overlaps with CSF)"
-          },
-          {
-            "category": "GDPR Readiness",
-            "amount": "$250K + $50K/year"
-          },
-          {
-            "category": "Total Year 1",
-            "amount": "$1.05M"
-          },
-          {
-            "category": "Ongoing Annual",
-            "amount": "$200K (SIEM, DPO, ASV scans, training)"
-          }
-        ],
-        "justification": "Without investment: $7.8M annual risk exposure, cannot process payments (lose PCI), cannot expand to EU (GDPR), investor concerns, potential breach ($20M+ impact)."
-      },
-      "slide_5": {
-        "title": "Recommendation & Next Steps",
-        "recommendation": "APPROVE $1.05M investment",
-        "rationale": "ROI positive (reduces $7.8M risk to <$2M residual), enables compliance (PCI, GDPR), enables business growth (EU expansion), reduces insurance premium",
-        "next_steps": [
-          "Board approval of budget",
-          "Hire CISO (currently interim)",
-          "Kick off Q1 projects (MFA, encryption, IR)",
-          "Monthly risk committee updates"
-        ]
-      }
-    }
-  },
-  {
-    "screen_id": 7,
-    "type": "final_deliverables_summary",
-    "title": "Entregables Finales",
-    "content": {
-      "required_documents": [
-        "Risk Assessment Report: Top 10 risks, ALE calculations, risk matrix, threat landscape analysis",
-        "NIST CSF Profile: Current profile (Tier 1), Target profile (Tier 3), Gap analysis with 50+ gaps identified, Roadmap prioritized",
-        "PCI-DSS Gap Analysis: 12 requirements assessed, gaps documented, remediation plan with costs and timeline",
-        "GDPR Readiness Assessment: 9 key requirements, gaps, implementation plan, DPO designation, 6-month timeline to readiness",
-        "Executive Presentation: 5-slide deck for Board with budget request $1.05M, ROI justification, timeline, recommendation"
-      ],
-      "evaluation_criteria": [
-        "Completeness: All required elements present",
-        "Accuracy: Risk calculations correct, framework understanding",
-        "Prioritization: Logical prioritization based on risk and compliance",
-        "Practicality: Realistic timelines and budgets",
-        "Business focus: Executive summary business-oriented, not just technical"
       ]
     }
   }

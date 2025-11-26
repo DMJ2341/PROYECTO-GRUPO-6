@@ -1,208 +1,314 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Equifax - Risk Management Failure",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "Caso: Equifax Breach (2017)",
+    "duration": 240,
     "content": {
-      "case_name": "Equifax Data Breach (2017)",
-      "date": "Mar-Jul 2017",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Equifax_Logo.svg/1200px-Equifax_Logo.svg.png",
-      "narrative": "CVE-2017-5638 (Apache Struts) crítico publicado en marzo. Equifax tenía 2 meses para parchear. NO lo hicieron. Vulnerability scanner detectó el vulnerability pero equipo ignoró alertas. Fallo masivo de risk management: identificaron el riesgo pero no lo trataron. 147 millones afectados, $1.4B+ en costos.",
-      "stats": [
-        {"label": "Personas Afectadas", "value": "147M", "icon": "group"},
-        {"label": "Tiempo para Parchear", "value": "2 meses", "icon": "schedule"},
-        {"label": "Costo Total", "value": "$1.4B+", "icon": "attach_money"}
+      "story_title": "Equifax: 147M Records, Preventable Vulnerability",
+      "story_intro": "Apache Struts CVE-2017-5638. Patch disponible 2 meses antes. No aplicado.",
+      "steps": [
+        {
+          "id": "1",
+          "icon": "security",
+          "title": "Vulnerability: Apache Struts",
+          "content": "6 Marzo 2017: Apache Struts CVE-2017-5638 publicado (CVSS 10.0). RCE sin autenticación. Equifax usaba Struts en dispute portal. Patch disponible MISMO DÍA.",
+          "insight": "CVSS 10.0 = máxima severidad. Patch disponible. Equifax tenía 2 MESES para parchear antes del breach."
+        },
+        {
+          "id": "2",
+          "icon": "watch_later",
+          "title": "Risk Management Failure",
+          "content": "Equifax vulnerability management process falló. Scanner detectó Struts vulnerable PERO no escaló a patch. 2 meses sin acción. 13 Mayo: Attackers explotaron.",
+          "insight": "Tener scanner ≠ estar seguro. Need: Detection → Prioritization → Patch → Verification. Full lifecycle."
+        },
+        {
+          "id": "3",
+          "icon": "data_thresholding",
+          "title": "Exfiltration: 147M Records",
+          "content": "Attackers pivotaron de dispute portal a databases. 147M records: SSN, DOB, addresses, driver licenses. 76 días sin detectar. No segmentación de red.",
+          "insight": "RCE → Pivot → Exfiltration. Defense in depth ausente. Database no debería ser accesible desde web server."
+        },
+        {
+          "id": "4",
+          "icon": "visibility_off",
+          "title": "Detection Failure",
+          "content": "SSL inspection certificate expiró. Equifax NO podía monitorear outbound traffic cifrado. Exfiltración invisible por 76 días. Monitoring gaps = blind spots.",
+          "insight": "Expired certs = monitoring down. No alerting on monitoring failure = compounding error."
+        },
+        {
+          "id": "5",
+          "icon": "gavel",
+          "title": "Aftermath: $700M Settlement",
+          "content": "$700M settlement con FTC. CEO Richard Smith renunció. CIO/CSO despedidos. Class action lawsuits. Congressional testimony. Reputational damage permanente.",
+          "insight": "Costo de no parchear vulnerabilidad conocida: $700M+ en multas, executive careers ended, trust destroyed."
+        },
+        {
+          "id": "6",
+          "icon": "article",
+          "title": "Lessons: Risk Management",
+          "content": "GAO report: 1) Patch management process broken. 2) Asset inventory incomplete (no sabían todos Struts instances). 3) Segmentation ausente. 4) Monitoring gaps. 5) Expired certificates.",
+          "insight": "Risk management is foundational. Technical debt kills. Proper processes > heroic firefighting."
+        }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Fundamentos de Gestión de Riesgos - NIST SP 800-30",
+    "type": "memory_cards",
+    "title": "Risk Management Framework",
+    "duration": 240,
     "content": {
-      "intro": "Riesgo es la medida de amenazas + vulnerabilidades + impacto. Gestionar riesgos para proteger activos de la organización.",
-      "tabs": [
+      "cards": [
         {
-          "label": "Fórmula de Riesgo",
-          "title": "Risk = Threat × Vulnerability × Impact",
-          "text": "Threat: probabilidad de que atacante/evento ocurra. Vulnerability: debilidad explotable. Impact: magnitud del daño. Si cualquier factor es 0, riesgo es 0. Ej: vulnerability sin threat = bajo riesgo.",
-          "icon": "calculate"
+          "id": "1",
+          "front": {
+            "icon": "assessment",
+            "term": "Risk = Likelihood × Impact",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Risk es función de probabilidad de ocurrencia Y magnitud de daño. Alto likelihood + bajo impact puede ser < bajo likelihood + catastrophic impact.",
+            "example": "Equifax: High likelihood (Struts vuln public, actively exploited). High impact (147M records). Result: Critical risk. Should have been priority 1 patch.",
+            "color": "#EF5350"
+          }
         },
         {
-          "label": "Riesgo vs Incertidumbre",
-          "title": "Diferencia Clave",
-          "text": "Riesgo: outcome conocido con probabilidad estimable (ej: 30% chance de breach). Incertidumbre: outcome desconocido, no podemos estimar probabilidad (black swans). Risk management maneja riesgos conocidos.",
-          "icon": "help_outline"
+          "id": "2",
+          "front": {
+            "icon": "trending_up",
+            "term": "Risk Appetite vs Tolerance",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Appetite: Cuánto risk org willing to take para achieve objectives. Tolerance: Max deviation acceptable. Board-level decisions.",
+            "example": "Startup: High risk appetite (move fast). Bank: Low risk appetite (regulatory). Equifax tolerance: Clearly exceeded when patch delayed 2 months.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "Inherent vs Residual",
-          "title": "Tipos de Riesgo",
-          "text": "Inherent Risk: riesgo natural sin controles. Residual Risk: riesgo que queda DESPUÉS de aplicar controles. Objetivo: reducir inherent a residual aceptable. Nunca es 0 (costo infinito).",
-          "icon": "trending_down"
+          "id": "3",
+          "front": {
+            "icon": "shield",
+            "term": "Risk Treatment: 4 Options",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "1) Avoid: Don't do risky activity. 2) Mitigate: Implement controls. 3) Transfer: Insurance, outsource. 4) Accept: Acknowledge, document decision.",
+            "example": "Equifax should: Mitigate (patch immediately). Transfer (cyber insurance). Actually did: Accept (implicitly, by inaction). Wrong choice.",
+            "color": "#66BB6A"
+          }
         },
         {
-          "label": "Appetite vs Tolerance",
-          "title": "Aceptación de Riesgo",
-          "text": "Risk Appetite: cantidad de riesgo que organización está dispuesta a aceptar para lograr objetivos. Risk Tolerance: desviación aceptable del appetite. Board define appetite, CISO lo operacionaliza.",
-          "icon": "balance"
+          "id": "4",
+          "front": {
+            "icon": "inventory",
+            "term": "Asset Inventory",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Can't protect what you don't know exists. Comprehensive inventory: hardware, software, data, cloud resources. Equifax problem: Incomplete inventory.",
+            "example": "CMDB (Configuration Management Database). Asset tagging. Discovery scans. Equifax: Didn't know all Struts instances = couldn't patch all.",
+            "color": "#FFB74D"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "Componentes del Riesgo - NIST SP 800-30 Appendix E",
+    "type": "progress_checklist",
+    "title": "Vulnerability Management Lifecycle",
+    "duration": 360,
     "content": {
-      "components": [
+      "items": [
         {
-          "component": "Threat Sources",
-          "types": [
-            {"type": "Adversarial", "examples": "Nation-states, cybercriminals, hacktivists, insiders maliciosos", "intent": "Deliberado"},
-            {"type": "Accidental", "examples": "Errores de usuarios, misconfiguraciones, insiders negligentes", "intent": "No intencional"},
-            {"type": "Structural", "examples": "Hardware failures, software bugs, equipo obsoleto", "intent": "Falta de componente"},
-            {"type": "Environmental", "examples": "Natural disasters (flood, earthquake, fire), power outages", "intent": "Acto de naturaleza"}
-          ],
-          "icon": "warning"
+          "id": "vm1",
+          "task": "1. Discovery & Asset Inventory",
+          "subtitle": "Know your attack surface",
+          "icon": "search",
+          "unlock_content": {
+            "title": "Asset Discovery",
+            "points": [
+              "Network scanning: Nmap, Nessus, Qualys",
+              "Agent-based: Deploy agents on endpoints for inventory",
+              "Cloud discovery: AWS Config, Azure Resource Graph",
+              "Application discovery: Dependency mapping, SBOM (Software Bill of Materials)",
+              "Equifax gap: Incomplete inventory = missed Struts instances",
+              "Update frequency: Continuous or weekly minimum"
+            ],
+            "bonus_fact": "Shadow IT is real. Developers deploy without approval. Continuous discovery catches this."
+          }
         },
         {
-          "component": "Vulnerabilities",
-          "description": "Debilidades en sistema, proceso o control que pueden ser explotadas.",
-          "examples": [
-            "Technical: CVEs sin parchear, configuraciones por defecto, credenciales débiles",
-            "Operational: Procesos inadecuados, falta de training, no segregation of duties",
-            "Management: Sin políticas, presupuesto insuficiente, no risk awareness"
-          ],
-          "icon": "bug_report"
+          "id": "vm2",
+          "task": "2. Vulnerability Scanning",
+          "subtitle": "Find the weaknesses",
+          "icon": "bug_report",
+          "unlock_content": {
+            "title": "Scanning Strategy",
+            "points": [
+              "Authenticated scans: Better accuracy (can see installed patches)",
+              "Unauthenticated scans: Attacker perspective",
+              "Frequency: Weekly for general, daily for critical assets",
+              "Scan types: Network, web app (DAST), code (SAST), containers",
+              "Equifax: Had scanners but results not acted upon",
+              "False positives: Validate findings before panic"
+            ],
+            "bonus_fact": "Scanner detected Equifax vulnerability. Problem was downstream: no action taken."
+          }
         },
         {
-          "component": "Likelihood",
-          "description": "Probabilidad de que threat explote vulnerability.",
-          "factors": [
-            "Capability del adversario (APT vs script kiddie)",
-            "Intent y motivación",
-            "Targeting (somos objetivo atractivo?)",
-            "Facilidad de explotación (CVSS score)"
-          ],
-          "scale": "Muy bajo (0-10%), Bajo (10-30%), Medio (30-60%), Alto (60-90%), Muy alto (90-100%)",
-          "icon": "percent"
+          "id": "vm3",
+          "task": "3. Risk Assessment & Prioritization",
+          "subtitle": "What to fix first?",
+          "icon": "priority_high",
+          "unlock_content": {
+            "title": "Prioritization Factors",
+            "points": [
+              "CVSS score: Baseline (10.0 = critical)",
+              "Exploitability: Is exploit public? Actively exploited?",
+              "Asset criticality: Internet-facing? Crown jewels?",
+              "Compensating controls: Firewall, WAF mitigating?",
+              "Vendor priority: Microsoft Patch Tuesday severity",
+              "Equifax: CVSS 10.0 + public exploit + internet-facing = P0"
+            ],
+            "bonus_fact": "Not all CVEs equal. CVSS 10.0 internet-facing > CVSS 9.0 internal asset."
+          }
         },
         {
-          "component": "Impact",
-          "description": "Magnitud del daño si el riesgo se materializa.",
-          "dimensions": [
-            "Confidencialidad: datos sensibles expuestos",
-            "Integridad: datos/sistemas alterados",
-            "Disponibilidad: downtime, pérdida de servicios",
-            "Financiero: $ pérdidas directas e indirectas",
-            "Reputacional: confianza de clientes, brand damage",
-            "Legal/Compliance: multas, sanciones, demandas"
-          ],
-          "scale": "Muy bajo, Bajo, Medio, Alto, Muy alto",
-          "icon": "crisis_alert"
+          "id": "vm4",
+          "task": "4. Remediation & Verification",
+          "subtitle": "Fix and confirm",
+          "icon": "build",
+          "unlock_content": {
+            "title": "Patch Management",
+            "points": [
+              "Testing: Patch in dev/staging before production",
+              "Change control: Approval process, rollback plan",
+              "Maintenance windows: Schedule with stakeholders",
+              "Emergency patching: Expedited process for critical (Equifax needed this)",
+              "Verification: Re-scan post-patch to confirm",
+              "Documentation: What patched, when, by whom"
+            ],
+            "bonus_fact": "Equifax had 2 months. Emergency patch should have happened in 48 hours for CVSS 10.0."
+          }
+        },
+        {
+          "id": "vm5",
+          "task": "5. Reporting & Metrics",
+          "subtitle": "Continuous improvement",
+          "icon": "analytics",
+          "unlock_content": {
+            "title": "VM Metrics",
+            "points": [
+              "Mean Time To Patch (MTTP): Goal <30 days standard, <7 days critical",
+              "Vulnerability debt: Total open vulnerabilities by severity",
+              "SLA compliance: % patched within policy timeframe",
+              "Repeat vulnerabilities: Same CVE reappearing = systemic issue",
+              "Equifax metric: MTTP for critical = 60+ days. Unacceptable.",
+              "Executive dashboard: Trend over time, risk exposure"
+            ],
+            "bonus_fact": "Good VM program: MTTP critical <7 days. Equifax: 60+ days. Order of magnitude off."
+          }
         }
       ]
     }
   },
   {
     "screen_id": 4,
-    "type": "theory_section",
-    "title": "Niveles de Gestión de Riesgo - NIST SP 800-39",
+    "type": "memory_cards",
+    "title": "Compliance Frameworks",
+    "duration": 180,
     "content": {
-      "tiers": [
+      "cards": [
         {
-          "tier": "Tier 1 - Organizational",
-          "description": "Nivel estratégico. Board, C-level.",
-          "activities": [
-            "Definir risk appetite y tolerance",
-            "Aprobar risk management strategy",
-            "Asignar presupuesto para seguridad",
-            "Governance y oversight"
-          ],
-          "example": "Board decide: aceptamos X% de riesgo de breach para mantener agilidad de negocio",
-          "icon": "corporate_fare"
+          "id": "1",
+          "front": {
+            "icon": "gavel",
+            "term": "GDPR - EU Privacy",
+            "color": "#0057B8"
+          },
+          "back": {
+            "definition": "General Data Protection Regulation. EU citizen data protection. Rights: Access, erasure, portability. 72-hour breach notification. Fines up to 4% global revenue.",
+            "example": "Equifax: If EU citizens affected, GDPR violation. British Airways: £183M fine. Marriott: £99M. Consent, data minimization, privacy by design mandatory.",
+            "color": "#4D9DE0"
+          }
         },
         {
-          "tier": "Tier 2 - Mission/Business Process",
-          "description": "Nivel táctico. Business units, procesos críticos.",
-          "activities": [
-            "Identificar riesgos específicos de procesos de negocio",
-            "Aplicar risk appetite a decisiones operacionales",
-            "Priorizar inversiones de seguridad por impacto al negocio"
-          ],
-          "example": "Finanzas: proteger procesos de pagos es critical. Marketing: web downtime 1 hora es tolerable.",
-          "icon": "business_center"
+          "id": "2",
+          "front": {
+            "icon": "security",
+            "term": "PCI DSS - Payment Card",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Payment Card Industry Data Security Standard. 12 requirements: Firewall, encryption, access control, monitoring, testing. Quarterly ASV scans, annual audit.",
+            "example": "Target breach: PCI violation. Fines from card brands + loss of ability to process cards. SAQ (Self-Assessment Questionnaire) for small merchants.",
+            "color": "#EF5350"
+          }
         },
         {
-          "tier": "Tier 3 - Information System",
-          "description": "Nivel operacional. Sistemas IT específicos.",
-          "activities": [
-            "Risk assessment de sistemas individuales",
-            "Implementar controles técnicos",
-            "Monitoring y detección",
-            "Patch management, vulnerability scanning"
-          ],
-          "example": "Sistema de pagos: requiere FIPS 140-2 encryption, HA, backups inmutables",
-          "icon": "computer"
+          "id": "3",
+          "front": {
+            "icon": "local_hospital",
+            "term": "HIPAA - Healthcare",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Health Insurance Portability & Accountability Act. PHI (Protected Health Information) security. Administrative, physical, technical safeguards. Breach notification 60 days.",
+            "example": "Healthcare breaches avg $10M cost. HHS Wall of Shame: Public breach list. Must report 500+ affected individuals. Equifax: Medical records included.",
+            "color": "#66BB6A"
+          }
+        },
+        {
+          "id": "4",
+          "front": {
+            "icon": "account_balance",
+            "term": "SOX - Financial",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Sarbanes-Oxley Act. Public company financial reporting integrity. IT controls over financial systems. Segregation of duties, audit trails, change management.",
+            "example": "Section 404: Internal control assessment. IT general controls (ITGC): Access, change, operations. Equifax: Public company, SOX applicable.",
+            "color": "#FFB74D"
+          }
         }
-      ],
-      "integration": "Los 3 tiers deben estar alineados. Decisiones de Tier 1 guían Tier 2 y 3. Feedback de Tier 3 informa Tier 1.",
-      "equifax_failure": "Tier 3 (IT) identificó vulnerability pero Tier 2 (management) no priorizó patch. Tier 1 (board) no tenía visibility. Breakdown de communication entre tiers."
+      ]
     }
   },
   {
     "screen_id": 5,
-    "type": "practical_exercise",
-    "title": "Calculadora de Riesgo",
-    "content": {
-      "scenario": "Evalúa riesgo de no parchear CVE crítico en servidor web público de ecommerce",
-      "factors": {
-        "threat": {
-          "question": "¿Qué tan probable es que atacante intente explotar?",
-          "considerations": [
-            "CVE público hace 2 semanas",
-            "Exploit code disponible en GitHub",
-            "Server es público (accesible desde internet)",
-            "Ecommerce es objetivo atractivo (datos de pago)"
-          ],
-          "likelihood": "ALTO (80%)"
-        },
-        "vulnerability": {
-          "question": "¿Existe la debilidad?",
-          "status": "SÍ - servidor usa versión vulnerable de Apache, no parchado",
-          "severity": "CVSS 9.8 (Critical)"
-        },
-        "impact": {
-          "question": "¿Qué pasa si se explota?",
-          "consequences": [
-            "Confidencialidad: 500K registros de clientes (nombres, emails, direcciones) expuestos",
-            "Integridad: posible modificación de precios, órdenes",
-            "Disponibilidad: web caída durante investigación/recovery (pérdida de ventas)",
-            "Financiero: $2M en pérdidas (ventas + multas GDPR + remediación)",
-            "Reputacional: pérdida de confianza de clientes"
-          ],
-          "magnitude": "MUY ALTO"
-        }
-      },
-      "calculation": {
-        "formula": "Risk = Likelihood × Impact",
-        "result": "ALTO × MUY ALTO = RIESGO CRÍTICO",
-        "priority": "INMEDIATO - Parchear en próximas 24-48 horas. Escalar a management si hay resistencia."
-      },
-      "equifax_comparison": "Equifax tuvo este MISMO análisis disponible (scanner identificó CVE-2017-5638) pero no actuaron. Risk management failure."
-    }
-  },
-  {
-    "screen_id": 6,
     "type": "quiz",
-    "title": "Evaluación - Fundamentos de Riesgo",
+    "title": "Evaluación - Risk Management",
+    "duration": 90,
     "content": {
-      "question": "Una empresa tiene CVE crítico (CVSS 9.8) en sistema interno NO expuesto a internet, sin exploit público conocido. ¿Cómo evalúas el riesgo?",
+      "question": "Equifax breach: ¿Cuál fue el PRIMARY risk management failure?",
       "options": [
-        {"id": "a", "text": "Riesgo CRÍTICO porque CVSS es 9.8", "is_correct": false, "feedback": "No. CVSS es severidad de vulnerability, NO riesgo. Falta evaluar likelihood (threat)."},
-        {"id": "b", "text": "Riesgo MEDIO-ALTO. Vulnerability severa existe pero likelihood menor (no expuesto, no exploit público)", "is_correct": true, "feedback": "Correcto. Risk = Threat × Vuln × Impact. Threat es menor (internal, no exploit). Vulnerability alta. Impact depende del sistema. Resultado: no tan crítico como si fuera público."},
-        {"id": "c", "text": "Riesgo BAJO porque es sistema interno", "is_correct": false, "feedback": "No tan simple. Insiders y lateral movement post-breach son amenazas. Vulnerability crítica en sistema importante es riesgo significativo."}
+        {
+          "id": "a",
+          "text": "No tenían vulnerability scanner",
+          "is_correct": false,
+          "feedback": "Incorrecto. Equifax SÍ tenía scanner. Scanner detectó la vulnerabilidad Struts. Problem was downstream."
+        },
+        {
+          "id": "b",
+          "text": "Vulnerability scanning → Risk prioritization → Remediation process BROKE. Scanner detected, pero no action.",
+          "is_correct": true,
+          "feedback": "CORRECTO! Scanner funcionó: Detectó CVE-2017-5638. Pero process breakdown: 1) Results no escalados properly. 2) CVSS 10.0 no triggered emergency patch. 3) No verification que patch aplicado. 4) Incomplete asset inventory = missed some Struts. 5) Process de patch management lento (60+ days). Full lifecycle falló. Technology worked, process failed. Risk management is about PROCESS, not just tools."
+        },
+        {
+          "id": "c",
+          "text": "Apache Struts era zero-day",
+          "is_correct": false,
+          "feedback": "Incorrecto. CVE-2017-5638 publicado 6 Marzo. Patch disponible MISMO DÍA. Equifax breached 13 Mayo = 2+ meses DESPUÉS. Not zero-day."
+        },
+        {
+          "id": "d",
+          "text": "SSL inspection certificate expiration",
+          "is_correct": false,
+          "feedback": "Parcialmente correcto. Cert expiration causó monitoring gap (detection failure). Pero PRIMARY failure: No parchar vulnerabilidad conocida por 2 meses. Cert issue compounded problema."
+        }
       ]
     }
   }

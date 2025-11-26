@@ -1,10 +1,15 @@
 import multiprocessing
+import os
 
 # Bind: Solo local (Nginx maneja externo)
 bind = "0.0.0.0:8000"
 
 # Workers: Fórmula estándar (CPU * 2 + 1)
-workers = multiprocessing.cpu_count() * 2 + 1
+# Usamos os.cpu_count() si multiprocessing falla en ciertos entornos.
+try:
+    workers = multiprocessing.cpu_count() * 2 + 1
+except NotImplementedError:
+    workers = os.cpu_count() * 2 + 1 if os.cpu_count() else 3
 
 # Tipo de worker
 worker_class = 'sync'

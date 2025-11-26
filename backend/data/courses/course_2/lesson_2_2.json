@@ -1,145 +1,229 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Capital One Breach",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "Caso: Capital One Breach (2019)",
+    "duration": 200,
     "content": {
-      "case_name": "Capital One Data Breach (2019)",
-      "date": "Mar-Jul 2019",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Capital_One_logo.svg/1200px-Capital_One_logo.svg.png",
-      "narrative": "Firewall mal configurado en AWS permitió SSRF (Server-Side Request Forgery). Atacante obtuvo credenciales IAM del metadata service, accedió a 700+ S3 buckets. 100 millones de aplicaciones de tarjetas robadas.",
-      "stats": [
-        {"label": "Personas Afectadas", "value": "100M", "icon": "group"},
-        {"label": "S3 Buckets Comprometidos", "value": "700+", "icon": "storage"},
-        {"label": "Multa", "value": "$80M", "icon": "gavel"}
+      "story_title": "Capital One: 100M Records via WAF Misconfiguration",
+      "story_intro": "AWS WAF misconfiguration + SSRF = massive breach",
+      "steps": [
+        {
+          "id": "1",
+          "icon": "account_balance",
+          "title": "El Target",
+          "content": "Capital One, major US bank. Cloud-first en AWS. 100M+ customer applications, SSNs, credit scores en S3 buckets.",
+          "insight": "Moving to cloud sin proper security = disaster. Cloud is secure, but YOU must configure it correctly."
+        },
+        {
+          "id": "2",
+          "icon": "bug_report",
+          "title": "El Exploit: SSRF",
+          "content": "Paige Thompson (ex-AWS employee) explotó SSRF (Server-Side Request Forgery) en WAF misconfigured. WAF tenía IAM role con demasiados permisos. SSRF → access metadata endpoint → steal credentials → access S3.",
+          "insight": "SSRF + over-privileged IAM = keys to kingdom. Least privilege es CRÍTICO en cloud."
+        },
+        {
+          "id": "3",
+          "icon": "cloud_download",
+          "title": "Exfiltración",
+          "content": "Thompson exfiltró 100M+ records desde S3 buckets. Data: SSNs, credit scores, bank accounts, transaction history. Subió sample a GitHub (rookie mistake).",
+          "insight": "DLP hubiera detectado exfiltration masiva. GitHub scanning encontró las credenciales leaked."
+        },
+        {
+          "id": "4",
+          "icon": "gavel",
+          "title": "Aftermath",
+          "content": "FBI arrestó Thompson. Capital One: $80M fine de reguladores, $190M en settlements. CISO despedido. Clase colectiva de lawsuits.",
+          "insight": "Misconfiguration de firewall/WAF puede costar más que breach tradicional. Cloud amplifica el blast radius."
+        }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Firewalls - NIST SP 800-41",
+    "type": "memory_cards",
+    "title": "Tipos de Firewalls",
+    "duration": 240,
     "content": {
-      "intro": "Dispositivo que controla tráfico entre redes basado en reglas de seguridad.",
-      "tabs": [
+      "description": "Evolución de firewall technology",
+      "cards": [
         {
-          "label": "Packet Filtering",
-          "title": "Firewall de Filtrado de Paquetes",
-          "text": "Más básico. Inspecciona headers: IP origen/destino, puertos, protocolo. Stateless: cada paquete independiente. Rápido pero limitado. No ve contenido de aplicación.",
-          "icon": "filter_alt"
+          "id": "1",
+          "front": {
+            "icon": "filter_alt",
+            "term": "Packet Filtering (Stateless)",
+            "color": "#757575"
+          },
+          "back": {
+            "definition": "Generación 1 (legacy). Inspecciona header de cada packet individualmente. Rules basadas en: source/dest IP, port, protocol. No mantiene state de conexiones.",
+            "example": "ACL en routers. Permite TCP port 80 from any to web server. Vulnerabilidad: No sabe si packet es parte de conexión legítima. Spoofing fácil.",
+            "color": "#9E9E9E"
+          }
         },
         {
-          "label": "Stateful",
-          "title": "Stateful Inspection",
-          "text": "Mantiene tabla de estado de conexiones. Sabe qué paquetes pertenecen a sesión establecida. Puede bloquear paquetes que no corresponden a conexión válida. Más seguro que stateless.",
-          "icon": "list_alt"
+          "id": "2",
+          "front": {
+            "icon": "memory",
+            "term": "Stateful Inspection",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Generación 2. Mantiene state table de conexiones activas. Verifica que packets sean parte de conexión legítima. Blocks unsolicited inbound traffic.",
+            "example": "Permite outbound connection, automáticamente permite response. Cisco ASA, pfSense. Vulnerabilidad: No inspecciona application-layer payload.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "NGFW",
-          "title": "Next-Generation Firewall",
-          "text": "Stateful + inspección profunda de paquetes (DPI) + IPS integrado + Application awareness + SSL/TLS inspection. Puede bloquear por aplicación (ej: bloquear Facebook pero permitir HTTPS). Ejemplos: Palo Alto, Fortinet.",
-          "icon": "security"
+          "id": "3",
+          "front": {
+            "icon": "shield",
+            "term": "Next-Gen Firewall (NGFW)",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Generación 3. Deep packet inspection (DPI). Application awareness. IPS integrado. Malware detection. SSL/TLS inspection. Identity-aware.",
+            "example": "Palo Alto, Fortinet, Check Point. Detecta malware en HTTP download. Blocks malicious domains. User-based policies. Capital One necesitaba NGFW.",
+            "color": "#66BB6A"
+          }
         },
         {
-          "label": "WAF",
-          "title": "Web Application Firewall",
-          "text": "Específico para HTTP/HTTPS. Protege apps web de OWASP Top 10: SQLi, XSS, CSRF. Opera en capa 7 (aplicación). Puede estar en cloud (Cloudflare) o on-prem.",
-          "icon": "web"
+          "id": "4",
+          "front": {
+            "icon": "cloud",
+            "term": "Web Application Firewall (WAF)",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Especializado en proteger web apps. Layer 7 (HTTP/HTTPS). Protege contra: SQLi, XSS, CSRF, SSRF. Rules basadas en OWASP Top 10.",
+            "example": "Cloudflare WAF, AWS WAF, ModSecurity. Capital One WAF estaba misconfigured: IAM role demasiado permissive. WAF debe seguir least privilege.",
+            "color": "#FFB74D"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_tabs",
-    "title": "IDS/IPS - NIST SP 800-94",
+    "type": "progress_checklist",
+    "title": "Firewall Rules: Best Practices",
+    "duration": 300,
     "content": {
-      "intro": "Intrusion Detection/Prevention Systems. Detectan y/o bloquean ataques.",
-      "tabs": [
+      "title": "Configuración Segura",
+      "items": [
         {
-          "label": "IDS vs IPS",
-          "title": "Diferencias Clave",
-          "text": "IDS: Detection only, pasivo, alerta. Como cámara de seguridad. IPS: Prevention, inline, bloquea. Como guardia que detiene intrusos. IPS puede causar falsos positivos que bloquean tráfico legítimo.",
-          "icon": "compare"
+          "id": "rule1",
+          "task": "Default Deny",
+          "subtitle": "Block everything, allow exceptions",
+          "icon": "block",
+          "unlock_content": {
+            "title": "Principio Fundamental",
+            "points": [
+              "Implicit deny: Todo bloqueado por default",
+              "Explicitly allow solo lo necesario",
+              "Evita: Default allow (permit any any = desastre)",
+              "Capital One: WAF permittió demasiado, no deny by default"
+            ],
+            "bonus_fact": "Firewall con default allow = no firewall. 90% de breaches involucran misconfigured firewalls."
+          }
         },
         {
-          "label": "Signature-based",
-          "title": "Detección por Firmas",
-          "text": "Busca patrones conocidos de ataques (signatures). Como antivirus. Rápido, preciso para ataques conocidos. NO detecta zero-days o variantes nuevas. Requiere updates constantes. Ejemplo: Snort rules.",
-          "icon": "fingerprint"
+          "id": "rule2",
+          "task": "Least Privilege",
+          "subtitle": "Mínimos permisos necesarios",
+          "icon": "vpn_key",
+          "unlock_content": {
+            "title": "Minimize Attack Surface",
+            "points": [
+              "Allow solo puertos/IPs específicos necesarios",
+              "No usar 0.0.0.0/0 (any) sin justificación",
+              "Review rules trimestralmente, remove obsoletas",
+              "Capital One IAM role: S3 full access cuando solo read necesario"
+            ],
+            "bonus_fact": "Una rule demasiado permissive puede nulificar 100 rules restrictivas. Review es crítico."
+          }
         },
         {
-          "label": "Anomaly-based",
-          "title": "Detección por Anomalías",
-          "text": "Aprende comportamiento normal (baseline), detecta desviaciones. Puede detectar ataques desconocidos. Más falsos positivos. Machine learning usado aquí. Ejemplo: tráfico inusual de red.",
-          "icon": "analytics"
-        },
-        {
-          "label": "NIDS vs HIDS",
-          "title": "Network vs Host",
-          "text": "NIDS: monitorea tráfico de red (span port, tap). Ve todo el tráfico pero no ve datos cifrados. HIDS: agent en host, ve logs del sistema, cambios en archivos. Más visibilidad del host pero más overhead.",
-          "icon": "device_hub"
+          "id": "rule3",
+          "task": "Logging y Monitoring",
+          "subtitle": "Visibility de todo el tráfico",
+          "icon": "visibility",
+          "unlock_content": {
+            "title": "Detect Anomalies",
+            "points": [
+              "Log ALL firewall decisions (allow y deny)",
+              "SIEM integration para correlation",
+              "Alert on: Denied traffic spikes, geographic anomalies",
+              "Capital One: Sin logging proper, breach no detectado por meses"
+            ],
+            "bonus_fact": "Firewall sin logging = blind. 70% de breaches detectados por terceros, no víctima."
+          }
         }
       ]
     }
   },
   {
     "screen_id": 4,
-    "type": "theory_section",
-    "title": "VPN - NIST SP 800-77",
+    "type": "memory_cards",
+    "title": "Network Segmentation",
+    "duration": 180,
     "content": {
-      "intro": "Virtual Private Network: túnel cifrado sobre red pública (internet).",
-      "types": [
+      "description": "Divide and conquer strategy",
+      "cards": [
         {
-          "type": "IPsec VPN",
-          "description": "Opera en capa 3 (IP). Site-to-site (conecta oficinas) o remote access (usuarios remotos). Protocols: ESP (encryption), AH (authentication). Fuerte pero complejo de configurar.",
-          "icon": "vpn_lock"
+          "id": "1",
+          "front": {
+            "icon": "widgets",
+            "term": "DMZ (Demilitarized Zone)",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "Zona intermedia entre internet y internal network. Servicios públicos (web, email, DNS) viven aquí. Si DMZ es compromised, internal network sigue protegida.",
+            "example": "Firewall 1: Internet → DMZ. Firewall 2: DMZ → Internal. Web server en DMZ. Si hacked, no acceso a internal database servers.",
+            "color": "#FFB74D"
+          }
         },
         {
-          "type": "SSL/TLS VPN",
-          "description": "Opera en capa 4-7. Acceso vía browser o thin client. Más fácil para usuarios. No requiere cliente pesado. Ejemplos: OpenVPN, Cisco AnyConnect.",
-          "icon": "https"
-        },
-        {
-          "type": "Split Tunneling",
-          "description": "Solo tráfico corporativo va por VPN, resto directo a internet. Más rápido pero menos seguro. Si laptop comprometida, atacante puede pivotar a red corp. Riesgo evaluado en pandemia con WFH.",
-          "icon": "call_split"
+          "id": "2",
+          "front": {
+            "icon": "lan",
+            "term": "VLANs (Virtual LANs)",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Segmentación lógica de network. Devices en diferentes VLANs no pueden comunicarse sin router/firewall. Isolation sin separación física.",
+            "example": "VLAN 10: Guest WiFi. VLAN 20: Employees. VLAN 30: Servers. Guest no puede reach servers. Mirai: flat networks permitieron propagation.",
+            "color": "#42A5F5"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 5,
-    "type": "practical_scenario",
-    "title": "Configura Firewall Rules",
-    "content": {
-      "scenario": "Eres admin de red. Debes crear reglas de firewall para servidor web (192.168.1.100) en DMZ.",
-      "requirements": [
-        "Permitir HTTP (80) y HTTPS (443) desde internet",
-        "Permitir SSH (22) solo desde red de admins (10.0.0.0/24)",
-        "Bloquear todo lo demás",
-        "Default deny policy"
-      ],
-      "your_rules": [
-        {"rule": 1, "action": "ALLOW", "src": "ANY", "dst": "192.168.1.100", "port": "80", "protocol": "TCP"},
-        {"rule": 2, "action": "ALLOW", "src": "ANY", "dst": "192.168.1.100", "port": "443", "protocol": "TCP"},
-        {"rule": 3, "action": "ALLOW", "src": "10.0.0.0/24", "dst": "192.168.1.100", "port": "22", "protocol": "TCP"},
-        {"rule": 4, "action": "DENY", "src": "ANY", "dst": "ANY", "port": "ANY", "protocol": "ANY"}
-      ],
-      "explanation": "Orden importa. Reglas específicas primero, default deny al final. Esto sigue principio de least privilege."
-    }
-  },
-  {
-    "screen_id": 6,
     "type": "quiz",
-    "title": "Evaluación - Dispositivos de Seguridad",
+    "title": "Evaluación - Firewalls",
+    "duration": 90,
     "content": {
-      "question": "En Capital One breach, firewall mal configurado permitió acceso no autorizado. ¿Qué habrían ayudado a prevenir?",
+      "question": "Capital One breach: ¿Cuál fue el error fundamental?",
       "options": [
-        {"id": "a", "text": "Reglas de firewall más restrictivas (least privilege) + auditoría regular de config", "is_correct": true, "feedback": "Correcto. Firewall permitía acceso al metadata service desde WAF. Reglas debían ser más restrictivas y auditadas."},
-        {"id": "b", "text": "Usar IDS en lugar de firewall", "is_correct": false, "feedback": "No. IDS solo detecta, no previene. Firewall era necesario pero mal configurado."},
-        {"id": "c", "text": "VPN para todos los accesos", "is_correct": false, "feedback": "No. El problema era configuración del firewall en la infraestructura AWS, no acceso remoto."}
+        {
+          "id": "a",
+          "text": "No tenían firewall",
+          "is_correct": false,
+          "feedback": "Incorrecto. Capital One tenía WAF (Web Application Firewall). El problema no fue ausencia sino misconfiguration."
+        },
+        {
+          "id": "b",
+          "text": "WAF con IAM role demasiado permissive + SSRF vulnerability",
+          "is_correct": true,
+          "feedback": "CORRECTO! WAF tenía IAM role con S3 full access (violación de least privilege). Atacante explotó SSRF para acceder metadata endpoint, steal credentials del IAM role, y usar esas credentials para download S3 buckets completos. Dos errores: 1) Over-privileged IAM, 2) SSRF not blocked."
+        },
+        {
+          "id": "c",
+          "text": "Usaron firewall stateless en vez de stateful",
+          "is_correct": false,
+          "feedback": "Incorrecto. Tipo de firewall no fue el issue. WAF es application-layer (layer 7). Problema fue misconfiguration de permisos."
+        }
       ]
     }
   }

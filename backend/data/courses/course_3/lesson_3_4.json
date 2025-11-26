@@ -1,7 +1,137 @@
 [
-  {"screen_id":1,"type":"story_hook","title":"Caso Real: Okta Breach 2022","duration":120,"content":{"case_name":"Okta Third-Party Breach","date":"Jan-Mar 2022","image_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Okta_logo.svg/1200px-Okta_logo.svg.png","narrative":"Atacantes comprometieron laptop de soporte engineer en Sitel (contractor de Okta). Acceso a Okta customer support tools. Visualizaron datos de ~375 customers. Riesgo: Okta es SSO provider para miles de empresas - single point of failure. Supply chain risk en IAM.","stats":[{"label":"Customers Afectados","value":"375","icon":"business"},{"label":"Vector","value":"Contractor","icon":"person"},{"label":"Access Duration","value":"5 días","icon":"schedule"}]}},
-  {"screen_id":2,"type":"theory_tabs","title":"Identity Lifecycle Management","content":{"intro":"Gestión de identidades desde creación hasta eliminación. Proceso crítico para seguridad y compliance.","tabs":[{"label":"Provisioning","title":"Onboarding - Creación","text":"Nuevo empleado: crear cuentas en AD, email, apps. Asignar a roles. Acceso Day-1. Automatizar con HR system. Joiner workflow. Principio: acceso mínimo inicial, expand as needed.","icon":"person_add"},{"label":"Modification","title":"Cambios - Role Changes","text":"Promoción, cambio dept, cambio responsabilidades. Movers workflow. Re-certificar acceso. Remove old permissions, add new. Risk: permission creep (acumular sin remover).","icon":"edit"},{"label":"Deprovisioning","title":"Offboarding - Eliminación","text":"Empleado sale: deshabilitar cuentas inmediatamente. Revocar acceso físico, VPN, remote. Leaver workflow. 24hr SLA critical. Transfer knowledge/files. Archival de datos. Ghost accounts = risk.","icon":"person_remove"},{"label":"Re-certification","title":"Access Reviews Periódicas","text":"Cada 90-180 días: managers revisan acceso de sus equipos. Confirman que sigue siendo necesario. Remediar excess permissions. Compliance requirement (SOX, GDPR). Automated campaigns.","icon":"fact_check"}]}},
-  {"screen_id":3,"type":"theory_section","title":"Single Sign-On (SSO) - SAML & OAuth","content":{"sso_benefits":["User convenience: 1 login → múltiples apps","Security: menos passwords, MFA centralizado","Compliance: audit trail centralizado","Efficiency: menos helpdesk password resets"],"protocols":[{"name":"SAML 2.0","description":"Security Assertion Markup Language. XML-based. Enterprise SSO. IdP (Okta, Azure AD) autentica, genera assertion, SP (app) confía. Usado para web apps corporativas.","flow":"User → SP → redirect to IdP → authn → SAML assertion → SP validates → access granted","icon":"verified_user"},{"name":"OAuth 2.0","description":"RFC 6749. Authorization framework (no authn). Delegar acceso sin compartir password. Access tokens, refresh tokens. 'Login with Google/Facebook'. 4 flows: authorization code (más seguro), implicit (deprecated), client credentials, password grant.","use":"API access, third-party app authorization","icon":"vpn_key"},{"name":"OpenID Connect (OIDC)","description":"Authentication layer encima de OAuth 2.0. ID tokens (JWT) con user claims. Combina SSO + API authorization. Moderno, REST/JSON-based. Reemplaza SAML en apps nuevas.","icon":"badge"}],"okta_risk":"Okta es IdP centralizado. Si comprometido, atacante accede todas las apps conectadas. Single point of failure. Mitigate: MFA, PAM, least privilege en IdP admin."}},
-  {"screen_id":4,"type":"practical_exercise","title":"Diseña IAM Architecture","content":{"scenario":"Empresa 500 empleados. Apps: Salesforce, Office 365, AWS, GitHub, Slack, internal HR app. Diseña SSO + Identity lifecycle.","requirements":["SSO para todas las apps","MFA enforced","Automated provisioning/deprovisioning","Access reviews quarterly","Privileged access management"],"your_design":{"idp":"Okta o Azure AD como Identity Provider central","authentication":"MFA required: TOTP app para users, FIDO2 para admins","sso_integration":["Salesforce: SAML 2.0","Office 365: OIDC/SAML","AWS: SAML federation + assume role","GitHub: SAML","Slack: SAML","Internal app: OIDC"],"lifecycle_automation":{"joiner":"HR system → IdP API → create user + assign default groups → notify manager","mover":"Manager request → approval workflow → modify group memberships → log change","leaver":"HR system (termination date) → auto-disable accounts same day → start deprovisioning workflow"},"pam":{"vault":"CyberArk or HashiCorp Vault para admin passwords","jit":"Just-in-time elevation para AWS/production","monitoring":"Alert on privileged access uso"},"governance":{"access_reviews":"Quarterly campaigns, managers approve/deny","reporting":"Who has access to what, compliance reports","audit":"All access changes logged in SIEM"}}}},
-  {"screen_id":5,"type":"quiz","title":"Evaluación - IAM Systems","content":{"question":"En Okta breach, contractor tenía acceso a support tools. ¿Qué controles habrían ayudado?","options":[{"id":"a","text":"PAM con JIT access + session monitoring + stronger contractor vetting","is_correct":true,"feedback":"Correcto. Contractor no debía tener acceso permanente. JIT (temporal), session recording, background checks más rigurosos."},{"id":"b","text":"Solo deshabilitar SSO","is_correct":false,"feedback":"No. SSO es valioso. Problema era privileged access management del contractor."},{"id":"c","text":"Eliminar todos los contractors","is_correct":false,"feedback":"No es práctico. Mejor: treat contractors como high-risk, stronger controls, limited access, monitoring."}]}}
+  {
+    "screen_id": 1,
+    "type": "memory_cards",
+    "title": "Password Management",
+    "duration": 240,
+    "content": {
+      "cards": [
+        {
+          "id": "1",
+          "front": {
+            "icon": "key",
+            "term": "Password Policies",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Length > complexity. NIST: 8+ chars minimum, 64+ max. No forced rotation (causes weak patterns). Allow spaces, special chars. Check against breach lists.",
+            "example": "Correct: 'my dog has fleas 2024'. Incorrect: 'P@ssw0rd1' (predictable). Use password managers. Diceware passphrases.",
+            "color": "#42A5F5"
+          }
+        },
+        {
+          "id": "2",
+          "front": {
+            "icon": "inventory_2",
+            "term": "Password Managers",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Store passwords encrypted. Generate random passwords. Autofill. Master password + MFA protection. Enterprise: 1Password, LastPass, Bitwarden.",
+            "example": "User memorizes 1 strong master password. Manager generates unique 20-char random per site. Prevents credential stuffing.",
+            "color": "#66BB6A"
+          }
+        },
+        {
+          "id": "3",
+          "front": {
+            "icon": "block",
+            "term": "Credential Stuffing",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Attacker usa leaked credentials from site A para try en site B. Password reuse = vulnerability. Automated at scale.",
+            "example": "LinkedIn breach → attackers try same email/password en banks. Defense: Unique passwords per site, MFA, CAPTCHA, rate limiting.",
+            "color": "#EF5350"
+          }
+        },
+        {
+          "id": "4",
+          "front": {
+            "icon": "psychology",
+            "term": "Passwordless Future",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Eliminate passwords entirely. FIDO2/passkeys, biometrics, magic links. Microsoft: 200M users passwordless. Reduces phishing, improves UX.",
+            "example": "Passkeys (Apple/Google): Device generates key pair. Private key never leaves device. Phishing-resistant. WebAuthn standard.",
+            "color": "#FFB74D"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "progress_checklist",
+    "title": "Password Hygiene Assessment",
+    "duration": 180,
+    "content": {
+      "items": [
+        {
+          "id": "pw1",
+          "task": "Check Password Strength",
+          "subtitle": "Entropy matters",
+          "icon": "security",
+          "unlock_content": {
+            "title": "Strength Metrics",
+            "points": [
+              "Length: 12+ chars recommended. 16+ for critical accounts.",
+              "Entropy: Random > Dictionary words. 'correct horse battery staple' = 44 bits entropy.",
+              "Avoid: Personal info, keyboard patterns (qwerty), common substitutions (@ for a).",
+              "Test: HaveIBeenPwned, zxcvbn library for strength estimation.",
+              "Gold standard: Password manager generated 20+ random chars."
+            ],
+            "bonus_fact": "8-char all-lowercase: 2 seconds to crack. 12-char mixed: 300+ years at current GPU speeds."
+          }
+        },
+        {
+          "id": "pw2",
+          "task": "Enable MFA Everywhere",
+          "subtitle": "Defense in depth",
+          "icon": "verified_user",
+          "unlock_content": {
+            "title": "MFA Deployment",
+            "points": [
+              "Priority 1: Email, banking, cloud providers (AWS/Azure/GCP)",
+              "Priority 2: Social media (prevent account takeover)",
+              "Priority 3: Internal enterprise apps",
+              "Method: FIDO2 > TOTP > SMS (better than nothing)",
+              "Recovery codes: Store securely. Needed if device lost."
+            ],
+            "bonus_fact": "Microsoft: MFA blocks 99.9% of automated attacks. 0.1% is sophisticated phishing/MFA bypass."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "quiz",
+    "title": "Evaluación",
+    "duration": 60,
+    "content": {
+      "question": "Mejor práctica para passwords según NIST guidelines?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Rotar password cada 90 días",
+          "is_correct": false,
+          "feedback": "Incorrecto. NIST eliminó forced rotation requirement. Causa: Users crean weak patterns (Password1 → Password2)."
+        },
+        {
+          "id": "b",
+          "text": "Length > complexity. Check breach lists. No forced rotation. MFA obligatorio.",
+          "is_correct": true,
+          "feedback": "CORRECTO! NIST SP 800-63B: 1) 8+ chars minimum (length). 2) No complexity requirements que causan weak patterns. 3) Check against breach databases (HaveIBeenPwned). 4) No forced periodic rotation. 5) Allow paste (para password managers). 6) MFA mandatory. Focus: User behavior > arbitrary rules."
+        },
+        {
+          "id": "c",
+          "text": "Passwords deben tener mayúsculas, números, símbolos",
+          "is_correct": false,
+          "feedback": "Incorrecto. Complexity rules causan predictable patterns: 'Password1!'. Length es más importante. 'my dog has fleas' > 'P@ssw0rd'."
+        }
+      ]
+    }
+  }
 ]

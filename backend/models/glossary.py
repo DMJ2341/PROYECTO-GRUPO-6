@@ -1,26 +1,32 @@
-from database.db import Base
-from sqlalchemy import Column, Integer, String, Text
+# backend/models/glossary.py
+from sqlalchemy import Column, Integer, String, Text, DateTime
+from datetime import datetime
+from database.db import Base 
 
 class Glossary(Base):
     __tablename__ = 'glossary'
-
     id = Column(Integer, primary_key=True)
-    term = Column(String(100), nullable=False, unique=True)
-    acronym = Column(String(100))
+    term = Column(String(255), unique=True, nullable=False)
+    acronym = Column(String(50), nullable=True)
     definition = Column(Text, nullable=False)
-    example = Column(Text)
-    category = Column(String(50))
-    difficulty = Column(String(20))
-    where_you_hear_it = Column(Text)
+    example = Column(Text, nullable=True)
+    category = Column(String(100), nullable=True)
+    difficulty = Column(String(50), default='Básico')
+    where_you_hear_it = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow) # <-- COLUMNA QUE FALTABA EN LA BD
 
     def to_dict(self):
+        """Devuelve una representación de diccionario del término."""
         return {
-            "id": self.id,
-            "term": self.term,
-            "acronym": self.acronym or "",
-            "definition": self.definition,
-            "example": self.example or "",
-            "category": self.category or "General",
-            "difficulty": self.difficulty or "Medio",
-            "where_you_hear_it": self.where_you_hear_it or ""
+            'id': self.id,
+            'term': self.term,
+            'acronym': self.acronym,
+            'definition': self.definition,
+            'example': self.example,
+            'category': self.category,
+            'difficulty': self.difficulty,
+            'where_you_hear_it': self.where_you_hear_it
         }
+
+    def __repr__(self):
+        return f"<Glossary(term='{self.term}')>"

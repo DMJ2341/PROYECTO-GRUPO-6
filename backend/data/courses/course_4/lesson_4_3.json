@@ -1,136 +1,177 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Colonial Pipeline Ransomware",
-    "duration": 120,
+    "type": "memory_cards",
+    "title": "Threat Hunting",
+    "duration": 240,
     "content": {
-      "case_name": "Colonial Pipeline - DarkSide Ransomware (2021)",
-      "date": "7 May 2021",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Colonialp_ipe_route.png/800px-Colonialp_ipe_route.png",
-      "narrative": "DarkSide ransomware vía VPN sin MFA. 100GB exfiltrados antes de cifrado (double extortion). Colonial tomó decisión crítica: shutdown completo del pipeline (prevenir spread a OT systems). 5500 millas de pipeline detenido. Pánico de gasolina en East Coast. Pagaron $4.4M en Bitcoin. FBI recuperó $2.3M.",
-      "stats": [
+      "cards": [
         {
-          "label": "Rescate Pagado",
-          "value": "$4.4M BTC",
-          "icon": "currency_bitcoin"
+          "id": "1",
+          "front": {
+            "icon": "travel_explore",
+            "term": "Proactive Threat Hunting",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "No esperar alerts. Buscar proactivamente threats que evaded detection. Hypothesis-driven: 'Creo que tenemos X porque Y'. Hunt for evidence.",
+            "example": "Hypothesis: 'Attacker usando living-off-the-land binaries (LOLBins) para evade EDR'. Hunt: Query logs para unusual PowerShell/WMI activity. Target: Hunt for POS anomalies.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "Pipeline Parado",
-          "value": "6 días",
-          "icon": "local_gas_station"
+          "id": "2",
+          "front": {
+            "icon": "fingerprint",
+            "term": "IoCs vs TTPs",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "IoC (Indicator of Compromise): Hash, IP, domain. Fácil cambiar. TTP (Tactics, Techniques, Procedures): Behavior. Harder to change.",
+            "example": "IoC: Malware hash 'abc123'. Change 1 byte = new hash. TTP: 'Uses Mimikatz for credential dumping' = detectable behavior regardless of hash.",
+            "color": "#66BB6A"
+          }
         },
         {
-          "label": "FBI Recuperó",
-          "value": "$2.3M",
-          "icon": "policy"
+          "id": "3",
+          "front": {
+            "icon": "psychology",
+            "term": "Hypothesis Development",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Generate hunts basado en: threat intel, industry trends, TTPs de APTs relevantes, crown jewels (what attackers want), past incidents.",
+            "example": "Retail: POS malware common. Hypothesis: 'Check for unusual process accessing POS terminal memory'. Target: This hunt would find BlackPOS.",
+            "color": "#FFB74D"
+          }
+        },
+        {
+          "id": "4",
+          "front": {
+            "icon": "fact_check",
+            "term": "Hunt Validation",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Hunt results: True positive (found threat), False positive (benign), or Inconclusive. Document findings. Feed back to detection rules.",
+            "example": "Found: Unusual PowerShell accessing lsass.exe = True positive (credential dumping). Update SIEM rule to auto-alert. Continuous improvement loop.",
+            "color": "#BA68C8"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Estrategias de Contención",
+    "type": "progress_checklist",
+    "title": "Threat Hunting Methodology",
+    "duration": 300,
     "content": {
-      "intro": "Limitar daño y prevenir spread. Trade-off entre velocidad y preservar evidencia.",
-      "tabs": [
+      "items": [
         {
-          "label": "Short-term",
-          "title": "Contención Inmediata",
-          "text": "Aislar sistemas comprometidos de red. Disconnect ethernet, disable WiFi. NO apagar (pierdes RAM). Cambiar passwords. Bloquear IPs maliciosas en firewall. Deshabilitar cuentas comprometidas. Goal: stop the bleeding.",
-          "icon": "block"
+          "id": "hunt1",
+          "task": "1. Define Hypothesis",
+          "subtitle": "What to hunt for?",
+          "icon": "lightbulb",
+          "unlock_content": {
+            "title": "Hypothesis Creation",
+            "points": [
+              "Based on: Recent threat intel, industry sector risks, crown jewels",
+              "Example hypotheses for retail:",
+              "- 'POS terminals infected with RAM scraper'",
+              "- 'Attacker pivoted from vendor VPN to payment network'",
+              "- 'Credentials exfiltrated via DNS tunneling'",
+              "Target example: 'Fazio credentials used to access non-HVAC systems'"
+            ],
+            "bonus_fact": "Good hypothesis is specific, testable, based on realistic threat model."
+          }
         },
         {
-          "label": "Long-term",
-          "title": "Contención Sostenida",
-          "text": "Segmentar red para monitoring continuo. Honeypot/honeynet para observar atacante. Permite recolectar más intel. Requiere recursos. Colonial optó por shutdown total (más seguro pero disruptivo).",
-          "icon": "grid_on"
+          "id": "hunt2",
+          "task": "2. Gather Data",
+          "subtitle": "What logs needed?",
+          "icon": "storage",
+          "unlock_content": {
+            "title": "Data Sources",
+            "points": [
+              "Endpoint: Process execution, file access, network connections, registry changes",
+              "Network: NetFlow, DNS logs, proxy logs, firewall logs",
+              "Authentication: Login attempts, privilege escalation, lateral movement",
+              "Application: Database queries, web app logs, API calls",
+              "Target needed: POS terminal logs, network traffic from POS to external IPs"
+            ],
+            "bonus_fact": "Data retention critical. Can't hunt if logs deleted. Recommend 90+ days minimum."
+          }
         },
         {
-          "label": "Decision Factors",
-          "title": "Consideraciones",
-          "text": "Business impact vs security. Evidencia forense vs speed. Legal/regulatory requirements. Comunicación con stakeholders. Colonial: OT safety > business continuity → shutdown. Correcta decisión dado riesgo de explosión/spill.",
-          "icon": "balance"
+          "id": "hunt3",
+          "task": "3. Execute Hunt",
+          "subtitle": "Query and analyze",
+          "icon": "search",
+          "unlock_content": {
+            "title": "Analysis Techniques",
+            "points": [
+              "Stack counting: Group by rare events. Outliers are interesting.",
+              "Time-series analysis: Detect anomalies in patterns.",
+              "Correlation: Connect dots across data sources.",
+              "Indicators: Search for known bad (IoCs) while hunting for behavior (TTPs).",
+              "Tools: Splunk, ELK, Jupyter notebooks, custom scripts"
+            ],
+            "bonus_fact": "Hunting is art + science. Experience matters. Pattern recognition improves with time."
+          }
+        },
+        {
+          "id": "hunt4",
+          "task": "4. Document & Improve",
+          "subtitle": "Close the loop",
+          "icon": "assignment",
+          "unlock_content": {
+            "title": "Continuous Improvement",
+            "points": [
+              "Document findings: What found, when, how, impact",
+              "True positive → Incident response + New detection rule",
+              "False positive → Refine hypothesis for next hunt",
+              "Inconclusive → Need better data sources",
+              "Share with team: Knowledge transfer, training",
+              "Target lesson: Document 'FireEye alert X dismissed' → Root cause → Training"
+            ],
+            "bonus_fact": "Mature SOCs: Hunt results feed detection engineering. Virtuous cycle."
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "Erradicación y Recuperación",
-    "content": {
-      "eradication": [
-        "Eliminar malware: antivirus, EDR, manual removal",
-        "Parchear vulnerabilidades explotadas",
-        "Rebuild systems desde conocido bueno (gold image)",
-        "Cambiar todas las credenciales",
-        "Cerrar backdoors, eliminar persistence mechanisms"
-      ],
-      "recovery": [
-        "Restaurar desde backups limpios (pre-infección)",
-        "Validar integridad de backups (no están infectados)",
-        "Restore en orden: DC primero, luego servers, luego workstations",
-        "Test functionality antes de producción",
-        "Monitorear agresivamente por reinfección",
-        "Comunicar plan de recovery a stakeholders"
-      ],
-      "colonial_recovery": "6 días para restaurar pipeline. FBI ayudó rastreando Bitcoin wallet, recuperaron $2.3M explotando private key de DarkSide."
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "theory_tabs",
-    "title": "Ransomware: To Pay or Not to Pay",
-    "content": {
-      "intro": "Decisión más difícil. Pros y cons de pagar rescate.",
-      "tabs": [
-        {
-          "label": "Arguments AGAINST",
-          "title": "Por qué NO Pagar",
-          "text": "Financia crim organizado. No garantiza decrypt (30% no reciben key). Puede re-atacar (saben que pagas). Ilegal en algunos casos (OFAC sanctions). Incentiva más ataques. FBI/CISA recomiendan NO pagar.",
-          "icon": "block"
-        },
-        {
-          "label": "Arguments FOR",
-          "title": "Por qué SÍ Pagar",
-          "text": "Faster recovery que rebuild. Business continuity crítica (hospital, utilities). Backups destruidos/cifrados también. Doble extorsión: pagan para no leak data. Decisión business, no security. Insurance puede cubrir.",
-          "icon": "payment"
-        },
-        {
-          "label": "Best Practice",
-          "title": "Preparación > Pago",
-          "text": "Backups 3-2-1 offline/immutable. Incident response plan. Cyber insurance. Patch management. Network segmentation. Si preparado bien, NO necesitas pagar. Colonial pagó porque no preparado adecuadamente.",
-          "icon": "shield"
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 5,
     "type": "quiz",
-    "title": "Evaluación - Contención",
+    "title": "Evaluación - Threat Hunting",
+    "duration": 60,
     "content": {
-      "question": "Colonial Pipeline hizo shutdown completo del pipeline. ¿Fue decisión correcta?",
+      "question": "Diferencia entre reactive detection y proactive hunting?",
       "options": [
         {
           "id": "a",
-          "text": "SÍ. OT systems safety-critical. Shutdown previno potential explosión/environmental disaster.",
-          "is_correct": true,
-          "feedback": "Correcto. Decisión difícil pero apropiada. Safety > business continuity en OT. Segmentar OT de IT habría prevenido necesidad de shutdown total."
+          "text": "Son lo mismo",
+          "is_correct": false,
+          "feedback": "Incorrecto. Muy diferentes approaches."
         },
         {
           "id": "b",
-          "text": "NO. Debieron seguir operando arriesgándose",
-          "is_correct": false,
-          "feedback": "Incorrecto. Riesgo de explosión, spills ambientales, vidas humanas. Shutdown fue prudente dado unknowns."
+          "text": "Detection espera alerts; Hunting busca proactivamente threats que evaded detection",
+          "is_correct": true,
+          "feedback": "CORRECTO! Reactive detection: SIEM rules → alerts → investigate. Waits for known bad. Proactive hunting: Hypothesis → query logs → find unknowns. Assumes breach already happened but undetected. Detection finds 70-80% of threats. Hunting finds the stealthy 20-30%. Target: FireEye detected (reactive) pero dismissed. Hunting hubiera found BlackPOS proactively (hypothesis: 'POS memory scraping')."
         },
         {
           "id": "c",
-          "text": "Debieron pagar más rápido para evitar shutdown",
+          "text": "Hunting es solo para APTs, detection para malware común",
           "is_correct": false,
-          "feedback": "No. Pagar no garantiza recovery inmediato. Shutdown fue para proteger OT systems, no relacionado con pago."
+          "feedback": "Incorrecto. Hunting aplica a cualquier threat que evades detection, no solo APTs."
+        },
+        {
+          "id": "d",
+          "text": "Detection requiere más skill",
+          "is_correct": false,
+          "feedback": "Incorrecto. Hunting requiere más skill (hypothesis, creativity, deep analysis). Detection es más process-driven."
         }
       ]
     }

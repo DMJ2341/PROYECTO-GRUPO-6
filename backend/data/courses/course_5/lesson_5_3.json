@@ -1,287 +1,171 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Enterprise Risk Assessment",
-    "duration": 120,
+    "type": "memory_cards",
+    "title": "Security Metrics & KPIs",
+    "duration": 240,
     "content": {
-      "case_name": "Fortune 500 Company Annual Risk Assessment",
-      "date": "2023",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Risk_Matrix.svg/1200px-Risk_Matrix.svg.png",
-      "narrative": "Empresa global realiza risk assessment anual. Identifica 150+ riesgos. Usa análisis cualitativo (risk matrix) para priorizar y cuantitativo (ALE) para top 10. Descubre: unpatched systems (likelihood HIGH, impact HIGH), insider threat (likelihood MEDIUM, impact CRITICAL). Resultados guían $50M budget allocation para controles.",
-      "stats": [
+      "cards": [
         {
-          "label": "Riesgos Identificados",
-          "value": "150+",
-          "icon": "warning"
+          "id": "1",
+          "front": {
+            "icon": "speed",
+            "term": "Mean Time To Patch (MTTP)",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Average time from vulnerability disclosure to patch deployment. Goal: <30 days standard, <7 days critical, <24 hours emergency (CVSS 10.0).",
+            "example": "Equifax MTTP: 60+ days for CVSS 10.0. Industry standard: <7 days. Order of magnitude failure. Track by severity: Critical, High, Medium, Low.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "Budget Influenciado",
-          "value": "$50M",
-          "icon": "attach_money"
+          "id": "2",
+          "front": {
+            "icon": "security",
+            "term": "Security Posture Score",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Aggregate metric. Factors: Vuln count weighted by severity, patch compliance, security control coverage, incident count. Trend over time.",
+            "example": "Score 0-100. Target: >80. Components: Critical vulns (-10 each), patch SLA compliance (+20), security tool coverage (+20). Executive dashboard.",
+            "color": "#66BB6A"
+          }
         },
         {
-          "label": "Métodos",
-          "value": "Quali + Quanti",
-          "icon": "calculate"
+          "id": "3",
+          "front": {
+            "icon": "shield",
+            "term": "Control Effectiveness",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "% of security controls functioning as intended. Annual assessment. Identify control gaps. Drives remediation priorities.",
+            "example": "NIST 800-53: 300 controls for High systems. Assessment: 285 effective (95%), 10 partially (3%), 5 ineffective (2%). Fix the 15 gaps.",
+            "color": "#FFB74D"
+          }
+        },
+        {
+          "id": "4",
+          "front": {
+            "icon": "verified_user",
+            "term": "Compliance Rate",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "% compliant with policies/regulations. Examples: Patch policy compliance, training completion, access review completion. Audit readiness.",
+            "example": "Patch policy: 95% systems patched within 30 days. Training: 100% annual security awareness. Equifax: Low compliance = breach.",
+            "color": "#BA68C8"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Métodos de Risk Assessment - NIST SP 800-30",
+    "type": "progress_checklist",
+    "title": "Building Security Metrics Program",
+    "duration": 300,
     "content": {
-      "intro": "Dos enfoques principales: Qualitative (subjetivo, escalas) y Quantitative (objetivo, números).",
-      "tabs": [
+      "items": [
         {
-          "label": "Qualitativo",
-          "title": "Análisis Cualitativo",
-          "text": "Usa escalas descriptivas: High/Medium/Low o 1-5. Risk matrix: likelihood vs impact. Rápido, fácil, bueno para overview. SUBJETIVO: diferentes personas = diferentes ratings. Útil cuando datos históricos insuficientes.",
-          "icon": "grid_on"
+          "id": "metrics1",
+          "task": "Define Objectives",
+          "subtitle": "What to measure?",
+          "icon": "flag",
+          "unlock_content": {
+            "title": "Metrics Strategy",
+            "points": [
+              "Align with business goals: Reduce risk, ensure compliance, enable business",
+              "SMART metrics: Specific, Measurable, Achievable, Relevant, Time-bound",
+              "Leading indicators: Predictive (vuln count). Lagging: Historical (breach count).",
+              "Balance: Don't just measure easy things. Measure important things.",
+              "Equifax need: MTTP, vulnerability debt, monitoring uptime"
+            ],
+            "bonus_fact": "Bad metric: Total firewall rules. Good metric: % critical assets protected by firewall."
+          }
         },
         {
-          "label": "Cuantitativo",
-          "title": "Análisis Cuantitativo",
-          "text": "Usa números y $. Calcula Annual Loss Expectancy (ALE). OBJETIVO: basado en datos. Requiere data histórica o estimaciones. Más time-consuming pero preciso para ROI de controles.",
-          "icon": "attach_money"
+          "id": "metrics2",
+          "task": "Collect Data",
+          "subtitle": "Automation critical",
+          "icon": "data_usage",
+          "unlock_content": {
+            "title": "Data Collection",
+            "points": [
+              "Automate: Manual collection = stale data. APIs from tools.",
+              "Sources: SIEM, vulnerability scanner, ticketing system, asset inventory",
+              "Frequency: Real-time dashboards, weekly reports, monthly trends",
+              "Data quality: Garbage in, garbage out. Validate accuracy.",
+              "Equifax: Had scanner data pero not aggregated/analyzed"
+            ],
+            "bonus_fact": "SOAR can aggregate metrics from disparate tools into single dashboard."
+          }
         },
         {
-          "label": "Semi-Cuantitativo",
-          "title": "Híbrido",
-          "text": "Combina ambos. Usa escalas numéricas (1-10) pero no $ directo. Mapea High=8-10, Medium=4-7, Low=1-3. Más granular que puro qualitative pero menos data-intensive que quantitative.",
-          "icon": "tune"
+          "id": "metrics3",
+          "task": "Analyze & Report",
+          "subtitle": "Insights for action",
+          "icon": "analytics",
+          "unlock_content": {
+            "title": "Analysis & Reporting",
+            "points": [
+              "Executive dashboard: High-level trends, red/yellow/green status",
+              "Technical reports: Detailed findings for security team",
+              "Trend analysis: Month-over-month, year-over-year",
+              "Benchmarking: Compare to industry peers, best practices",
+              "Actionable: Every metric should drive decision",
+              "Equifax: Metrics existed pero no accountability for poor performance"
+            ],
+            "bonus_fact": "Good metrics answer: Are we getting better or worse? Where to invest?"
+          }
+        },
+        {
+          "id": "metrics4",
+          "task": "Continuous Improvement",
+          "subtitle": "Iterate",
+          "icon": "trending_up",
+          "unlock_content": {
+            "title": "Metrics Maturity",
+            "points": [
+              "Review quarterly: Are metrics still relevant?",
+              "Add new metrics as program matures",
+              "Retire metrics that don't drive action",
+              "Adjust targets: Initial target 70%, mature target 95%",
+              "Culture: Data-driven security decisions",
+              "Equifax lesson: Metrics without consequences = useless"
+            ],
+            "bonus_fact": "Mature orgs: Security metrics integrated into executive scorecards. C-suite accountability."
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "Análisis Cualitativo: Risk Matrix",
-    "content": {
-      "risk_matrix": {
-        "axes": {
-          "likelihood": [
-            "Very Low (0-10%)",
-            "Low (10-30%)",
-            "Medium (30-60%)",
-            "High (60-90%)",
-            "Very High (90-100%)"
-          ],
-          "impact": [
-            "Very Low (minimal)",
-            "Low (minor)",
-            "Medium (moderate)",
-            "High (significant)",
-            "Very High (severe/catastrophic)"
-          ]
-        },
-        "matrix": [
-          ["Low", "Low", "Medium", "High", "Critical"],
-          ["Low", "Medium", "Medium", "High", "Critical"],
-          ["Medium", "Medium", "High", "Critical", "Critical"],
-          ["High", "High", "Critical", "Critical", "Critical"],
-          ["High", "Critical", "Critical", "Critical", "Critical"]
-        ],
-        "color_coding": "Green (Low), Yellow (Medium), Orange (High), Red (Critical)"
-      },
-      "usage": "Plotear cada riesgo en matriz. Priorizar tratamiento: Critical first, High second, etc.",
-      "limitations": [
-        "Subjetivo - bias del evaluador",
-        "No captura magnitud precisa",
-        "Comparaciones difíciles (es Medium risk A == Medium risk B?)",
-        "No calcula ROI de controles"
-      ],
-      "example": {
-        "risk": "Ransomware attack en file servers",
-        "likelihood": "HIGH (60%) - industria es target, vulnerabilities existen",
-        "impact": "VERY HIGH - $5M pérdidas + downtime + reputación",
-        "matrix_position": "HIGH × VERY HIGH = CRITICAL RISK",
-        "action": "Tratamiento inmediato requerido"
-      }
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "theory_section",
-    "title": "Análisis Cuantitativo: ALE Calculation",
-    "content": {
-      "formulas": [
-        {
-          "formula": "ALE = SLE × ARO",
-          "description": "Annual Loss Expectancy = Single Loss Expectancy × Annual Rate of Occurrence"
-        },
-        {
-          "formula": "SLE = Asset Value × Exposure Factor",
-          "description": "Pérdida por incident único"
-        },
-        {
-          "formula": "ARO",
-          "description": "Cuántas veces al año ocurre el evento"
-        }
-      ],
-      "example_calculation": {
-        "scenario": "Risk: Ransomware en file server",
-        "asset_value": "$10M (data value + recovery cost)",
-        "exposure_factor": "50% (half of data/systems affected)",
-        "sle": "$10M × 0.5 = $5M",
-        "aro": "0.2 (1 vez cada 5 años basado en estadísticas de industria)",
-        "ale": "$5M × 0.2 = $1M per year",
-        "interpretation": "Esperamos perder $1M anualmente por este riesgo. Inversión en controles hasta $1M es justified (si reduce riesgo significativamente)."
-      },
-      "roi_of_control": {
-        "control": "Deploy EDR + immutable backups",
-        "cost": "$500K one-time + $100K/year maintenance",
-        "risk_reduction": "ARO de 0.2 → 0.05 (reduce 75%)",
-        "new_ale": "$5M × 0.05 = $250K",
-        "savings": "$1M - $250K = $750K/year",
-        "roi": "$750K savings - $100K maintenance = $650K/year benefit. Payback: $500K / $650K = 0.77 years (9 months)",
-        "decision": "APPROVE - ROI positivo en menos de 1 año"
-      }
-    }
-  },
-  {
-    "screen_id": 5,
-    "type": "practical_exercise",
-    "title": "Lab: Realiza Risk Assessment",
-    "content": {
-      "scenario": "Startup ecommerce 50 empleados. Web app, customer DB (50K clientes), payment processing (integración Stripe).",
-      "your_task": "Identificar top 5 riesgos y calcular ALE para top 3.",
-      "step_1": {
-        "action": "Identificar Assets",
-        "assets": [
-          {
-            "asset": "Customer Database",
-            "value": "$2M (GDPR fines + loss of customers)"
-          },
-          {
-            "asset": "Web Application",
-            "value": "$500K (downtime + recovery)"
-          },
-          {
-            "asset": "Payment Gateway Integration",
-            "value": "$1M (PCI fines + fraud)"
-          }
-        ]
-      },
-      "step_2": {
-        "action": "Identificar Threats y Vulnerabilities",
-        "risks": [
-          {
-            "risk": "SQL Injection en web app",
-            "threat": "Cybercriminals",
-            "vuln": "Improper input validation",
-            "likelihood": "MEDIUM (industry stats: 15% ecommerce sites have SQLi)"
-          },
-          {
-            "risk": "Ransomware",
-            "threat": "Cybercriminals",
-            "vuln": "No EDR, weak backups",
-            "likelihood": "HIGH (30% SMBs hit annually)"
-          },
-          {
-            "risk": "Insider data theft",
-            "threat": "Malicious employee",
-            "vuln": "No DLP, broad DB access",
-            "likelihood": "LOW (5% SMBs annually)"
-          },
-          {
-            "risk": "DDoS attack",
-            "threat": "Competitors, hacktivists",
-            "vuln": "No DDoS mitigation",
-            "likelihood": "MEDIUM (10% ecommerce annually)"
-          },
-          {
-            "risk": "Cloud misconfiguration",
-            "threat": "Accidental",
-            "vuln": "S3 buckets public by mistake",
-            "likelihood": "MEDIUM (20% cloud users)"
-          }
-        ]
-      },
-      "step_3": {
-        "action": "Calcular ALE para Top 3",
-        "calculations": [
-          {
-            "risk": "Ransomware",
-            "sle": "$500K (recovery + downtime)",
-            "aro": "0.3",
-            "ale": "$150K/year"
-          },
-          {
-            "risk": "Cloud misconfiguration exposing customer DB",
-            "sle": "$2M (GDPR + customers)",
-            "aro": "0.2",
-            "ale": "$400K/year"
-          },
-          {
-            "risk": "SQL Injection",
-            "sle": "$1M (data breach + PCI)",
-            "aro": "0.15",
-            "ale": "$150K/year"
-          }
-        ]
-      },
-      "step_4": {
-        "action": "Priorizar y Recomendar Controles",
-        "priority_order": [
-          "1. Cloud misconfiguration (ALE $400K) - Implement automated config scanning, least privilege IAM",
-          "2. Ransomware (ALE $150K) - Deploy EDR, immutable backups",
-          "3. SQLi (ALE $150K) - Code review, WAF, penetration testing"
-        ]
-      }
-    }
-  },
-  {
-    "screen_id": 6,
-    "type": "theory_section",
-    "title": "CVSS Integration en Risk Assessment",
-    "content": {
-      "concept": "CVSS score de vulnerability informa likelihood y impact en risk assessment.",
-      "mapping": {
-        "cvss_score": "9.8 (Critical)",
-        "likelihood": "HIGH - fácilmente explotable (AV:N/AC:L)",
-        "impact": "HIGH - RCE, full compromise (C:H/I:H/A:H)",
-        "risk_assessment": "Si vulnerability está en production system público, es CRITICAL risk"
-      },
-      "example": {
-        "cve": "CVE-2021-44228 (Log4Shell)",
-        "cvss": "10.0",
-        "system": "Java app público",
-        "likelihood": "VERY HIGH (exploit público, amplia explotación)",
-        "impact": "CRITICAL (RCE, full system compromise)",
-        "ale_estimation": "Asset value $5M, Exposure 100%, ARO 0.8 (muy probable este año) = ALE $4M",
-        "action": "Emergency patching, highest priority"
-      },
-      "note": "CVSS alone NO es risk. Es severity de vulnerability. Risk considera likelihood de explotación + impact en TU contexto."
-    }
-  },
-  {
-    "screen_id": 7,
     "type": "quiz",
-    "title": "Evaluación - Risk Assessment",
+    "title": "Evaluación - Metrics",
+    "duration": 60,
     "content": {
-      "question": "Sistema tiene vulnerability CVSS 9.5. Sistema es offline, air-gapped, sin internet. ¿Cuál es el riesgo?",
+      "question": "¿Por qué security metrics importantes?",
       "options": [
         {
           "id": "a",
-          "text": "CRITICAL - CVSS 9.5 es crítico",
+          "text": "Solo para compliance checkbox",
           "is_correct": false,
-          "feedback": "No. CVSS es severity de vuln, NO riesgo. Risk considera likelihood."
+          "feedback": "Incorrecto. Compliance es benefit pero not primary purpose."
         },
         {
           "id": "b",
-          "text": "LOW-MEDIUM - Vulnerability severa existe pero likelihood muy bajo (air-gapped, no remote exploitation)",
+          "text": "Drive accountability, measure improvement, justify budget, identify gaps",
           "is_correct": true,
-          "feedback": "Correcto. Risk = Threat × Vuln × Impact. Threat es muy bajo (requiere physical access o insider). Vulnerability alta. Impact depende del sistema. Resultado: riesgo menor que si fuera internet-facing."
+          "feedback": "CORRECTO! Metrics purposes: 1) Accountability: MTTP metric = patch team responsible. 2) Improvement: Trending shows if getting better/worse. 3) Budget justification: 'Need $X to reduce MTTP from 30→7 days'. 4) Gap identification: Control effectiveness 60% = need investment. 5) Executive communication: Translate security to business language. Equifax: Had metrics pero no accountability. MTTP 60+ days pero no consequences. Metrics without action = theater."
         },
         {
           "id": "c",
-          "text": "NO RISK - sistema air-gapped es seguro",
+          "text": "Para hacer security team look busy",
           "is_correct": false,
-          "feedback": "No. Hay riesgo (insiders, USB, supply chain). Solo es MENOR que si fuera público, no cero."
+          "feedback": "Incorrecto. Vanity metrics (ex: total scans run) don't matter. Outcome metrics (ex: vulns remediated) matter."
         }
       ]
     }

@@ -1,155 +1,226 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Sony Pictures Hack",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "Sony Pictures Hack (2014)",
+    "duration": 240,
     "content": {
-      "case_name": "Sony Pictures Entertainment Breach (2014)",
-      "date": "24 Nov 2014",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Sony_Pictures_Entertainment_logo.svg/1200px-Sony_Pictures_Entertainment_logo.svg.png",
-      "narrative": "Atacantes (Guardians of Peace / Lazarus Group) comprometen toda la red corporativa. 100TB de datos robados: películas sin estrenar, emails de ejecutivos, datos de empleados. Falta de segmentación de red y controles preventivos permitió movimiento lateral sin restricción.",
-      "stats": [
-        {"label": "Datos Robados", "value": "100TB", "icon": "storage"},
-        {"label": "Empleados Afectados", "value": "47K", "icon": "badge"},
-        {"label": "Costo Total", "value": "$100M+", "icon": "account_balance"}
+      "story_title": "Sony Pictures: Devastación Total",
+      "story_intro": "Lazarus Group destruyó la infraestructura IT de Sony Pictures",
+      "steps": [
+        {
+          "id": "1",
+          "icon": "movie",
+          "title": "Target: Hollywood Studio",
+          "content": "Sony Pictures Entertainment, major Hollywood studio. The Interview, película sobre Kim Jong-un. Corea del Norte amenazó consecuencias.",
+          "insight": "Geopolitical threats son reales. Nation-state actors tienen motivaciones más allá de dinero."
+        },
+        {
+          "id": "2",
+          "icon": "download",
+          "title": "Compromiso Completo",
+          "content": "Lazarus Group entró vía spear phishing. Desplegaron wiper malware (Destover) que BORRÓ 75% de servers. No ransomware, puro sabotaje.",
+          "insight": "Wiper malware es peor que ransomware. No hay recovery posible. Backups eran la única salvación."
+        },
+        {
+          "id": "3",
+          "icon": "leak",
+          "title": "Massive Data Leak",
+          "content": "100TB de datos robados y publicados: emails internos, SSNs de empleados, películas unreleased, scripts, contratos. Todo online.",
+          "insight": "Una vez data está en internet, es imposible borrarla. Reputational damage permanente."
+        },
+        {
+          "id": "4",
+          "icon": "build",
+          "title": "Reconstrucción: 2 Meses",
+          "content": "Sony tuvo que reconstruir TODA su infraestructura desde cero. Costo: $100M+. No podían hacer business por semanas.",
+          "insight": "El costo de no tener disaster recovery adecuado: meses offline, millones perdidos."
+        }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Controles de Seguridad - NIST SP 800-53",
+    "type": "memory_cards",
+    "title": "Controles NIST SP 800-53",
+    "duration": 240,
     "content": {
-      "intro": "Según NIST SP 800-53 Rev. 5, los controles se clasifican por función y tipo.",
-      "tabs": [
+      "description": "Familias de controles de seguridad",
+      "cards": [
         {
-          "label": "Por Función",
-          "title": "Clasificación Funcional",
-          "text": "Preventivos (evitar incidentes): firewalls, MFA, cifrado. Detectivos (identificar): IDS, SIEM, logs. Correctivos (reparar): backups, patches, IR plans. Disuasivos (desalentar): avisos legales, cámaras.",
-          "icon": "category"
+          "id": "1",
+          "front": {
+            "icon": "security",
+            "term": "AC - Access Control",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Controles para limitar acceso a sistemas y datos. Least privilege, separation of duties, account management.",
+            "example": "MFA, role-based access, session timeout, remote access controls. Sony falló en AC - atacantes tenían acceso excesivo.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "Por Tipo",
-          "title": "Clasificación por Implementación",
-          "text": "Técnicos (technology): firewalls, encryption, MFA. Administrativos (policy/procedure): políticas, training, auditorías. Físicos (physical): guardias, locks, CCTV.",
-          "icon": "dashboard"
+          "id": "2",
+          "front": {
+            "icon": "verified_user",
+            "term": "IA - Identification & Authentication",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Verificar identidad de usuarios y dispositivos. MFA, password policies, credential management.",
+            "example": "Strong passwords, MFA required, authenticator lifecycle. Phishing resistance con FIDO2 keys.",
+            "color": "#66BB6A"
+          }
         },
         {
-          "label": "Familias NIST",
-          "title": "Control Families SP 800-53",
-          "text": "AC (Access Control), AU (Audit), SC (System Communications Protection), IA (Identification & Authentication), IR (Incident Response), RA (Risk Assessment), SI (System Integrity), etc. 20 familias total.",
-          "icon": "family_restroom"
+          "id": "3",
+          "front": {
+            "icon": "monitor",
+            "term": "SI - System & Information Integrity",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Detectar, reportar y corregir flaws. Malware protection, monitoring, vulnerability scanning.",
+            "example": "Antivirus/EDR, patch management, SIEM logging, IDS/IPS. Sony detection falló completamente.",
+            "color": "#FFB74D"
+          }
         },
         {
-          "label": "Selección",
-          "title": "Proceso de Selección de Controles",
-          "text": "1) Categorizar sistema (FIPS 199). 2) Seleccionar baseline (Low/Moderate/High). 3) Tailoring (ajustar). 4) Supplementar según riesgos. 5) Documentar en SSP.",
-          "icon": "checklist"
+          "id": "4",
+          "front": {
+            "icon": "backup",
+            "term": "CP - Contingency Planning",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "BCP, DRP, backups. Asegurar continuidad ante incidentes.",
+            "example": "Backups offline, disaster recovery drills, alternate site. Sony NO tenía backups adequados.",
+            "color": "#BA68C8"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "interactive_diagram",
-    "title": "Defense in Depth (Defensa en Profundidad)",
+    "type": "progress_checklist",
+    "title": "Defense in Depth: Capas de Defensa",
+    "duration": 300,
     "content": {
-      "description": "Estrategia de múltiples capas de seguridad. Si una falla, las otras protegen. Concepto del NSA.",
-      "layers": [
-        {"level": 1, "name": "Políticas, Procedimientos y Awareness", "controls": ["Security policies", "Acceptable Use Policy", "Training programs"], "icon": "policy"},
-        {"level": 2, "name": "Seguridad Física", "controls": ["Guards", "Locks", "CCTV", "Badges"], "icon": "meeting_room"},
-        {"level": 3, "name": "Perímetro de Red", "controls": ["Firewall", "IPS", "DMZ"], "icon": "security"},
-        {"level": 4, "name": "Red Interna", "controls": ["Segmentación (VLANs)", "NAC", "IDS"], "icon": "lan"},
-        {"level": 5, "name": "Host/Endpoint", "controls": ["Antivirus/EDR", "Host firewall", "Patching"], "icon": "computer"},
-        {"level": 6, "name": "Aplicación", "controls": ["WAF", "Input validation", "Secure coding"], "icon": "web"},
-        {"level": 7, "name": "Datos", "controls": ["Encryption at rest/transit", "DLP", "Backups"], "icon": "lock"}
-      ],
-      "sony_failure": "Sony falló en segmentación de red (capa 4). Atacantes se movieron lateralmente desde sistema comprometido a toda la red sin resistencia. También faltaron controles detectivos (capa monitoring)."
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "theory_section",
-    "title": "Zero Trust Architecture (ZTA)",
-    "content": {
-      "intro": "Nuevo paradigma de seguridad según NIST SP 800-207. 'Never trust, always verify'.",
-      "principles": [
+      "title": "Modelo de Defensa en Profundidad",
+      "items": [
         {
-          "principle": "Verify Explicitly",
-          "description": "Autenticar y autorizar basado en todos los puntos de datos disponibles: identidad, device health, location, data classification.",
-          "icon": "verified_user"
+          "id": "layer_1",
+          "task": "Capa 1: Perimeter Security",
+          "subtitle": "Firewalls, IDS/IPS, DMZ",
+          "icon": "shield",
+          "unlock_content": {
+            "title": "Primera Línea de Defensa",
+            "points": [
+              "Firewall: Filtrar tráfico entrante/saliente",
+              "IDS/IPS: Detectar y prevenir ataques conocidos",
+              "DMZ: Zona desmilitarizada para servicios públicos",
+              "DDoS mitigation: Rate limiting, CDN",
+              "No es suficiente solo: Atacantes bypasan con phishing"
+            ],
+            "bonus_fact": "Target tenía firewall pero puerto 445 abierto. Perimeter no ayuda contra lateral movement."
+          }
         },
         {
-          "principle": "Least Privilege Access",
-          "description": "Just-In-Time y Just-Enough-Access. Limitar acceso al mínimo necesario por tiempo limitado.",
-          "icon": "vpn_lock"
+          "id": "layer_2",
+          "task": "Capa 2: Network Security",
+          "subtitle": "Segmentation, VLANs, NAC",
+          "icon": "lan",
+          "unlock_content": {
+            "title": "Controlar Movimiento Interno",
+            "points": [
+              "Segmentación: Separar redes por función",
+              "VLANs: Isolation lógica",
+              "NAC: Network Access Control",
+              "Micro-segmentation: Zero Trust",
+              "Limit lateral movement en la red"
+            ],
+            "bonus_fact": "WannaCry se propagó en redes planas. Segmentation hubiera limitado el daño."
+          }
         },
         {
-          "principle": "Assume Breach",
-          "description": "Diseñar asumiendo que el perímetro ya está comprometido. Micro-segmentation, encryption everywhere, monitoring.",
-          "icon": "warning"
+          "id": "layer_3",
+          "task": "Capa 3: Endpoint Security",
+          "subtitle": "Antivirus, EDR, DLP",
+          "icon": "computer",
+          "unlock_content": {
+            "title": "Proteger Dispositivos",
+            "points": [
+              "EDR: Behavioral analysis, detect anomalies",
+              "DLP: Data Loss Prevention",
+              "Full disk encryption",
+              "Application whitelisting",
+              "Patch management automatizado"
+            ],
+            "bonus_fact": "Sony tenía antivirus pero wiper era zero-day. EDR hubiera detectado behavior anómalo."
+          }
         }
-      ],
-      "components": [
-        "Policy Engine (decide access)",
-        "Policy Administrator (enforce access)",
-        "Policy Enforcement Point (where access granted/denied)",
-        "Continuous monitoring and analytics"
-      ],
-      "vs_traditional": {
-        "traditional": "Castle-and-moat: perímetro fuerte, interior confiado",
-        "zero_trust": "No trust boundaries: verify everything, trust nothing"
-      }
-    }
-  },
-  {
-    "screen_id": 5,
-    "type": "practical_scenario",
-    "title": "Diseña Controles: Protege Startup Fintech",
-    "content": {
-      "scenario": "Eres CISO de startup fintech de 50 empleados. Tienes app de banca móvil, APIs, base de datos de clientes. Presupuesto limitado $200K/año para seguridad.",
-      "requirements": [
-        "Proteger datos de clientes (PII, financieros)",
-        "Cumplir con regulaciones (PCI-DSS básico)",
-        "Prevenir ataques comunes (phishing, DDoS, SQLi)",
-        "Detectar y responder a incidentes"
-      ],
-      "user_designs": {
-        "instruction": "Selecciona controles priorizando por impacto y costo:",
-        "controls_available": [
-          {"control": "MFA para empleados", "type": "Preventivo/Técnico", "cost": "$5K/año", "priority": "Critical"},
-          {"control": "TLS/HTTPS para app", "type": "Preventivo/Técnico", "cost": "$2K", "priority": "Critical"},
-          {"control": "WAF (Web Application Firewall)", "type": "Preventivo/Técnico", "cost": "$15K/año", "priority": "High"},
-          {"control": "SIEM básico", "type": "Detectivo/Técnico", "cost": "$30K/año", "priority": "High"},
-          {"control": "Security awareness training", "type": "Preventivo/Administrativo", "cost": "$10K/año", "priority": "High"},
-          {"control": "Backup automatizado", "type": "Correctivo/Técnico", "cost": "$8K/año", "priority": "Critical"},
-          {"control": "Vulnerability scanning", "type": "Detectivo/Técnico", "cost": "$12K/año", "priority": "Medium"},
-          {"control": "EDR para endpoints", "type": "Detectivo/Técnico", "cost": "$25K/año", "priority": "Medium"},
-          {"control": "DDoS protection", "type": "Preventivo/Técnico", "cost": "$40K/año", "priority": "Medium"},
-          {"control": "Penetration testing", "type": "Detectivo/Administrativo", "cost": "$20K/año", "priority": "Medium"}
-        ]
-      },
-      "recommended_order": [
-        "1. MFA + TLS (fundamentos de seguridad)",
-        "2. Backups (recuperación ante incidentes)",
-        "3. Security Awareness (factor humano)",
-        "4. WAF (protege app web)",
-        "5. SIEM (detección)",
-        "6. Resto según presupuesto"
       ]
     }
   },
   {
-    "screen_id": 6,
-    "type": "quiz",
-    "title": "Evaluación - Controles de Seguridad",
+    "screen_id": 4,
+    "type": "memory_cards",
+    "title": "Zero Trust Architecture",
+    "duration": 180,
     "content": {
-      "question": "Tu empresa implementa un sistema que monitorea logs 24/7 y envía alertas cuando detecta patrones anormales de login. ¿Qué tipo de control es (función y tipo)?",
+      "description": "Modelo: nunca confiar, siempre verificar",
+      "cards": [
+        {
+          "id": "1",
+          "front": {
+            "icon": "gpp_bad",
+            "term": "Never Trust, Always Verify",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "No asumir confianza basada en ubicación. Cada request es potentially hostile. Verificación continua.",
+            "example": "Empleado en oficina SIGUE necesitando MFA. Google BeyondCorp: Zero Trust desde 2011.",
+            "color": "#EF5350"
+          }
+        },
+        {
+          "id": "2",
+          "front": {
+            "icon": "vpn_key",
+            "term": "Least Privilege Access",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Dar mínimos permisos necesarios. JIT: elevar privilegios solo cuando needed, tiempo limitado.",
+            "example": "Azure AD PIM: Admin rights por 2 horas, luego auto-revoke. AWS IAM time-bound policies.",
+            "color": "#66BB6A"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 5,
+    "type": "quiz",
+    "title": "Evaluación - Controles",
+    "duration": 90,
+    "content": {
+      "question": "Diferencia entre Defense in Depth y Zero Trust?",
       "options": [
-        {"id": "a", "text": "Preventivo - Técnico", "is_correct": false, "feedback": "No. Preventivo evita el ataque. Este solo observa y alerta."},
-        {"id": "b", "text": "Detectivo - Técnico", "is_correct": true, "feedback": "¡Correcto! Es detectivo (identifica incidentes) y técnico (implementado vía tecnología SIEM/log monitoring)."},
-        {"id": "c", "text": "Correctivo - Administrativo", "is_correct": false, "feedback": "No. Correctivo repara daño. Este detecta, no corrige automáticamente."}
+        {
+          "id": "a",
+          "text": "Son lo mismo",
+          "is_correct": false,
+          "feedback": "Incorrecto. Son complementarios pero diferentes."
+        },
+        {
+          "id": "b",
+          "text": "Defense in Depth usa capas; Zero Trust elimina confianza implícita",
+          "is_correct": true,
+          "feedback": "Correcto! Defense in Depth: múltiples capas. Zero Trust: verificar SIEMPRE. Son complementarios."
+        }
       ]
     }
   }

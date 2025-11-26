@@ -1,151 +1,199 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Twitter Hack 2020",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "Caso: Twitter Hack 2020",
+    "duration": 200,
     "content": {
-      "case_name": "Twitter Bitcoin Scam - Social Engineering + SIM Swap",
-      "date": "15 Jul 2020",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/1200px-Logo_of_Twitter.svg.png",
-      "narrative": "Atacantes hicieron vishing (llamadas) a empleados de Twitter, obtuvieron acceso a internal tools. Luego SIM swapping para bypass MFA vía SMS. Comprometieron cuentas de Obama, Biden, Musk, Gates. Postearon scam de Bitcoin.",
-      "stats": [
-        {"label": "Cuentas High-Profile", "value": "130", "icon": "verified"},
-        {"label": "Bitcoin Robado", "value": "$117K", "icon": "currency_bitcoin"},
-        {"label": "Vector", "value": "Vishing + SIM Swap", "icon": "phone"}
+      "story_title": "Twitter: Internal Tools + Social Engineering",
+      "story_intro": "Teenagers compromised high-profile accounts: Obama, Biden, Musk, Gates",
+      "steps": [
+        {
+          "id": "1",
+          "icon": "phone_android",
+          "title": "Vector: Spear Phishing Employees",
+          "content": "Atacantes (teenagers incluyendo Graham Clark, 17) hicieron spear phishing a Twitter employees. Se hicieron pasar por IT support. Robaron credentials de admin panel.",
+          "insight": "Insiders con privileged access son high-value targets. Social engineering sigue funcionando."
+        },
+        {
+          "id": "2",
+          "icon": "admin_panel_settings",
+          "title": "Internal Tools Abuse",
+          "content": "Con creds robadas, accedieron internal admin panel. Herramienta permitía: 1) Change email de cualquier account. 2) Disable MFA. 3) Reset password. Control TOTAL.",
+          "insight": "Internal tools sin proper access controls = skeleton key. Least privilege ausente."
+        },
+        {
+          "id": "3",
+          "icon": "currency_bitcoin",
+          "title": "Bitcoin Scam",
+          "content": "Comprometieron 130 accounts high-profile. Tweeted: 'Send Bitcoin, I'll double it'. Classic scam. $120K en Bitcoin robados. Damage reputacional masivo.",
+          "insight": "Objetivo: dinero rápido. Podrían haber hecho más damage (manipular mercados, esparcir desinformación)."
+        },
+        {
+          "id": "4",
+          "icon": "policy",
+          "title": "Aftermath: Access Controls",
+          "content": "Twitter implementó: 1) MFA obligatorio para internal tools. 2) Reduced privileged access. 3) Enhanced monitoring. 4) Security training. Attackers arrested (Florida, UK, California).",
+          "insight": "Post-mortem revealed: demasiados employees tenían god-mode access. Privilege creep."
+        }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Factores de Autenticación - NIST SP 800-63B",
+    "type": "memory_cards",
+    "title": "Authorization Models",
+    "duration": 240,
     "content": {
-      "intro": "Según NIST Digital Identity Guidelines, autenticación puede usar 5 factores.",
-      "tabs": [
+      "cards": [
         {
-          "label": "Knowledge",
-          "title": "Algo que Sabes",
-          "text": "Passwords, PINs, security questions. Factor más débil: phishable, reusable, olvidable. Ataques: brute force, dictionary, credential stuffing, phishing. NIST recomienda >8 caracteres, no rotación forzada.",
-          "icon": "password"
+          "id": "1",
+          "front": {
+            "icon": "person",
+            "term": "DAC - Discretionary",
+            "color": "#757575"
+          },
+          "back": {
+            "definition": "Owner del recurso controla access. File permissions en Unix/Windows. User puede grant/revoke access a otros. Flexible pero no centralizado.",
+            "example": "Linux: chmod, chown. Windows: NTFS permissions. Owner de archivo decide who can read/write. Problema: Permission sprawl, difícil auditar.",
+            "color": "#9E9E9E"
+          }
         },
         {
-          "label": "Possession",
-          "title": "Algo que Tienes",
-          "text": "Hardware token (YubiKey), smartphone (authenticator app), smart card. Genera OTP (One-Time Password). TOTP (Time-based - RFC 6238), HOTP (Counter-based - RFC 4226). Más seguro que knowledge solo.",
-          "icon": "phonelink_lock"
+          "id": "2",
+          "front": {
+            "icon": "shield",
+            "term": "MAC - Mandatory",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Sistema operativo enforce access basado en security labels. Users NO pueden override. Military/government. SELinux, Trusted Solaris.",
+            "example": "Top Secret, Secret, Confidential labels. User con Secret clearance NO puede acceder Top Secret, sin importar file ownership. Rigid pero secure.",
+            "color": "#EF5350"
+          }
         },
         {
-          "label": "Inherence",
-          "title": "Algo que Eres",
-          "text": "Biometría: huella dactilar, facial recognition, iris scan, voice. FAR (False Accept Rate) vs FRR (False Reject Rate). No cambias si comprometida. Privacy concerns. NIST SP 800-63B Section 5.2.3.",
-          "icon": "fingerprint"
+          "id": "3",
+          "front": {
+            "icon": "work",
+            "term": "RBAC - Role-Based",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Permissions asignadas a roles, no a usuarios individuales. Users assigned a roles. Scalable para organizations grandes. Reduce admin overhead.",
+            "example": "Roles: Admin, Editor, Viewer. User Juan tiene role 'Editor' = puede edit pero no delete. Healthcare: Doctor, Nurse, Admin roles con diferentes permissions a patient records.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "Location",
-          "title": "Dónde Estás",
-          "text": "Geolocation, IP address, GPS. Context-aware. Ejemplo: bloquear login desde país inusual. Impossible travel detection. Puede ser spoofed (VPN).",
-          "icon": "location_on"
-        },
-        {
-          "label": "Behavior",
-          "title": "Cómo te Comportas",
-          "text": "Typing rhythm, mouse movements, gait analysis. Continuous authentication. Behavioral biometrics. Emergente, no ampliamente desplegado aún.",
-          "icon": "psychology"
+          "id": "4",
+          "front": {
+            "icon": "rule",
+            "term": "ABAC - Attribute-Based",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Access basado en attributes (user, resource, environment). Policies con conditional logic. Más granular que RBAC. Zero Trust friendly.",
+            "example": "Policy: 'Allow IF (user.department='Finance' AND resource.type='budget' AND time=business_hours AND location=corporate_network)'. Dynamic, context-aware.",
+            "color": "#66BB6A"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "Multi-Factor Authentication (MFA)",
+    "type": "progress_checklist",
+    "title": "Least Privilege Implementation",
+    "duration": 300,
     "content": {
-      "intro": "Usar 2+ factores de categorías diferentes. Dramatically aumenta seguridad.",
-      "mfa_types": [
+      "items": [
         {
-          "type": "SMS/Voice OTP",
-          "security": "Baja",
-          "description": "Código enviado via SMS o llamada. Vulnerable a SIM swapping (Twitter hack), SS7 attacks, phishing. NIST deprecated en SP 800-63B. NO usar si hay mejor opción.",
-          "icon": "sms"
+          "id": "lp1",
+          "task": "Principle of Least Privilege (PoLP)",
+          "subtitle": "Minimum necessary access",
+          "icon": "minimize",
+          "unlock_content": {
+            "title": "Core Security Principle",
+            "points": [
+              "Definition: User/process tiene SOLO permissions necesarias para su función.",
+              "Objetivo: Limit blast radius de compromise. Twitter hack: Too many god-mode admins.",
+              "Implementation: Default deny. Explicitly grant. Regular review/revoke.",
+              "Just-in-Time (JIT): Elevar privileges solo cuando needed, time-bound.",
+              "Zero Standing Privileges: No permanent admin. Todo JIT approval-based."
+            ],
+            "bonus_fact": "Verizon DBIR: 80% of breaches involve privileged credential abuse. PoLP reduces risk."
+          }
         },
         {
-          "type": "Authenticator Apps",
-          "security": "Media-Alta",
-          "description": "TOTP en app (Google Authenticator, Microsoft Authenticator, Authy). Código rota cada 30 seg. Offline. Vulnerable a phishing real-time (AitM).",
-          "icon": "apps"
+          "id": "lp2",
+          "task": "Privileged Access Management (PAM)",
+          "subtitle": "Control admin accounts",
+          "icon": "vpn_key",
+          "unlock_content": {
+            "title": "PAM Solutions",
+            "points": [
+              "Password vaulting: CyberArk, BeyondTrust. Store/rotate privileged passwords.",
+              "Session recording: Audit admin actions. Forensics post-incident.",
+              "JIT elevation: Request → Approval → Time-limited access → Auto-revoke.",
+              "Break-glass: Emergency access con heavy auditing.",
+              "Twitter needed PAM: Internal tools sin access controls = disaster."
+            ],
+            "bonus_fact": "PAM market $2B+/year. Required for compliance (PCI DSS, SOX, HIPAA)."
+          }
         },
         {
-          "type": "Push Notifications",
-          "security": "Alta",
-          "description": "Notificación push a smartphone. Aprobar/denegar. Duo, Okta Verify. Vulnerable a MFA fatigue (bombardear con prompts hasta que usuario acepta por error).",
-          "icon": "notifications"
-        },
-        {
-          "type": "Hardware Tokens",
-          "security": "Muy Alta",
-          "description": "FIDO2/WebAuthn (YubiKey). Phishing-resistant: challenge-response criptográfico. No funciona en sitio falso. Gold standard. Requiere soporte del sitio.",
-          "icon": "vpn_key"
-        },
-        {
-          "type": "Biometric + PIN",
-          "security": "Alta",
-          "description": "Huella + PIN (algo que eres + sabes). Usado en Windows Hello, smartphones. Conveniente y seguro si implementado bien.",
-          "icon": "fingerprint"
+          "id": "lp3",
+          "task": "Access Review Cadence",
+          "subtitle": "Continuous validation",
+          "icon": "fact_check",
+          "unlock_content": {
+            "title": "Governance Process",
+            "points": [
+              "Quarterly access reviews: Managers certify subordinates' access still needed.",
+              "Detect privilege creep: User cambia role pero mantiene old permissions.",
+              "Automated de-provisioning: User leaves → auto-revoke ALL access.",
+              "Orphaned accounts: Detect accounts sin owner/activity. High risk.",
+              "Audit logs: Compliance requirement. Who accessed what when."
+            ],
+            "bonus_fact": "Average employee accumulates 3.5x necessary permissions over 3 years. Regular reviews critical."
+          }
         }
-      ],
-      "twitter_lesson": "Twitter usó SMS OTP que fue bypasseado vía SIM swap. Si hubieran usado FIDO2/hardware tokens para empleados, ataque habría fallado."
+      ]
     }
   },
   {
     "screen_id": 4,
-    "type": "practical_exercise",
-    "title": "Configura MFA por Sensibilidad",
-    "content": {
-      "scenario": "Tienes 4 tipos de usuarios. Asigna método MFA apropiado.",
-      "users": [
-        {
-          "role": "Employees - General",
-          "access": "Email, internal apps",
-          "risk": "Medium",
-          "recommended_mfa": "Authenticator App (TOTP) o Push Notifications",
-          "rationale": "Balance seguridad-usabilidad. TOTP es suficiente para acceso standard."
-        },
-        {
-          "role": "IT Admins",
-          "access": "Privileged systems, production",
-          "risk": "Critical",
-          "recommended_mfa": "Hardware Token (FIDO2 YubiKey) REQUIRED",
-          "rationale": "Phishing-resistant essential. Privileged access no puede usar SMS."
-        },
-        {
-          "role": "Executives",
-          "access": "Sensitive data, M&A info",
-          "risk": "High",
-          "recommended_mfa": "Hardware Token o Biometric + Push (redundante)",
-          "rationale": "High-value targets. Phishing-resistant preferido."
-        },
-        {
-          "role": "External Contractors",
-          "access": "Limited project tools",
-          "risk": "Medium",
-          "recommended_mfa": "Authenticator App, tiempo-limitado",
-          "rationale": "No SMS. App-based acceptable. Access auto-revoke al terminar contrato."
-        }
-      ],
-      "never_use": ["SMS OTP para privileged access", "Security questions (phishable)", "Email OTP como único factor"]
-    }
-  },
-  {
-    "screen_id": 5,
     "type": "quiz",
-    "title": "Evaluación - MFA",
+    "title": "Evaluación - Authorization",
+    "duration": 90,
     "content": {
-      "question": "¿Por qué SIM swapping permitió bypass MFA en Twitter hack?",
+      "question": "Twitter 2020: ¿Cuál fue el root cause?",
       "options": [
-        {"id": "a", "text": "Porque Twitter usaba SMS OTP. SIM swap redirige SMS al atacante.", "is_correct": true, "feedback": "Correcto. SMS OTP es vulnerable a SIM swapping. Atacante convence a carrier de transferir número a nueva SIM. Recibe OTPs."},
-        {"id": "b", "text": "Porque MFA estaba deshabilitada", "is_correct": false, "feedback": "No. MFA estaba habilitada pero usaba SMS que es vulnerable."},
-        {"id": "c", "text": "Porque passwords eran débiles", "is_correct": false, "feedback": "No. El problema no eran passwords sino el método MFA vulnerable (SMS)."}
+        {
+          "id": "a",
+          "text": "Zero-day vulnerability en Twitter platform",
+          "is_correct": false,
+          "feedback": "Incorrecto. NO fue technical vulnerability. Fue social engineering + over-privileged internal tools."
+        },
+        {
+          "id": "b",
+          "text": "Too many employees con admin access + weak access controls en internal tools",
+          "is_correct": true,
+          "feedback": "CORRECTO! Root cause: 1) Demasiados employees tenían access a god-mode admin panel. 2) Panel permitía disable MFA, change email sin additional verification. 3) No MFA on internal tools. 4) Insufficient monitoring. PoLP violado masivamente. Si solo 10 people (no 100s) tuvieran access, surface attack 10x menor."
+        },
+        {
+          "id": "c",
+          "text": "MFA no implementado",
+          "is_correct": false,
+          "feedback": "Parcialmente correcto. MFA no era obligatorio en internal tools (error), pero el issue más grande: over-privileged access. Incluso con MFA, too many people tenían god-mode."
+        },
+        {
+          "id": "d",
+          "text": "SQL injection",
+          "is_correct": false,
+          "feedback": "Incorrecto. NO fue technical exploit. Fue social engineering para robar credentials legítimas."
+        }
       ]
     }
   }

@@ -38,7 +38,7 @@ from services.auth_service import AuthService
 from services.lesson_service import create_lesson
 from services.streak_service import StreakService
 from services.glossary_favorite_service import toggle_favorite, get_user_favorites, is_favorite
-from services.daily_term_service import get_daily_term_for_user
+from services.daily_term_service import get_daily_term_for_user, complete_daily_term
 from services.exam_service import ExamService
 from services.preference_engine import PreferenceEngine
 
@@ -615,6 +615,28 @@ def daily_term_v2(current_user_id):
     except Exception as e:
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error cargando término del día"}), 500
+    
+@app.route('/api/daily-term/complete', methods=['POST'])
+@token_required
+def complete_daily_term_route(current_user_id):
+    """Marca el término como completado y otorga el XP."""
+    data = request.get_json()
+    term_id = data.get('term_id')
+    
+    if not term_id:
+        return jsonify({"error": "ID del término es requerido"}), 400
+
+    try:
+        # Llama a la función de servicio que otorga el XP
+        result = complete_daily_term(current_user_id, term_id)
+        if result['success']:
+            return jsonify(result), 200
+        else:
+            # Devuelve 409 Conflict si ya se completó hoy
+            return jsonify(result), 409 
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({"error": "Error interno al completar el término"}), 500
 
 @app.route('/api/glossary/stats', methods=['GET'])
 def glossary_stats():

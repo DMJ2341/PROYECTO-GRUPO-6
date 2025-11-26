@@ -1,123 +1,99 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: Kr00k Vulnerability",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "Caso: Heartbleed (2014)",
+    "duration": 180,
     "content": {
-      "case_name": "Kr00k (CVE-2019-15126) - WiFi Vulnerability",
-      "date": "Feb 2020 (discovered)",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Wi-Fi_Logo.svg/1200px-Wi-Fi_Logo.svg.png",
-      "narrative": "Vulnerabilidad en chips WiFi Broadcom y Cypress. Tras disassociation, dispositivo transmitía frames con clave de cifrado zero (all zeros). Afectó miles de millones de dispositivos: iPhones, iPads, Macs, routers, IoT.",
-      "stats": [
-        {"label": "Dispositivos Vulnerables", "value": "1B+", "icon": "router"},
-        {"label": "CVSS Score", "value": "8.3", "icon": "warning"},
-        {"label": "Vendors Afectados", "value": "Amazon, Apple, Google, Samsung", "icon": "business"}
+      "story_title": "Heartbleed: OpenSSL Buffer Over-read",
+      "story_intro": "CVE-2014-0160, CVSS 7.5. Bug en OpenSSL por 2 años afectó 17% de internet",
+      "steps": [
+        {
+          "id": "1",
+          "icon": "favorite_border",
+          "title": "El Bug",
+          "content": "Heartbleed: buffer over-read en TLS heartbeat extension. Permite leer 64KB de memory del server por request. Passwords, private keys, session tokens leakeados.",
+          "insight": "Una línea de código missing bounds check = 500K sites vulnerables."
+        },
+        {
+          "id": "2",
+          "icon": "cloud",
+          "title": "Scope Masivo",
+          "content": "Afectó: Yahoo, Google, Amazon AWS, muchos banks. OpenSSL estaba en 66% de web servers. Bug existió desde 2012, discovered en 2014.",
+          "insight": "Open source critical infrastructure con solo 2 full-time developers. Underfunded = insecure."
+        },
+        {
+          "id": "3",
+          "icon": "build",
+          "title": "Remediation",
+          "content": "Patch: OpenSSL 1.0.1g released. PERO: private keys comprometidas = re-issue ALL certificates. Certificate revocation lists explotaron. Effort masivo.",
+          "insight": "Patching no es suficiente cuando keys están leaked. Certificate rotation es pain."
+        }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Seguridad WiFi - NIST SP 800-153",
+    "type": "memory_cards",
+    "title": "TLS/SSL Fundamentals",
+    "duration": 240,
     "content": {
-      "intro": "Estándares 802.11 y sus mecanismos de seguridad. Evolución: WEP → WPA → WPA2 → WPA3.",
-      "tabs": [
+      "cards": [
         {
-          "label": "WEP",
-          "title": "Wired Equivalent Privacy - OBSOLETO",
-          "text": "1997, 64 o 128-bit keys. Usa RC4. ROTO: vulnerable a ataque FMS, can crack in minutes con aircrack-ng. IV reutilization. NO USAR NUNCA.",
-          "icon": "block"
+          "id": "1",
+          "front": {
+            "icon": "lock",
+            "term": "TLS Handshake",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Establece encrypted connection. 1) ClientHello. 2) ServerHello + Certificate. 3) Key exchange. 4) Finished. Negotiates cipher suite, exchanges keys.",
+            "example": "TLS 1.3: Faster handshake (1-RTT vs 2-RTT). Removes weak ciphers. Mandatory forward secrecy. Heartbleed: TLS 1.0/1.1 affected.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "WPA/WPA2",
-          "title": "WiFi Protected Access",
-          "text": "WPA (2003): TKIP, mejora sobre WEP. WPA2 (2004): usa AES-CCMP, estándar actual. WPA2-Personal (PSK - Pre-Shared Key) vs WPA2-Enterprise (802.1X con RADIUS). Vulnerable a KRACK attack si no patcheado.",
-          "icon": "lock"
-        },
-        {
-          "label": "WPA3",
-          "title": "WiFi Protected Access 3",
-          "text": "2018. SAE (Simultaneous Authentication of Equals) reemplaza PSK. Protección contra offline dictionary attacks. Forward secrecy. OWE (Opportunistic Wireless Encryption) para redes abiertas. Mitigaciones contra Kr00k.",
-          "icon": "enhanced_encryption"
-        },
-        {
-          "label": "Enterprise",
-          "title": "802.1X / RADIUS Authentication",
-          "text": "Autenticación por usuario, no solo por dispositivo. EAP (Extensible Authentication Protocol): EAP-TLS (certificados), EAP-PEAP (password + TLS). RADIUS server valida credenciales. Usado en corporativo.",
-          "icon": "business_center"
+          "id": "2",
+          "front": {
+            "icon": "verified",
+            "term": "Certificates & CAs",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "X.509 certificates. CA (Certificate Authority) firma certificate. Browser trust CA root certificates. Chain of trust.",
+            "example": "Let's Encrypt: Free automated certificates. DigiCert, Sectigo: Commercial CAs. Heartbleed: Had to revoke/reissue millions of certs.",
+            "color": "#66BB6A"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "Ataques a Redes WiFi",
-    "content": {
-      "attacks": [
-        {
-          "name": "Evil Twin / Rogue AP",
-          "description": "Atacante crea AP falso con mismo SSID que red legítima. Usuarios se conectan pensando que es real. Atacante ve todo el tráfico no cifrado. Puede hacer phishing, MITM.",
-          "mitigation": "WPA2-Enterprise con certificados, educar usuarios, wireless IDS",
-          "icon": "warning"
-        },
-        {
-          "name": "Deauthentication Attack",
-          "description": "Enviar frames de deauth forjados para desconectar clientes del AP. Fuerza reconnect para capturar 4-way handshake (WPA2). Usado para offline cracking de PSK.",
-          "mitigation": "802.11w (Management Frame Protection) en WPA3, detectar excessive deauth frames",
-          "icon": "block"
-        },
-        {
-          "name": "KRACK (CVE-2017-13077)",
-          "description": "Key Reinstallation Attack contra WPA2. Forzar reinstalación de clave durante 4-way handshake. Permite decrypt, forge packets. Afectó todos los dispositivos WPA2. Requiere proximity física.",
-          "mitigation": "Patch devices, usar WPA3",
-          "icon": "vpn_key_off"
-        },
-        {
-          "name": "WPS PIN Brute Force",
-          "description": "WPS (WiFi Protected Setup) usa 8-digit PIN. Solo 11,000 combinaciones por diseño flawed. Puede crackearse en horas. Da acceso a WPA2 PSK.",
-          "mitigation": "Deshabilitar WPS completamente",
-          "icon": "pin"
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "practical_scenario",
-    "title": "Detecta Red Maliciosa",
-    "content": {
-      "scenario": "Escaneas redes WiFi en cafetería. Ves estas redes:",
-      "networks": [
-        {"ssid": "Starbucks WiFi", "security": "Open", "signal": "-45 dBm", "channel": "6"},
-        {"ssid": "Starbucks_Guest", "security": "WPA2-PSK", "signal": "-50 dBm", "channel": "6"},
-        {"ssid": "Starbucks WiFi", "security": "Open", "signal": "-55 dBm", "channel": "11"},
-        {"ssid": "xfinitywifi", "security": "Open", "signal": "-60 dBm", "channel": "1"}
-      ],
-      "questions": [
-        {
-          "q": "¿Qué red es probablemente Evil Twin?",
-          "a": "SSID 'Starbucks WiFi' en channel 11 con señal más débil. Hay dos redes con mismo nombre, una es fake.",
-          "red_flags": ["SSID duplicado", "Señal más débil (más lejos = sospechoso)"]
-        },
-        {
-          "q": "¿Qué harías?",
-          "a": "Verificar con empleados cuál es la red real. No conectarse a redes open sin VPN. Preferir WPA2-PSK si es legítima."
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 5,
     "type": "quiz",
-    "title": "Evaluación - Seguridad WiFi",
+    "title": "Evaluación - Encryption",
+    "duration": 60,
     "content": {
-      "question": "¿Qué mecanismo de WPA3 previene ataques de diccionario offline contra PSK?",
+      "question": "¿Por qué Heartbleed requirió revocar certificates?",
       "options": [
-        {"id": "a", "text": "SAE (Simultaneous Authentication of Equals)", "is_correct": true, "feedback": "Correcto. SAE usa Dragonfly handshake resistente a offline dictionary attacks, a diferencia del 4-way handshake de WPA2."},
-        {"id": "b", "text": "AES-256 encryption", "is_correct": false, "feedback": "No. AES cifra datos pero no previene captura de handshake para cracking offline."},
-        {"id": "c", "text": "802.1X authentication", "is_correct": false, "feedback": "No. 802.1X es para Enterprise, no es específico de WPA3."}
+        {
+          "id": "a",
+          "text": "Bug estaba en certificates mismos",
+          "is_correct": false,
+          "feedback": "Incorrecto. Certificates estaban bien. Heartbleed permitía leak PRIVATE KEYS from server memory."
+        },
+        {
+          "id": "b",
+          "text": "Private keys podían ser leakeadas desde server memory",
+          "is_correct": true,
+          "feedback": "CORRECTO! Heartbleed permitía read server memory. Si private key estaba en memory, atacante podía extraerla. Con private key, puede impersonate server, decrypt traffic. Por eso ALL certificates tuvieron que ser revoked y reissued con new keys."
+        },
+        {
+          "id": "c",
+          "text": "CAs fueron comprometidas",
+          "is_correct": false,
+          "feedback": "Incorrecto. CAs no fueron comprometidas. Cada server individual con Heartbleed era vulnerable a key extraction."
+        }
       ]
     }
   }

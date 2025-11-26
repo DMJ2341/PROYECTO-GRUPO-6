@@ -1,85 +1,92 @@
+# backend/services/daily_term_service.py
 from database.db import get_session
 from models.glossary import Glossary
 from models.daily_term_log import DailyTermLog
-from services.activity_service import ActivityService
+from models.activity import Activity, ActivityType # Asegúrate de que ActivityType esté definido en activity.py
 from sqlalchemy import func
 from datetime import date
+import sentry_sdk
 
-activity_service = ActivityService()
-DAILY_XP = 5
-
-def get_daily_term_for_user(user_id: int):
+def get_daily_term_for_user(user_id):
+    """
+    Obtiene el término del día para el usuario. No otorga XP automáticamente.
+    """
     session = get_session()
+    today = date.today()
     try:
-        today = date.today()
+        # 1. Determinar el término del día (Lógica de rotación simple)
+        total_terms = session.query(Glossary).count()
+        if total_terms == 0:
+            return None
 
-        # 1. ¿Ya vio el término de hoy?
-        already_viewed = session.query(DailyTermLog).filter_by(
-            user_id=user_id,
-            viewed_date=today
+        day_of_year = today.timetuple().tm_yday
+        term_id_offset = (day_of_year % total_terms) if total_terms > 0 else 0
+        
+        # Obtener el término basado en el offset
+        daily_term = session.query(Glossary).order_by(Glossary.id).offset(term_id_offset).first()
+        
+        if not daily_term:
+            return None
+
+        # 2. Verificar si el usuario ya completó este término hoy
+        already_viewed = session.query(DailyTermLog).filter(
+            DailyTermLog.user_id == user_id,
+            DailyTermLog.glossary_id == daily_term.id,
+            func.date(DailyTermLog.viewed_at) == today
         ).first()
 
-        if already_viewed:
-            # Devolver el mismo término que ya vio hoy
-            term = session.query(Glossary).get(already_viewed.glossary_id)
-            # ✅ CORRECCIÓN: Convertir a dict AHORA, dentro de la sesión viva
-            term_dict = term.to_dict() 
-            
-            return {
-                "term": term_dict,
-                "already_viewed": True,
-                "xp_reward": 0
-            }
-
-        # 2. Elegir término aleatorio no visto
-        viewed_ids = [
-            row[0] for row in session.query(DailyTermLog.glossary_id)
-            .filter_by(user_id=user_id)
-            .all()
-        ]
-
-        query = session.query(Glossary)
-        if viewed_ids:
-            query = query.filter(Glossary.id.notin_(viewed_ids))
-
-        term = query.order_by(func.random()).first()
-
-        if not term:
-            # Si ya vio todos, repetir aleatorio
-            term = session.query(Glossary).order_by(func.random()).first()
-
-        if not term:
-             return None
-
-        # ✅ CORRECCIÓN: Convertir a dict AHORA, antes de cualquier commit/close
-        term_dict = term.to_dict()
-        term_id = term.id # Guardamos el ID simple para usarlo después
-
-        # 3. Registrar visita y XP
-        log = DailyTermLog(
-            user_id=user_id,
-            glossary_id=term_id,
-            viewed_date=today
-        )
-        session.add(log)
-
-        activity_service.create_activity(
-            user_id=user_id,
-            activity_type="daily_term",
-            points=DAILY_XP,
-            description="Término del día aprendido"
-        )
-
-        session.commit()
-
         return {
-            "term": term_dict, # Devolvemos el diccionario, no el objeto SQLAlchemy
-            "already_viewed": False,
-            "xp_reward": DAILY_XP
+            "term": daily_term.to_dict(),
+            "already_viewed_today": already_viewed is not None,
+            "xp_reward": 5 # XP que se otorga al completarlo
         }
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return None
+    finally:
+        session.remove()
+
+def complete_daily_term(user_id, term_id, xp_amount=5):
+    """
+    Marca el término como completado y otorga el XP.
+    """
+    session = get_session()
+    today = date.today()
+    
+    try:
+        # 1. Verificar si ya se completó hoy
+        already_logged = session.query(DailyTermLog).filter(
+            DailyTermLog.user_id == user_id,
+            DailyTermLog.glossary_id == term_id,
+            func.date(DailyTermLog.viewed_at) == today
+        ).first()
+
+        if already_logged:
+            return {"success": False, "xp_earned": 0, "message": "Término diario ya completado hoy."}
+
+        # 2. Registrar la actividad de XP
+        activity = Activity(
+            user_id=user_id,
+            type=ActivityType.DAILY_TERM.value,
+            xp_amount=xp_amount,
+            description=f"Término diario ID {term_id} completado."
+        )
+        session.add(activity)
+
+        # 3. Registrar el log del término diario
+        daily_log = DailyTermLog(
+            user_id=user_id,
+            glossary_id=term_id
+        )
+        session.add(daily_log)
+        
+        session.commit()
+        
+        return {"success": True, "xp_earned": xp_amount, "message": f"¡Ganaste {xp_amount} XP por completar el término!"}
 
     except Exception as e:
         session.rollback()
-        raise e
+        sentry_sdk.capture_exception(e)
+        return {"success": False, "xp_earned": 0, "message": "Error interno al procesar el término."}
     finally:
-        session.close()
+        session.remove()

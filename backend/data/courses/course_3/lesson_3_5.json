@@ -1,7 +1,154 @@
 [
-  {"screen_id":1,"type":"story_hook","title":"Caso Real: Stuxnet - Physical Access","duration":120,"content":{"case_name":"Stuxnet Worm (2010) - Air-Gap Bypass","date":"Jun 2010","image_url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Stuxnet_icon.svg/1200px-Stuxnet_icon.svg.png","narrative":"Instalaciones nucleares de Irán air-gapped (sin conexión internet). Stuxnet se introdujo vía USB drives dejados en parking lot (baiting). Empleados recogieron USBs, insertaron en workstations. Worm saltó air-gap, llegó a PLCs que controlaban centrifugas. Destruyó 1000 centrifugas. Cyber-physical attack requirió acceso físico inicial.","stats":[{"label":"Zero-Days Usados","value":"4","icon":"bug_report"},{"label":"Centrifugas Destruidas","value":"1000","icon":"precision_manufacturing"},{"label":"Vector Inicial","value":"USB Baiting","icon":"usb"}]}},
-  {"screen_id":2,"type":"theory_tabs","title":"Controles de Acceso Físico - NIST SP 800-53 PE Family","content":{"intro":"Physical and Environmental Protection controls. Seguridad física es primera línea de defensa.","tabs":[{"label":"Perímetro","title":"Barreras Físicas","text":"Fences, gates, bollards. Múltiples layers. Reception/lobby como checkpoint. Security guards. Vehicle barriers. Lighting perimeter. CCTV visible (disuasión). Mantrap/access control vestibule para areas sensibles.","icon":"fence"},{"label":"Access Control","title":"Sistemas de Control","text":"Badge systems: HID proximity cards, smart cards, RFID. Biometric readers: huella, facial, iris. PIN pads (algo que sabes). Multi-factor físico. Tailgating prevention: turnstiles, mantraps. Anti-passback (no re-entry sin exit scan).","icon":"badge"},{"label":"Vigilancia","title":"Monitoreo y Detección","text":"CCTV: retention 30-90 días. Motion detectors. Door/window sensors. Security guards (patrols). Visitor management system: registro, badge temporal, escort required. Alert on forced entry, door held open.","icon":"videocam"},{"label":"Data Center","title":"Protección de Instalaciones","text":"Biometric + PIN para entry. Server cages con locks. Cable locks en equipment. Asset tracking. Environmental: HVAC, fire suppression (gas, no water), UPS, generator. Water detection. Temperature/humidity monitoring.","icon":"dns"}]}},
-  {"screen_id":3,"type":"theory_section","title":"Ataques Físicos Comunes","content":{"attacks":[{"name":"Tailgating/Piggybacking","description":"Seguir a persona autorizada a través de puerta. Tailgating: sin consentimiento. Piggybacking: persona autorizada deja entrar (social engineering). Mitigate: mantraps, security awareness, guards.","icon":"people"},{"name":"Baiting","description":"Dejar dispositivo infectado (USB, CD) donde target lo encuentre. Curiosidad o greed. Label 'Executive Salaries' o 'Confidential'. Stuxnet usó esto. Mitigate: USB port control, disable autorun, awareness training.","icon":"usb"},{"name":"Dumpster Diving","description":"Buscar información en basura: documentos no shredded, discos no destroyed. Recuperar passwords, network diagrams. Legal en muchos lugares. Mitigate: shred todo documento sensible, degauss/destroy discos, locked dumpsters.","icon":"delete"},{"name":"Shoulder Surfing","description":"Observar passwords/PINs mientras usuario tipea. ATMs, laptops en café. Low-tech pero efectivo. Mitigate: privacy screens, awareness, shield keyboard.","icon":"visibility"}],"stuxnet_lesson":"Air-gap NO es suficiente si no controlas acceso físico. USB policies, DLP en USBs, whitelist dispositivos, awareness training críticos."}},
-  {"screen_id":4,"type":"practical_scenario","title":"Diseña Seguridad Física para Data Center","content":{"requirements":["Tier 3 data center (24/7 operations)","Almacena datos financieros (PCI-DSS)","100 racks de servers","Personal: 20 IT staff, 5 security guards, contractors ocasionales"],"your_design":{"perimeter":["8ft fence con barbed wire","Vehicle gate con guard 24/7","Bollards para anti-ram","CCTV perimeter, 90 día retention"],"building_entry":["Reception: visitors log, issue temp badge","Badge + PIN para employees","Biometric (huella) para IT staff","Escort required para contractors"],"data_center_floor":["Mantrap con badge + biometric","Server cages con locks individuales","Cable locks en equipment crítico","No phones/cameras allowed (lockers outside)","Asset tracking system"],"environmental":["Redundant HVAC","Gas fire suppression (FM-200)","UPS + diesel generator","Water leak detection","Temp/humidity monitoring con alerts"],"monitoring":["CCTV en todos los ángulos","Motion detectors after hours","Door sensors (alert si held open)","Security patrol cada 2 horas","SIEM integration: physical + logical access"]}}},
-  {"screen_id":5,"type":"quiz","title":"Evaluación - Seguridad Física","content":{"question":"Stuxnet usó USB baiting para entrar a instalación air-gapped. ¿Qué controles físicos habrían ayudado?","options":[{"id":"a","text":"USB port control (whitelist) + security awareness training + DLP en removable media","is_correct":true,"feedback":"Correcto. Deshabilitar USB ports salvo dispositivos autorizados. Educar sobre no insertar USBs desconocidos. DLP previene exfiltración si ya comprometido."},{"id":"b","text":"Solo firewall más fuerte","is_correct":false,"feedback":"No. Sistema era air-gapped (sin red externa). Firewall no ayuda contra USB físico."},{"id":"c","text":"Antivirus signature-based","is_correct":false,"feedback":"Stuxnet era zero-day con 4 vulns desconocidas. Signatures no existían. Behavioral analysis habría ayudado más."}]}}
+  {
+    "screen_id": 1,
+    "type": "memory_cards",
+    "title": "Cloud IAM",
+    "duration": 240,
+    "content": {
+      "cards": [
+        {
+          "id": "1",
+          "front": {
+            "icon": "cloud",
+            "term": "AWS IAM",
+            "color": "#FF9900"
+          },
+          "back": {
+            "definition": "Users, Groups, Roles, Policies. Policies en JSON. Least privilege. Service accounts via roles (no long-term keys). Federated access (SSO).",
+            "example": "Policy: Allow S3:GetObject on specific bucket. Role: Lambda execution role. Root account: Never use for daily ops. MFA on root.",
+            "color": "#FFB366"
+          }
+        },
+        {
+          "id": "2",
+          "front": {
+            "icon": "cloud",
+            "term": "Azure AD / Entra ID",
+            "color": "#0078D4"
+          },
+          "back": {
+            "definition": "Identity platform. Users, Groups, Service Principals, Managed Identities. RBAC. Conditional Access (Zero Trust). Integration con O365.",
+            "example": "Conditional Access: Allow login IF (MFA passed AND compliant device AND trusted location). Service Principal = app identity.",
+            "color": "#4DA6FF"
+          }
+        },
+        {
+          "id": "3",
+          "front": {
+            "icon": "cloud",
+            "term": "GCP IAM",
+            "color": "#4285F4"
+          },
+          "back": {
+            "definition": "Members (users, groups, service accounts). Roles (primitive, predefined, custom). Policies. Organization > Folder > Project hierarchy. Least privilege.",
+            "example": "Predefined roles: roles/storage.objectViewer. Custom roles para granular control. Service account keys: Rotate o mejor use Workload Identity.",
+            "color": "#669DF6"
+          }
+        },
+        {
+          "id": "4",
+          "front": {
+            "icon": "api",
+            "term": "Cross-Account Access",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Assume roles across AWS accounts. Azure service principals cross-tenant. Federation. Avoid long-term keys. Use temporary credentials (STS).",
+            "example": "AWS STS AssumeRole: Dev account → Prod account read-only access for troubleshooting. Time-limited credentials. Audit trail.",
+            "color": "#BA68C8"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 2,
+    "type": "progress_checklist",
+    "title": "Cloud IAM Best Practices",
+    "duration": 240,
+    "content": {
+      "items": [
+        {
+          "id": "cloud1",
+          "task": "Eliminate Root/Admin Daily Use",
+          "subtitle": "Break glass only",
+          "icon": "warning",
+          "unlock_content": {
+            "title": "Privileged Account Management",
+            "points": [
+              "AWS root: MFA obligatorio. Store credentials in vault. Use ONLY for billing/account closure.",
+              "Azure Global Admin: Similar. Daily ops use lower-privileged roles.",
+              "Create admin users con MFA. Use for day-to-day.",
+              "Capital One: Over-privileged roles caused SSRF impact. Least privilege.",
+              "Audit: CloudTrail/Azure Activity Log. Alert on root/admin usage."
+            ],
+            "bonus_fact": "AWS best practice: Root access maybe once a year. Everything else via IAM users/roles."
+          }
+        },
+        {
+          "id": "cloud2",
+          "task": "Service Account Hygiene",
+          "subtitle": "Eliminate long-term keys",
+          "icon": "key",
+          "unlock_content": {
+            "title": "Workload Identity",
+            "points": [
+              "AWS: Use IAM roles for EC2/Lambda. No access keys in code.",
+              "Azure: Managed Identities. App gets token from metadata service.",
+              "GCP: Workload Identity. No service account key files.",
+              "Rotate keys: If must use keys, rotate every 90 days.",
+              "Uber breach: AWS keys in GitHub. Eliminate keys = eliminate this vector."
+            ],
+            "bonus_fact": "GitHub scans for leaked keys. 10K+ repos removed monthly for exposed credentials."
+          }
+        },
+        {
+          "id": "cloud3",
+          "task": "Implement SCPs/Azure Policy",
+          "subtitle": "Guardrails",
+          "icon": "policy",
+          "unlock_content": {
+            "title": "Organization-level Controls",
+            "points": [
+              "AWS SCPs: Organization-wide deny rules. Ex: Deny region outside US.",
+              "Azure Policy: Enforce tagging, allowed VM sizes, require encryption.",
+              "GCP Organization Policies: Similar. Centralized governance.",
+              "Prevent: Developers spinning up expensive resources, data in wrong regions.",
+              "Compliance: GDPR data residency enforced via policy."
+            ],
+            "bonus_fact": "SCPs override ALL IAM permissions. Ultimate guardrail for multi-account environments."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "screen_id": 3,
+    "type": "quiz",
+    "title": "Evaluación - Cloud IAM",
+    "duration": 60,
+    "content": {
+      "question": "¿Cómo prevenir Uber-style leak (AWS keys en GitHub)?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Educar developers sobre no commitear keys",
+          "is_correct": false,
+          "feedback": "Incorrecto. Training ayuda pero humans make mistakes. Need technical control."
+        },
+        {
+          "id": "b",
+          "text": "IAM roles con temporary credentials. No long-term keys. GitHub scanning.",
+          "is_correct": true,
+          "feedback": "CORRECTO! 1) Use IAM roles (EC2 instance profile, Lambda execution role) = temporary credentials, auto-rotate. 2) Eliminate service account keys donde posible (AWS roles, Azure Managed Identity, GCP Workload Identity). 3) GitHub secret scanning + pre-commit hooks (detect-secrets). 4) Rotate keys if must use (90 days). 5) AWS CloudTrail alert on key creation. Defense in depth."
+        },
+        {
+          "id": "c",
+          "text": "Private repos en vez de public",
+          "is_correct": false,
+          "feedback": "Incorrecto. Uber keys estaban en private repo. Attacker gained access. Keys no deben existir in code period."
+        }
+      ]
+    }
+  }
 ]

@@ -1,182 +1,205 @@
 [
   {
     "screen_id": 1,
-    "type": "story_hook",
-    "title": "Caso Real: SolarWinds - Detection Challenges",
-    "duration": 120,
+    "type": "step_revelation",
+    "title": "Caso: Target Point-of-Sale Breach (2013)",
+    "duration": 220,
     "content": {
-      "case_name": "SolarWinds SUNBURST APT29 (2020)",
-      "date": "Mar-Dec 2020",
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/SolarWinds_logo.svg/1200px-SolarWinds_logo.svg.png",
-      "narrative": "APT más sofisticado de la década. Supply chain: backdoor en updates de Orion. SUNBURST malware extremadamente sigiloso: dormía 2 semanas, DGA domains, imitaba tráfico legítimo Orion, fileless, living-off-the-land. FireEye lo descubrió por coincidencia tras ser ellos mismos comprometidos. 9 meses sin detectar.",
-      "stats": [
+      "story_title": "Target: 40M Credit Cards via HVAC Vendor",
+      "story_intro": "Supply chain + POS malware = massive breach during holiday shopping",
+      "steps": [
         {
-          "label": "Dwell Time",
-          "value": "9 meses",
-          "icon": "schedule"
+          "id": "1",
+          "icon": "hvac",
+          "title": "Supply Chain Entry: Fazio Mechanical",
+          "content": "Attackers phished Fazio Mechanical (HVAC vendor). Small vendor tenía VPN access a Target network para billing. Compromised Fazio credentials → Target network access.",
+          "insight": "Supply chain is weakest link. Vendors with network access = attack vector. Trust pero verify."
         },
         {
-          "label": "Organizations Impacted",
-          "value": "18K",
-          "icon": "business"
+          "id": "2",
+          "icon": "bug_report",
+          "title": "Malware: BlackPOS RAM Scraper",
+          "content": "Deployed BlackPOS malware en POS terminals. Memory scraping: captura credit card data ANTES de encryption. Track 1&2 data (full card info including CVV).",
+          "insight": "POS malware scrapes RAM donde cards están en plaintext momentarily. P2PE (Point-to-Point Encryption) mitiga."
         },
         {
-          "label": "Gov Agencies Breached",
-          "value": "9+",
-          "icon": "account_balance"
+          "id": "3",
+          "icon": "warning",
+          "title": "Detection Failure: FireEye Alerted, Ignored",
+          "content": "Target tenía FireEye (top-tier security). FireEye detectó malware, alertó security team. PERO: Alert ignored/dismissed as false positive. Breach continuó 2+ weeks.",
+          "insight": "Having tools ≠ being secure. Alert fatigue, lack of trained analysts = detection failures."
+        },
+        {
+          "id": "4",
+          "icon": "credit_card",
+          "title": "Exfiltration: 40M Cards Stolen",
+          "content": "Nov-Dec 2013 (holiday shopping season). 40M credit/debit cards, 70M customer records total. Data exfiltrated to servers en Brazil y Russia. Sold on dark web.",
+          "insight": "Timing: holiday season = max transactions = max value. Attackers pick timing strategically."
+        },
+        {
+          "id": "5",
+          "icon": "gavel",
+          "title": "Aftermath: $292M Cost",
+          "content": "$292M total cost: settlements, legal fees, remediation, brand damage. CEO/CIO resigned. New CISO hired. PCI compliance questioned. Class action lawsuits.",
+          "insight": "Breach costs go beyond immediate response. Brand damage, executive turnover, years of lawsuits."
         }
       ]
     }
   },
   {
     "screen_id": 2,
-    "type": "theory_tabs",
-    "title": "Fuentes de Detección",
+    "type": "memory_cards",
+    "title": "Detection Technologies",
+    "duration": 240,
     "content": {
-      "intro": "Múltiples fuentes generan alertas de potenciales incidentes. SIEM agrega y correlaciona.",
-      "tabs": [
+      "cards": [
         {
-          "label": "SIEM/SOAR",
-          "title": "Security Info & Event Mgmt",
-          "text": "Agrega logs de firewalls, IDS, endpoints, AD, apps. Correlation rules detectan patterns: failed logins múltiples, privilege escalation, data exfiltration. SOAR (Security Orchestration Automation Response) automatiza workflows. Ejemplos: Splunk, Elastic, QRadar.",
-          "icon": "dashboard"
+          "id": "1",
+          "front": {
+            "icon": "analytics",
+            "term": "SIEM - Security Information & Event Management",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Centralized log aggregation y correlation. Collect logs from all sources (firewalls, servers, endpoints). Rules y ML para detect anomalies. Alerting.",
+            "example": "Splunk, QRadar, Sentinel. Target tenía FireEye (SIEM-like) pero ignored alerts. SIEM only as good as SOC analyzing it. Alert fatigue real.",
+            "color": "#42A5F5"
+          }
         },
         {
-          "label": "EDR/XDR",
-          "title": "Endpoint/Extended Detection",
-          "text": "EDR: behavioral detection en endpoints (CrowdStrike, SentinelOne). Ve process execution, file changes, network connections, memory. XDR: correlaciona endpoint + network + cloud. Detecta living-off-the-land, fileless malware.",
-          "icon": "computer"
+          "id": "2",
+          "front": {
+            "icon": "computer",
+            "term": "EDR - Endpoint Detection & Response",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Agent en endpoints. Behavioral analysis, process monitoring, network connections, file integrity. Detect malware, lateral movement. Response: isolate, kill processes.",
+            "example": "CrowdStrike, SentinelOne, Microsoft Defender ATP. Target needed EDR en POS terminals. Would detect BlackPOS memory scraping.",
+            "color": "#66BB6A"
+          }
         },
         {
-          "label": "IDS/IPS",
-          "title": "Network Intrusion Detection",
-          "text": "Signatures de ataques conocidos. Anomaly detection para desconocidos. Snort, Suricata. Genera muchas alertas - tuning crítico para reducir falsos positivos. SUNBURST evadió signatures imitando tráfico legítimo.",
-          "icon": "sensors"
+          "id": "3",
+          "front": {
+            "icon": "network_check",
+            "term": "NDR - Network Detection & Response",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Network traffic analysis. Detect lateral movement, C2 beaconing, data exfiltration. East-west traffic monitoring (not just north-south perimeter).",
+            "example": "Darktrace, ExtraHop, Corelight (Zeek). Target: NDR hubiera detectado exfiltration a Brazil/Russia. Unusual destinations.",
+            "color": "#FFB74D"
+          }
         },
         {
-          "label": "Threat Intel",
-          "title": "Intelligence Feeds",
-          "text": "IOCs compartidos: IPs maliciosas, domains, file hashes. STIX/TAXII protocols. ISACs (sector-specific). CISA alerts. Enriquece alertas con contexto. Threat hunting usa intel para buscar proactivamente.",
-          "icon": "psychology"
+          "id": "4",
+          "front": {
+            "icon": "cloud",
+            "term": "UEBA - User & Entity Behavior Analytics",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Baseline normal behavior. Detect anomalies: logins from unusual locations, access unusual files, off-hours activity. ML-driven.",
+            "example": "Exabeam, Securonix. Target: UEBA hubiera detectado Fazio credentials used from unusual location to access unusual systems (POS).",
+            "color": "#BA68C8"
+          }
         }
       ]
     }
   },
   {
     "screen_id": 3,
-    "type": "theory_section",
-    "title": "Indicators of Compromise (IOCs)",
+    "type": "progress_checklist",
+    "title": "SOC (Security Operations Center)",
+    "duration": 300,
     "content": {
-      "ioc_types": [
+      "items": [
         {
-          "type": "Network IOCs",
-          "examples": [
-            "IPs maliciosas: 45.141.84.223",
-            "Domains: avsvmcloud.com (SUNBURST C2)",
-            "URLs",
-            "Unusual ports",
-            "Beaconing patterns"
-          ]
+          "id": "soc1",
+          "task": "SOC Tiers",
+          "subtitle": "Escalation model",
+          "icon": "layers",
+          "unlock_content": {
+            "title": "SOC Structure",
+            "points": [
+              "Tier 1 (Analysts): Triage alerts. Initial investigation. Known playbooks. Escalate unknowns.",
+              "Tier 2 (Incident Responders): Deep dive investigations. Threat hunting. Complex incidents.",
+              "Tier 3 (Threat Hunters/Engineers): Proactive hunting. Tool tuning. Advanced threats.",
+              "SOC Manager: Metrics, staffing, process improvement.",
+              "Target issue: Analysts dismissed FireEye alert. Training gap."
+            ],
+            "bonus_fact": "Good SOC: 24/7 coverage, clear escalation paths, continuous training, low analyst burnout."
+          }
         },
         {
-          "type": "Host IOCs",
-          "examples": [
-            "File hashes: SHA256 of malware",
-            "Registry keys created",
-            "Mutexes",
-            "Scheduled tasks",
-            "Services created"
-          ]
+          "id": "soc2",
+          "task": "Alert Fatigue Problem",
+          "subtitle": "Too many false positives",
+          "icon": "notifications_off",
+          "unlock_content": {
+            "title": "The Challenge",
+            "points": [
+              "Average SOC: 10K+ alerts/day. Analysts can review ~100/day.",
+              "99% are false positives (benign). Finding 1% true positives = needle in haystack.",
+              "Result: Alert fatigue. Analysts become numb. Miss critical alerts (Target).",
+              "Solutions: SOAR automation, ML for prioritization, tuning rules, alert suppression.",
+              "Measurement: MTTD (Mean Time To Detect), MTTR (Mean Time To Respond)"
+            ],
+            "bonus_fact": "Ponemon study: Average data breach discovered after 207 days. Detection is hard."
+          }
         },
         {
-          "type": "Behavioral IOCs",
-          "examples": [
-            "Living-off-the-land: PowerShell, WMI, PsExec abuse",
-            "Unusual process parent-child relationships",
-            "Lateral movement patterns",
-            "Data staging in temp folders",
-            "Compression/encryption of data before exfil"
-          ]
+          "id": "soc3",
+          "task": "Threat Intelligence Integration",
+          "subtitle": "Context for decisions",
+          "icon": "info",
+          "unlock_content": {
+            "title": "Intelligence-Driven",
+            "points": [
+              "Tactical: IoCs (IPs, domains, hashes). Block known bad.",
+              "Operational: TTPs (Tactics, Techniques, Procedures). Detect behavior.",
+              "Strategic: Adversary motivations, trends. Inform strategy.",
+              "Feeds: MISP, Threat Connect, commercial (Recorded Future, Mandiant).",
+              "Target: Threat intel on BlackPOS existed. Should have hunted for it."
+            ],
+            "bonus_fact": "MITRE ATT&CK framework maps TTPs. SOC uses to detect techniques, not just IoCs."
+          }
         }
-      ],
-      "sunburst_iocs": {
-        "domains": "DGA algorithm, looked like legit Orion telemetry",
-        "behavior": "Dormant 12-14 days, then called home via DNS/HTTP",
-        "evasion": "Checked for AV/sandboxes, terminated if detected"
-      },
-      "ioc_sharing": "Compartir IOCs vía STIX/TAXII, MISP platforms. Community defense."
+      ]
     }
   },
   {
     "screen_id": 4,
-    "type": "practical_exercise",
-    "title": "Alert Triage - True vs False Positive",
-    "content": {
-      "scenario": "Eres SOC analyst. Tienes 5 alertas. Prioriza y clasifica.",
-      "alerts": [
-        {
-          "id": 1,
-          "alert": "Failed login: user 'jsmith' - 15 attempts in 5 min from 192.168.1.50",
-          "severity": "Medium",
-          "analysis": "Investigate. Possible brute force or user forgot password. Check if jsmith is valid user, if IP is their usual workstation. Correlate with other jsmith activity.",
-          "verdict": "Likely TRUE POSITIVE if unusual, could be FALSE if user issue"
-        },
-        {
-          "id": 2,
-          "alert": "Outbound connection: workstation 10.0.0.100 → 185.220.101.34:443 (Tor exit node)",
-          "severity": "High",
-          "analysis": "RED FLAG. Corporate workstation no debería contactar Tor. Possible C2, exfiltration, or employee using Tor (policy violation). Investigate immediately. Check process making connection, user logged in.",
-          "verdict": "TRUE POSITIVE - investigate"
-        },
-        {
-          "id": 3,
-          "alert": "Antivirus: Quarantined 'test.exe' on 10.0.0.45",
-          "severity": "Low",
-          "analysis": "AV funcionó. Verify quarantine exitosa. Check si fue descarga de email/web. User awareness si phishing. Monitor for reinfection attempts.",
-          "verdict": "TRUE POSITIVE but contained"
-        },
-        {
-          "id": 4,
-          "alert": "Port scan detected: 203.0.113.50 scanning TCP ports 1-1024 on 192.168.1.0/24",
-          "severity": "High",
-          "analysis": "External reconnaissance. Check firewall blocks. If interno, possible compromised host doing recon. Identify source (internal vs external). Block if malicious.",
-          "verdict": "TRUE POSITIVE - reconnaissance"
-        },
-        {
-          "id": 5,
-          "alert": "Large file transfer: 10.0.0.200 uploaded 5GB to dropbox.com",
-          "severity": "Medium",
-          "analysis": "Could be legitimate (user backing up) or exfiltration. Check user, if files are sensitive, DLP policy. Correlate with other suspicious activity from .200. May be FALSE positive if legit business use.",
-          "verdict": "INVESTIGATE - context needed"
-        }
-      ],
-      "prioritization": "Order: #2 (Tor C2), #4 (Port scan), #1 (Brute force), #5 (Large transfer), #3 (AV contained)"
-    }
-  },
-  {
-    "screen_id": 5,
     "type": "quiz",
     "title": "Evaluación - Detection",
+    "duration": 90,
     "content": {
-      "question": "SUNBURST evadió detección 9 meses imitando tráfico legítimo. ¿Qué habría ayudado a detectarlo más temprano?",
+      "question": "Target breach: ¿Por qué FireEye detection failed?",
       "options": [
         {
           "id": "a",
-          "text": "Behavioral analysis + threat hunting + NetFlow anomaly detection",
-          "is_correct": true,
-          "feedback": "Correcto. Beaconing pattern detectable en NetFlow. Behavioral analysis vs baseline. Threat hunting proactivo buscando anomalías. Signatures no funcionaron porque imitaba legítimo."
+          "text": "FireEye no detectó el malware",
+          "is_correct": false,
+          "feedback": "Incorrecto. FireEye SÍ detectó BlackPOS malware y alertó security team. Technology funcionó."
         },
         {
           "id": "b",
-          "text": "Solo antivirus signature-based",
-          "is_correct": false,
-          "feedback": "No. SUNBURST era desconocido, fileless. Signatures inútiles contra APT sofisticado."
+          "text": "Security team dismissed alerts como false positives. Alert fatigue + lack of training.",
+          "is_correct": true,
+          "feedback": "CORRECTO! FireEye detected malware y alertó multiple times. Security analysts dismissed alerts creyendo eran false positives. Causas: 1) Alert fatigue (too many alerts daily). 2) Lack of training to recognize true positives. 3) No escalation cuando uncertain. 4) Culture que no empowered analysts to act. Having best tools ≠ security. Need trained SOC + proper processes. Target paid for FireEye pero no aprovechó."
         },
         {
           "id": "c",
-          "text": "Firewall más restrictivo",
+          "text": "BlackPOS era zero-day sin signatures",
           "is_correct": false,
-          "feedback": "Parcial. Firewall ayuda pero tráfico parecía legítimo Orion telemetry. Detection requiere behavioral analytics."
+          "feedback": "Incorrecto. BlackPOS no era zero-day. Variants conocidos. FireEye lo detectó, lo cual prueba tenía signatures/behavior patterns."
+        },
+        {
+          "id": "d",
+          "text": "Target no tenía SIEM",
+          "is_correct": false,
+          "feedback": "Incorrecto. Target tenía FireEye (enterprise-grade). Problem no fue lack of tools sino people/process."
         }
       ]
     }
