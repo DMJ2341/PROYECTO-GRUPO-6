@@ -1,4 +1,4 @@
-# backend/app.py - VERSIÓN CORREGIDA Y COMPLETA
+# backend/app.py - VERSIÓN CORREGIDA Y ROBUSTA
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.db import get_session, create_all
@@ -7,7 +7,7 @@ import jwt
 import datetime
 from functools import wraps
 import sentry_sdk
-from config import Config  # ✅ Importamos la config centralizada
+from config import Config  # ✅ Importamos la configuración segura
 
 # --- MODELOS ---
 from models.user import User
@@ -53,41 +53,58 @@ sentry_sdk.init(
 )
 
 app = Flask(__name__)
-# Cargar configuración desde config.py
+# Cargar configuración desde config.py (que lee variables de entorno)
 app.config.from_object(Config)
 CORS(app)
 
 # INICIALIZACIÓN DE BASE DE DATOS
 try:
     with app.app_context():
+        # Usamos create_all solo si no usas migraciones (Alembic)
+        create_all()
         session = get_session()
         session.execute(text("SELECT 1"))
         print("✅ Base de datos conectada correctamente")
 except Exception as e:
     sentry_sdk.capture_exception(e)
     print(f"❌ Error conectando a la base de datos: {e}")
-    raise
+    # No lanzamos raise aquí para permitir que la app intente arrancar y reportar errores
 
-# ---------- AUTH DECORATOR ----------
+# ---------- AUTH DECORATOR (CORREGIDO) ----------
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token:
+        token = None
+        auth_header = request.headers.get('Authorization')
+        
+        if not auth_header:
             return jsonify({'error': 'Token es requerido'}), 401
+        
+        # Lógica robusta para extraer el token
+        parts = auth_header.split()
+        if len(parts) == 2 and parts[0].lower() == 'bearer':
+            token = parts[1]
+        elif len(parts) == 1:
+            token = parts[0]
+        else:
+            return jsonify({'error': 'Formato de token inválido'}), 401
+
         try:
-            if token.startswith('Bearer '):
-                token = token[7:]
-            # Usamos la clave secreta desde la configuración
+            # Usamos la clave secreta desde la configuración segura
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             current_user_id = data['user_id']
             
+            # Contexto para Sentry
             sentry_sdk.set_user({"id": current_user_id, "email": data.get('email')})
             
         except jwt.ExpiredSignatureError:
             return jsonify({'error': 'Token expirado'}), 401
         except jwt.InvalidTokenError:
             return jsonify({'error': 'Token inválido'}), 401
+        except Exception as e:
+            sentry_sdk.capture_exception(e)
+            return jsonify({'error': 'Error procesando token'}), 401
+            
         return f(current_user_id, *args, **kwargs)
     return decorated
 
@@ -97,9 +114,9 @@ def health_check():
     return jsonify({
         'status': 'OK', 
         'message': 'CyberLearn API Operativa',
-        'version': '3.1.0',
+        'version': '3.1.1',
         'database': 'Conectada',
-        'environment': 'Producción - Servidor'
+        'environment': 'Producción'
     })
 
 # ==========================================
@@ -783,7 +800,7 @@ def home():
     return jsonify({
         "message": "🚀 CyberLearn API - Servidor de Producción",
         "status": "activo", 
-        "version": "3.1.0",
+        "version": "3.1.1",
         "features": "Auth, CMS, Progress, Badges, Glossary, Assessments"
     })
 
@@ -794,6 +811,6 @@ if __name__ == '__main__':
         print("✅ Tablas de base de datos verificadas")
     except Exception as e:
         sentry_sdk.capture_exception(e)
-        print(f"⚠️ Error creando tablas: {e}")
+        print(f"⚠️ Error creando tablas (Ignorar si ya existen y usas migraciones): {e}")
     
     app.run(host='0.0.0.0', port=8000, debug=False)

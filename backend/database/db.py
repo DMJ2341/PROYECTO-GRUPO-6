@@ -7,11 +7,14 @@ from sqlalchemy.ext.declarative import declarative_base
 
 load_dotenv()
 
-# Es mejor fallar si no hay URL en producción que dejar una contraseña hardcodeada,
-# pero si mantienes el fallback, asegúrate de que sea solo para desarrollo.
-DB_URL = os.getenv('DATABASE_URL', 'postgresql://app_cyberlearn:CyberLearn2025*@172.232.188.183:5432/cyberlearn_db')
+# Obtenemos la URL de forma segura
+DB_URL = os.getenv('DATABASE_URL')
 
-# ✅ CORRECCIÓN: pool_pre_ping dentro de los paréntesis
+if not DB_URL:
+    raise ValueError("❌ DATABASE_URL no está configurada. Revisa tu archivo .env")
+
+# Creamos el motor con la URL segura
+# pool_pre_ping=True ayuda a reconectar si la base de datos cierra la conexión
 engine = create_engine(DB_URL, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
