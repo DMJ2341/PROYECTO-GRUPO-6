@@ -34,9 +34,10 @@ interface ApiService {
         @Path("courseId") courseId: Int
     ): Response<List<Lesson>>
 
-    // --- LECCIONES (NUEVO SISTEMA) ---
+    // --- LECCIONES (SOLUCIÓN APLICADA) ---
+    // Usamos el nombre específico 'getLessonDetail' apuntando a 'lessons/{lessonId}'
     @GET("lessons/{lessonId}")
-    suspend fun getLesson(
+    suspend fun getLessonDetail(
         @Header("Authorization") token: String,
         @Path("lessonId") lessonId: String
     ): Response<LessonResponse>
@@ -47,7 +48,7 @@ interface ApiService {
         @Path("lessonId") lessonId: String
     ): Response<Unit>
 
-    // --- ASSESSMENTS (Test Vocacional & Examen Final) ---
+    // --- ASSESSMENTS ---
     @GET("preference-test/questions")
     suspend fun getPreferenceQuestions(@Header("Authorization") token: String): Response<PreferenceTestResponse>
 

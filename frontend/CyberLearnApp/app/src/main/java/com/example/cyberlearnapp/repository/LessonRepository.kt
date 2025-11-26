@@ -10,25 +10,27 @@ import javax.inject.Singleton
 class LessonRepository @Inject constructor(
     private val apiService: ApiService
 ) {
-    // Obtiene la lección completa (con su JSON de pantallas)
+    // Ahora llamamos explícitamente a getLessonDetail
     suspend fun getLesson(lessonId: String): LessonResponse {
         val token = "Bearer ${AuthManager.getToken() ?: ""}"
-        val response = apiService.getLesson(token, lessonId)
+
+        // ✅ CAMBIO CLAVE: Llamada al método renombrado
+        val response = apiService.getLessonDetail(token, lessonId)
 
         if (response.isSuccessful && response.body() != null) {
             return response.body()!!
         } else {
-            throw Exception("Error ${response.code()}: No se pudo cargar la lección")
+            // Si falla, lanzamos error con código para debug
+            throw Exception("Error ${response.code()}: ${response.message()}")
         }
     }
 
-    // Marca la lección como terminada
     suspend fun markLessonComplete(lessonId: String) {
         val token = "Bearer ${AuthManager.getToken() ?: ""}"
         val response = apiService.completeLesson(token, lessonId)
 
         if (!response.isSuccessful) {
-            throw Exception("Error al guardar el progreso: ${response.message()}")
+            throw Exception("Error al completar lección: ${response.code()}")
         }
     }
 }

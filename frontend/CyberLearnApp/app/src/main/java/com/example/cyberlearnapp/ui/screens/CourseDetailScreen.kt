@@ -74,8 +74,6 @@ fun CourseDetailScreen(
 
         // Lista de Lecciones
         items(lessons.sortedBy { it.orderIndex }) { lesson ->
-            // Lógica simple: Desbloqueada si es la 1ra, la anterior está lista, o ella misma está lista
-            // Asumimos que el ViewModel o Backend podría mandar 'isLocked', pero aquí lo calculamos visualmente si falla
             val isUnlocked = !lesson.isLocked || lesson.isCompleted
 
             ListItem(
