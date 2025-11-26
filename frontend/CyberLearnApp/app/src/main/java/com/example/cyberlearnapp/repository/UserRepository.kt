@@ -1,40 +1,42 @@
 package com.example.cyberlearnapp.repository
 
 import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.models.DashboardData
-import com.example.cyberlearnapp.network.models.User
+import com.example.cyberlearnapp.network.models.CompleteDailyTermRequest
+import com.example.cyberlearnapp.network.models.CompleteDailyTermResponse
+import com.example.cyberlearnapp.network.models.DashboardResponse
+import com.example.cyberlearnapp.network.models.DailyTermWrapper
+import com.example.cyberlearnapp.network.models.UserProfileResponse // ✅ CORRECCIÓN: Referencia al nuevo nombre
+import com.example.cyberlearnapp.network.models.AuthResponse
 import com.example.cyberlearnapp.utils.AuthManager
+import com.example.cyberlearnapp.utils.safeApiCall
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class UserRepository @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val authManager: AuthManager
 ) {
-    private fun getToken(): String = "Bearer ${AuthManager.getToken() ?: ""}"
+    // ... (Otras funciones)
 
-    // Obtener perfil de usuario
-    suspend fun getUserProfile(): User {
-        val response = apiService.getUserProfile(getToken())
-        if (response.isSuccessful && response.body() != null) {
-            return response.body()!!.user
-        } else {
-            throw Exception("Error al obtener perfil")
-        }
+    suspend fun getDashboard(): DashboardResponse = safeApiCall {
+        apiService.getDashboard().body()!!
     }
 
-    // Obtener datos del Dashboard (XP, Nivel, Badges)
-    suspend fun getDashboard(): DashboardData {
-        val response = apiService.getDashboard(getToken())
-        if (response.isSuccessful && response.body() != null) {
-            return response.body()!!.dashboard
-        } else {
-            throw Exception("Error al cargar dashboard")
-        }
+    suspend fun getDailyTerm(): DailyTermWrapper = safeApiCall {
+        apiService.getDailyTerm().body()!!
     }
 
-    // El AuthManager maneja el logout local, aquí podríamos llamar al backend si existiera endpoint de logout
+    suspend fun completeDailyTerm(termId: Int): CompleteDailyTermResponse =
+        safeApiCall {
+            apiService.completeDailyTerm(CompleteDailyTermRequest(termId = termId)).body()!!
+        }
+
+    // ✅ FUNCIÓN CORREGIDA
+    suspend fun getUserProfile(): UserProfileResponse = safeApiCall {
+        // Usa UserProfileResponse que ahora está definido en User.kt
+        apiService.getProfile().body()!!
+    }
+
     fun logout() {
-        AuthManager.clear()
+        authManager.clearAuthData()
     }
 }

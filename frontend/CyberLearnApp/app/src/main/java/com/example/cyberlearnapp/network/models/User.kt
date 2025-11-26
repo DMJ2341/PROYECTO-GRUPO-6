@@ -12,7 +12,7 @@ data class User(
 )
 
 @Serializable
-data class UserResponse(
+data class UserProfileResponse(
     val success: Boolean,
     val user: User
 )
