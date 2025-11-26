@@ -30,7 +30,5 @@ El desarrollo se lleva a cabo bajo una metodología ágil estructurada en 4 Spri
 ## Integrantes
 
 * **Gavino Poma, María Olivia**
-* **Rau Zavala, Jefferson Pedro**
-* **Vega Huaraca, Yon Antoni**
 * **Villacriz Villavicencio, Regina Sofía**
 
