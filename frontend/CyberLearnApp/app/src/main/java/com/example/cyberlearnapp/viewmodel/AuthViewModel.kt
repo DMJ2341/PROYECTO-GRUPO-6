@@ -22,7 +22,6 @@ class AuthViewModel @Inject constructor(
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
-    // Estado para la navegación automática si ya hay token
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
 
@@ -33,10 +32,40 @@ class AuthViewModel @Inject constructor(
     private fun checkSession() {
         val token = AuthManager.getToken()
         if (!token.isNullOrEmpty()) {
-            // Si hay token, asumimos usuario logueado temporalmente
-            // Lo ideal sería validar el token con el backend, pero por ahora basta
-            _currentUser.value = User(0, "User", "email@example.com")
+            // 1. Indicamos que estamos cargando para mostrar spinner si es necesario
+            _authState.value = AuthState.Loading
+
+            viewModelScope.launch {
+                try {
+                    // 2. Validamos el token obteniendo el perfil real del usuario
+                    // Añadimos "Bearer " porque el backend lo espera así
+                    val response = apiService.getUserProfile("Bearer $token")
+
+                    if (response.isSuccessful && response.body() != null) {
+                        val data = response.body()!!
+                        // 3. Sesión válida: Guardamos el usuario real
+                        _currentUser.value = data.user
+                        _authState.value = AuthState.Success
+                    } else {
+                        // 4. Token inválido o expirado: Limpiamos sesión
+                        handleSessionError()
+                    }
+                } catch (e: Exception) {
+                    // Error de red (sin internet, servidor caído)
+                    // Opción A: Dejar pasar si quieres soporte offline (requiere base de datos local)
+                    // Opción B (Más segura): Pedir login de nuevo
+                    _authState.value = AuthState.Error("No se pudo validar la sesión: ${e.message}")
+                }
+            }
+        } else {
+            _authState.value = AuthState.Idle
         }
+    }
+
+    private fun handleSessionError() {
+        AuthManager.clear()
+        _currentUser.value = null
+        _authState.value = AuthState.Idle // Esto debería llevar al LoginScreen
     }
 
     fun login(email: String, pass: String) {
@@ -79,6 +108,10 @@ class AuthViewModel @Inject constructor(
 
     fun resetNavigation() {
         _authState.value = AuthState.Idle
+    }
+
+    fun logout() {
+        handleSessionError()
     }
 }
 

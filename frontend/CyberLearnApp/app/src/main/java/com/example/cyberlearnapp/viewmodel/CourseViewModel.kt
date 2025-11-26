@@ -36,23 +36,11 @@ class CourseViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
             try {
-                // 1. Cargar las lecciones de este curso (siempre necesario)
+                // Cargamos lecciones
                 val lessons = repository.getCourseLessons(courseId)
+                // Buscamos el curso en la lista ya cargada para tener el título
+                val course = _state.value.courses.find { it.id == courseId }
 
-                // 2. Buscar la información del curso (Título, Descripción, etc.)
-                var course = _state.value.courses.find { it.id == courseId }
-
-                // ✅ CORRECCIÓN: Si 'course' es null (porque el VM es nuevo),
-                // recargamos la lista completa de cursos desde la API.
-                if (course == null) {
-                    val allCourses = repository.getCourses()
-                    course = allCourses.find { it.id == courseId }
-
-                    // Actualizamos la lista general en el estado también
-                    _state.value = _state.value.copy(courses = allCourses)
-                }
-
-                // Ahora sí actualizamos el estado con el curso encontrado
                 _state.value = _state.value.copy(
                     isLoading = false,
                     selectedCourse = course,
@@ -64,7 +52,7 @@ class CourseViewModel @Inject constructor(
         }
     }
 
-    // Helper para saber si una lección está completada
+    // Helper para saber si una lección está completada (simple check en memoria por ahora)
     fun isLessonCompleted(lessonId: String): Boolean {
         return _state.value.lessons.find { it.id == lessonId }?.isCompleted == true
     }
@@ -75,6 +63,6 @@ data class CourseState(
     val courses: List<Course> = emptyList(),
     val selectedCourse: Course? = null,
     val lessons: List<Lesson> = emptyList(),
-    val courseProgress: Float = 0f,
+    val courseProgress: Float = 0f, // Se podría calcular
     val error: String? = null
 )
