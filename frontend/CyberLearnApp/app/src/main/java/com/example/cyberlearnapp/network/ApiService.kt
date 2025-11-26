@@ -2,6 +2,7 @@ package com.example.cyberlearnapp.network
 
 import com.example.cyberlearnapp.network.models.*
 import com.example.cyberlearnapp.network.models.assessments.*
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -14,6 +15,10 @@ interface ApiService {
     @POST("auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
 
+    // ✅ NUEVO: Endpoint para refrescar token (Call síncrono para el Authenticator)
+    @POST("auth/refresh")
+    fun refreshToken(@Body request: Map<String, String>): Call<AuthResponse>
+
     // --- DASHBOARD & USER ---
     @GET("user/dashboard")
     suspend fun getDashboard(@Header("Authorization") token: String): Response<DashboardResponse>
@@ -24,7 +29,7 @@ interface ApiService {
     @GET("daily-term")
     suspend fun getDailyTerm(@Header("Authorization") token: String): Response<DailyTermWrapper>
 
-    // --- CURSOS ---
+    // --- CURSOS & LECCIONES ---
     @GET("courses")
     suspend fun getCourses(@Header("Authorization") token: String): Response<List<Course>>
 
@@ -34,8 +39,6 @@ interface ApiService {
         @Path("courseId") courseId: Int
     ): Response<List<Lesson>>
 
-    // --- LECCIONES (SOLUCIÓN APLICADA) ---
-    // Usamos el nombre específico 'getLessonDetail' apuntando a 'lessons/{lessonId}'
     @GET("lessons/{lessonId}")
     suspend fun getLessonDetail(
         @Header("Authorization") token: String,
@@ -48,7 +51,7 @@ interface ApiService {
         @Path("lessonId") lessonId: String
     ): Response<Unit>
 
-    // --- ASSESSMENTS ---
+    // --- EXÁMENES ---
     @GET("preference-test/questions")
     suspend fun getPreferenceQuestions(@Header("Authorization") token: String): Response<PreferenceTestResponse>
 

@@ -1,125 +1,100 @@
 package com.example.cyberlearnapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
-import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamIntroScreen
-import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamResultScreen
-import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamScreen
-import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceResultScreen
-import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceTestScreen
+import com.example.cyberlearnapp.viewmodel.AuthViewModel
+import com.example.cyberlearnapp.viewmodel.CourseViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: String = Screens.Auth.route
+    startDestination: String = "auth"
 ) {
+    // ViewModels compartidos o instanciados aquí si es necesario
+    val authViewModel: AuthViewModel = hiltViewModel()
+
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        // --- AUTENTICACIÓN ---
-        composable(route = Screens.Auth.route) {
+
+        // --- AUTH ---
+        composable("auth") {
+            // ✅ CORREGIDO: Usamos onLoginSuccess en lugar de pasar navController
             AuthScreen(
+                viewModel = authViewModel,
                 onLoginSuccess = {
-                    navController.navigate(Screens.Dashboard.route) {
-                        popUpTo(Screens.Auth.route) { inclusive = true }
+                    // Al loguearse, vamos al dashboard y limpiamos el historial para no volver al login con "atrás"
+                    navController.navigate("dashboard") {
+                        popUpTo("auth") { inclusive = true }
                     }
                 }
             )
         }
 
-        // --- DASHBOARD (HOME) ---
-        composable(route = Screens.Dashboard.route) {
+        // --- DASHBOARD ---
+        composable("dashboard") {
             DashboardScreen(navController = navController)
         }
 
         // --- LISTA DE CURSOS ---
-        composable(route = Screens.Courses.route) {
+        composable("courses") {
+            val courseViewModel: CourseViewModel = hiltViewModel()
             CoursesScreen(
-                onCourseClick = { courseId ->
-                    navController.navigate(Screens.CourseDetail.createRoute(courseId))
-                },
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                navController = navController,
+                viewModel = courseViewModel
             )
         }
 
-        // --- DETALLE DEL CURSO (Lista de lecciones) ---
+        // --- DETALLE DEL CURSO ---
         composable(
-            route = Screens.CourseDetail.route,
+            route = "course_detail/{courseId}",
             arguments = listOf(
                 navArgument("courseId") { type = NavType.IntType }
             )
         ) { backStackEntry ->
-            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 1
+            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+            val courseViewModel: CourseViewModel = hiltViewModel()
 
             CourseDetailScreen(
-                courseId = courseId,
-                navController = navController
+                navController = navController,
+                viewModel = courseViewModel,
+                courseId = courseId
             )
         }
 
-        // --- LECCIÓN (SISTEMA NUEVO) ---
+        // --- DETALLE DE LECCIÓN ---
         composable(
-            route = "lesson/{lessonId}",
+            route = "lesson_detail/{lessonId}",
             arguments = listOf(
                 navArgument("lessonId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
-
             LessonDetailScreen(
-                lessonId = lessonId,
-                navController = navController
-            )
-        }
-
-        // --- TEST VOCACIONAL ---
-        composable("preference_test") {
-            PreferenceTestScreen(navController = navController)
-        }
-
-        composable("preference_result") {
-            PreferenceResultScreen(
-                profileType = "saved",
-                navController = navController
-            )
-        }
-
-        // --- EXAMEN FINAL INTEGRADOR ---
-        composable("final_exam/intro") {
-            FinalExamIntroScreen(navController)
-        }
-        composable("final_exam/take") {
-            FinalExamScreen(navController)
-        }
-        composable("final_exam/result") {
-            FinalExamResultScreen(navController)
-        }
-
-        // --- LOGROS ---
-        composable(route = Screens.Achievements.route) {
-            AchievementsScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                navController = navController,
+                lessonId = lessonId
             )
         }
 
         // --- PERFIL ---
-        composable(route = Screens.Profile.route) {
+        composable("profile") {
+            // ✅ CORREGIDO: Pasamos los callbacks requeridos
             ProfileScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
                 onLogout = {
-                    navController.navigate(Screens.Auth.route) {
+                    // Ejecutamos la lógica de logout del ViewModel
+                    authViewModel.logout()
+                    // Navegamos al login y limpiamos toda la pila
+                    navController.navigate("auth") {
                         popUpTo(0) { inclusive = true }
                     }
                 }
