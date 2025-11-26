@@ -1,40 +1,38 @@
+// app/src/main/java/com/example/cyberlearnapp/repository/UserRepository.kt
+
 package com.example.cyberlearnapp.repository
 
 import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.models.DashboardData
-import com.example.cyberlearnapp.network.models.User
+import com.example.cyberlearnapp.network.models.CompleteDailyTermRequest
+import com.example.cyberlearnapp.network.models.CompleteDailyTermResponse
+import com.example.cyberlearnapp.network.models.DashboardResponse
 import com.example.cyberlearnapp.utils.AuthManager
+import com.example.cyberlearnapp.utils.safeApiCall
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class UserRepository @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val authManager: AuthManager
 ) {
-    private fun getToken(): String = "Bearer ${AuthManager.getToken() ?: ""}"
 
-    // Obtener perfil de usuario
-    suspend fun getUserProfile(): User {
-        val response = apiService.getUserProfile(getToken())
-        if (response.isSuccessful && response.body() != null) {
-            return response.body()!!.user
-        } else {
-            throw Exception("Error al obtener perfil")
-        }
+    suspend fun getDashboard() = safeApiCall {
+        apiService.getDashboard().body()!!
     }
 
-    // Obtener datos del Dashboard (XP, Nivel, Badges)
-    suspend fun getDashboard(): DashboardData {
-        val response = apiService.getDashboard(getToken())
-        if (response.isSuccessful && response.body() != null) {
-            return response.body()!!.dashboard
-        } else {
-            throw Exception("Error al cargar dashboard")
-        }
+    suspend fun getDailyTerm() = safeApiCall {
+        apiService.getDailyTerm().body()!!
     }
 
-    // El AuthManager maneja el logout local, aquí podríamos llamar al backend si existiera endpoint de logout
+    // NUEVA FUNCIÓN
+    suspend fun completeDailyTerm(termId: Int): CompleteDailyTermResponse = safeApiCall {
+        apiService.completeDailyTerm(CompleteDailyTermRequest(termId)).body()!!
+    }
+
+    suspend fun getUserProfile() = safeApiCall {
+        apiService.getProfile().body()!!
+    }
+
     fun logout() {
-        AuthManager.clear()
+        authManager.clearAuthData()
     }
 }

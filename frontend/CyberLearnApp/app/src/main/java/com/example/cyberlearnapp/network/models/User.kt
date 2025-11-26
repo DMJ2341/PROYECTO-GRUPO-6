@@ -11,8 +11,9 @@ data class User(
     @SerialName("created_at") val createdAt: String? = null
 )
 
+// ✅ CORRECCIÓN: Definición de la respuesta del endpoint /api/user/profile
 @Serializable
-data class UserResponse(
+data class UserProfileResponse(
     val success: Boolean,
     val user: User
 )

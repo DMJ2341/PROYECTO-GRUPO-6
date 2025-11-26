@@ -1,83 +1,72 @@
+// app/src/main/java/com/example/cyberlearnapp/network/ApiService.kt
+
 package com.example.cyberlearnapp.network
 
 import com.example.cyberlearnapp.network.models.*
 import com.example.cyberlearnapp.network.models.assessments.*
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
 
-    // --- AUTH ---
-    @POST("auth/login")
-    suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
-
-    @POST("auth/register")
+    @POST("api/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
 
-    @POST("auth/refresh")
-    fun refreshToken(@Body request: Map<String, String>): Call<AuthResponse>
+    @POST("api/auth/login")
+    suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
-    // --- DASHBOARD & USER ---
-    @GET("user/dashboard")
-    suspend fun getDashboard(@Header("Authorization") token: String): Response<DashboardResponse>
+    @POST("api/auth/refresh")
+    suspend fun refreshToken(@Body request: RefreshTokenRequest): Response<AuthResponse>
 
-    @GET("user/profile")
-    suspend fun getUserProfile(@Header("Authorization") token: String): Response<UserResponse>
+    @POST("api/auth/logout")
+    suspend fun logout(@Header("Authorization") token: String): Response<GeneralResponse>
 
-    @GET("daily-term")
-    suspend fun getDailyTerm(@Header("Authorization") token: String): Response<DailyTermWrapper>
+    @GET("api/user/profile")
+    suspend fun getProfile(): Response<UserProfileResponse>
 
-    // --- CURSOS & LECCIONES ---
-    @GET("courses")
-    suspend fun getCourses(@Header("Authorization") token: String): Response<List<Course>>
+    @GET("api/user/dashboard")
+    suspend fun getDashboard(): Response<DashboardResponse>
 
-    @GET("courses/{courseId}/lessons")
-    suspend fun getCourseLessons(
-        @Header("Authorization") token: String,
-        @Path("courseId") courseId: Int
-    ): Response<List<Lesson>>
+    @GET("api/courses")
+    suspend fun getCourses(): Response<List<Course>>
 
-    @GET("lessons/{lessonId}")
-    suspend fun getLessonDetail(
-        @Header("Authorization") token: String,
-        @Path("lessonId") lessonId: String
-    ): Response<LessonResponse>
+    @GET("api/courses/{courseId}/lessons")
+    suspend fun getCourseLessons(@Path("courseId") courseId: Int): Response<List<Lesson>>
 
-    // ✅ MODIFICADO: Ahora devuelve LessonCompletionResponse
-    @POST("progress/lesson/{lessonId}")
-    suspend fun completeLesson(
-        @Header("Authorization") token: String,
-        @Path("lessonId") lessonId: String
-    ): Response<LessonCompletionResponse>
+    @GET("api/lessons/{lessonId}")
+    suspend fun getLessonDetail(@Path("lessonId") lessonId: String): Response<LessonResponse>
 
-    // --- ✅ NUEVO: GLOSARIO ---
-    @GET("glossary")
-    suspend fun getGlossaryTerms(
-        @Header("Authorization") token: String,
-        @Query("q") query: String? = null
-    ): Response<GlossaryResponse>
+    @POST("api/progress/lesson/{lessonId}")
+    suspend fun completeLesson(@Path("lessonId") lessonId: String): Response<LessonCompleteResponse>
 
-    // --- EXÁMENES ---
-    @GET("preference-test/questions")
-    suspend fun getPreferenceQuestions(@Header("Authorization") token: String): Response<PreferenceTestResponse>
+    @GET("api/daily-term")
+    suspend fun getDailyTerm(): Response<DailyTermWrapper>
 
-    @POST("preference-test/submit")
-    suspend fun submitPreferenceTest(
-        @Header("Authorization") token: String,
-        @Body body: SubmitPreferenceRequest
-    ): Response<SubmitPreferenceResponse>
+    // NUEVO ENDPOINT PARA GANAR XP
+    @POST("api/daily-term/complete")
+    suspend fun completeDailyTerm(@Body request: CompleteDailyTermRequest): Response<CompleteDailyTermResponse>
 
-    @GET("preference-test/result")
-    suspend fun getPreferenceResult(@Header("Authorization") token: String): Response<PreferenceResultWrapper>
+    @GET("api/glossary")
+    suspend fun getAllGlossaryTerms(): Response<List<GlossaryTerm>>
 
-    // ✅ CORREGIDO: Rutas alineadas con el backend (exam/final)
-    @GET("exam/final")
-    suspend fun getFinalExam(@Header("Authorization") token: String): Response<ExamStartResponse>
+    @GET("api/glossary/search")
+    suspend fun searchGlossaryTerms(@Query("q") query: String): Response<List<GlossaryTerm>>
 
-    @POST("exam/final/submit")
-    suspend fun submitFinalExam(
-        @Header("Authorization") token: String,
-        @Body body: ExamSubmitRequest
-    ): Response<ExamResultResponse>
+    @GET("api/preference-test/questions")
+    suspend fun getPreferenceQuestions(): Response<PreferenceQuestionResponse>
+
+    @POST("api/preference-test/submit")
+    suspend fun submitPreferenceTest(@Body request: SubmitPreferenceTestRequest): Response<PreferenceTestResponse>
+
+    @GET("api/preference-test/result")
+    suspend fun getPreferenceResult(): Response<PreferenceTestResultResponse>
+
+    @POST("api/preference-test/retake")
+    suspend fun retakePreferenceTest(): Response<GeneralResponse>
+
+    @GET("api/exam/final")
+    suspend fun getFinalExam(): Response<FinalExamQuestionsResponse>
+
+    @POST("api/exam/final/submit")
+    suspend fun submitFinalExam(@Body request: SubmitFinalExamRequest): Response<FinalExamResultResponse>
 }
