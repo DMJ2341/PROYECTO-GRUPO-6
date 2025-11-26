@@ -1,110 +1,72 @@
 package com.example.cyberlearnapp.network
 
 import com.example.cyberlearnapp.network.models.*
+import com.example.cyberlearnapp.network.models.assessments.*
+import retrofit2.Response
 import retrofit2.http.*
 
-/**
- * API Service - Endpoints del backend
- * ACTUALIZADO: Agregados endpoints para lecciones interactivas
- */
 interface ApiService {
 
-    // ========== AUTENTICACIÓN ==========
-    @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequest): AuthResponse
-
+    // --- AUTH ---
     @POST("auth/login")
-    suspend fun login(@Body request: LoginRequest): AuthResponse
+    suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
-    // ========== USUARIO ==========
-    @GET("users/profile")
-    suspend fun getUserProfile(@Header("Authorization") token: String): User
+    @POST("auth/register")
+    suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
 
-    @GET("users/dashboard")
-    suspend fun getDashboard(@Header("Authorization") token: String): DashboardData
+    // --- DASHBOARD & USER ---
+    @GET("user/dashboard")
+    suspend fun getDashboard(@Header("Authorization") token: String): Response<DashboardResponse>
 
-    // ========== CURSOS ==========
+    @GET("user/profile")
+    suspend fun getUserProfile(@Header("Authorization") token: String): Response<UserResponse>
+
+    @GET("daily-term")
+    suspend fun getDailyTerm(@Header("Authorization") token: String): Response<DailyTermWrapper>
+
+    // --- CURSOS ---
     @GET("courses")
-    suspend fun getCourses(@Header("Authorization") token: String): List<Course>
+    suspend fun getCourses(@Header("Authorization") token: String): Response<List<Course>>
 
-    @GET("courses/{courseId}")
-    suspend fun getCourseDetail(
-        @Header("Authorization") token: String,
-        @Path("courseId") courseId: Int
-    ): CourseDetail
-
-    // 🆕 NUEVO: Obtener lecciones de un curso
     @GET("courses/{courseId}/lessons")
     suspend fun getCourseLessons(
         @Header("Authorization") token: String,
         @Path("courseId") courseId: Int
-    ): List<Lesson>
+    ): Response<List<Lesson>>
 
-    // ========== LECCIONES ==========
+    // --- LECCIONES (SOLUCIÓN APLICADA) ---
+    // Usamos el nombre específico 'getLessonDetail' apuntando a 'lessons/{lessonId}'
     @GET("lessons/{lessonId}")
-    suspend fun getLesson(
+    suspend fun getLessonDetail(
         @Header("Authorization") token: String,
-        @Path("lessonId") lessonId: Int
-    ): Lesson
+        @Path("lessonId") lessonId: String
+    ): Response<LessonResponse>
 
-    // 🆕 NUEVO: Obtener lección interactiva
-    @GET("lessons/{lessonId}/interactive")
-    suspend fun getInteractiveLesson(
-        @Path("lessonId") lessonId: Int
-    ): InteractiveLesson
-
-    // ========== ACTIVIDADES ==========
-    @POST("activities/start")
-    suspend fun startActivity(
-        @Header("Authorization") token: String,
-        @Body data: Map<String, Any>
-    ): ActivityResponse
-
-    @POST("activities/complete")
-    suspend fun completeActivity(
-        @Header("Authorization") token: String,
-        @Body data: Map<String, Any>
-    ): ActivityResponse
-
-    // 🆕 NUEVO: Completar lección interactiva
-    @POST("lessons/complete")
+    @POST("progress/lesson/{lessonId}")
     suspend fun completeLesson(
-        @Body data: Map<String, Any>
-    ): ActivityResponse
+        @Header("Authorization") token: String,
+        @Path("lessonId") lessonId: String
+    ): Response<Unit>
 
-    // 🆕 NUEVO: Registrar actividad de lección
-    @POST("lessons/activity")
-    suspend fun recordLessonActivity(
-        @Body data: Map<String, Any>
-    ): ActivityResponse
+    // --- ASSESSMENTS ---
+    @GET("preference-test/questions")
+    suspend fun getPreferenceQuestions(@Header("Authorization") token: String): Response<PreferenceTestResponse>
 
-    // ========== BADGES ==========
-    @GET("badges")
-    suspend fun getBadges(@Header("Authorization") token: String): List<Badge>
+    @POST("preference-test/submit")
+    suspend fun submitPreferenceTest(
+        @Header("Authorization") token: String,
+        @Body body: SubmitPreferenceRequest
+    ): Response<SubmitPreferenceResponse>
 
-    @GET("badges/user")
-    suspend fun getUserBadges(@Header("Authorization") token: String): List<UserBadge>
+    @GET("preference-test/result")
+    suspend fun getPreferenceResult(@Header("Authorization") token: String): Response<PreferenceResultWrapper>
+
+    @POST("final-exam/start")
+    suspend fun startFinalExam(@Header("Authorization") token: String): Response<ExamStartResponse>
+
+    @POST("final-exam/submit")
+    suspend fun submitFinalExam(
+        @Header("Authorization") token: String,
+        @Body body: ExamSubmitRequest
+    ): Response<ExamResultResponse>
 }
-
-data class ActivityResponse(
-    val success: Boolean,
-    val message: String,
-    val xp_earned: Int? = null,
-    val new_badges: List<Badge>? = null
-)
-
-data class DashboardData(
-    val user: User,
-    val total_xp: Int,
-    val current_streak: Int,
-    val badges_count: Int,
-    val courses_progress: List<CourseProgress>
-)
-
-data class CourseProgress(
-    val course_id: Int,
-    val course_title: String,
-    val completed_lessons: Int,
-    val total_lessons: Int,
-    val progress_percentage: Int
-)

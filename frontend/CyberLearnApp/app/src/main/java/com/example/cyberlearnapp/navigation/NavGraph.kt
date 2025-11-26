@@ -7,6 +7,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
+import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamIntroScreen
+import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamResultScreen
+import com.example.cyberlearnapp.ui.screens.final_exam.FinalExamScreen
+import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceResultScreen
+import com.example.cyberlearnapp.ui.screens.preference_test.PreferenceTestScreen
 
 @Composable
 fun NavGraph(
@@ -17,7 +22,7 @@ fun NavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
-        // Autenticación
+        // --- AUTENTICACIÓN ---
         composable(route = Screens.Auth.route) {
             AuthScreen(
                 onLoginSuccess = {
@@ -28,30 +33,12 @@ fun NavGraph(
             )
         }
 
-        // Dashboard
+        // --- DASHBOARD (HOME) ---
         composable(route = Screens.Dashboard.route) {
-            DashboardScreen(
-                onNavigateToCourses = {
-                    navController.navigate(Screens.Courses.route)
-                },
-                onNavigateToCourse = { courseId ->
-                    navController.navigate(Screens.CourseDetail.createRoute(courseId))
-                },
-                onNavigateToAchievements = {
-                    navController.navigate(Screens.Achievements.route)
-                },
-                onNavigateToProfile = {
-                    navController.navigate(Screens.Profile.route)
-                },
-                onLogout = {
-                    navController.navigate(Screens.Auth.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }
-            )
+            DashboardScreen(navController = navController)
         }
 
-        // Cursos
+        // --- LISTA DE CURSOS ---
         composable(route = Screens.Courses.route) {
             CoursesScreen(
                 onCourseClick = { courseId ->
@@ -63,7 +50,7 @@ fun NavGraph(
             )
         }
 
-        // Detalle de curso
+        // --- DETALLE DEL CURSO (Lista de lecciones) ---
         composable(
             route = Screens.CourseDetail.route,
             arguments = listOf(
@@ -74,33 +61,49 @@ fun NavGraph(
 
             CourseDetailScreen(
                 courseId = courseId,
-                onLessonClick = { lessonId ->
-                    navController.navigate(Screens.InteractiveLesson.createRoute(lessonId))
-                },
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                navController = navController
             )
         }
 
-        // Lección interactiva
+        // --- LECCIÓN (SISTEMA NUEVO) ---
         composable(
-            route = Screens.InteractiveLesson.route,
+            route = "lesson/{lessonId}",
             arguments = listOf(
-                navArgument("lessonId") { type = NavType.IntType }
+                navArgument("lessonId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val lessonId = backStackEntry.arguments?.getInt("lessonId") ?: 1
+            val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
 
-            InteractiveLessonScreen(
+            LessonDetailScreen(
                 lessonId = lessonId,
-                onComplete = {
-                    navController.popBackStack()
-                }
+                navController = navController
             )
         }
 
-        // Logros
+        // --- TEST VOCACIONAL ---
+        composable("preference_test") {
+            PreferenceTestScreen(navController = navController)
+        }
+
+        composable("preference_result") {
+            PreferenceResultScreen(
+                profileType = "saved",
+                navController = navController
+            )
+        }
+
+        // --- EXAMEN FINAL INTEGRADOR ---
+        composable("final_exam/intro") {
+            FinalExamIntroScreen(navController)
+        }
+        composable("final_exam/take") {
+            FinalExamScreen(navController)
+        }
+        composable("final_exam/result") {
+            FinalExamResultScreen(navController)
+        }
+
+        // --- LOGROS ---
         composable(route = Screens.Achievements.route) {
             AchievementsScreen(
                 onBackClick = {
@@ -109,7 +112,7 @@ fun NavGraph(
             )
         }
 
-        // Perfil
+        // --- PERFIL ---
         composable(route = Screens.Profile.route) {
             ProfileScreen(
                 onBackClick = {
