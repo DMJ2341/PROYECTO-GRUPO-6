@@ -60,12 +60,14 @@ class CourseViewModel @Inject constructor(
             _isLoading.value = true
             _lessons.value = emptyList()
             try {
-                // ✅ CORRECCIÓN AQUÍ: Usamos el nombre correcto 'getCourseLessons'
+                // ✅ Usa el método correcto del repositorio para obtener lecciones
                 val result = repository.getCourseLessons(courseId)
 
                 if (result.isNotEmpty()) {
                     _lessons.value = result
                 } else {
+                    // Evita un error si la lista está vacía, solo notifica al usuario.
+                    _lessons.value = emptyList()
                     _error.value = "Este curso no tiene lecciones disponibles aún."
                 }
             } catch (e: Exception) {

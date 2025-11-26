@@ -2,6 +2,7 @@ package com.example.cyberlearnapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyberlearnapp.network.models.LessonCompletionData
 import com.example.cyberlearnapp.network.models.LessonResponse
 import com.example.cyberlearnapp.repository.LessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,19 +22,21 @@ class LessonViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    // ✅ AÑADIDO: Estado para errores
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
+
+    // ✅ Estado para notificar a la UI que se completó y ganaste XP
+    private val _completionResult = MutableStateFlow<LessonCompletionData?>(null)
+    val completionResult: StateFlow<LessonCompletionData?> = _completionResult
 
     fun loadLesson(lessonId: String) {
         viewModelScope.launch {
             _isLoading.value = true
-            _error.value = null // Limpiar error previo
+            _error.value = null
             try {
                 val result = repository.getLesson(lessonId)
                 _lesson.value = result
             } catch (e: Exception) {
-                e.printStackTrace()
                 _error.value = e.message ?: "Error desconocido"
                 _lesson.value = null
             } finally {
@@ -45,11 +48,12 @@ class LessonViewModel @Inject constructor(
     fun completeLesson(lessonId: String) {
         viewModelScope.launch {
             try {
-                repository.markLessonComplete(lessonId)
-                // Aquí podrías actualizar algún estado local o notificar éxito
+                // No ponemos loading aquí para no interrumpir la UI bruscamente, o usamos uno sutil
+                val result = repository.markLessonComplete(lessonId)
+                _completionResult.value = result // ✅ Dispara el diálogo en la UI
             } catch (e: Exception) {
                 e.printStackTrace()
-                // Opcional: Mostrar error de completado
+                // Si falla en red, podrías guardar localmente o reintentar
             }
         }
     }
