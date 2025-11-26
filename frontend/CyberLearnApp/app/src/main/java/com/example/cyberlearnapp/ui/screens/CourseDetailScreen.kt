@@ -1,16 +1,15 @@
 package com.example.cyberlearnapp.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.items // ✅ IMPORTANTE: Necesario para usar items(list)
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.* // ✅ IMPORTANTE: Incluye getValue, setValue, collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,13 +31,13 @@ fun CourseDetailScreen(
         viewModel.loadLessons(courseId)
     }
 
-    // 2. Observar el estado
+    // 2. Observar el estado (Ahora funcionará gracias a los imports de runtime.*)
     val lessons by viewModel.lessons.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
-
-    // Buscamos el curso actual en la lista cargada previamente para obtener el título
     val courses by viewModel.courses.collectAsState()
+
+    // Buscamos el curso actual para el título
     val currentCourse = courses.find { it.id == courseId }
 
     Scaffold(
@@ -57,10 +56,17 @@ fun CourseDetailScreen(
 
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            } else if (lessons.isEmpty()) {
-                // Si no carga y no hay error, mostramos mensaje
+            } else if (error != null) {
+                // Mensaje de error
                 Text(
-                    text = error ?: "No hay lecciones disponibles.",
+                    text = error ?: "Error desconocido",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            } else if (lessons.isEmpty()) {
+                // Mensaje vacío
+                Text(
+                    text = "No hay lecciones disponibles.",
                     modifier = Modifier.align(Alignment.Center),
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -72,12 +78,15 @@ fun CourseDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     item {
-                        Text(
-                            text = currentCourse?.description ?: "",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
-                        Divider(modifier = Modifier.padding(bottom = 16.dp))
+                        if (!currentCourse?.description.isNullOrEmpty()) {
+                            Text(
+                                text = currentCourse?.description ?: "",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                            // Usamos HorizontalDivider en Material3
+                            HorizontalDivider(modifier = Modifier.padding(bottom = 16.dp))
+                        }
                         Text(
                             text = "Lecciones",
                             style = MaterialTheme.typography.titleLarge,
@@ -86,10 +95,9 @@ fun CourseDetailScreen(
                         )
                     }
 
+                    // ✅ Ahora 'items' reconocerá la lista de lecciones correctamente
                     items(lessons) { lesson ->
                         LessonItem(lesson = lesson, onClick = {
-                            // Navegar a la lección
-                            // Asegúrate de que tu NavGraph maneje esta ruta
                             navController.navigate("lesson_detail/${lesson.id}")
                         })
                     }

@@ -8,15 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
-import com.example.cyberlearnapp.viewmodel.AuthViewModel
-import com.example.cyberlearnapp.viewmodel.CourseViewModel
+import com.example.cyberlearnapp.viewmodel.*
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     startDestination: String = "auth"
 ) {
-    // ViewModels compartidos o instanciados aquí si es necesario
     val authViewModel: AuthViewModel = hiltViewModel()
 
     NavHost(
@@ -26,11 +24,9 @@ fun NavGraph(
 
         // --- AUTH ---
         composable("auth") {
-            // ✅ CORREGIDO: Usamos onLoginSuccess en lugar de pasar navController
             AuthScreen(
                 viewModel = authViewModel,
                 onLoginSuccess = {
-                    // Al loguearse, vamos al dashboard y limpiamos el historial para no volver al login con "atrás"
                     navController.navigate("dashboard") {
                         popUpTo("auth") { inclusive = true }
                     }
@@ -43,25 +39,36 @@ fun NavGraph(
             DashboardScreen(navController = navController)
         }
 
-        // --- LISTA DE CURSOS ---
+        // --- COURSES ---
         composable("courses") {
             val courseViewModel: CourseViewModel = hiltViewModel()
-            CoursesScreen(
-                navController = navController,
-                viewModel = courseViewModel
+            CoursesScreen(navController = navController, viewModel = courseViewModel)
+        }
+
+        // --- ✅ GLOSARIO ---
+        composable("glossary") {
+            val glossaryViewModel: GlossaryViewModel = hiltViewModel()
+            GlossaryScreen(navController = navController, viewModel = glossaryViewModel)
+        }
+
+        // --- PROFILE ---
+        composable("profile") {
+            ProfileScreen(
+                onBackClick = { navController.popBackStack() },
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate("auth") { popUpTo(0) { inclusive = true } }
+                }
             )
         }
 
-        // --- DETALLE DEL CURSO ---
+        // --- DETALLE CURSO ---
         composable(
             route = "course_detail/{courseId}",
-            arguments = listOf(
-                navArgument("courseId") { type = NavType.IntType }
-            )
+            arguments = listOf(navArgument("courseId") { type = NavType.IntType })
         ) { backStackEntry ->
             val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
             val courseViewModel: CourseViewModel = hiltViewModel()
-
             CourseDetailScreen(
                 navController = navController,
                 viewModel = courseViewModel,
@@ -69,35 +76,16 @@ fun NavGraph(
             )
         }
 
-        // --- DETALLE DE LECCIÓN ---
+        // --- DETALLE LECCIÓN ---
         composable(
             route = "lesson_detail/{lessonId}",
-            arguments = listOf(
-                navArgument("lessonId") { type = NavType.StringType }
-            )
+            arguments = listOf(navArgument("lessonId") { type = NavType.StringType })
         ) { backStackEntry ->
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
+            // LessonViewModel se inyecta dentro de la pantalla
             LessonDetailScreen(
                 navController = navController,
                 lessonId = lessonId
-            )
-        }
-
-        // --- PERFIL ---
-        composable("profile") {
-            // ✅ CORREGIDO: Pasamos los callbacks requeridos
-            ProfileScreen(
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                onLogout = {
-                    // Ejecutamos la lógica de logout del ViewModel
-                    authViewModel.logout()
-                    // Navegamos al login y limpiamos toda la pila
-                    navController.navigate("auth") {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }
             )
         }
     }

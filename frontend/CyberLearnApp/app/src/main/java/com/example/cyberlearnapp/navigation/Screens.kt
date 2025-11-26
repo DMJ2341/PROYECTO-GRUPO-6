@@ -4,7 +4,8 @@ sealed class Screens(val route: String) {
     object Auth : Screens("auth_screen")
     object Dashboard : Screens("dashboard")
     object Courses : Screens("courses")
-    object Achievements : Screens("achievements")
+    // object Achievements : Screens("achievements") // Eliminado
+    object Glossary : Screens("glossary") // ✅ Añadido
     object Profile : Screens("profile")
 
     object CourseDetail {
@@ -12,8 +13,6 @@ sealed class Screens(val route: String) {
         fun createRoute(courseId: Int) = "course/$courseId"
     }
 
-    // No necesitas un objeto para lección si usas el string directo,
-    // pero es buena práctica tenerlo si quieres:
     object Lesson {
         const val route = "lesson/{lessonId}"
         fun createRoute(lessonId: String) = "lesson/$lessonId"

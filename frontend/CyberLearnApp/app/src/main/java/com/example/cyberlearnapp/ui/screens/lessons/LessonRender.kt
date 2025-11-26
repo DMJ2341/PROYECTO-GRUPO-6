@@ -1,111 +1,164 @@
 package com.example.cyberlearnapp.ui.screens.lessons
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import com.example.cyberlearnapp.network.models.LessonScreen
+import com.example.cyberlearnapp.network.models.LessonResponse
 import com.example.cyberlearnapp.utils.getIconByName
 import kotlinx.serialization.json.*
 
 @Composable
 fun LessonScreenRender(
-    screenData: LessonScreen,
-    onQuizAnswer: (Boolean) -> Unit
+    lesson: LessonResponse,
+    screenIndex: Int,
+    onNext: () -> Unit,
+    onPrev: () -> Unit,
+    isLastScreen: Boolean
 ) {
-    val content = screenData.content
-    val scrollState = rememberScrollState()
+    val currentScreen = lesson.screens.getOrNull(screenIndex)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(bottom = 100.dp) // Espacio extra para el botón inferior
-    ) {
-        // Header del Tipo de Pantalla
-        SuggestionChip(
-            onClick = {},
-            label = { Text(screenData.type.replace("_", " ").uppercase()) },
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+    if (currentScreen == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Cargando contenido...")
+        }
+        return
+    }
 
-        Text(
-            text = screenData.title,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(24.dp))
+    val type = currentScreen.type
+    val contentData = currentScreen.content
+    val title = currentScreen.title
 
-        // --- SWITCH MAESTRO ---
-        when (screenData.type) {
-            "story_hook" -> RenderStoryHook(content)
-            "theory_tabs" -> RenderTheoryTabs(content)
-            "theory_section" -> RenderTheorySection(content)
-            "interactive_concept" -> RenderInteractiveConcepts(content)
-            "practical_lab" -> RenderPracticalLab(content)
-            "practical_scenario", "practical_exercise" -> RenderPracticalScenario(content)
-            "quiz" -> RenderQuiz(content, onQuizAnswer)
-            else -> Text("Contenido en desarrollo: ${screenData.type}")
+    // ✅ CAMBIO CLAVE: Usamos Scaffold interno para asegurar que la barra inferior se vea
+    Scaffold(
+        containerColor = Color.Transparent, // Usamos el fondo del tema general
+        bottomBar = {
+            // Barra de Navegación Inferior (Botones)
+            Surface(
+                tonalElevation = 8.dp, // Sombra para separarlo del contenido
+                shadowElevation = 8.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        // ✅ Añade insets seguros por si la barra del sistema es transparente
+                        .windowInsetsPadding(WindowInsets.safeDrawing),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Button(
+                        onClick = onPrev,
+                        enabled = screenIndex > 0,
+                        colors = ButtonDefaults.outlinedButtonColors()
+                    ) {
+                        Text("Anterior")
+                    }
+
+                    // Lógica para ocultar "Siguiente" solo en la intro del examen (que tiene su propio botón)
+                    if (type != "final_exam_intro") {
+                        Button(onClick = onNext) {
+                            Text(if (isLastScreen) "Finalizar" else "Siguiente")
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                }
+            }
+        }
+    ) { paddingValues ->
+        // Contenido Principal
+        Column(
+            modifier = Modifier
+                .padding(paddingValues) // Respeta el espacio de los botones
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+
+            // Contenedor del contenido específico
+            Box(modifier = Modifier.weight(1f)) {
+                when (type) {
+                    // Tipos básicos
+                    "story_hook" -> RenderStoryHook(contentData)
+                    "theory_tabs" -> RenderTheoryTabs(contentData)
+                    "theory_section" -> RenderTheorySection(contentData)
+                    "interactive_concept" -> RenderInteractiveConcept(contentData)
+                    "quiz" -> RenderQuiz(contentData)
+
+                    // Tipos Avanzados e Interactivos
+                    "practical_exercise" -> RenderPracticalExercise(contentData)
+                    "final_exam_intro" -> RenderFinalExamIntro(contentData, onStartExam = onNext)
+                    "architecture_design" -> RenderArchitectureDesign(contentData)
+                    "interactive_exercise" -> RenderInteractiveExercise(contentData)
+                    "analysis_questions" -> RenderAnalysisQuestions(contentData)
+                    "control_assessment" -> RenderControlAssessment(contentData)
+                    "theoretical_questions" -> RenderTheoreticalQuestions(contentData)
+                    "final_deliverable" -> RenderFinalDeliverable(contentData)
+                    "pcap_analysis" -> RenderPcapAnalysis(contentData)
+
+                    else -> {
+                        Text("Tipo de contenido no soportado: $type", color = Color.Red)
+                    }
+                }
+            }
         }
     }
 }
 
-// 1. STORY HOOK (Caso Real)
+// ==========================================
+// RENDERIZADORES (SIN CAMBIOS, SOLO COPIAR EL RESTO)
+// ==========================================
+
 @Composable
 fun RenderStoryHook(content: JsonObject) {
-    val caseName = content["case_name"]?.jsonPrimitive?.content ?: ""
-    val date = content["date"]?.jsonPrimitive?.content ?: ""
-    val narrative = content["narrative"]?.jsonPrimitive?.content ?: ""
-    val imageUrl = content["image_url"]?.jsonPrimitive?.content
-    val stats = content["stats"]?.jsonArray
-
-    Card(elevation = CardDefaults.cardElevation(4.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
-        Column {
-            if (imageUrl != null) {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxWidth().height(220.dp),
-                    contentScale = ContentScale.Crop
-                )
-            }
-            Column(modifier = Modifier.padding(20.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(getIconByName("history"), null, tint = Color.Gray, modifier = Modifier.size(16.dp))
-                    Spacer(Modifier.width(4.dp))
-                    Text(date, style = MaterialTheme.typography.labelMedium, color = Color.Gray)
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            content["image_url"]?.jsonPrimitive?.content?.let { url ->
+                Card(
+                    modifier = Modifier.fillMaxWidth().height(200.dp).padding(bottom = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Icon(Icons.Default.Image, null, modifier = Modifier.size(48.dp), tint = Color.Gray)
+                    }
                 }
-                Spacer(Modifier.height(8.dp))
-                Text(caseName, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(12.dp))
-                Text(narrative, style = MaterialTheme.typography.bodyLarge, lineHeight = MaterialTheme.typography.bodyLarge.fontSize * 1.5)
+            }
+            Text(content["narrative"]?.jsonPrimitive?.content ?: "", style = MaterialTheme.typography.bodyLarge)
 
-                if (stats != null) {
-                    Spacer(Modifier.height(24.dp))
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        stats.forEach { stat ->
-                            val s = stat.jsonObject
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(getIconByName(s["icon"]?.jsonPrimitive?.content ?: ""), null, tint = MaterialTheme.colorScheme.primary)
-                                Text(s["value"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
-                                Text(s["label"]?.jsonPrimitive?.content ?: "", style = MaterialTheme.typography.labelSmall)
-                            }
+            val stats = content["stats"]?.jsonArray
+            if (stats != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                    stats.forEach { statElement ->
+                        val stat = statElement.jsonObject
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(getIconByName(stat["icon"]?.jsonPrimitive?.content ?: ""), null)
+                            Text(stat["value"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
+                            Text(stat["label"]?.jsonPrimitive?.content ?: "", style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 }
@@ -114,145 +167,55 @@ fun RenderStoryHook(content: JsonObject) {
     }
 }
 
-// 2. THEORY TABS
 @Composable
 fun RenderTheoryTabs(content: JsonObject) {
-    val tabs = content["tabs"]?.jsonArray ?: return
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    val intro = content["intro"]?.jsonPrimitive?.content
+    val tabs = content["tabs"]?.jsonArray
 
-    Column {
-        ScrollableTabRow(
-            selectedTabIndex = selectedIndex,
-            edgePadding = 0.dp,
-            containerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.primary
-        ) {
-            tabs.forEachIndexed { index, tab ->
-                Tab(
-                    selected = selectedIndex == index,
-                    onClick = { selectedIndex = index },
-                    text = { Text(tab.jsonObject["label"]?.jsonPrimitive?.content ?: "") },
-                    icon = { Icon(getIconByName(tab.jsonObject["icon"]?.jsonPrimitive?.content ?: ""), null) }
-                )
-            }
-        }
-        Spacer(Modifier.height(16.dp))
-
-        val current = tabs[selectedIndex].jsonObject
-        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(current["title"]?.jsonPrimitive?.content ?: "", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(8.dp))
-                Text(current["text"]?.jsonPrimitive?.content ?: "", style = MaterialTheme.typography.bodyLarge)
-            }
-        }
-    }
-}
-
-// 3. THEORY SECTION (Listas complejas: puertos, roles, componentes)
-@Composable
-fun RenderTheorySection(content: JsonObject) {
-    // Soporte para 'common_ports' (Curso 2)
-    val ports = content["common_ports"]?.jsonArray
-    if (ports != null) {
-        ports.forEach { p ->
-            val port = p.jsonObject
-            ListItem(
-                headlineContent = { Text("${port["port"]}: ${port["service"]?.jsonPrimitive?.content}") },
-                supportingContent = { Text("Vuln: ${port["vuln"]?.jsonPrimitive?.content}", color = Color.Red) },
-                leadingContent = { Badge { Text(port["protocol"]?.jsonPrimitive?.content ?: "") } }
-            )
-            HorizontalDivider()
-        }
-        return
-    }
-
-    // Soporte para 'components' (Curso 5 - Risk)
-    val components = content["components"]?.jsonArray
-    if (components != null) {
-        components.forEach { c ->
-            val comp = c.jsonObject
-            Card(modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(getIconByName(comp["icon"]?.jsonPrimitive?.content ?: ""), null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(comp["component"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
-                    }
-                    comp["description"]?.jsonPrimitive?.content?.let {
-                        Text(it, modifier = Modifier.padding(top = 8.dp))
-                    }
-                }
-            }
-        }
-    }
-}
-
-// 4. INTERACTIVE CONCEPTS (Tarjetas simples)
-@Composable
-fun RenderInteractiveConcepts(content: JsonObject) {
-    val concepts = content["concepts"]?.jsonArray ?: return
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        concepts.forEach { c ->
-            val item = c.jsonObject
-            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))) {
-                Row(modifier = Modifier.padding(16.dp)) {
-                    Icon(getIconByName(item["icon"]?.jsonPrimitive?.content ?: ""), null, tint = MaterialTheme.colorScheme.secondary)
-                    Spacer(Modifier.width(16.dp))
-                    Column {
-                        Text(item["name"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
-                        Text(item["definition"]?.jsonPrimitive?.content ?: "", style = MaterialTheme.typography.bodyMedium)
-                    }
-                }
-            }
-        }
-    }
-}
-
-// 5. PRACTICAL LAB (PCAP View)
-@Composable
-fun RenderPracticalLab(content: JsonObject) {
-    val instruction = content["instruction"]?.jsonPrimitive?.content ?: ""
-    val pcap = content["pcap_simulation"]?.jsonArray
-
-    Text(instruction, fontWeight = FontWeight.Medium)
-    Spacer(Modifier.height(12.dp))
-
-    if (pcap != null) {
-        Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF2B2B2B))) {
-            Column(modifier = Modifier.padding(8.dp)) {
-                Text("NETWORK TRAFFIC CAPTURE", color = Color.Green, fontFamily = FontFamily.Monospace, fontSize = MaterialTheme.typography.labelSmall.fontSize)
-                HorizontalDivider(color = Color.Gray)
-                pcap.forEach { pkt ->
-                    val p = pkt.jsonObject
-                    Row(modifier = Modifier.padding(vertical = 4.dp)) {
-                        Text("[${p["packet"]}] ", color = Color.Yellow, fontFamily = FontFamily.Monospace)
-                        Text("${p["src"]} -> ${p["dst"]} ", color = Color.White, fontFamily = FontFamily.Monospace)
-                        Text("[${p["flags"]}]", color = Color.Cyan, fontFamily = FontFamily.Monospace)
-                    }
-                }
-            }
-        }
-    }
-
-    // Preguntas del lab
-    val questions = content["questions"]?.jsonArray
-    if (questions != null) {
-        Spacer(Modifier.height(16.dp))
-        questions.forEach { q ->
-            var revealed by remember { mutableStateOf(false) }
-            val quest = q.jsonObject
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        if (intro != null) item { Text(intro, modifier = Modifier.padding(bottom = 8.dp)) }
+        items(tabs?.size ?: 0) { index ->
+            val tab = tabs!![index].jsonObject
             Card(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { revealed = !revealed },
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("❓ " + (quest["q"]?.jsonPrimitive?.content ?: ""), fontWeight = FontWeight.Bold)
-                    if (revealed) {
-                        Spacer(Modifier.height(8.dp))
-                        Text("💡 " + (quest["a"]?.jsonPrimitive?.content ?: ""), color = MaterialTheme.colorScheme.primary)
-                    } else {
-                        Text("Toca para ver la respuesta", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(getIconByName(tab["icon"]?.jsonPrimitive?.content ?: ""), null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(tab["title"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(tab["text"]?.jsonPrimitive?.content ?: "")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderTheorySection(content: JsonObject) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        content["intro"]?.jsonPrimitive?.contentOrNull?.let {
+            item { Text(it, modifier = Modifier.padding(bottom = 16.dp)) }
+        }
+
+        val components = content["components"]?.jsonArray
+        if (components != null) {
+            item { Text("Componentes Clave:", fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 8.dp)) }
+            items(components.size) { index ->
+                val element = components[index]
+                if (element is JsonObject) {
+                    ListItem(
+                        headlineContent = { Text(element["name"]?.jsonPrimitive?.content ?: "") },
+                        supportingContent = { Text(element["description"]?.jsonPrimitive?.content ?: "") },
+                        leadingContent = { Icon(Icons.Default.CheckCircle, null) }
+                    )
+                } else if (element is JsonPrimitive) {
+                    Row(modifier = Modifier.padding(vertical = 4.dp)) {
+                        Icon(Icons.Default.ArrowRight, contentDescription = null)
+                        Text(text = element.content, modifier = Modifier.padding(start = 8.dp))
                     }
                 }
             }
@@ -260,114 +223,216 @@ fun RenderPracticalLab(content: JsonObject) {
     }
 }
 
-// 6. PRACTICAL SCENARIO (Decisiones / Risk Calc)
 @Composable
-fun RenderPracticalScenario(content: JsonObject) {
-    val scenario = content["scenario"]?.jsonPrimitive?.content ?: ""
-
-    Text("Escenario:", style = MaterialTheme.typography.labelLarge, color = Color.Gray)
-    Text(scenario, style = MaterialTheme.typography.bodyLarge)
-    Spacer(Modifier.height(16.dp))
-
-    // Caso Risk Calculator (Curso 5)
-    val factors = content["factors"]?.jsonObject
-    if (factors != null) {
-        factors.entries.forEach { (key, value) ->
-            val factor = value.jsonObject
-            Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+fun RenderInteractiveConcept(content: JsonObject) {
+    val concepts = content["concepts"]?.jsonArray
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item { Text(content["description"]?.jsonPrimitive?.content ?: "", modifier = Modifier.padding(bottom = 16.dp)) }
+        items(concepts?.size ?: 0) { index ->
+            val c = concepts!![index].jsonObject
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+            ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(key.uppercase(), style = MaterialTheme.typography.labelSmall, color = Color.Gray)
-                    Text(factor["question"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
+                    Text(c["name"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                    // Mostrar status o likelihood
-                    val status = factor["status"]?.jsonPrimitive?.content
-                        ?: factor["likelihood"]?.jsonPrimitive?.content
-                        ?: factor["magnitude"]?.jsonPrimitive?.content
-
-                    Text(status ?: "", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-        return
-    }
-
-    // Caso Scenarios simples
-    val scenarios = content["scenarios"]?.jsonArray
-    scenarios?.forEach { s ->
-        val sc = s.jsonObject
-        var revealed by remember { mutableStateOf(false) }
-        Card(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { revealed = !revealed },
-            colors = CardDefaults.cardColors(containerColor = if(revealed) Color(0xFFE8F5E9) else MaterialTheme.colorScheme.surface)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(sc["description"]?.jsonPrimitive?.content ?: "")
-                if (revealed) {
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                    Text("Respuesta: " + (sc["correct_answer"]?.jsonPrimitive?.content ?: ""), fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
-                    Text(sc["explanation"]?.jsonPrimitive?.content ?: "", style = MaterialTheme.typography.bodySmall)
+                    Text("Def: ${c["definition"]?.jsonPrimitive?.content ?: ""}")
                 }
             }
         }
     }
 }
 
-// 7. QUIZ (Interactivo)
 @Composable
-fun RenderQuiz(content: JsonObject, onAnswer: (Boolean) -> Unit) {
+fun RenderQuiz(content: JsonObject) {
     val question = content["question"]?.jsonPrimitive?.content ?: ""
-    val options = content["options"]?.jsonArray ?: return
+    val options = content["options"]?.jsonArray
+    var selectedOption by remember { mutableStateOf<String?>(null) }
+    var feedback by remember { mutableStateOf("") }
 
-    var selectedId by remember { mutableStateOf<String?>(null) }
-    var isSubmitted by remember { mutableStateOf(false) }
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            Text(question, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 16.dp))
+            options?.forEach { element ->
+                val opt = element.jsonObject
+                val id = opt["id"]?.jsonPrimitive?.content
+                val text = opt["text"]?.jsonPrimitive?.content
+                val isCorrect = opt["is_correct"]?.jsonPrimitive?.boolean == true
+                val optFeedback = opt["feedback"]?.jsonPrimitive?.content ?: ""
 
-    Text("Evaluación Rápida", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
-    Spacer(Modifier.height(8.dp))
-    Text(question, style = MaterialTheme.typography.headlineSmall)
-    Spacer(Modifier.height(16.dp))
+                Button(
+                    onClick = { selectedOption = id; feedback = optFeedback },
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (selectedOption == id) (if (isCorrect) Color.Green else Color.Red) else MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(text ?: "")
+                }
+            }
+            if (feedback.isNotEmpty()) Text(feedback, modifier = Modifier.padding(top = 16.dp))
+        }
+    }
+}
 
-    options.forEach { opt ->
-        val o = opt.jsonObject
-        val id = o["id"]?.jsonPrimitive?.content ?: ""
-        val text = o["text"]?.jsonPrimitive?.content ?: ""
-        val isCorrect = o["is_correct"]?.jsonPrimitive?.boolean ?: false
-        val feedback = o["feedback"]?.jsonPrimitive?.content ?: ""
+@Composable
+fun RenderPracticalExercise(content: JsonObject) {
+    val instruction = content["instruction"]?.jsonPrimitive?.content ?: ""
+    val techniques = content["techniques"]?.jsonArray
+    val tasks = content["tasks"]?.jsonArray
 
-        val isSelected = selectedId == id
-        val cardColor = when {
-            isSubmitted && isCorrect -> Color(0xFFC8E6C9) // Verde si es la correcta
-            isSubmitted && isSelected && !isCorrect -> Color(0xFFFFCDD2) // Rojo si elegiste mal
-            isSelected -> MaterialTheme.colorScheme.primaryContainer
-            else -> MaterialTheme.colorScheme.surface
+    var completedTasks by remember { mutableStateOf(setOf<String>()) }
+
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Science, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Spacer(Modifier.width(12.dp))
+                    Text(instruction, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                }
+            }
+            Spacer(Modifier.height(16.dp))
         }
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp)
-                .clickable(enabled = !isSubmitted) {
-                    selectedId = id
-                    isSubmitted = true
-                    onAnswer(isCorrect)
-                },
-            colors = CardDefaults.cardColors(containerColor = cardColor),
-            border = BorderStroke(1.dp, if(isSelected) MaterialTheme.colorScheme.primary else Color.LightGray)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(selected = isSelected, onClick = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text(text)
-                }
-                // Feedback solo si ya se envió y (es la seleccionada o es la correcta para mostrar cuál era)
-                if (isSubmitted && (isSelected || isCorrect)) {
-                    if (isCorrect) {
-                        Text("✅ $feedback", modifier = Modifier.padding(start = 40.dp, top = 4.dp), style = MaterialTheme.typography.bodySmall, color = Color(0xFF2E7D32))
-                    } else if (isSelected) {
-                        Text("❌ $feedback", modifier = Modifier.padding(start = 40.dp, top = 4.dp), style = MaterialTheme.typography.bodySmall, color = Color.Red)
+        if (techniques != null) {
+            item {
+                Text("Técnicas MITRE ATT&CK®", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.height(8.dp))
+            }
+            items(techniques.size) { index ->
+                val tech = techniques[index].jsonObject
+                val name = tech["technique_name"]?.jsonPrimitive?.content ?: ""
+                val id = tech["technique_id"]?.jsonPrimitive?.content ?: ""
+
+                Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(name, fontWeight = FontWeight.Bold)
+                        Text(id, style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
         }
+
+        if (tasks != null) {
+            item {
+                Spacer(Modifier.height(16.dp))
+                Text("Tareas", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            }
+            items(tasks.size) { index ->
+                val t = tasks[index].jsonObject
+                val taskText = t["task"]?.jsonPrimitive?.content ?: ""
+                val taskId = index.toString()
+                val isCompleted = completedTasks.contains(taskId)
+
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable {
+                        completedTasks = if (isCompleted) completedTasks - taskId else completedTasks + taskId
+                    },
+                    colors = CardDefaults.cardColors(containerColor = if (isCompleted) Color(0xFFC8E6C9) else MaterialTheme.colorScheme.surface)
+                ) {
+                    Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(checked = isCompleted, onCheckedChange = null)
+                        Text(taskText, modifier = Modifier.padding(start = 8.dp), color = if (isCompleted) Color.Black else MaterialTheme.colorScheme.onSurface)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderFinalExamIntro(content: JsonObject, onStartExam: () -> Unit) {
+    val description = content["description"]?.jsonPrimitive?.content ?: ""
+    val timeLimit = content["time_limit"]?.jsonPrimitive?.content ?: "45 min"
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        item {
+            Icon(Icons.Default.Assignment, null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.height(16.dp))
+            Text("Examen Final", style = MaterialTheme.typography.headlineMedium)
+            Text(description, textAlign = TextAlign.Center, modifier = Modifier.padding(16.dp))
+
+            Card(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row {
+                        Icon(Icons.Default.Timer, null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Tiempo límite: $timeLimit")
+                    }
+                }
+            }
+
+            Button(
+                onClick = onStartExam,
+                modifier = Modifier.fillMaxWidth().height(50.dp)
+            ) {
+                Text("COMENZAR EXAMEN")
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderArchitectureDesign(content: JsonObject) {
+    val scenario = content["scenario"]?.jsonPrimitive?.content ?: ""
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            Text("Diseño de Arquitectura", style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(8.dp))
+            Text(scenario)
+        }
+    }
+}
+
+@Composable
+fun RenderInteractiveExercise(content: JsonObject) {
+    val description = content["description"]?.jsonPrimitive?.content ?: ""
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item { Text(description) }
+    }
+}
+
+@Composable
+fun RenderAnalysisQuestions(content: JsonObject) {
+    val context = content["context"]?.jsonPrimitive?.content ?: ""
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item { Text("Preguntas de Análisis", fontWeight = FontWeight.Bold) }
+        item { Text(context) }
+    }
+}
+
+@Composable
+fun RenderControlAssessment(content: JsonObject) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item { Text("Evaluación de Controles") }
+    }
+}
+
+@Composable
+fun RenderTheoreticalQuestions(content: JsonObject) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item { Text("Preguntas Teóricas") }
+    }
+}
+
+@Composable
+fun RenderFinalDeliverable(content: JsonObject) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item { Text("Entregable Final") }
+    }
+}
+
+@Composable
+fun RenderPcapAnalysis(content: JsonObject) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item { Text("Análisis PCAP") }
     }
 }

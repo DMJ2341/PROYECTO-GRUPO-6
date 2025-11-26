@@ -14,7 +14,9 @@ class ExamRepository @Inject constructor(
 ) {
     suspend fun startExam(): ExamStartResponse {
         val token = "Bearer ${AuthManager.getToken() ?: ""}"
-        val response = apiService.startFinalExam(token)
+
+        // ✅ CORRECCIÓN: Usamos 'getFinalExam' en lugar de 'startFinalExam'
+        val response = apiService.getFinalExam(token)
 
         if (response.isSuccessful && response.body() != null) {
             return response.body()!!
