@@ -41,6 +41,7 @@ class CourseViewModel @Inject constructor(
             _error.value = null
             try {
                 val result = repository.getCourses()
+<<<<<<< HEAD
                 if (result.isNotEmpty()) {
                     _courses.value = result
                 } else {
@@ -50,6 +51,16 @@ class CourseViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _error.value = "Error al cargar cursos: ${e.message}"
+=======
+                // repository.getCourses() devuelve List<Course> directamente (según tu código)
+                if (result.isNotEmpty()) {
+                    _courses.value = result
+                } else {
+                    _error.value = "No se encontraron cursos."
+                }
+            } catch (e: Exception) {
+                _error.value = "Error: ${e.message}"
+>>>>>>> main
             } finally {
                 _isLoading.value = false
             }
@@ -59,6 +70,7 @@ class CourseViewModel @Inject constructor(
     fun loadLessons(courseId: Int) {
         viewModelScope.launch {
             _isLoading.value = true
+<<<<<<< HEAD
             _lessons.value = emptyList() // Limpiamos la lista anterior para que no se vea la del curso previo
             _error.value = null
 
@@ -66,6 +78,13 @@ class CourseViewModel @Inject constructor(
                 // Llamamos al repositorio
                 val result = repository.getCourseLessons(courseId)
 
+=======
+            _lessons.value = emptyList()
+            try {
+                // ✅ CORRECCIÓN AQUÍ: Usamos el nombre correcto 'getCourseLessons'
+                val result = repository.getCourseLessons(courseId)
+
+>>>>>>> main
                 if (result.isNotEmpty()) {
                     _lessons.value = result
                 } else {
