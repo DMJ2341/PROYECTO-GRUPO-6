@@ -1,55 +1,80 @@
-package com.example.cyberlearnapp.ui.components
+package com.example.cyberlearnapp.viewmodel
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.models.DailyTermWrapper
+import com.example.cyberlearnapp.network.models.Badge
+import com.example.cyberlearnapp.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@Composable
-fun DailyTermCard(wrapper: DailyTermWrapper) {
-    // ✅ CORREGIDO: Se usa 'term' en lugar de 'dailyTerm' (según DailyTermWrapper.kt)
-    val term = wrapper.term
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF2D2D44)) // Color oscuro "Cyber"
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("💡", style = MaterialTheme.typography.headlineSmall)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Término del Día", style = MaterialTheme.typography.labelMedium, color = Color.Gray)
-                Spacer(modifier = Modifier.weight(1f))
-                // NOTA: Se asume que term.category no es nulo, o se necesita manejo de nulos aquí.
-                Badge { Text(term.category ?: "General") }
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = term.term,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = term.definition,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFFB0BEC5)
-            )
-            // ✅ CORREGIDO: Se usa 'xpReward' en lugar de 'xpEarned' (según DailyTermWrapper.kt)
-            if (wrapper.xpReward > 0) {
-                Spacer(modifier = Modifier.height(8.dp))
-                // ✅ CORREGIDO: Se usa 'xpReward' en lugar de 'xpEarned'
-                Text(
-                    "+${wrapper.xpReward} XP ganados",
-                    color = Color.Yellow,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold
+// Asumimos que este estado ya está definido correctamente en DashboardModels.kt o aquí.
+data class DashboardState(
+    val isLoading: Boolean = true,
+    val error: String? = null,
+
+    val userXp: Int = 0,
+    val userLevel: Int = 1,
+    val badges: List<Badge> = emptyList(), // Esta lista suele ser poblada por otro repo o está en DashboardResponse
+    val dailyTerm: DailyTermWrapper? = null,
+    val hasPreferenceResult: Boolean = false,
+    val completedCourses: Int = 0
+)
+
+@HiltViewModel
+class DashboardViewModel @Inject constructor(
+    private val userRepo: UserRepository
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(DashboardState())
+    val state = _state.asStateFlow()
+
+    init {
+        loadAllData()
+    }
+
+    fun loadAllData() {
+        loadDashboard()
+        loadDailyTerm()
+    }
+
+    private fun loadDashboard() {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true)
+            try {
+                // userRepo.getDashboard() devuelve DashboardResponse
+                val response = userRepo.getDashboard()
+
+                // ✅ CORRECCIÓN 1: Acceder a la propiedad 'dashboard'
+                val data = response.dashboard
+
+                _state.value = _state.value.copy(
+                    // ✅ CORRECCIÓN 2: Usar los nombres de propiedades correctos del modelo
+                    userXp = data.totalXp,
+                    userLevel = data.level,
+                    // Se asume que data.badgesCount es usado en otro lugar o se usa una lista vacía
+                    // La propiedad badges aquí debe ser poblada por un BadgeRepository o estar en el Summary.
+                    hasPreferenceResult = data.hasPreferenceResult,
+                    completedCourses = data.completedCourses,
+                    isLoading = false
                 )
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(isLoading = false, error = e.message)
+            }
+        }
+    }
+
+    private fun loadDailyTerm() {
+        viewModelScope.launch {
+            try {
+                // ✅ Se usa el repositorio (asumiendo que tiene la lógica de token)
+                val dailyTermWrapper = userRepo.getDailyTerm()
+                _state.value = _state.value.copy(dailyTerm = dailyTermWrapper)
+            } catch (e: Exception) {
+                // Error silencioso para no romper el dashboard
             }
         }
     }

@@ -12,8 +12,8 @@ data class LessonCompletionResponse(
 data class LessonCompletionData(
     val lesson_completed: Boolean,
     val xp_earned: Int,
-    // Referencia a CourseProgress, que ahora está centralizada en DashboardModels.kt
+    // ✅ Ahora hace referencia al modelo CourseProgress que está en DashboardModels.kt
     val course_progress: CourseProgress? = null
 )
 
-// --- CLASE CourseProgress ELIMINADA (Para evitar Redeclaration) ---
+// La clase CourseProgress ha sido ELIMINADA de este archivo.

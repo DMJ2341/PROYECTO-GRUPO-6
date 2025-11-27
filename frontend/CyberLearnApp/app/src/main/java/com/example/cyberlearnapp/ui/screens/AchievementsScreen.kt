@@ -17,7 +17,7 @@ import com.example.cyberlearnapp.viewmodel.DashboardViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AchievementsScreen(
-    onBackClick: () -> Unit, // ✅ Aquí agregamos el parámetro que faltaba
+    onBackClick: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -56,6 +56,7 @@ fun AchievementsScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(state.badges.size) { index ->
+                    // Asume que BadgeCard está disponible
                     BadgeCard(badge = state.badges[index])
                 }
             }
