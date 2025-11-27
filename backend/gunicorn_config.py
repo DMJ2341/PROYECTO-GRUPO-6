@@ -5,30 +5,40 @@ import os
 bind = "0.0.0.0:8000"
 
 # Workers: Fórmula estándar (CPU * 2 + 1)
-# Usamos os.cpu_count() si multiprocessing falla en ciertos entornos.
 try:
+    # Usamos gevent para manejar la concurrencia de manera eficiente.
     workers = multiprocessing.cpu_count() * 2 + 1
 except NotImplementedError:
     workers = os.cpu_count() * 2 + 1 if os.cpu_count() else 3
 
-# Tipo de worker
-worker_class = 'sync'
+# ✅ CAMBIO CRÍTICO: Usar gevent en lugar de sync
+worker_class = 'gevent'  # Cambiado de 'sync' a gevent
+worker_connections = 1000 # Máximo de conexiones que puede manejar cada worker
 
-# Logs: Directorio persistente (¡Asegúrate de haber creado la carpeta /var/log/cyberlearn!)
+# Logs
 accesslog = "/var/log/cyberlearn/access.log"
 errorlog = "/var/log/cyberlearn/error.log"
-loglevel = "info"  # Recomiendo 'info' para ver el tráfico en esta etapa
+loglevel = "info"
+
+# ✅ KEEP-ALIVE: Crítico para que Nginx mantenga la conexión (75 segundos)
+# Debe ser menor que el timeout del proxy (Nginx).
+keepalive = 75  
 
 # Tiempos de espera
 timeout = 120
-graceful_timeout = 120  # Permite terminar peticiones pendientes antes de reiniciar
+graceful_timeout = 120
 
-# Preload: Carga la app antes de clonar los procesos (ahorra RAM y arranca más rápido)
+# Preload
 preload_app = False
 
-# Daemon: Systemd se encarga de esto, así que False es correcto
+# Daemon
 daemon = False
 
-# Usuario del proceso (Opcional si Systemd ya lo maneja, pero no hace daño)
+# Usuario
 user = "is-maria.gavino.p"
 group = "is-maria.gavino.p"
+
+# ✅ Configuración adicional para estabilidad
+# Reiniciar workers periódicamente para evitar memory leaks
+max_requests = 1000  
+max_requests_jitter = 50

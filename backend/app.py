@@ -40,8 +40,8 @@ from services.streak_service import StreakService
 from services.glossary_favorite_service import toggle_favorite, get_user_favorites, is_favorite
 from services.daily_term_service import get_daily_term_for_user, complete_daily_term
 from services.exam_service import ExamService
-from services.preference_engine import PreferenceEngine
-from services.preference_quiz import get_preference_questions, submit_preference_answers  # ← NUEVO Y CORRECTO
+# ✅ CORRECCIÓN: Importar get_preference_questions, submit_preference_answers Y el engine
+from services.preference_quiz import get_preference_questions, submit_preference_answers, engine
 
 # -------------------------------------------------------------------
 # SENTRY CONFIG
@@ -753,8 +753,9 @@ def submit_preference_test(current_user_id):
 @token_required
 def get_preference_result(current_user_id):
     try:
-        engine = PreferenceEngine()
-        result = engine.get_user_result(current_user_id)
+        # ✅ CORRECCIÓN: Usar engine.get_user_result() que ahora está disponible
+        result = engine.get_user_result(current_user_id) 
+        
         if not result:
             return jsonify({"success": True, "has_result": False})
         return jsonify({"success": True, "has_result": True, "result": result})
