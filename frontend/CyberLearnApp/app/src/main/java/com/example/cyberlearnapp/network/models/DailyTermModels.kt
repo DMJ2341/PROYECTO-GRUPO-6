@@ -1,19 +1,15 @@
 package com.example.cyberlearnapp.network.models
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerialName
 
-// --- CLASE GlossaryTerm ELIMINADA (Para evitar Redeclaration) ---
-
-// --- WRAPPER DEL TÉRMINO DIARIO ---
 @Serializable
 data class DailyTermWrapper(
     @SerialName("term") val term: GlossaryTerm,
     @SerialName("already_viewed_today") val alreadyViewedToday: Boolean,
-    @SerialName("xp_reward") val xpReward: Int
+    @SerialName("xp_reward") val xpReward: Int = 5
 )
 
-// --- MODELOS DE REQUEST/RESPONSE PARA GANAR XP ---
 @Serializable
 data class CompleteDailyTermRequest(
     @SerialName("term_id") val termId: Int

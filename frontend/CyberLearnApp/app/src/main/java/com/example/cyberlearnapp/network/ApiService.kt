@@ -8,86 +8,123 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    // --- AUTH ---
-    @POST("auth/login")
+    // ==========================================
+    // 🔒 AUTH & PERFIL
+    // ==========================================
+
+    @POST("api/auth/login")
     suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
-    @POST("auth/register")
+    @POST("api/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
 
-    @POST("auth/refresh")
+    @POST("api/auth/refresh")
     fun refreshToken(@Body request: Map<String, String>): Call<AuthResponse>
 
-    // --- DASHBOARD & USER ---
-    @GET("user/dashboard")
+    @POST("api/auth/logout")
+    // ✅ CORREGIDO: Usamos Response<Unit> para la simplicidad de la respuesta 200 OK.
+    suspend fun logout(@Header("Authorization") token: String, @Body request: Map<String, String>): Response<Unit>
+
+    @GET("api/user/dashboard")
     suspend fun getDashboard(@Header("Authorization") token: String): Response<DashboardResponse>
 
-    @GET("user/profile")
-    suspend fun getUserProfile(@Header("Authorization") token: String): Response<UserResponse>
+    @GET("api/user/profile")
+    suspend fun getUserProfile(@Header("Authorization") token: String): Response<UserProfileResponse>
 
-    @GET("daily-term")
-    suspend fun getDailyTerm(@Header("Authorization") token: String): Response<DailyTermWrapper>
+    // ==========================================
+    // 📚 CURSOS Y LECCIONES
+    // ==========================================
 
-    // --- CURSOS & LECCIONES ---
-    @GET("courses")
-    suspend fun getCourses(@Header("Authorization") token: String): Response<List<Course>>
+    @GET("api/courses")
+    suspend fun getCourses(): Response<List<Course>>
 
-    @GET("courses/{courseId}/lessons")
+    @GET("api/courses/{courseId}/lessons")
     suspend fun getCourseLessons(
-        @Header("Authorization") token: String,
         @Path("courseId") courseId: Int
     ): Response<List<Lesson>>
 
-    @GET("lessons/{lessonId}")
+    @GET("api/lessons/{lessonId}")
     suspend fun getLessonDetail(
         @Header("Authorization") token: String,
         @Path("lessonId") lessonId: String
     ): Response<LessonResponse>
 
-    // ✅ MODIFICADO: Ahora devuelve LessonCompletionResponse
-    @POST("progress/lesson/{lessonId}")
+    @POST("api/progress/lesson/{lessonId}")
     suspend fun completeLesson(
         @Header("Authorization") token: String,
         @Path("lessonId") lessonId: String
     ): Response<LessonCompletionResponse>
 
-    // --- ✅ NUEVO: GLOSARIO ---
-    @GET("glossary")
-    suspend fun getGlossaryTerms(
+    @GET("api/progress/course/{courseId}")
+    // ✅ CORREGIDO: El backend devuelve un JSON de progreso. Usamos Map<String, Any> o un modelo simple.
+    // Dado que el backend devuelve un objeto pequeño (percentage, completed_lessons, etc.),
+    // asumimos que un modelo simple de progreso existe o usamos Map<String, Any> si no lo encontramos.
+    // Usaremos Map<String, Any> para evitar errores de modelo no encontrado.
+    suspend fun getCourseProgress(
         @Header("Authorization") token: String,
+        @Path("courseId") courseId: Int
+    ): Response<Map<String, Any>>
+
+    @GET("api/progress/all")
+    // ✅ CORREGIDO: El backend devuelve un wrapper con una lista de progreso (List<CourseProgress>).
+    // Usamos Map<String, Any> para capturar el wrapper {"success": true, "courses": [...]}
+    suspend fun getAllProgress(@Header("Authorization") token: String): Response<Map<String, Any>>
+
+    // ==========================================
+    // 📖 GLOSARIO & TÉRMINO DIARIO
+    // ==========================================
+
+    @GET("api/daily-term")
+    suspend fun getDailyTerm(@Header("Authorization") token: String): Response<DailyTermWrapper>
+
+    @POST("api/daily-term/complete")
+    suspend fun completeDailyTerm(
+        @Header("Authorization") token: String,
+        @Body request: CompleteDailyTermRequest
+    ): Response<CompleteDailyTermResponse>
+
+    @GET("api/glossary")
+    // El backend devuelve {"success": true, "terms": [...]} (GlossaryResponse)
+    suspend fun getGlossaryTerms(): Response<GlossaryResponse>
+
+    @GET("api/glossary/search")
+    suspend fun searchGlossaryTerms(
         @Query("q") query: String? = null
     ): Response<GlossaryResponse>
 
-    // --- EXÁMENES ---
-    @GET("preference-test/questions")
-    suspend fun getPreferenceQuestions(@Header("Authorization") token: String): Response<PreferenceTestResponse>
-
-    @POST("preference-test/submit")
-    suspend fun submitPreferenceTest(
+    @POST("api/glossary/{glossaryId}/favorite")
+    // ✅ CORREGIDO: Respuesta personalizada del backend. Usamos Map<String, Any>
+    suspend fun toggleGlossaryFavorite(
         @Header("Authorization") token: String,
-        @Body body: SubmitPreferenceRequest
-    ): Response<SubmitPreferenceResponse>
+        @Path("glossaryId") glossaryId: Int
+    ): Response<Map<String, Any>> // Respuesta: {"success": true, "is_favorite": true, "action": "added"}
 
-    @GET("preference-test/result")
-    suspend fun getPreferenceResult(@Header("Authorization") token: String): Response<PreferenceResultWrapper>
+    // ==========================================
+    // 🎓 EVALUACIONES
+    // ==========================================
 
-    // ✅ CORREGIDO: Rutas alineadas con el backend (exam/final)
-    @GET("exam/final")
+    @GET("api/exam/final")
     suspend fun getFinalExam(@Header("Authorization") token: String): Response<ExamStartResponse>
 
-    @POST("exam/final/submit")
+    @POST("api/exam/final/submit")
     suspend fun submitFinalExam(
         @Header("Authorization") token: String,
         @Body body: ExamSubmitRequest
     ): Response<ExamResultResponse>
 
-    @GET("api/daily-term")
-    suspend fun getDailyTerm(): Response<DailyTermWrapper>
+    @GET("api/preference-test/questions")
+    suspend fun getPreferenceQuestions(@Header("Authorization") token: String): Response<PreferenceTestResponse>
 
-    // ✅ NUEVO ENDPOINT PARA GANAR XP
-    @POST("api/daily-term/complete")
-    suspend fun completeDailyTerm(@Body request: CompleteDailyTermRequest): Response<CompleteDailyTermResponse>
+    @POST("api/preference-test/submit")
+    suspend fun submitPreferenceTest(
+        @Header("Authorization") token: String,
+        @Body body: SubmitPreferenceRequest
+    ): Response<SubmitPreferenceResponse>
 
-    @GET("api/glossary")
-    suspend fun getAllGlossaryTerms(): Response<List<GlossaryTerm>>
+    @GET("api/preference-test/result")
+    suspend fun getPreferenceResult(@Header("Authorization") token: String): Response<PreferenceResultWrapper>
+
+    @POST("api/preference-test/retake")
+    // ✅ CORREGIDO: Usamos Response<Unit> para la simplicidad de la respuesta 200 OK.
+    suspend fun retakePreferenceTest(@Header("Authorization") token: String): Response<Unit>
 }
