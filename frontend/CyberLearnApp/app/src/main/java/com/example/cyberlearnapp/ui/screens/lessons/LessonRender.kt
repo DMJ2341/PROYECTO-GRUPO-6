@@ -7,13 +7,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -23,26 +26,33 @@ import com.example.cyberlearnapp.network.models.LessonResponse
 import com.example.cyberlearnapp.utils.getIconByName
 import kotlinx.serialization.json.*
 
+import com.example.cyberlearnapp.ui.theme.*
+
+// =========================================================================
+// FUNCIÓN PRINCIPAL DE RENDERIZADO DE PANTALLAS DE LECCIÓN
+// =========================================================================
+
 @Composable
 fun LessonScreenRender(
-    lesson: LessonResponse, // ✅ CAMBIO: Recibe LessonResponse
+    lesson: LessonResponse,
     screenIndex: Int,
     onNext: () -> Unit,
     onPrev: () -> Unit,
     isLastScreen: Boolean
 ) {
-    // ✅ LÓGICA SIMPLIFICADA: Usamos la lista 'screens' que ya viene en el objeto
     val currentScreen = lesson.screens.getOrNull(screenIndex)
 
     if (currentScreen == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Cargando contenido o fin de lección...")
+            Text(
+                "Cargando contenido o fin de lección...",
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
         return
     }
 
     val type = currentScreen.type
-    // El contenido ya es un JsonObject, no hace falta parsear string
     val contentData = currentScreen.content
     val title = currentScreen.title
 
@@ -51,66 +61,384 @@ fun LessonScreenRender(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        // Título de la pantalla
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 16.dp),
+            color = MaterialTheme.colorScheme.onBackground
         )
 
+        // Contenido principal (con scroll)
         Box(modifier = Modifier.weight(1f)) {
             when (type) {
+                "step_revelation" -> RenderStepRevelation(contentData)
                 "story_hook" -> RenderStoryHook(contentData)
                 "theory_tabs" -> RenderTheoryTabs(contentData)
                 "theory_section" -> RenderTheorySection(contentData)
                 "interactive_concept" -> RenderInteractiveConcept(contentData)
                 "quiz" -> RenderQuiz(contentData)
-                // NUEVAS INTERACTIVAS
                 "memory_cards" -> RenderMemoryCards(contentData)
                 "accordion_list" -> RenderAccordionList(contentData)
                 "progress_checklist" -> RenderProgressChecklist(contentData)
-                // ---
-                else -> RenderStoryHook(contentData)
+                else -> {
+                    // Mensaje informativo para tipos no implementados
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = WarningOrange.copy(alpha = 0.2f)
+                        ),
+                        border = BorderStroke(2.dp, WarningOrange)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Icon(
+                                Icons.Default.Warning,
+                                contentDescription = null,
+                                tint = WarningOrange,
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                "Tipo de contenido no soportado: $type",
+                                color = TextPrimary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                "Este tipo de pantalla aún no ha sido implementado.",
+                                color = TextSecondary,
+                                fontSize = 14.sp
+                            )
+                        }
+                    }
+                }
             }
         }
 
+        // Botones de navegación
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(onClick = onPrev, enabled = screenIndex > 0) {
-                Text("Anterior")
+            Button(
+                onClick = onPrev,
+                enabled = screenIndex > 0,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text("Anterior", color = MaterialTheme.colorScheme.onSecondary)
             }
-            Button(onClick = onNext) {
-                Text(if (isLastScreen) "Finalizar" else "Siguiente")
+            Button(
+                onClick = onNext,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    if (isLastScreen) "Finalizar" else "Siguiente",
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }
 }
 
 // =========================================================================
-// RENDERERS EXISTENTES
+// FUNCIÓN DE UTILIDAD: PARSING SEGURO DE COLORES HEXADECIMALES
+// =========================================================================
+
+fun parseColorHex(hex: String?, default: Color): Color {
+    return try {
+        if (hex.isNullOrBlank()) return default
+        val cleanHex = hex.removePrefix("#")
+        if (cleanHex.length != 6 && cleanHex.length != 8) return default
+
+        val colorValue = cleanHex.toLong(16)
+        val finalValue = if (cleanHex.length == 6) {
+            0xFF000000 or colorValue
+        } else {
+            colorValue
+        }
+        Color(finalValue)
+    } catch (e: Exception) {
+        default
+    }
+}
+
+// =========================================================================
+// RENDERER: STEP REVELATION
+// Para pantallas tipo "Caso Real" con pasos revelables
+// =========================================================================
+
+@Composable
+fun RenderStepRevelation(content: JsonObject) {
+    val storyTitle = content["story_title"]?.jsonPrimitive?.content
+    val storyIntro = content["story_intro"]?.jsonPrimitive?.content
+    val steps = content["steps"]?.jsonArray
+
+    var currentStep by remember { mutableStateOf(0) }
+    var showInsight by remember { mutableStateOf(false) }
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Título de la historia
+        if (storyTitle != null) {
+            item {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = PrimaryPurple.copy(alpha = 0.2f)
+                    ),
+                    border = BorderStroke(2.dp, PrimaryPurple)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Icon(
+                            Icons.Default.MenuBook,
+                            contentDescription = null,
+                            tint = PrimaryPurple,
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            storyTitle,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = TextPrimary
+                        )
+                    }
+                }
+            }
+        }
+
+        // Introducción
+        if (storyIntro != null) {
+            item {
+                Text(
+                    storyIntro,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = TextSecondary,
+                    fontStyle = FontStyle.Italic,
+                    lineHeight = 24.sp
+                )
+            }
+        }
+
+        // Pasos de la historia
+        if (steps != null && steps.isNotEmpty()) {
+            items(steps.size) { index ->
+                if (index <= currentStep) {
+                    val step = steps[index].jsonObject
+                    val stepTitle = step["title"]?.jsonPrimitive?.content ?: ""
+                    val stepContent = step["content"]?.jsonPrimitive?.content ?: ""
+                    val stepInsight = step["insight"]?.jsonPrimitive?.content
+                    val stepIcon = step["icon"]?.jsonPrimitive?.content ?: "info"
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = SurfaceCard
+                        ),
+                        border = BorderStroke(
+                            1.dp,
+                            if (index == currentStep) PrimaryCyan else SurfaceElevated
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            // Header del paso
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    getIconByName(stepIcon),
+                                    contentDescription = null,
+                                    tint = PrimaryCyan,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(Modifier.width(12.dp))
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        "Paso ${index + 1}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = TextTertiary
+                                    )
+                                    Text(
+                                        stepTitle,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = TextPrimary,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
+
+                            Spacer(Modifier.height(12.dp))
+
+                            // Contenido del paso
+                            Text(
+                                stepContent,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TextSecondary,
+                                lineHeight = 22.sp
+                            )
+
+                            // Insight (revelable)
+                            if (stepInsight != null && index == currentStep) {
+                                Spacer(Modifier.height(12.dp))
+
+                                OutlinedButton(
+                                    onClick = { showInsight = !showInsight },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = AccentGold
+                                    ),
+                                    border = BorderStroke(1.dp, AccentGold)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Lightbulb,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        if (showInsight) "Ocultar Insight" else "Ver Insight Clave",
+                                        style = MaterialTheme.typography.labelMedium
+                                    )
+                                }
+
+                                AnimatedVisibility(visible = showInsight) {
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 8.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = AccentGold.copy(alpha = 0.15f)
+                                        )
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(12.dp),
+                                            verticalAlignment = Alignment.Top
+                                        ) {
+                                            Text("💡", fontSize = 20.sp)
+                                            Spacer(Modifier.width(8.dp))
+                                            Text(
+                                                stepInsight,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = TextPrimary,
+                                                fontStyle = FontStyle.Italic,
+                                                lineHeight = 20.sp
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Botón para revelar siguiente paso
+            if (currentStep < steps.size - 1) {
+                item {
+                    Button(
+                        onClick = {
+                            currentStep++
+                            showInsight = false
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PrimaryCyan
+                        )
+                    ) {
+                        Icon(Icons.Default.ArrowForward, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Continuar Historia")
+                    }
+                }
+            } else {
+                // Mensaje final
+                item {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = SuccessGreen
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.CheckCircle,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            Text(
+                                "Historia completada. Continúa a la siguiente sección.",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// =========================================================================
+// RENDERERS DE TIPOS DE CONTENIDO
 // =========================================================================
 
 @Composable
 fun RenderStoryHook(content: JsonObject) {
-    LazyColumn {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         item {
             content["image_url"]?.jsonPrimitive?.content?.let { url ->
-                Text("Imagen: $url", color = Color.Blue, modifier = Modifier.padding(bottom = 8.dp))
+                Text(
+                    "Imagen: $url",
+                    color = PrimaryCyan,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
             }
-            Text(content["narrative"]?.jsonPrimitive?.content ?: "", style = MaterialTheme.typography.bodyLarge)
+
+            Text(
+                content["narrative"]?.jsonPrimitive?.content ?: "",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
 
             val stats = content["stats"]?.jsonArray
             if (stats != null) {
                 Spacer(modifier = Modifier.height(16.dp))
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     stats.forEach { statElement ->
                         val stat = statElement.jsonObject
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(getIconByName(stat["icon"]?.jsonPrimitive?.content ?: ""), null)
-                            Text(stat["value"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
-                            Text(stat["label"]?.jsonPrimitive?.content ?: "", style = MaterialTheme.typography.bodySmall)
+                            Icon(
+                                getIconByName(stat["icon"]?.jsonPrimitive?.content ?: ""),
+                                null,
+                                tint = AccentGold
+                            )
+                            Text(
+                                stat["value"]?.jsonPrimitive?.content ?: "",
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            Text(
+                                stat["label"]?.jsonPrimitive?.content ?: "",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
                 }
@@ -124,22 +452,47 @@ fun RenderTheoryTabs(content: JsonObject) {
     val intro = content["intro"]?.jsonPrimitive?.content
     val tabs = content["tabs"]?.jsonArray
 
-    LazyColumn {
-        if (intro != null) item { Text(intro, modifier = Modifier.padding(bottom = 8.dp)) }
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        if (intro != null) {
+            item {
+                Text(
+                    intro,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+
         items(tabs?.size ?: 0) { index ->
             val tab = tabs!![index].jsonObject
             Card(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(getIconByName(tab["icon"]?.jsonPrimitive?.content ?: ""), null)
+                        Icon(
+                            getIconByName(tab["icon"]?.jsonPrimitive?.content ?: ""),
+                            null,
+                            tint = PrimaryCyan
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(tab["title"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
+                        Text(
+                            tab["title"]?.jsonPrimitive?.content ?: "",
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(tab["text"]?.jsonPrimitive?.content ?: "")
+                    Text(
+                        tab["text"]?.jsonPrimitive?.content ?: "",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 20.sp
+                    )
                 }
             }
         }
@@ -148,26 +501,62 @@ fun RenderTheoryTabs(content: JsonObject) {
 
 @Composable
 fun RenderTheorySection(content: JsonObject) {
-    LazyColumn {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         content["intro"]?.jsonPrimitive?.contentOrNull?.let {
-            item { Text(it, modifier = Modifier.padding(bottom = 16.dp)) }
+            item {
+                Text(
+                    it,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
 
         val components = content["components"]?.jsonArray
         if (components != null) {
-            item { Text("Componentes Clave:", fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 8.dp)) }
+            item {
+                Text(
+                    "Componentes Clave:",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
             items(components.size) { index ->
                 val element = components[index]
                 if (element is JsonObject) {
                     ListItem(
-                        headlineContent = { Text(element["name"]?.jsonPrimitive?.content ?: "") },
-                        supportingContent = { Text(element["description"]?.jsonPrimitive?.content ?: "") },
-                        leadingContent = { Icon(Icons.Default.CheckCircle, null) }
+                        headlineContent = {
+                            Text(
+                                element["name"]?.jsonPrimitive?.content ?: "",
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                element["description"]?.jsonPrimitive?.content ?: "",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        leadingContent = {
+                            Icon(Icons.Default.CheckCircle, null, tint = SuccessGreen)
+                        }
                     )
                 } else if (element is JsonPrimitive) {
                     Row(modifier = Modifier.padding(vertical = 4.dp)) {
-                        Icon(Icons.Default.ArrowRight, contentDescription = null)
-                        Text(text = element.content, modifier = Modifier.padding(start = 8.dp))
+                        Icon(
+                            Icons.Default.ArrowRight,
+                            contentDescription = null,
+                            tint = PrimaryCyan
+                        )
+                        Text(
+                            text = element.content,
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 }
             }
@@ -178,15 +567,39 @@ fun RenderTheorySection(content: JsonObject) {
 @Composable
 fun RenderInteractiveConcept(content: JsonObject) {
     val concepts = content["concepts"]?.jsonArray
-    LazyColumn {
-        item { Text(content["description"]?.jsonPrimitive?.content ?: "", modifier = Modifier.padding(bottom = 16.dp)) }
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            Text(
+                content["description"]?.jsonPrimitive?.content ?: "",
+                modifier = Modifier.padding(bottom = 16.dp),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+
         items(concepts?.size ?: 0) { index ->
             val c = concepts!![index].jsonObject
-            OutlinedCard(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+            OutlinedCard(
+                modifier = Modifier.fillMaxWidth(),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+            ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(c["name"]?.jsonPrimitive?.content ?: "", fontWeight = FontWeight.Bold)
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    Text("Def: ${c["definition"]?.jsonPrimitive?.content ?: ""}")
+                    Text(
+                        c["name"]?.jsonPrimitive?.content ?: "",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Divider(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                    Text(
+                        "Def: ${c["definition"]?.jsonPrimitive?.content ?: ""}",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        lineHeight = 20.sp
+                    )
                 }
             }
         }
@@ -201,7 +614,14 @@ fun RenderQuiz(content: JsonObject) {
     var feedback by remember { mutableStateOf("") }
 
     Column {
-        Text(question, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 16.dp))
+        Text(
+            question,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 16.dp),
+            color = MaterialTheme.colorScheme.onBackground,
+            lineHeight = 24.sp
+        )
+
         options?.forEach { element ->
             val opt = element.jsonObject
             val id = opt["id"]?.jsonPrimitive?.content
@@ -209,44 +629,71 @@ fun RenderQuiz(content: JsonObject) {
             val isCorrect = opt["is_correct"]?.jsonPrimitive?.boolean == true
             val optFeedback = opt["feedback"]?.jsonPrimitive?.content ?: ""
 
-            Button(
-                onClick = { selectedOption = id; feedback = optFeedback },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedOption == id) (if (isCorrect) Color.Green else Color.Red) else MaterialTheme.colorScheme.primary
-                )
+            val containerColor = when {
+                selectedOption != null && selectedOption == id ->
+                    if (isCorrect) SuccessGreen.copy(alpha = 0.2f)
+                    else ErrorRed.copy(alpha = 0.2f)
+                selectedOption == id -> SurfaceActive
+                else -> MaterialTheme.colorScheme.surface
+            }
+
+            val borderColor = when {
+                selectedOption != null && selectedOption == id ->
+                    if (isCorrect) SuccessGreen else ErrorRed
+                selectedOption == id -> PrimaryCyan
+                else -> MaterialTheme.colorScheme.surfaceVariant
+            }
+
+            Card(
+                onClick = {
+                    selectedOption = id
+                    feedback = optFeedback
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = containerColor
+                ),
+                border = BorderStroke(2.dp, borderColor)
             ) {
-                Text(text ?: "")
+                Text(
+                    text ?: "",
+                    modifier = Modifier.padding(16.dp),
+                    color = TextPrimary,
+                    lineHeight = 22.sp
+                )
             }
         }
-        if (feedback.isNotEmpty()) Text(feedback, modifier = Modifier.padding(top = 16.dp))
+
+        if (feedback.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = SurfaceElevated
+                )
+            ) {
+                Text(
+                    feedback,
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    lineHeight = 22.sp
+                )
+            }
+        }
     }
 }
 
-// =========================================================================
-// NUEVAS INTERACTIVAS
-// =========================================================================
-
-// --- IDEA 1: "Memory Cards" ---
 @Composable
 fun RenderMemoryCards(content: JsonObject) {
     val cards = content["cards"]?.jsonArray ?: return
 
-    LazyColumn {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         items(cards.size) { index ->
             val card = cards[index].jsonObject
             var flipped by remember { mutableStateOf(false) }
-
-            // Función de ayuda para parsear el color de forma segura
-            fun parseColorHex(hex: String?, default: Long): Color {
-                return try {
-                    val cleanHex = hex?.removePrefix("#")
-                    // Combina 0xFF (alpha opaco) con el valor RGB de 6 dígitos
-                    Color(cleanHex?.toLong(16)?.or(0xFF00000000) ?: default)
-                } catch (e: Exception) {
-                    Color(default)
-                }
-            }
 
             val frontColorString = card["front"]?.jsonObject?.get("color")?.jsonPrimitive?.content
             val backColorString = card["back"]?.jsonObject?.get("color")?.jsonPrimitive?.content
@@ -254,14 +701,13 @@ fun RenderMemoryCards(content: JsonObject) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
-                    .height(180.dp)
+                    .height(200.dp)
                     .clickable { flipped = !flipped },
                 colors = CardDefaults.cardColors(
                     containerColor = if (flipped)
-                        parseColorHex(backColorString, 0xFF4CAF50) // Default: Green
+                        parseColorHex(backColorString, SurfaceActive)
                     else
-                        parseColorHex(frontColorString, 0xFF1976D2) // Default: Blue
+                        parseColorHex(frontColorString, PrimaryCyan)
                 )
             ) {
                 Box(
@@ -270,9 +716,14 @@ fun RenderMemoryCards(content: JsonObject) {
                 ) {
                     if (!flipped) {
                         // FRENTE
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
                             Icon(
-                                getIconByName(card["front"]?.jsonObject?.get("icon")?.jsonPrimitive?.content ?: ""),
+                                getIconByName(
+                                    card["front"]?.jsonObject?.get("icon")?.jsonPrimitive?.content ?: ""
+                                ),
                                 null,
                                 tint = Color.White,
                                 modifier = Modifier.size(48.dp)
@@ -294,7 +745,9 @@ fun RenderMemoryCards(content: JsonObject) {
                     } else {
                         // REVERSO
                         Column(
-                            modifier = Modifier.padding(20.dp)
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .verticalScroll(rememberScrollState())
                         ) {
                             Text(
                                 "Definición:",
@@ -306,7 +759,8 @@ fun RenderMemoryCards(content: JsonObject) {
                             Text(
                                 card["back"]?.jsonObject?.get("definition")?.jsonPrimitive?.content ?: "",
                                 color = Color.White,
-                                fontSize = 16.sp
+                                fontSize = 15.sp,
+                                lineHeight = 20.sp
                             )
 
                             Spacer(Modifier.height(12.dp))
@@ -320,7 +774,8 @@ fun RenderMemoryCards(content: JsonObject) {
                             Text(
                                 card["back"]?.jsonObject?.get("example")?.jsonPrimitive?.content ?: "",
                                 color = Color.White.copy(alpha = 0.9f),
-                                fontSize = 14.sp
+                                fontSize = 13.sp,
+                                lineHeight = 18.sp
                             )
                         }
                     }
@@ -330,44 +785,39 @@ fun RenderMemoryCards(content: JsonObject) {
     }
 }
 
-// --- IDEA 2: "Accordion List" ---
-
 @Composable
 fun RenderAccordionList(content: JsonObject) {
     val sections = content["sections"]?.jsonArray ?: return
     var expandedSection by remember { mutableStateOf<String?>(null) }
     var expandedItem by remember { mutableStateOf<String?>(null) }
 
-    LazyColumn {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         items(sections.toList()) { section ->
             val sec = section.jsonObject
             val sectionId = sec["id"]?.jsonPrimitive?.content ?: ""
             val isExpanded = expandedSection == sectionId
 
-            // Función de ayuda para parsear el color de forma segura
-            fun parseColorHex(hex: String?, default: Long): Color {
-                return try {
-                    val cleanHex = hex?.removePrefix("#")
-                    // Combina 0xFF (alpha opaco) con el valor RGB de 6 dígitos
-                    Color(cleanHex?.toLong(16)?.or(0xFF00000000) ?: default)
-                } catch (e: Exception) {
-                    Color(default)
-                }
-            }
-
-            val sectionColor = parseColorHex(sec["color"]?.jsonPrimitive?.content, 0xFFD32F2F)
+            val sectionColor = parseColorHex(
+                sec["color"]?.jsonPrimitive?.content,
+                PrimaryCyan
+            )
 
             // Sección principal
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
                     .clickable {
                         expandedSection = if (isExpanded) null else sectionId
                         expandedItem = null
                     },
                 colors = CardDefaults.cardColors(
-                    containerColor = sectionColor.copy(alpha = 0.2f)
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                border = BorderStroke(
+                    2.dp,
+                    if (isExpanded) sectionColor else MaterialTheme.colorScheme.surface
                 )
             ) {
                 Row(
@@ -384,65 +834,70 @@ fun RenderAccordionList(content: JsonObject) {
                         sec["title"]?.jsonPrimitive?.content ?: "",
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.weight(1f)
                     )
                     Icon(
                         if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                        null
+                        null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
             // Items de la sección (expandible)
             AnimatedVisibility(visible = isExpanded) {
-                Column(modifier = Modifier.padding(start = 16.dp)) {
+                Column(modifier = Modifier.padding(start = 16.dp, top = 8.dp)) {
                     sec["items"]?.jsonArray?.forEach { item ->
                         val it = item.jsonObject
                         val itemId = it["id"]?.jsonPrimitive?.content ?: ""
                         val isItemExpanded = expandedItem == itemId
 
-                        // Item
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 2.dp)
+                                .padding(vertical = 4.dp)
                                 .clickable {
                                     expandedItem = if (isItemExpanded) null else itemId
-                                }
+                                },
+                            colors = CardDefaults.cardColors(
+                                containerColor = SurfaceElevated
+                            )
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(
                                         getIconByName(it["icon"]?.jsonPrimitive?.content ?: ""),
                                         null,
+                                        tint = PrimaryCyan,
                                         modifier = Modifier.size(20.dp)
                                     )
                                     Spacer(Modifier.width(8.dp))
                                     Text(
                                         it["title"]?.jsonPrimitive?.content ?: "",
-                                        fontWeight = FontWeight.Medium
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Spacer(Modifier.weight(1f))
                                     Icon(
-                                        if (isItemExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                        if (isItemExpanded) Icons.Default.ExpandLess
+                                        else Icons.Default.ExpandMore,
                                         null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
 
-                                // Detalles (expandible)
                                 AnimatedVisibility(visible = isItemExpanded) {
                                     Column(modifier = Modifier.padding(top = 12.dp)) {
                                         val details = it["details"]?.jsonObject
 
-                                        // Definición
                                         DetailRow(
                                             label = "Definición",
                                             value = details?.get("definition")?.jsonPrimitive?.content ?: "",
-                                            color = Color(0xFF1976D2)
+                                            color = PrimaryCyan
                                         )
 
-                                        // Tipos
                                         val types = details?.get("types")?.jsonArray?.joinToString(", ") {
                                             it.jsonPrimitive.content
                                         }
@@ -450,51 +905,55 @@ fun RenderAccordionList(content: JsonObject) {
                                             DetailRow(
                                                 label = "Tipos",
                                                 value = types,
-                                                color = Color(0xFFF57C00)
+                                                color = WarningOrange
                                             )
                                         }
 
-                                        // Caso real
                                         DetailRow(
                                             label = "Caso Real",
                                             value = details?.get("real_case")?.jsonPrimitive?.content ?: "",
-                                            color = Color(0xFFD32F2F)
+                                            color = ErrorRed
                                         )
 
-                                        // Prevención
                                         val prevention = details?.get("prevention")?.jsonArray
                                         if (prevention != null) {
                                             Text(
                                                 "Prevención:",
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 12.sp,
-                                                color = Color(0xFF388E3C),
+                                                color = SuccessGreen,
                                                 modifier = Modifier.padding(top = 8.dp)
                                             )
                                             prevention.forEach { prev ->
-                                                Row(modifier = Modifier.padding(start = 8.dp, top = 2.dp)) {
-                                                    Text("✓", color = Color(0xFF388E3C))
+                                                Row(
+                                                    modifier = Modifier.padding(
+                                                        start = 8.dp,
+                                                        top = 2.dp
+                                                    )
+                                                ) {
+                                                    Text("✓", color = SuccessGreen)
                                                     Spacer(Modifier.width(4.dp))
                                                     Text(
                                                         prev.jsonPrimitive.content,
-                                                        fontSize = 12.sp
+                                                        fontSize = 12.sp,
+                                                        lineHeight = 18.sp,
+                                                        color = MaterialTheme.colorScheme.onSurface
                                                     )
                                                 }
                                             }
                                         }
 
-                                        // Severidad badge
                                         val severity = details?.get("severity")?.jsonPrimitive?.content
                                         if (severity != null) {
                                             Spacer(Modifier.height(8.dp))
                                             Box(
                                                 modifier = Modifier
                                                     .background(
-                                                        when(severity) {
-                                                            "CRÍTICA" -> Color(0xFFD32F2F)
-                                                            "ALTA" -> Color(0xFFF57C00)
-                                                            "MEDIA" -> Color(0xFFFBC02D)
-                                                            else -> Color(0xFF388E3C)
+                                                        when (severity) {
+                                                            "CRÍTICA" -> ErrorRed.copy(alpha = 0.8f)
+                                                            "ALTA" -> WarningOrange.copy(alpha = 0.8f)
+                                                            "MEDIA" -> AccentGold.copy(alpha = 0.8f)
+                                                            else -> SuccessGreen.copy(alpha = 0.8f)
                                                         },
                                                         RoundedCornerShape(4.dp)
                                                     )
@@ -530,13 +989,13 @@ fun DetailRow(label: String, value: String, color: Color) {
         )
         Text(
             value,
-            fontSize = 12.sp,
-            modifier = Modifier.padding(start = 8.dp)
+            fontSize = 13.sp,
+            lineHeight = 18.sp,
+            color = TextPrimary,
+            modifier = Modifier.padding(start = 8.dp, top = 2.dp)
         )
     }
 }
-
-// --- IDEA 3: "Progress Checklist" ---
 
 @Composable
 fun RenderProgressChecklist(content: JsonObject) {
@@ -544,12 +1003,15 @@ fun RenderProgressChecklist(content: JsonObject) {
     var completedItems by remember { mutableStateOf(setOf<String>()) }
 
     Column {
-        // Barra de progreso global
-        val progress = if (items.isNotEmpty()) completedItems.size.toFloat() / items.size else 0f
+        val progress = if (items.isNotEmpty()) {
+            completedItems.size.toFloat() / items.size
+        } else {
+            0f
+        }
 
         Card(
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = SurfaceCard
             ),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -561,24 +1023,29 @@ fun RenderProgressChecklist(content: JsonObject) {
                 ) {
                     Text(
                         "Progreso del Módulo",
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TextPrimary
                     )
                     Text(
                         "${(progress * 100).toInt()}%",
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        style = MaterialTheme.typography.titleMedium,
+                        color = PrimaryCyan
                     )
                 }
                 Spacer(Modifier.height(8.dp))
                 LinearProgressIndicator(
                     progress = progress,
-                    modifier = Modifier.fillMaxWidth().height(8.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = PrimaryCyan,
+                    trackColor = SurfaceElevated
                 )
                 Text(
                     "${completedItems.size} de ${items.size} completados",
                     style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
@@ -586,9 +1053,11 @@ fun RenderProgressChecklist(content: JsonObject) {
 
         Spacer(Modifier.height(16.dp))
 
-        // Items del checklist
-        LazyColumn {
-            items(items.toList()) { item ->
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items.forEach { item ->
                 val it = item.jsonObject
                 val itemId = it["id"]?.jsonPrimitive?.content ?: ""
                 val isCompleted = completedItems.contains(itemId)
@@ -596,7 +1065,6 @@ fun RenderProgressChecklist(content: JsonObject) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
                         .clickable {
                             completedItems = if (isCompleted) {
                                 completedItems - itemId
@@ -606,47 +1074,48 @@ fun RenderProgressChecklist(content: JsonObject) {
                         },
                     colors = CardDefaults.cardColors(
                         containerColor = if (isCompleted)
-                            Color(0xFFE8F5E9) // Very light green
+                            SuccessGreen.copy(alpha = 0.1f)
                         else
-                            MaterialTheme.colorScheme.surface
+                            SurfaceCard
                     ),
                     border = BorderStroke(
                         2.dp,
-                        if (isCompleted) Color(0xFF388E3C) else Color.LightGray
+                        if (isCompleted) SuccessGreen else SurfaceElevated
                     )
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        // Tarea principal
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(
                                 checked = isCompleted,
                                 onCheckedChange = null,
                                 colors = CheckboxDefaults.colors(
-                                    checkedColor = Color(0xFF388E3C)
+                                    checkedColor = SuccessGreen,
+                                    uncheckedColor = TextSecondary
                                 )
                             )
                             Spacer(Modifier.width(12.dp))
                             Icon(
                                 getIconByName(it["icon"]?.jsonPrimitive?.content ?: ""),
                                 null,
-                                tint = if (isCompleted) Color(0xFF388E3C) else MaterialTheme.colorScheme.primary
+                                tint = if (isCompleted) SuccessGreen else PrimaryCyan,
+                                modifier = Modifier.size(24.dp)
                             )
                             Spacer(Modifier.width(12.dp))
                             Text(
                                 it["task"]?.jsonPrimitive?.content ?: "",
                                 fontWeight = if (isCompleted) FontWeight.Bold else FontWeight.Normal,
                                 fontSize = 16.sp,
+                                color = if (isCompleted) TextSecondary else TextPrimary,
                                 modifier = Modifier.weight(1f)
                             )
                         }
 
-                        // Contenido desbloqueado
                         AnimatedVisibility(visible = isCompleted) {
                             Column(
                                 modifier = Modifier
                                     .padding(start = 56.dp, top = 12.dp)
                                     .background(
-                                        Color(0xFF388E3C).copy(alpha = 0.1f),
+                                        SuccessGreen.copy(alpha = 0.15f),
                                         RoundedCornerShape(8.dp)
                                     )
                                     .padding(16.dp)
@@ -655,48 +1124,56 @@ fun RenderProgressChecklist(content: JsonObject) {
                                     Text("🎉", fontSize = 24.sp)
                                     Spacer(Modifier.width(8.dp))
                                     Text(
-                                        it["unlock_content"]?.jsonObject?.get("title")?.jsonPrimitive?.content ?: "¡Desbloqueado!",
+                                        it["unlock_content"]?.jsonObject?.get("title")?.jsonPrimitive?.content
+                                            ?: "¡Desbloqueado!",
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF2E7D32) // Darker green
+                                        fontSize = 16.sp,
+                                        color = SuccessGreen
                                     )
                                 }
 
                                 Spacer(Modifier.height(8.dp))
 
-                                // Puntos clave
                                 it["unlock_content"]?.jsonObject?.get("points")?.jsonArray?.forEach { point ->
                                     Row(
                                         modifier = Modifier.padding(vertical = 2.dp)
                                     ) {
-                                        Text("•", color = Color(0xFF388E3C), fontWeight = FontWeight.Bold)
+                                        Text("•", color = SuccessGreen, fontWeight = FontWeight.Bold)
                                         Spacer(Modifier.width(8.dp))
                                         Text(
                                             point.jsonPrimitive.content,
-                                            fontSize = 14.sp
+                                            fontSize = 14.sp,
+                                            lineHeight = 20.sp,
+                                            color = TextPrimary
                                         )
                                     }
                                 }
 
-                                // Bonus fact
-                                val bonusFact = it["unlock_content"]?.jsonObject?.get("bonus_fact")?.jsonPrimitive?.content
+                                val bonusFact = it["unlock_content"]?.jsonObject?.get("bonus_fact")
+                                    ?.jsonPrimitive?.content
                                 if (bonusFact != null) {
                                     Spacer(Modifier.height(8.dp))
                                     Card(
                                         colors = CardDefaults.cardColors(
-                                            containerColor = Color(0xFFFFF9C4) // Light yellow
+                                            containerColor = SurfaceElevated
                                         )
                                     ) {
-                                        Row(modifier = Modifier.padding(12.dp)) {
+                                        Row(
+                                            modifier = Modifier.padding(12.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
                                             Icon(
                                                 Icons.Default.Lightbulb,
                                                 null,
-                                                tint = Color(0xFFF57C00), // Orange
+                                                tint = AccentGold,
                                                 modifier = Modifier.size(20.dp)
                                             )
                                             Spacer(Modifier.width(8.dp))
                                             Text(
                                                 bonusFact,
-                                                fontSize = 12.sp,
+                                                fontSize = 13.sp,
+                                                lineHeight = 18.sp,
+                                                color = TextPrimary,
                                                 fontStyle = FontStyle.Italic
                                             )
                                         }
@@ -709,12 +1186,11 @@ fun RenderProgressChecklist(content: JsonObject) {
             }
         }
 
-        // Mensaje de completitud
         if (completedItems.size == items.size && items.isNotEmpty()) {
             Spacer(Modifier.height(16.dp))
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF4CAF50) // Solid green
+                    containerColor = SuccessGreen
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {

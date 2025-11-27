@@ -17,6 +17,14 @@ import androidx.navigation.NavController
 import com.example.cyberlearnapp.ui.screens.lessons.LessonScreenRender
 import com.example.cyberlearnapp.viewmodel.LessonViewModel
 
+// NUEVAS IMPORTACIONES CLAVE PARA SCROLLING
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
+// ✅ IMPORTACIÓN CLAVE PARA EL COLOR DE ÉXITO
+import com.example.cyberlearnapp.ui.theme.SuccessGreen
+
+
 @Composable
 fun LessonDetailScreen(
     navController: NavController,
@@ -37,12 +45,13 @@ fun LessonDetailScreen(
     // ✅ Diálogo de Victoria / XP
     if (completionResult != null) {
         AlertDialog(
-            onDismissRequest = { }, // No permitir cerrar sin botón
-            icon = { Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Green, modifier = Modifier.size(48.dp)) },
-            title = { Text("¡Lección Completada!") },
+            onDismissRequest = { },
+            // ❌ CORRECCIÓN: Usamos SuccessGreen en lugar de MaterialTheme.colorScheme.success
+            icon = { Icon(Icons.Default.CheckCircle, contentDescription = null, tint = SuccessGreen, modifier = Modifier.size(48.dp)) },
+            title = { Text("¡Lección Completada!", color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                    Text("¡Excelente trabajo!")
+                    Text("¡Excelente trabajo!", color = MaterialTheme.colorScheme.onSurface)
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         "+${completionResult?.xp_earned} XP",
@@ -53,16 +62,21 @@ fun LessonDetailScreen(
                 }
             },
             confirmButton = {
-                Button(onClick = {
-                    navController.popBackStack() // Volver al menú
-                }) {
-                    Text("Continuar")
+                Button(
+                    onClick = {
+                        navController.popBackStack()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text("Continuar", color = MaterialTheme.colorScheme.onPrimary)
                 }
             }
         )
     }
 
-    Scaffold { padding ->
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background
+    ) { padding ->
         Box(
             modifier = Modifier
                 .padding(padding)
@@ -70,37 +84,42 @@ fun LessonDetailScreen(
             contentAlignment = Alignment.Center
         ) {
             if (isLoading && lessonResponse == null) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             } else if (error != null) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
                     Icon(Icons.Default.Lock, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(64.dp))
-                    Text("Acceso Bloqueado", style = MaterialTheme.typography.titleLarge)
-                    Text("Completa las lecciones anteriores primero.", textAlign = TextAlign.Center)
+                    Text("Acceso Bloqueado", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onBackground)
+                    Text("Completa las lecciones anteriores primero.", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onBackground)
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = { navController.popBackStack() }) { Text("Volver") }
                 }
             } else if (lessonResponse != null) {
                 val totalScreens = lessonResponse!!.screens.size
 
-                LessonScreenRender(
-                    lesson = lessonResponse!!,
-                    screenIndex = currentScreenIndex,
-                    onNext = {
-                        if (currentScreenIndex < totalScreens - 1) {
-                            currentScreenIndex++
-                        } else {
-                            // ✅ Al terminar, llamamos al backend
-                            // Y esperamos a que 'completionResult' cambie para mostrar el diálogo
-                            if (completionResult == null) {
-                                viewModel.completeLesson(lessonId)
+                // MODIFICACIÓN CLAVE: Envuelve LessonScreenRender en un Column con verticalScroll
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()) // <<-- SOLUCIÓN AL TEXTO CORTADO
+                ) {
+                    LessonScreenRender(
+                        lesson = lessonResponse!!,
+                        screenIndex = currentScreenIndex,
+                        onNext = {
+                            if (currentScreenIndex < totalScreens - 1) {
+                                currentScreenIndex++
+                            } else {
+                                if (completionResult == null) {
+                                    viewModel.completeLesson(lessonId)
+                                }
                             }
-                        }
-                    },
-                    onPrev = {
-                        if (currentScreenIndex > 0) currentScreenIndex--
-                    },
-                    isLastScreen = currentScreenIndex == totalScreens - 1
-                )
+                        },
+                        onPrev = {
+                            if (currentScreenIndex > 0) currentScreenIndex--
+                        },
+                        isLastScreen = currentScreenIndex == totalScreens - 1
+                    )
+                }
             }
         }
     }
