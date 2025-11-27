@@ -27,7 +27,8 @@ class UserViewModel @Inject constructor(
             _isLoading.value = true
             try {
                 val userProfile = userRepository.getUserProfile()
-                _user.value = userProfile
+                // ✅ CORRECCIÓN: Se asigna userProfile.user, no la respuesta entera.
+                _user.value = userProfile.user
             } catch (e: Exception) {
                 // Manejar error
             } finally {

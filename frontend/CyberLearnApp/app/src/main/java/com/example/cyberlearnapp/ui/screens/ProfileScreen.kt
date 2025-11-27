@@ -8,14 +8,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue // Importar getValue
+import androidx.compose.runtime.collectAsState // Importar collectAsState
+import androidx.compose.runtime.* import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyberlearnapp.viewmodel.UserViewModel
+// Importar User para la correcta inferencia de tipo en el StateFlow
+import com.example.cyberlearnapp.network.models.User
 
 @Composable
 fun ProfileScreen(
@@ -23,7 +26,9 @@ fun ProfileScreen(
     onLogout: () -> Unit,
     viewModel: UserViewModel = hiltViewModel()
 ) {
-    val user by viewModel.user.collectAsState()
+    // ✅ CORRECCIÓN 1: Se usa el delegate 'by' con el tipo explícito y valor inicial.
+    // Resuelve los errores de Property delegate, Cannot infer type y Unresolved reference 'user'.
+    val user: User? by viewModel.user.collectAsState(initial = null)
 
     LaunchedEffect(Unit) {
         viewModel.loadProfile()
@@ -60,6 +65,7 @@ fun ProfileScreen(
 
         user?.let { userData ->
             Text(
+                // ✅ Resuelve Unresolved reference 'name'
                 text = userData.name ?: "Usuario",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
@@ -69,6 +75,7 @@ fun ProfileScreen(
             Spacer(Modifier.height(4.dp))
 
             Text(
+                // ✅ Resuelve Unresolved reference 'email'
                 text = userData.email,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -102,10 +109,12 @@ fun ProfileScreen(
                 ProfileInfoItem(
                     icon = Icons.Default.Email,
                     label = "Email",
+                    // ✅ Resuelve Unresolved reference 'email'
                     value = user?.email ?: "---"
                 )
 
-                Divider(
+                // ✅ CORRECCIÓN 2: Usar HorizontalDivider (Componente de Material 3)
+                HorizontalDivider(
                     modifier = Modifier.padding(vertical = 12.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant
                 )
@@ -114,17 +123,20 @@ fun ProfileScreen(
                 ProfileInfoItem(
                     icon = Icons.Default.Person,
                     label = "Nombre",
+                    // ✅ Resuelve Unresolved reference 'name'
                     value = user?.name ?: "Usuario"
                 )
 
-                Divider(
+                // ✅ CORRECCIÓN 2: Usar HorizontalDivider (Componente de Material 3)
+                HorizontalDivider(
                     modifier = Modifier.padding(vertical = 12.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant
                 )
 
                 // Rol (si existe en tu modelo)
                 ProfileInfoItem(
-                    icon = Icons.Default.Badge,
+                    // ✅ CORRECCIÓN 3: Se usa CardMembership (Badge no existe en Icons.Default)
+                    icon = Icons.Default.CardMembership,
                     label = "Rol",
                     value = "Estudiante" // O user?.role si lo tienes
                 )
@@ -225,7 +237,7 @@ fun ProfileScreen(
                 // Cerrar Sesión
                 Button(
                     onClick = {
-                        viewModel.logout()
+                        viewModel.logout() // ✅ Resuelve Unresolved reference 'logout'
                         onLogout()
                     },
                     modifier = Modifier
@@ -255,7 +267,7 @@ fun ProfileScreen(
     }
 }
 
-// ✅ COMPONENTE REUTILIZABLE - Info Item
+// COMPONENTE REUTILIZABLE - Info Item
 @Composable
 private fun ProfileInfoItem(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
@@ -291,7 +303,7 @@ private fun ProfileInfoItem(
     }
 }
 
-// ✅ COMPONENTE REUTILIZABLE - Stat Item
+// COMPONENTE REUTILIZABLE - Stat Item
 @Composable
 private fun StatItem(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
@@ -309,6 +321,7 @@ private fun StatItem(
         )
 
         Spacer(Modifier.height(8.dp))
+
 
         Text(
             text = value,

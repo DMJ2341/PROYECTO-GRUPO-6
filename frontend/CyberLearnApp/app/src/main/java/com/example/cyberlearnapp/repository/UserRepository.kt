@@ -5,7 +5,7 @@ import com.example.cyberlearnapp.network.models.CompleteDailyTermRequest
 import com.example.cyberlearnapp.network.models.CompleteDailyTermResponse
 import com.example.cyberlearnapp.network.models.DashboardResponse
 import com.example.cyberlearnapp.network.models.DailyTermWrapper
-import com.example.cyberlearnapp.network.models.UserProfileResponse // ✅ CORRECCIÓN: Referencia al nuevo nombre
+import com.example.cyberlearnapp.network.models.UserProfileResponse
 import com.example.cyberlearnapp.network.models.AuthResponse
 import com.example.cyberlearnapp.utils.AuthManager
 import com.example.cyberlearnapp.utils.safeApiCall
@@ -15,28 +15,29 @@ class UserRepository @Inject constructor(
     private val apiService: ApiService,
     private val authManager: AuthManager
 ) {
-    // ... (Otras funciones)
+    // Helper para obtener el token con el prefijo "Bearer "
+    private fun getToken(): String = "Bearer ${authManager.getToken() ?: ""}"
 
     suspend fun getDashboard(): DashboardResponse = safeApiCall {
-        apiService.getDashboard().body()!!
+        apiService.getDashboard(getToken()).body()!!
     }
 
     suspend fun getDailyTerm(): DailyTermWrapper = safeApiCall {
-        apiService.getDailyTerm().body()!!
+        apiService.getDailyTerm(getToken()).body()!!
     }
 
     suspend fun completeDailyTerm(termId: Int): CompleteDailyTermResponse =
         safeApiCall {
-            apiService.completeDailyTerm(CompleteDailyTermRequest(termId = termId)).body()!!
+            apiService.completeDailyTerm(getToken(), CompleteDailyTermRequest(termId = termId)).body()!!
         }
 
-    // ✅ FUNCIÓN CORREGIDA
     suspend fun getUserProfile(): UserProfileResponse = safeApiCall {
-        // Usa UserProfileResponse que ahora está definido en User.kt
-        apiService.getProfile().body()!!
+        apiService.getUserProfile(getToken()).body()!!
     }
 
+    // ✅ CORRECCIÓN: Se añade la función 'logout' que el ViewModel espera
+    // Unresolved reference 'logout' resuelto.
     fun logout() {
-        authManager.clearAuthData()
+        authManager.clear()
     }
 }

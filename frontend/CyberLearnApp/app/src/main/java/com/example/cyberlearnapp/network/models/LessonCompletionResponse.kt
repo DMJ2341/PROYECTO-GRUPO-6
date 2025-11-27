@@ -12,14 +12,8 @@ data class LessonCompletionResponse(
 data class LessonCompletionData(
     val lesson_completed: Boolean,
     val xp_earned: Int,
+    // ✅ Ahora hace referencia al modelo CourseProgress que está en DashboardModels.kt
     val course_progress: CourseProgress? = null
 )
 
-@Serializable
-data class CourseProgress(
-    val course_id: Int,
-    val percentage: Int,
-    val completed: Int,
-    val total: Int,
-    val course_completed: Boolean
-)
+// La clase CourseProgress ha sido ELIMINADA de este archivo.
