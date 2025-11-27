@@ -6,62 +6,58 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// ✅ TIPOGRAFÍA MEJORADA - Jerarquía visual clara
+// =========================================================================
+// TIPOGRAFÍA CYBERLEARNAPP
+// Optimizada para legibilidad en pantallas móviles con fondo oscuro
+// =========================================================================
+
 val Typography = Typography(
-    // Títulos grandes (Pantallas principales)
-    displayLarge = TextStyle(
+    // --- ENCABEZADOS GRANDES ---
+    headlineLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp
     ),
-    displayMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
-        lineHeight = 36.sp,
-        letterSpacing = 0.sp
-    ),
 
-    // Títulos de secciones
-    headlineLarge = TextStyle(
+    // --- ENCABEZADOS MEDIANOS ---
+    headlineMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp
     ),
-    headlineMedium = TextStyle(
+
+    // --- ENCABEZADOS PEQUEÑOS ---
+    headlineSmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
-    headlineSmall = TextStyle(
+
+    // --- TÍTULOS GRANDES ---
+    titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 18.sp,
-        lineHeight = 24.sp,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
 
-    // Títulos de Cards
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.sp
-    ),
+    // --- TÍTULOS MEDIANOS ---
     titleMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
-        lineHeight = 22.sp,
+        lineHeight = 24.sp,
         letterSpacing = 0.15.sp
     ),
+
+    // --- TÍTULOS PEQUEÑOS ---
     titleSmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
@@ -70,30 +66,34 @@ val Typography = Typography(
         letterSpacing = 0.1.sp
     ),
 
-    // Cuerpo de texto
+    // --- CUERPO DE TEXTO GRANDE ---
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
+        lineHeight = 24.sp,        // Mejora legibilidad
         letterSpacing = 0.5.sp
     ),
+
+    // --- CUERPO DE TEXTO MEDIANO ---
     bodyMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 20.sp,
+        lineHeight = 22.sp,        // Mejora legibilidad
         letterSpacing = 0.25.sp
     ),
+
+    // --- CUERPO DE TEXTO PEQUEÑO ---
     bodySmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
-        lineHeight = 16.sp,
+        lineHeight = 18.sp,        // Mejora legibilidad
         letterSpacing = 0.4.sp
     ),
 
-    // Labels (botones, chips)
+    // --- ETIQUETAS GRANDES ---
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
@@ -101,6 +101,8 @@ val Typography = Typography(
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp
     ),
+
+    // --- ETIQUETAS MEDIANAS ---
     labelMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
@@ -108,6 +110,8 @@ val Typography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
     ),
+
+    // --- ETIQUETAS PEQUEÑAS ---
     labelSmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
