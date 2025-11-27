@@ -17,10 +17,6 @@ import androidx.navigation.NavController
 import com.example.cyberlearnapp.ui.screens.lessons.LessonScreenRender
 import com.example.cyberlearnapp.viewmodel.LessonViewModel
 
-// NUEVAS IMPORTACIONES CLAVE PARA SCROLLING
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-
 // ✅ IMPORTACIÓN CLAVE PARA EL COLOR DE ÉXITO
 import com.example.cyberlearnapp.ui.theme.SuccessGreen
 
@@ -46,7 +42,6 @@ fun LessonDetailScreen(
     if (completionResult != null) {
         AlertDialog(
             onDismissRequest = { },
-            // ❌ CORRECCIÓN: Usamos SuccessGreen en lugar de MaterialTheme.colorScheme.success
             icon = { Icon(Icons.Default.CheckCircle, contentDescription = null, tint = SuccessGreen, modifier = Modifier.size(48.dp)) },
             title = { Text("¡Lección Completada!", color = MaterialTheme.colorScheme.onSurface) },
             text = {
@@ -96,30 +91,25 @@ fun LessonDetailScreen(
             } else if (lessonResponse != null) {
                 val totalScreens = lessonResponse!!.screens.size
 
-                // MODIFICACIÓN CLAVE: Envuelve LessonScreenRender en un Column con verticalScroll
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()) // <<-- SOLUCIÓN AL TEXTO CORTADO
-                ) {
-                    LessonScreenRender(
-                        lesson = lessonResponse!!,
-                        screenIndex = currentScreenIndex,
-                        onNext = {
-                            if (currentScreenIndex < totalScreens - 1) {
-                                currentScreenIndex++
-                            } else {
-                                if (completionResult == null) {
-                                    viewModel.completeLesson(lessonId)
-                                }
+                // ✅ CORRECCIÓN: SIN verticalScroll en el padre
+                // Los LazyColumn dentro de los renderers manejan su propio scroll
+                LessonScreenRender(
+                    lesson = lessonResponse!!,
+                    screenIndex = currentScreenIndex,
+                    onNext = {
+                        if (currentScreenIndex < totalScreens - 1) {
+                            currentScreenIndex++
+                        } else {
+                            if (completionResult == null) {
+                                viewModel.completeLesson(lessonId)
                             }
-                        },
-                        onPrev = {
-                            if (currentScreenIndex > 0) currentScreenIndex--
-                        },
-                        isLastScreen = currentScreenIndex == totalScreens - 1
-                    )
-                }
+                        }
+                    },
+                    onPrev = {
+                        if (currentScreenIndex > 0) currentScreenIndex--
+                    },
+                    isLastScreen = currentScreenIndex == totalScreens - 1
+                )
             }
         }
     }
