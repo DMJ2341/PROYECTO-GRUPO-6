@@ -1,137 +1,152 @@
-[
-  {
-    "screen_id": 1,
-    "type": "memory_cards",
-    "title": "Password Management",
-    "duration": 240,
-    "content": {
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "key",
-            "term": "Password Policies",
-            "color": "#1976D2"
+{
+  "id": "c3_l4",
+  "title": "Funciones Hash",
+  "description": "Password Management",
+  "type": "interactive",
+  "duration_minutes": 8,
+  "xp_reward": 20,
+  "order_index": 4,
+  "course_id": 3,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "Password Management",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "key",
+              "term": "Password Policies",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Length > complexity. NIST: 8+ chars minimum, 64+ max. No forced rotation (causes weak patterns). Allow spaces, special chars. Check against breach lists.",
+              "example": "Correct: 'my dog has fleas 2024'. Incorrect: 'P@ssw0rd1' (predictable). Use password managers. Diceware passphrases.",
+              "color": "#42A5F5"
+            }
           },
-          "back": {
-            "definition": "Length > complexity. NIST: 8+ chars minimum, 64+ max. No forced rotation (causes weak patterns). Allow spaces, special chars. Check against breach lists.",
-            "example": "Correct: 'my dog has fleas 2024'. Incorrect: 'P@ssw0rd1' (predictable). Use password managers. Diceware passphrases.",
-            "color": "#42A5F5"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "inventory_2",
-            "term": "Password Managers",
-            "color": "#388E3C"
+          {
+            "id": "2",
+            "front": {
+              "icon": "inventory_2",
+              "term": "Password Managers",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Store passwords encrypted. Generate random passwords. Autofill. Master password + MFA protection. Enterprise: 1Password, LastPass, Bitwarden.",
+              "example": "User memorizes 1 strong master password. Manager generates unique 20-char random per site. Prevents credential stuffing.",
+              "color": "#66BB6A"
+            }
           },
-          "back": {
-            "definition": "Store passwords encrypted. Generate random passwords. Autofill. Master password + MFA protection. Enterprise: 1Password, LastPass, Bitwarden.",
-            "example": "User memorizes 1 strong master password. Manager generates unique 20-char random per site. Prevents credential stuffing.",
-            "color": "#66BB6A"
-          }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "block",
-            "term": "Credential Stuffing",
-            "color": "#D32F2F"
+          {
+            "id": "3",
+            "front": {
+              "icon": "block",
+              "term": "Credential Stuffing",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Attacker usa leaked credentials from site A para try en site B. Password reuse = vulnerability. Automated at scale.",
+              "example": "LinkedIn breach → attackers try same email/password en banks. Defense: Unique passwords per site, MFA, CAPTCHA, rate limiting.",
+              "color": "#EF5350"
+            }
           },
-          "back": {
-            "definition": "Attacker usa leaked credentials from site A para try en site B. Password reuse = vulnerability. Automated at scale.",
-            "example": "LinkedIn breach → attackers try same email/password en banks. Defense: Unique passwords per site, MFA, CAPTCHA, rate limiting.",
-            "color": "#EF5350"
+          {
+            "id": "4",
+            "front": {
+              "icon": "psychology",
+              "term": "Passwordless Future",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Eliminate passwords entirely. FIDO2/passkeys, biometrics, magic links. Microsoft: 200M users passwordless. Reduces phishing, improves UX.",
+              "example": "Passkeys (Apple/Google): Device generates key pair. Private key never leaves device. Phishing-resistant. WebAuthn standard.",
+              "color": "#FFB74D"
+            }
           }
-        },
-        {
-          "id": "4",
-          "front": {
-            "icon": "psychology",
-            "term": "Passwordless Future",
-            "color": "#F57C00"
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Password Hygiene Assessment",
+      "duration": 180,
+      "content": {
+        "items": [
+          {
+            "id": "pw1",
+            "task": "Check Password Strength",
+            "subtitle": "Entropy matters",
+            "icon": "security",
+            "unlock_content": {
+              "title": "Strength Metrics",
+              "points": [
+                "Length: 12+ chars recommended. 16+ for critical accounts.",
+                "Entropy: Random > Dictionary words. 'correct horse battery staple' = 44 bits entropy.",
+                "Avoid: Personal info, keyboard patterns (qwerty), common substitutions (@ for a).",
+                "Test: HaveIBeenPwned, zxcvbn library for strength estimation.",
+                "Gold standard: Password manager generated 20+ random chars."
+              ],
+              "bonus_fact": "8-char all-lowercase: 2 seconds to crack. 12-char mixed: 300+ years at current GPU speeds."
+            }
           },
-          "back": {
-            "definition": "Eliminate passwords entirely. FIDO2/passkeys, biometrics, magic links. Microsoft: 200M users passwordless. Reduces phishing, improves UX.",
-            "example": "Passkeys (Apple/Google): Device generates key pair. Private key never leaves device. Phishing-resistant. WebAuthn standard.",
-            "color": "#FFB74D"
+          {
+            "id": "pw2",
+            "task": "Enable MFA Everywhere",
+            "subtitle": "Defense in depth",
+            "icon": "verified_user",
+            "unlock_content": {
+              "title": "MFA Deployment",
+              "points": [
+                "Priority 1: Email, banking, cloud providers (AWS/Azure/GCP)",
+                "Priority 2: Social media (prevent account takeover)",
+                "Priority 3: Internal enterprise apps",
+                "Method: FIDO2 > TOTP > SMS (better than nothing)",
+                "Recovery codes: Store securely. Needed if device lost."
+              ],
+              "bonus_fact": "Microsoft: MFA blocks 99.9% of automated attacks. 0.1% is sophisticated phishing/MFA bypass."
+            }
           }
-        }
-      ]
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación",
+      "duration": 60,
+      "content": {
+        "question": "Mejor práctica para passwords según NIST guidelines?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Rotar password cada 90 días",
+            "is_correct": false,
+            "feedback": "Incorrecto. NIST eliminó forced rotation requirement. Causa: Users crean weak patterns (Password1 → Password2)."
+          },
+          {
+            "id": "b",
+            "text": "Length > complexity. Check breach lists. No forced rotation. MFA obligatorio.",
+            "is_correct": true,
+            "feedback": "CORRECTO! NIST SP 800-63B: 1) 8+ chars minimum (length). 2) No complexity requirements que causan weak patterns. 3) Check against breach databases (HaveIBeenPwned). 4) No forced periodic rotation. 5) Allow paste (para password managers). 6) MFA mandatory. Focus: User behavior > arbitrary rules."
+          },
+          {
+            "id": "c",
+            "text": "Passwords deben tener mayúsculas, números, símbolos",
+            "is_correct": false,
+            "feedback": "Incorrecto. Complexity rules causan predictable patterns: 'Password1!'. Length es más importante. 'my dog has fleas' > 'P@ssw0rd'."
+          }
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 2,
-    "type": "progress_checklist",
-    "title": "Password Hygiene Assessment",
-    "duration": 180,
-    "content": {
-      "items": [
-        {
-          "id": "pw1",
-          "task": "Check Password Strength",
-          "subtitle": "Entropy matters",
-          "icon": "security",
-          "unlock_content": {
-            "title": "Strength Metrics",
-            "points": [
-              "Length: 12+ chars recommended. 16+ for critical accounts.",
-              "Entropy: Random > Dictionary words. 'correct horse battery staple' = 44 bits entropy.",
-              "Avoid: Personal info, keyboard patterns (qwerty), common substitutions (@ for a).",
-              "Test: HaveIBeenPwned, zxcvbn library for strength estimation.",
-              "Gold standard: Password manager generated 20+ random chars."
-            ],
-            "bonus_fact": "8-char all-lowercase: 2 seconds to crack. 12-char mixed: 300+ years at current GPU speeds."
-          }
-        },
-        {
-          "id": "pw2",
-          "task": "Enable MFA Everywhere",
-          "subtitle": "Defense in depth",
-          "icon": "verified_user",
-          "unlock_content": {
-            "title": "MFA Deployment",
-            "points": [
-              "Priority 1: Email, banking, cloud providers (AWS/Azure/GCP)",
-              "Priority 2: Social media (prevent account takeover)",
-              "Priority 3: Internal enterprise apps",
-              "Method: FIDO2 > TOTP > SMS (better than nothing)",
-              "Recovery codes: Store securely. Needed if device lost."
-            ],
-            "bonus_fact": "Microsoft: MFA blocks 99.9% of automated attacks. 0.1% is sophisticated phishing/MFA bypass."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 3,
-    "type": "quiz",
-    "title": "Evaluación",
-    "duration": 60,
-    "content": {
-      "question": "Mejor práctica para passwords según NIST guidelines?",
-      "options": [
-        {
-          "id": "a",
-          "text": "Rotar password cada 90 días",
-          "is_correct": false,
-          "feedback": "Incorrecto. NIST eliminó forced rotation requirement. Causa: Users crean weak patterns (Password1 → Password2)."
-        },
-        {
-          "id": "b",
-          "text": "Length > complexity. Check breach lists. No forced rotation. MFA obligatorio.",
-          "is_correct": true,
-          "feedback": "CORRECTO! NIST SP 800-63B: 1) 8+ chars minimum (length). 2) No complexity requirements que causan weak patterns. 3) Check against breach databases (HaveIBeenPwned). 4) No forced periodic rotation. 5) Allow paste (para password managers). 6) MFA mandatory. Focus: User behavior > arbitrary rules."
-        },
-        {
-          "id": "c",
-          "text": "Passwords deben tener mayúsculas, números, símbolos",
-          "is_correct": false,
-          "feedback": "Incorrecto. Complexity rules causan predictable patterns: 'Password1!'. Length es más importante. 'my dog has fleas' > 'P@ssw0rd'."
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
   }
-]
+}

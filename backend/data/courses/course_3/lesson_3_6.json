@@ -1,152 +1,167 @@
-[
-  {
-    "screen_id": 1,
-    "type": "step_revelation",
-    "title": "Evaluación Final: Diseña IAM Architecture",
-    "duration": 240,
-    "content": {
-      "story_title": "Scenario: Healthcare Platform IAM",
-      "story_intro": "Diseña IAM para healthcare SaaS. 10K+ patients, 200 providers, HIPAA compliance",
-      "steps": [
-        {
-          "id": "1",
-          "icon": "local_hospital",
-          "title": "Requirements",
-          "content": "Healthcare platform. Patient portal, provider EHR access, admin functions. Data: PHI (Protected Health Information). HIPAA compliance mandatory. Multi-tenant SaaS (cada hospital = tenant).",
-          "insight": "HIPAA = strict access controls, audit logs, encryption. PHI access es heavily regulated."
-        },
-        {
-          "id": "2",
-          "icon": "architecture",
-          "title": "Tu Misión",
-          "content": "Diseñar: 1) User types y roles. 2) Authentication (MFA strategy). 3) Authorization (RBAC/ABAC). 4) Audit logging. 5) Tenant isolation. 6) Compliance controls.",
-          "insight": "Healthcare IAM = complex. Balance security, usability, compliance."
-        }
-      ]
+{
+  "id": "c3_l6",
+  "title": "Evaluación Final Curso 3",
+  "description": "Evaluación Final: Diseña IAM Architecture",
+  "type": "interactive",
+  "duration_minutes": 13,
+  "xp_reward": 20,
+  "order_index": 6,
+  "course_id": 3,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Evaluación Final: Diseña IAM Architecture",
+      "duration": 240,
+      "content": {
+        "story_title": "Scenario: Healthcare Platform IAM",
+        "story_intro": "Diseña IAM para healthcare SaaS. 10K+ patients, 200 providers, HIPAA compliance",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "local_hospital",
+            "title": "Requirements",
+            "content": "Healthcare platform. Patient portal, provider EHR access, admin functions. Data: PHI (Protected Health Information). HIPAA compliance mandatory. Multi-tenant SaaS (cada hospital = tenant).",
+            "insight": "HIPAA = strict access controls, audit logs, encryption. PHI access es heavily regulated."
+          },
+          {
+            "id": "2",
+            "icon": "architecture",
+            "title": "Tu Misión",
+            "content": "Diseñar: 1) User types y roles. 2) Authentication (MFA strategy). 3) Authorization (RBAC/ABAC). 4) Audit logging. 5) Tenant isolation. 6) Compliance controls.",
+            "insight": "Healthcare IAM = complex. Balance security, usability, compliance."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "IAM Architecture Design",
+      "duration": 360,
+      "content": {
+        "items": [
+          {
+            "id": "design1",
+            "task": "Define User Roles",
+            "subtitle": "RBAC hierarchy",
+            "icon": "people",
+            "unlock_content": {
+              "title": "Role Design",
+              "points": [
+                "Patients: View own records, schedule appointments, message providers",
+                "Providers (Doctors/Nurses): View assigned patients, update charts, prescribe",
+                "Admins: User management, billing, reports",
+                "Super Admin: System config, security settings (break glass)",
+                "SoD: Billing admin ≠ Clinical admin (fraud prevention)"
+              ],
+              "bonus_fact": "HIPAA: Minimum necessary rule. Provider sees ONLY patients they treat, not entire database."
+            }
+          },
+          {
+            "id": "design2",
+            "task": "Authentication Strategy",
+            "subtitle": "Secure access",
+            "icon": "verified_user",
+            "unlock_content": {
+              "title": "Auth Implementation",
+              "points": [
+                "Patients: Passwordless (magic link/SMS code) OR password + TOTP. Lower friction.",
+                "Providers: Password + MFA mandatory. FIDO2 for doctors (highest privilege).",
+                "SSO: Integrate hospital AD/Okta via SAML/OIDC.",
+                "Session timeout: 15 min idle for PHI access (HIPAA best practice).",
+                "Device trust: Register devices, anomaly detection on new device."
+              ],
+              "bonus_fact": "Healthcare breach avg cost: $10M+. Strong auth is cheapest insurance."
+            }
+          },
+          {
+            "id": "design3",
+            "task": "Authorization & Tenant Isolation",
+            "subtitle": "Granular access",
+            "icon": "security",
+            "unlock_content": {
+              "title": "Authorization Design",
+              "points": [
+                "RBAC baseline: Roles defined above.",
+                "ABAC enhancement: IF (provider.specialty='Cardiology' AND patient.condition='heart') THEN allow.",
+                "Tenant isolation: Hospital A providers CANNOT see Hospital B data. Database-level RLS (Row-Level Security).",
+                "Emergency access: Break-glass for ER. Log heavily. Require justification.",
+                "API authorization: OAuth 2.0 scopes. Fine-grained permissions."
+              ],
+              "bonus_fact": "Multi-tenancy bug = HIPAA violation. Patient data leak across hospitals = catastrophic."
+            }
+          },
+          {
+            "id": "design4",
+            "task": "Audit & Compliance",
+            "subtitle": "Accountability",
+            "icon": "fact_check",
+            "unlock_content": {
+              "title": "Logging & Compliance",
+              "points": [
+                "Audit log: WHO accessed WHAT PHI WHEN. Immutable logs. 6-year retention (HIPAA).",
+                "SIEM: Real-time monitoring. Alert on: bulk data access, off-hours access, geographic anomalies.",
+                "Access reviews: Quarterly. Manager certifies provider access.",
+                "Compliance reports: HIPAA audit trail. Automated generation.",
+                "Encryption: At-rest (AES-256), in-transit (TLS 1.3), backups encrypted."
+              ],
+              "bonus_fact": "HIPAA audit: Must produce access logs. No logs = automatic violation. $50K+ per incident."
+            }
+          },
+          {
+            "id": "design5",
+            "task": "Incident Response",
+            "subtitle": "Breach preparedness",
+            "icon": "crisis_alert",
+            "unlock_content": {
+              "title": "IR for PHI Breach",
+              "points": [
+                "Detection: SIEM alert on anomalous PHI access.",
+                "Containment: Disable compromised account. Isolate affected systems.",
+                "Notification: HHS (60 days), affected individuals (60 days), media if 500+.",
+                "Forensics: Determine scope. How many records? Root cause?",
+                "Uber lesson: DO NOT cover up. Transparency is legal requirement."
+              ],
+              "bonus_fact": "HIPAA breach notification: https://ocrportal.hhs.gov/ocr/breach/breach_report.jsf - Wall of Shame public."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "Budget & Vendors",
+      "duration": 180,
+      "content": {
+        "items": [
+          {
+            "id": "budget",
+            "task": "IAM Budget Breakdown",
+            "subtitle": "200 providers, 10K patients",
+            "icon": "attach_money",
+            "unlock_content": {
+              "title": "Cost Estimate",
+              "points": [
+                "SSO/IdP: Okta Healthcare $8/user/month × 200 = $19K/year",
+                "MFA: Duo Healthcare $6/user/month × 200 = $14K/year",
+                "FIDO2 keys: YubiKey × 200 doctors = $10K one-time",
+                "SIEM: Splunk Cloud $5K/GB, ~$60K/year for logs",
+                "Compliance: HIPAA consultant + audit $30K/year",
+                "Training: Security awareness $5K/year",
+                "Total: ~$140K/year"
+              ],
+              "bonus_fact": "ROI: Single HIPAA breach avg $10M. $140K/year insurance is cheap."
+            }
+          }
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 2,
-    "type": "progress_checklist",
-    "title": "IAM Architecture Design",
-    "duration": 360,
-    "content": {
-      "items": [
-        {
-          "id": "design1",
-          "task": "Define User Roles",
-          "subtitle": "RBAC hierarchy",
-          "icon": "people",
-          "unlock_content": {
-            "title": "Role Design",
-            "points": [
-              "Patients: View own records, schedule appointments, message providers",
-              "Providers (Doctors/Nurses): View assigned patients, update charts, prescribe",
-              "Admins: User management, billing, reports",
-              "Super Admin: System config, security settings (break glass)",
-              "SoD: Billing admin ≠ Clinical admin (fraud prevention)"
-            ],
-            "bonus_fact": "HIPAA: Minimum necessary rule. Provider sees ONLY patients they treat, not entire database."
-          }
-        },
-        {
-          "id": "design2",
-          "task": "Authentication Strategy",
-          "subtitle": "Secure access",
-          "icon": "verified_user",
-          "unlock_content": {
-            "title": "Auth Implementation",
-            "points": [
-              "Patients: Passwordless (magic link/SMS code) OR password + TOTP. Lower friction.",
-              "Providers: Password + MFA mandatory. FIDO2 for doctors (highest privilege).",
-              "SSO: Integrate hospital AD/Okta via SAML/OIDC.",
-              "Session timeout: 15 min idle for PHI access (HIPAA best practice).",
-              "Device trust: Register devices, anomaly detection on new device."
-            ],
-            "bonus_fact": "Healthcare breach avg cost: $10M+. Strong auth is cheapest insurance."
-          }
-        },
-        {
-          "id": "design3",
-          "task": "Authorization & Tenant Isolation",
-          "subtitle": "Granular access",
-          "icon": "security",
-          "unlock_content": {
-            "title": "Authorization Design",
-            "points": [
-              "RBAC baseline: Roles defined above.",
-              "ABAC enhancement: IF (provider.specialty='Cardiology' AND patient.condition='heart') THEN allow.",
-              "Tenant isolation: Hospital A providers CANNOT see Hospital B data. Database-level RLS (Row-Level Security).",
-              "Emergency access: Break-glass for ER. Log heavily. Require justification.",
-              "API authorization: OAuth 2.0 scopes. Fine-grained permissions."
-            ],
-            "bonus_fact": "Multi-tenancy bug = HIPAA violation. Patient data leak across hospitals = catastrophic."
-          }
-        },
-        {
-          "id": "design4",
-          "task": "Audit & Compliance",
-          "subtitle": "Accountability",
-          "icon": "fact_check",
-          "unlock_content": {
-            "title": "Logging & Compliance",
-            "points": [
-              "Audit log: WHO accessed WHAT PHI WHEN. Immutable logs. 6-year retention (HIPAA).",
-              "SIEM: Real-time monitoring. Alert on: bulk data access, off-hours access, geographic anomalies.",
-              "Access reviews: Quarterly. Manager certifies provider access.",
-              "Compliance reports: HIPAA audit trail. Automated generation.",
-              "Encryption: At-rest (AES-256), in-transit (TLS 1.3), backups encrypted."
-            ],
-            "bonus_fact": "HIPAA audit: Must produce access logs. No logs = automatic violation. $50K+ per incident."
-          }
-        },
-        {
-          "id": "design5",
-          "task": "Incident Response",
-          "subtitle": "Breach preparedness",
-          "icon": "crisis_alert",
-          "unlock_content": {
-            "title": "IR for PHI Breach",
-            "points": [
-              "Detection: SIEM alert on anomalous PHI access.",
-              "Containment: Disable compromised account. Isolate affected systems.",
-              "Notification: HHS (60 days), affected individuals (60 days), media if 500+.",
-              "Forensics: Determine scope. How many records? Root cause?",
-              "Uber lesson: DO NOT cover up. Transparency is legal requirement."
-            ],
-            "bonus_fact": "HIPAA breach notification: https://ocrportal.hhs.gov/ocr/breach/breach_report.jsf - Wall of Shame public."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 3,
-    "type": "progress_checklist",
-    "title": "Budget & Vendors",
-    "duration": 180,
-    "content": {
-      "items": [
-        {
-          "id": "budget",
-          "task": "IAM Budget Breakdown",
-          "subtitle": "200 providers, 10K patients",
-          "icon": "attach_money",
-          "unlock_content": {
-            "title": "Cost Estimate",
-            "points": [
-              "SSO/IdP: Okta Healthcare $8/user/month × 200 = $19K/year",
-              "MFA: Duo Healthcare $6/user/month × 200 = $14K/year",
-              "FIDO2 keys: YubiKey × 200 doctors = $10K one-time",
-              "SIEM: Splunk Cloud $5K/GB, ~$60K/year for logs",
-              "Compliance: HIPAA consultant + audit $30K/year",
-              "Training: Security awareness $5K/year",
-              "Total: ~$140K/year"
-            ],
-            "bonus_fact": "ROI: Single HIPAA breach avg $10M. $140K/year insurance is cheap."
-          }
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "Diseña IAM para healthcare SaaS. 10K+ patients, 200 providers, HIPAA compliance"
   }
-]
+}

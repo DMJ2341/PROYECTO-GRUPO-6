@@ -1,171 +1,186 @@
-[
-  {
-    "screen_id": 1,
-    "type": "memory_cards",
-    "title": "SIEM Use Cases",
-    "duration": 180,
-    "content": {
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "login",
-            "term": "Failed Login Monitoring",
-            "color": "#D32F2F"
+{
+  "id": "c4_l5",
+  "title": "Gestión de Sesiones",
+  "description": "SIEM Use Cases",
+  "type": "interactive",
+  "duration_minutes": 8,
+  "xp_reward": 20,
+  "order_index": 5,
+  "course_id": 4,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "SIEM Use Cases",
+      "duration": 180,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "login",
+              "term": "Failed Login Monitoring",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Detect brute force, credential stuffing. Multiple failed logins followed by success = compromise. Geographic anomalies.",
+              "example": "Alert: 100 failed logins to admin account from IP in Russia, then 1 success. SIEM correlates events. Target: Fazio creds from unusual location.",
+              "color": "#EF5350"
+            }
           },
-          "back": {
-            "definition": "Detect brute force, credential stuffing. Multiple failed logins followed by success = compromise. Geographic anomalies.",
-            "example": "Alert: 100 failed logins to admin account from IP in Russia, then 1 success. SIEM correlates events. Target: Fazio creds from unusual location.",
-            "color": "#EF5350"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "cloud_upload",
-            "term": "Data Exfiltration",
-            "color": "#FF6F00"
+          {
+            "id": "2",
+            "front": {
+              "icon": "cloud_upload",
+              "term": "Data Exfiltration",
+              "color": "#FF6F00"
+            },
+            "back": {
+              "definition": "Large outbound transfers to unusual destinations. DNS queries with high entropy (tunneling). Upload to cloud storage anomalies.",
+              "example": "SIEM: User uploaded 10GB to personal Dropbox in 1 hour. Baseline: User averages 10MB/day. Alert triggered. Target: Exfil to Brazil/Russia.",
+              "color": "#FFB74D"
+            }
           },
-          "back": {
-            "definition": "Large outbound transfers to unusual destinations. DNS queries with high entropy (tunneling). Upload to cloud storage anomalies.",
-            "example": "SIEM: User uploaded 10GB to personal Dropbox in 1 hour. Baseline: User averages 10MB/day. Alert triggered. Target: Exfil to Brazil/Russia.",
-            "color": "#FFB74D"
-          }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "admin_panel_settings",
-            "term": "Privileged Account Activity",
-            "color": "#7B1FA2"
+          {
+            "id": "3",
+            "front": {
+              "icon": "admin_panel_settings",
+              "term": "Privileged Account Activity",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Admin accounts used outside business hours, from unusual locations, unusual commands. Service accounts login interactively (abnormal).",
+              "example": "Alert: Domain Admin account login at 3am on Saturday. Investigation: Compromised. Twitter: Internal admin tool abuse detected this way.",
+              "color": "#BA68C8"
+            }
           },
-          "back": {
-            "definition": "Admin accounts used outside business hours, from unusual locations, unusual commands. Service accounts login interactively (abnormal).",
-            "example": "Alert: Domain Admin account login at 3am on Saturday. Investigation: Compromised. Twitter: Internal admin tool abuse detected this way.",
-            "color": "#BA68C8"
+          {
+            "id": "4",
+            "front": {
+              "icon": "bug_report",
+              "term": "Malware C2 Detection",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Beaconing: Regular intervals to external IP. DNS to known bad domains. TLS to unusual ports. HTTP POST to suspicious URLs.",
+              "example": "SIEM + Threat Intel: DNS query to domain in threat feed = alert. Colonial: DarkSide C2 beaconing could be detected.",
+              "color": "#42A5F5"
+            }
           }
-        },
-        {
-          "id": "4",
-          "front": {
-            "icon": "bug_report",
-            "term": "Malware C2 Detection",
-            "color": "#1976D2"
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Building Detection Rules",
+      "duration": 240,
+      "content": {
+        "items": [
+          {
+            "id": "rules1",
+            "task": "Define Use Case",
+            "subtitle": "What to detect?",
+            "icon": "assignment",
+            "unlock_content": {
+              "title": "Use Case Definition",
+              "points": [
+                "Business driver: Compliance, threat intel, past incident, industry trend",
+                "Example: 'Detect ransomware lateral movement via SMB'",
+                "Success criteria: What alert looks like? Acceptable false positive rate?",
+                "Data sources needed: Which logs required?",
+                "Target example: 'Detect POS malware memory access'"
+              ],
+              "bonus_fact": "Good use case: Specific, actionable, measurable. Bad: Too broad ('detect all attacks')."
+            }
           },
-          "back": {
-            "definition": "Beaconing: Regular intervals to external IP. DNS to known bad domains. TLS to unusual ports. HTTP POST to suspicious URLs.",
-            "example": "SIEM + Threat Intel: DNS query to domain in threat feed = alert. Colonial: DarkSide C2 beaconing could be detected.",
-            "color": "#42A5F5"
+          {
+            "id": "rules2",
+            "task": "Write Detection Logic",
+            "subtitle": "Translate to query",
+            "icon": "code",
+            "unlock_content": {
+              "title": "Rule Development",
+              "points": [
+                "SIEM query language: SPL (Splunk), KQL (Sentinel), etc",
+                "Logic: IF (condition1 AND condition2) THEN alert",
+                "Example: IF (process='powershell.exe' AND cmdline contains 'Invoke-Mimikatz') THEN High Severity Alert",
+                "Thresholds: 5+ failed logins in 10 min from single IP",
+                "Exclusions: Whitelist known good (scanner IPs, maintenance accounts)"
+              ],
+              "bonus_fact": "Start strict, tune over time. Better initial false positives than miss true threats."
+            }
+          },
+          {
+            "id": "rules3",
+            "task": "Test & Validate",
+            "subtitle": "Does it work?",
+            "icon": "science",
+            "unlock_content": {
+              "title": "Rule Testing",
+              "points": [
+                "Simulate attack: Use purple team to generate events",
+                "Historical data: Replay past logs. Does rule catch known incident?",
+                "False positive check: Run against baseline. Too noisy?",
+                "Severity tuning: Critical vs High vs Medium",
+                "Target test: Replay BlackPOS logs. Does rule trigger?"
+              ],
+              "bonus_fact": "Never deploy rule to production without testing. One bad rule = alert storm = SOC down."
+            }
+          },
+          {
+            "id": "rules4",
+            "task": "Deploy & Maintain",
+            "subtitle": "Continuous improvement",
+            "icon": "update",
+            "unlock_content": {
+              "title": "Rule Lifecycle",
+              "points": [
+                "Deploy: Enable in production SIEM",
+                "Monitor: Track alert volume, false positive rate",
+                "Tune: Adjust thresholds, add exceptions, refine logic",
+                "Sunset: Disable outdated rules (threat no longer relevant)",
+                "Document: Maintain rule library with descriptions, owners"
+              ],
+              "bonus_fact": "Rule maintenance = 30-40% of detection engineering time. Old rules accumulate like code debt."
+            }
           }
-        }
-      ]
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación",
+      "duration": 60,
+      "content": {
+        "question": "SIEM rule tuning: ¿Por qué importante?",
+        "options": [
+          {
+            "id": "a",
+            "text": "No es importante, rules son set-and-forget",
+            "is_correct": false,
+            "feedback": "Incorrecto. Opposite. Rules need constant tuning."
+          },
+          {
+            "id": "b",
+            "text": "Reduce false positives, improve detection accuracy, adapt to environment changes",
+            "is_correct": true,
+            "feedback": "CORRECTO! 1) Reduce FPs: Initial rule = noisy. Tuning adds exceptions, adjusts thresholds. 2) Improve accuracy: Attackers evolve. Rules must adapt. 3) Environment changes: New apps, new users = new baselines. 4) Alert fatigue prevention: Untuned rules = alert storm = analysts numb. Target lesson: FireEye alerts ignored partly due to alert fatigue from noisy rules. Well-tuned rules = SOC can focus on real threats."
+          },
+          {
+            "id": "c",
+            "text": "Solo para compliance",
+            "is_correct": false,
+            "feedback": "Incorrecto. Compliance es benefit pero primary goal es effective detection."
+          }
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 2,
-    "type": "progress_checklist",
-    "title": "Building Detection Rules",
-    "duration": 240,
-    "content": {
-      "items": [
-        {
-          "id": "rules1",
-          "task": "Define Use Case",
-          "subtitle": "What to detect?",
-          "icon": "assignment",
-          "unlock_content": {
-            "title": "Use Case Definition",
-            "points": [
-              "Business driver: Compliance, threat intel, past incident, industry trend",
-              "Example: 'Detect ransomware lateral movement via SMB'",
-              "Success criteria: What alert looks like? Acceptable false positive rate?",
-              "Data sources needed: Which logs required?",
-              "Target example: 'Detect POS malware memory access'"
-            ],
-            "bonus_fact": "Good use case: Specific, actionable, measurable. Bad: Too broad ('detect all attacks')."
-          }
-        },
-        {
-          "id": "rules2",
-          "task": "Write Detection Logic",
-          "subtitle": "Translate to query",
-          "icon": "code",
-          "unlock_content": {
-            "title": "Rule Development",
-            "points": [
-              "SIEM query language: SPL (Splunk), KQL (Sentinel), etc",
-              "Logic: IF (condition1 AND condition2) THEN alert",
-              "Example: IF (process='powershell.exe' AND cmdline contains 'Invoke-Mimikatz') THEN High Severity Alert",
-              "Thresholds: 5+ failed logins in 10 min from single IP",
-              "Exclusions: Whitelist known good (scanner IPs, maintenance accounts)"
-            ],
-            "bonus_fact": "Start strict, tune over time. Better initial false positives than miss true threats."
-          }
-        },
-        {
-          "id": "rules3",
-          "task": "Test & Validate",
-          "subtitle": "Does it work?",
-          "icon": "science",
-          "unlock_content": {
-            "title": "Rule Testing",
-            "points": [
-              "Simulate attack: Use purple team to generate events",
-              "Historical data: Replay past logs. Does rule catch known incident?",
-              "False positive check: Run against baseline. Too noisy?",
-              "Severity tuning: Critical vs High vs Medium",
-              "Target test: Replay BlackPOS logs. Does rule trigger?"
-            ],
-            "bonus_fact": "Never deploy rule to production without testing. One bad rule = alert storm = SOC down."
-          }
-        },
-        {
-          "id": "rules4",
-          "task": "Deploy & Maintain",
-          "subtitle": "Continuous improvement",
-          "icon": "update",
-          "unlock_content": {
-            "title": "Rule Lifecycle",
-            "points": [
-              "Deploy: Enable in production SIEM",
-              "Monitor: Track alert volume, false positive rate",
-              "Tune: Adjust thresholds, add exceptions, refine logic",
-              "Sunset: Disable outdated rules (threat no longer relevant)",
-              "Document: Maintain rule library with descriptions, owners"
-            ],
-            "bonus_fact": "Rule maintenance = 30-40% of detection engineering time. Old rules accumulate like code debt."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 3,
-    "type": "quiz",
-    "title": "Evaluación",
-    "duration": 60,
-    "content": {
-      "question": "SIEM rule tuning: ¿Por qué importante?",
-      "options": [
-        {
-          "id": "a",
-          "text": "No es importante, rules son set-and-forget",
-          "is_correct": false,
-          "feedback": "Incorrecto. Opposite. Rules need constant tuning."
-        },
-        {
-          "id": "b",
-          "text": "Reduce false positives, improve detection accuracy, adapt to environment changes",
-          "is_correct": true,
-          "feedback": "CORRECTO! 1) Reduce FPs: Initial rule = noisy. Tuning adds exceptions, adjusts thresholds. 2) Improve accuracy: Attackers evolve. Rules must adapt. 3) Environment changes: New apps, new users = new baselines. 4) Alert fatigue prevention: Untuned rules = alert storm = analysts numb. Target lesson: FireEye alerts ignored partly due to alert fatigue from noisy rules. Well-tuned rules = SOC can focus on real threats."
-        },
-        {
-          "id": "c",
-          "text": "Solo para compliance",
-          "is_correct": false,
-          "feedback": "Incorrecto. Compliance es benefit pero primary goal es effective detection."
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
   }
-]
+}

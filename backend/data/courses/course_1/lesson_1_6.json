@@ -1,227 +1,242 @@
-[
-  {
-    "screen_id": 1,
-    "type": "step_revelation",
-    "title": "Sony Pictures Hack (2014)",
-    "duration": 240,
-    "content": {
-      "story_title": "Sony Pictures: Devastación Total",
-      "story_intro": "Lazarus Group destruyó la infraestructura IT de Sony Pictures",
-      "steps": [
-        {
-          "id": "1",
-          "icon": "movie",
-          "title": "Target: Hollywood Studio",
-          "content": "Sony Pictures Entertainment, major Hollywood studio. The Interview, película sobre Kim Jong-un. Corea del Norte amenazó consecuencias.",
-          "insight": "Geopolitical threats son reales. Nation-state actors tienen motivaciones más allá de dinero."
-        },
-        {
-          "id": "2",
-          "icon": "download",
-          "title": "Compromiso Completo",
-          "content": "Lazarus Group entró vía spear phishing. Desplegaron wiper malware (Destover) que BORRÓ 75% de servers. No ransomware, puro sabotaje.",
-          "insight": "Wiper malware es peor que ransomware. No hay recovery posible. Backups eran la única salvación."
-        },
-        {
-          "id": "3",
-          "icon": "leak",
-          "title": "Massive Data Leak",
-          "content": "100TB de datos robados y publicados: emails internos, SSNs de empleados, películas unreleased, scripts, contratos. Todo online.",
-          "insight": "Una vez data está en internet, es imposible borrarla. Reputational damage permanente."
-        },
-        {
-          "id": "4",
-          "icon": "build",
-          "title": "Reconstrucción: 2 Meses",
-          "content": "Sony tuvo que reconstruir TODA su infraestructura desde cero. Costo: $100M+. No podían hacer business por semanas.",
-          "insight": "El costo de no tener disaster recovery adecuado: meses offline, millones perdidos."
-        }
-      ]
+{
+  "id": "c1_l6",
+  "title": "Controles de Seguridad",
+  "description": "Sony Pictures Hack (2014)",
+  "type": "interactive",
+  "duration_minutes": 17,
+  "xp_reward": 20,
+  "order_index": 6,
+  "course_id": 1,
+  "total_screens": 5,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Sony Pictures Hack (2014)",
+      "duration": 240,
+      "content": {
+        "story_title": "Sony Pictures: Devastación Total",
+        "story_intro": "Lazarus Group destruyó la infraestructura IT de Sony Pictures",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "movie",
+            "title": "Target: Hollywood Studio",
+            "content": "Sony Pictures Entertainment, major Hollywood studio. The Interview, película sobre Kim Jong-un. Corea del Norte amenazó consecuencias.",
+            "insight": "Geopolitical threats son reales. Nation-state actors tienen motivaciones más allá de dinero."
+          },
+          {
+            "id": "2",
+            "icon": "download",
+            "title": "Compromiso Completo",
+            "content": "Lazarus Group entró vía spear phishing. Desplegaron wiper malware (Destover) que BORRÓ 75% de servers. No ransomware, puro sabotaje.",
+            "insight": "Wiper malware es peor que ransomware. No hay recovery posible. Backups eran la única salvación."
+          },
+          {
+            "id": "3",
+            "icon": "leak",
+            "title": "Massive Data Leak",
+            "content": "100TB de datos robados y publicados: emails internos, SSNs de empleados, películas unreleased, scripts, contratos. Todo online.",
+            "insight": "Una vez data está en internet, es imposible borrarla. Reputational damage permanente."
+          },
+          {
+            "id": "4",
+            "icon": "build",
+            "title": "Reconstrucción: 2 Meses",
+            "content": "Sony tuvo que reconstruir TODA su infraestructura desde cero. Costo: $100M+. No podían hacer business por semanas.",
+            "insight": "El costo de no tener disaster recovery adecuado: meses offline, millones perdidos."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "Controles NIST SP 800-53",
+      "duration": 240,
+      "content": {
+        "description": "Familias de controles de seguridad",
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "security",
+              "term": "AC - Access Control",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Controles para limitar acceso a sistemas y datos. Least privilege, separation of duties, account management.",
+              "example": "MFA, role-based access, session timeout, remote access controls. Sony falló en AC - atacantes tenían acceso excesivo.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "verified_user",
+              "term": "IA - Identification & Authentication",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Verificar identidad de usuarios y dispositivos. MFA, password policies, credential management.",
+              "example": "Strong passwords, MFA required, authenticator lifecycle. Phishing resistance con FIDO2 keys.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "monitor",
+              "term": "SI - System & Information Integrity",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Detectar, reportar y corregir flaws. Malware protection, monitoring, vulnerability scanning.",
+              "example": "Antivirus/EDR, patch management, SIEM logging, IDS/IPS. Sony detection falló completamente.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "backup",
+              "term": "CP - Contingency Planning",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "BCP, DRP, backups. Asegurar continuidad ante incidentes.",
+              "example": "Backups offline, disaster recovery drills, alternate site. Sony NO tenía backups adequados.",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "Defense in Depth: Capas de Defensa",
+      "duration": 300,
+      "content": {
+        "title": "Modelo de Defensa en Profundidad",
+        "items": [
+          {
+            "id": "layer_1",
+            "task": "Capa 1: Perimeter Security",
+            "subtitle": "Firewalls, IDS/IPS, DMZ",
+            "icon": "shield",
+            "unlock_content": {
+              "title": "Primera Línea de Defensa",
+              "points": [
+                "Firewall: Filtrar tráfico entrante/saliente",
+                "IDS/IPS: Detectar y prevenir ataques conocidos",
+                "DMZ: Zona desmilitarizada para servicios públicos",
+                "DDoS mitigation: Rate limiting, CDN",
+                "No es suficiente solo: Atacantes bypasan con phishing"
+              ],
+              "bonus_fact": "Target tenía firewall pero puerto 445 abierto. Perimeter no ayuda contra lateral movement."
+            }
+          },
+          {
+            "id": "layer_2",
+            "task": "Capa 2: Network Security",
+            "subtitle": "Segmentation, VLANs, NAC",
+            "icon": "lan",
+            "unlock_content": {
+              "title": "Controlar Movimiento Interno",
+              "points": [
+                "Segmentación: Separar redes por función",
+                "VLANs: Isolation lógica",
+                "NAC: Network Access Control",
+                "Micro-segmentation: Zero Trust",
+                "Limit lateral movement en la red"
+              ],
+              "bonus_fact": "WannaCry se propagó en redes planas. Segmentation hubiera limitado el daño."
+            }
+          },
+          {
+            "id": "layer_3",
+            "task": "Capa 3: Endpoint Security",
+            "subtitle": "Antivirus, EDR, DLP",
+            "icon": "computer",
+            "unlock_content": {
+              "title": "Proteger Dispositivos",
+              "points": [
+                "EDR: Behavioral analysis, detect anomalies",
+                "DLP: Data Loss Prevention",
+                "Full disk encryption",
+                "Application whitelisting",
+                "Patch management automatizado"
+              ],
+              "bonus_fact": "Sony tenía antivirus pero wiper era zero-day. EDR hubiera detectado behavior anómalo."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "memory_cards",
+      "title": "Zero Trust Architecture",
+      "duration": 180,
+      "content": {
+        "description": "Modelo: nunca confiar, siempre verificar",
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "gpp_bad",
+              "term": "Never Trust, Always Verify",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "No asumir confianza basada en ubicación. Cada request es potentially hostile. Verificación continua.",
+              "example": "Empleado en oficina SIGUE necesitando MFA. Google BeyondCorp: Zero Trust desde 2011.",
+              "color": "#EF5350"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "vpn_key",
+              "term": "Least Privilege Access",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Dar mínimos permisos necesarios. JIT: elevar privilegios solo cuando needed, tiempo limitado.",
+              "example": "Azure AD PIM: Admin rights por 2 horas, luego auto-revoke. AWS IAM time-bound policies.",
+              "color": "#66BB6A"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "quiz",
+      "title": "Evaluación - Controles",
+      "duration": 90,
+      "content": {
+        "question": "Diferencia entre Defense in Depth y Zero Trust?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Son lo mismo",
+            "is_correct": false,
+            "feedback": "Incorrecto. Son complementarios pero diferentes."
+          },
+          {
+            "id": "b",
+            "text": "Defense in Depth usa capas; Zero Trust elimina confianza implícita",
+            "is_correct": true,
+            "feedback": "Correcto! Defense in Depth: múltiples capas. Zero Trust: verificar SIEMPRE. Son complementarios."
+          }
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 2,
-    "type": "memory_cards",
-    "title": "Controles NIST SP 800-53",
-    "duration": 240,
-    "content": {
-      "description": "Familias de controles de seguridad",
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "security",
-            "term": "AC - Access Control",
-            "color": "#1976D2"
-          },
-          "back": {
-            "definition": "Controles para limitar acceso a sistemas y datos. Least privilege, separation of duties, account management.",
-            "example": "MFA, role-based access, session timeout, remote access controls. Sony falló en AC - atacantes tenían acceso excesivo.",
-            "color": "#42A5F5"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "verified_user",
-            "term": "IA - Identification & Authentication",
-            "color": "#388E3C"
-          },
-          "back": {
-            "definition": "Verificar identidad de usuarios y dispositivos. MFA, password policies, credential management.",
-            "example": "Strong passwords, MFA required, authenticator lifecycle. Phishing resistance con FIDO2 keys.",
-            "color": "#66BB6A"
-          }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "monitor",
-            "term": "SI - System & Information Integrity",
-            "color": "#F57C00"
-          },
-          "back": {
-            "definition": "Detectar, reportar y corregir flaws. Malware protection, monitoring, vulnerability scanning.",
-            "example": "Antivirus/EDR, patch management, SIEM logging, IDS/IPS. Sony detection falló completamente.",
-            "color": "#FFB74D"
-          }
-        },
-        {
-          "id": "4",
-          "front": {
-            "icon": "backup",
-            "term": "CP - Contingency Planning",
-            "color": "#7B1FA2"
-          },
-          "back": {
-            "definition": "BCP, DRP, backups. Asegurar continuidad ante incidentes.",
-            "example": "Backups offline, disaster recovery drills, alternate site. Sony NO tenía backups adequados.",
-            "color": "#BA68C8"
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 3,
-    "type": "progress_checklist",
-    "title": "Defense in Depth: Capas de Defensa",
-    "duration": 300,
-    "content": {
-      "title": "Modelo de Defensa en Profundidad",
-      "items": [
-        {
-          "id": "layer_1",
-          "task": "Capa 1: Perimeter Security",
-          "subtitle": "Firewalls, IDS/IPS, DMZ",
-          "icon": "shield",
-          "unlock_content": {
-            "title": "Primera Línea de Defensa",
-            "points": [
-              "Firewall: Filtrar tráfico entrante/saliente",
-              "IDS/IPS: Detectar y prevenir ataques conocidos",
-              "DMZ: Zona desmilitarizada para servicios públicos",
-              "DDoS mitigation: Rate limiting, CDN",
-              "No es suficiente solo: Atacantes bypasan con phishing"
-            ],
-            "bonus_fact": "Target tenía firewall pero puerto 445 abierto. Perimeter no ayuda contra lateral movement."
-          }
-        },
-        {
-          "id": "layer_2",
-          "task": "Capa 2: Network Security",
-          "subtitle": "Segmentation, VLANs, NAC",
-          "icon": "lan",
-          "unlock_content": {
-            "title": "Controlar Movimiento Interno",
-            "points": [
-              "Segmentación: Separar redes por función",
-              "VLANs: Isolation lógica",
-              "NAC: Network Access Control",
-              "Micro-segmentation: Zero Trust",
-              "Limit lateral movement en la red"
-            ],
-            "bonus_fact": "WannaCry se propagó en redes planas. Segmentation hubiera limitado el daño."
-          }
-        },
-        {
-          "id": "layer_3",
-          "task": "Capa 3: Endpoint Security",
-          "subtitle": "Antivirus, EDR, DLP",
-          "icon": "computer",
-          "unlock_content": {
-            "title": "Proteger Dispositivos",
-            "points": [
-              "EDR: Behavioral analysis, detect anomalies",
-              "DLP: Data Loss Prevention",
-              "Full disk encryption",
-              "Application whitelisting",
-              "Patch management automatizado"
-            ],
-            "bonus_fact": "Sony tenía antivirus pero wiper era zero-day. EDR hubiera detectado behavior anómalo."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "memory_cards",
-    "title": "Zero Trust Architecture",
-    "duration": 180,
-    "content": {
-      "description": "Modelo: nunca confiar, siempre verificar",
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "gpp_bad",
-            "term": "Never Trust, Always Verify",
-            "color": "#D32F2F"
-          },
-          "back": {
-            "definition": "No asumir confianza basada en ubicación. Cada request es potentially hostile. Verificación continua.",
-            "example": "Empleado en oficina SIGUE necesitando MFA. Google BeyondCorp: Zero Trust desde 2011.",
-            "color": "#EF5350"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "vpn_key",
-            "term": "Least Privilege Access",
-            "color": "#388E3C"
-          },
-          "back": {
-            "definition": "Dar mínimos permisos necesarios. JIT: elevar privilegios solo cuando needed, tiempo limitado.",
-            "example": "Azure AD PIM: Admin rights por 2 horas, luego auto-revoke. AWS IAM time-bound policies.",
-            "color": "#66BB6A"
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 5,
-    "type": "quiz",
-    "title": "Evaluación - Controles",
-    "duration": 90,
-    "content": {
-      "question": "Diferencia entre Defense in Depth y Zero Trust?",
-      "options": [
-        {
-          "id": "a",
-          "text": "Son lo mismo",
-          "is_correct": false,
-          "feedback": "Incorrecto. Son complementarios pero diferentes."
-        },
-        {
-          "id": "b",
-          "text": "Defense in Depth usa capas; Zero Trust elimina confianza implícita",
-          "is_correct": true,
-          "feedback": "Correcto! Defense in Depth: múltiples capas. Zero Trust: verificar SIEMPRE. Son complementarios."
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "Lazarus Group destruyó la infraestructura IT de Sony Pictures"
   }
-]
+}

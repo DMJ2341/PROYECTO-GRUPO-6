@@ -1,171 +1,186 @@
-[
-  {
-    "screen_id": 1,
-    "type": "memory_cards",
-    "title": "Business Continuity & Disaster Recovery",
-    "duration": 180,
-    "content": {
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "emergency",
-            "term": "BCP - Business Continuity Plan",
-            "color": "#D32F2F"
+{
+  "id": "c5_l5",
+  "title": "Forensics Digital",
+  "description": "Business Continuity & Disaster Recovery",
+  "type": "interactive",
+  "duration_minutes": 8,
+  "xp_reward": 20,
+  "order_index": 5,
+  "course_id": 5,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "Business Continuity & Disaster Recovery",
+      "duration": 180,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "emergency",
+              "term": "BCP - Business Continuity Plan",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "How to maintain critical operations durante disruption. Identifies critical processes, dependencies, workarounds. Goal: Keep business running.",
+              "example": "Colonial Pipeline: BCP includes manual fuel delivery, communication plan. Tested? Probably not well. BCP needs quarterly testing.",
+              "color": "#EF5350"
+            }
           },
-          "back": {
-            "definition": "How to maintain critical operations durante disruption. Identifies critical processes, dependencies, workarounds. Goal: Keep business running.",
-            "example": "Colonial Pipeline: BCP includes manual fuel delivery, communication plan. Tested? Probably not well. BCP needs quarterly testing.",
-            "color": "#EF5350"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "restore",
-            "term": "DRP - Disaster Recovery Plan",
-            "color": "#1976D2"
+          {
+            "id": "2",
+            "front": {
+              "icon": "restore",
+              "term": "DRP - Disaster Recovery Plan",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "How to restore IT systems post-disaster. Backup/restore procedures, failover, rebuild steps. Subset of BCP focused on IT.",
+              "example": "RTO (Recovery Time Objective): Max downtime tolerable. RPO (Recovery Point Objective): Max data loss tolerable. Colonial: RTO 6 days too long.",
+              "color": "#42A5F5"
+            }
           },
-          "back": {
-            "definition": "How to restore IT systems post-disaster. Backup/restore procedures, failover, rebuild steps. Subset of BCP focused on IT.",
-            "example": "RTO (Recovery Time Objective): Max downtime tolerable. RPO (Recovery Point Objective): Max data loss tolerable. Colonial: RTO 6 days too long.",
-            "color": "#42A5F5"
+          {
+            "id": "3",
+            "front": {
+              "icon": "backup",
+              "term": "Backup Strategy: 3-2-1 Rule",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "3 copies of data, 2 different media types, 1 offsite/offline. Protects against ransomware (air-gapped backup).",
+              "example": "3 copies: Production + Daily backup + Weekly archive. 2 media: Disk + Tape. 1 offsite: Cloud or physical vault. Test restores monthly.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "science",
+              "term": "DR Testing",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Test disaster recovery annually MINIMUM. Tabletop (discussion), Walkthrough (step-by-step), Full (actual failover). Identify gaps.",
+              "example": "Colonial lesson: Restore from backups was slow. Indicates: backups not tested, restore procedures unclear. Testing reveals this.",
+              "color": "#FFB74D"
+            }
           }
-        },
-        {
-          "id": "3",
-          "front": {
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "DR Planning",
+      "duration": 240,
+      "content": {
+        "items": [
+          {
+            "id": "dr1",
+            "task": "Business Impact Analysis (BIA)",
+            "subtitle": "What's critical?",
+            "icon": "business",
+            "unlock_content": {
+              "title": "Identify Priorities",
+              "points": [
+                "Tier 1: Mission-critical (< 4 hour RTO). Ex: Payment processing, 911.",
+                "Tier 2: Important (< 24 hour RTO). Ex: Email, HR systems.",
+                "Tier 3: Standard (< 1 week RTO). Ex: Reporting, archives.",
+                "Dependencies: Database → App → Web. Must restore in order.",
+                "Colonial: Pipeline control = Tier 1. But took 6 days."
+              ],
+              "bonus_fact": "BIA answers: If this system down, how long before business impact? That's your RTO."
+            }
+          },
+          {
+            "id": "dr2",
+            "task": "Define RTOs & RPOs",
+            "subtitle": "Recovery objectives",
+            "icon": "timer",
+            "unlock_content": {
+              "title": "Set Targets",
+              "points": [
+                "RTO: Max downtime. Ex: 4 hours.",
+                "RPO: Max data loss. Ex: 1 hour (last backup).",
+                "Cost trade-off: Lower RTO/RPO = more expensive (real-time replication).",
+                "Document: Every critical system needs defined RTO/RPO.",
+                "Colonial: Actual recovery 6 days >> desired RTO."
+              ],
+              "bonus_fact": "RTO=0, RPO=0 (zero downtime, zero data loss) = $$$$$. Active-active clusters, sync replication."
+            }
+          },
+          {
+            "id": "dr3",
+            "task": "Backup & Replication",
+            "subtitle": "Data protection",
             "icon": "backup",
-            "term": "Backup Strategy: 3-2-1 Rule",
-            "color": "#388E3C"
+            "unlock_content": {
+              "title": "Implementation",
+              "points": [
+                "Backup frequency: Matches RPO. RPO=1 hour = hourly backups.",
+                "Backup testing: Monthly restore tests. Verify integrity.",
+                "Air-gapped: Offline/immutable backups. Ransomware protection.",
+                "Cloud replication: AWS to Azure. Multi-cloud DR.",
+                "Veeam, Commvault, AWS Backup popular solutions."
+              ],
+              "bonus_fact": "Ransomware targets backups. Immutable backups (write-once) = can't be encrypted."
+            }
           },
-          "back": {
-            "definition": "3 copies of data, 2 different media types, 1 offsite/offline. Protects against ransomware (air-gapped backup).",
-            "example": "3 copies: Production + Daily backup + Weekly archive. 2 media: Disk + Tape. 1 offsite: Cloud or physical vault. Test restores monthly.",
-            "color": "#66BB6A"
+          {
+            "id": "dr4",
+            "task": "DR Testing & Training",
+            "subtitle": "Practice makes perfect",
+            "icon": "school",
+            "unlock_content": {
+              "title": "Validation",
+              "points": [
+                "Tabletop: Annual. Discuss scenario, walk through plan.",
+                "Simulation: Semi-annual. Partial failover, non-prod.",
+                "Full DR test: Annual. Actual failover to DR site. Production cutover.",
+                "Document gaps: Update plan based on test results.",
+                "Train staff: Everyone knows their role in DR."
+              ],
+              "bonus_fact": "Untested DR plan = useless. Colonial learned hard way. Test, test, test."
+            }
           }
-        },
-        {
-          "id": "4",
-          "front": {
-            "icon": "science",
-            "term": "DR Testing",
-            "color": "#F57C00"
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación",
+      "duration": 60,
+      "content": {
+        "question": "RTO vs RPO difference?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Son lo mismo",
+            "is_correct": false,
+            "feedback": "Incorrecto. Conceptos diferentes."
           },
-          "back": {
-            "definition": "Test disaster recovery annually MINIMUM. Tabletop (discussion), Walkthrough (step-by-step), Full (actual failover). Identify gaps.",
-            "example": "Colonial lesson: Restore from backups was slow. Indicates: backups not tested, restore procedures unclear. Testing reveals this.",
-            "color": "#FFB74D"
+          {
+            "id": "b",
+            "text": "RTO = max downtime tolerable. RPO = max data loss tolerable.",
+            "is_correct": true,
+            "feedback": "CORRECTO! RTO (Recovery Time Objective): How long can system be down? Ex: Payment system RTO=1 hour. Must restore within 1 hour. RPO (Recovery Point Objective): How much data loss acceptable? Ex: RPO=15 min means last 15 min of transactions might be lost. Need: Backup every 15 min. Trade-off: Lower RTO/RPO = more expensive (hot standby, real-time replication). Colonial: RTO should have been <1 day. Actual: 6 days."
+          },
+          {
+            "id": "c",
+            "text": "RTO = tiempo de backup. RPO = frecuencia",
+            "is_correct": false,
+            "feedback": "Incorrecto. Confusión. RPO drives backup frequency pero RPO ≠ backup time."
           }
-        }
-      ]
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 2,
-    "type": "progress_checklist",
-    "title": "DR Planning",
-    "duration": 240,
-    "content": {
-      "items": [
-        {
-          "id": "dr1",
-          "task": "Business Impact Analysis (BIA)",
-          "subtitle": "What's critical?",
-          "icon": "business",
-          "unlock_content": {
-            "title": "Identify Priorities",
-            "points": [
-              "Tier 1: Mission-critical (< 4 hour RTO). Ex: Payment processing, 911.",
-              "Tier 2: Important (< 24 hour RTO). Ex: Email, HR systems.",
-              "Tier 3: Standard (< 1 week RTO). Ex: Reporting, archives.",
-              "Dependencies: Database → App → Web. Must restore in order.",
-              "Colonial: Pipeline control = Tier 1. But took 6 days."
-            ],
-            "bonus_fact": "BIA answers: If this system down, how long before business impact? That's your RTO."
-          }
-        },
-        {
-          "id": "dr2",
-          "task": "Define RTOs & RPOs",
-          "subtitle": "Recovery objectives",
-          "icon": "timer",
-          "unlock_content": {
-            "title": "Set Targets",
-            "points": [
-              "RTO: Max downtime. Ex: 4 hours.",
-              "RPO: Max data loss. Ex: 1 hour (last backup).",
-              "Cost trade-off: Lower RTO/RPO = more expensive (real-time replication).",
-              "Document: Every critical system needs defined RTO/RPO.",
-              "Colonial: Actual recovery 6 days >> desired RTO."
-            ],
-            "bonus_fact": "RTO=0, RPO=0 (zero downtime, zero data loss) = $$$$$. Active-active clusters, sync replication."
-          }
-        },
-        {
-          "id": "dr3",
-          "task": "Backup & Replication",
-          "subtitle": "Data protection",
-          "icon": "backup",
-          "unlock_content": {
-            "title": "Implementation",
-            "points": [
-              "Backup frequency: Matches RPO. RPO=1 hour = hourly backups.",
-              "Backup testing: Monthly restore tests. Verify integrity.",
-              "Air-gapped: Offline/immutable backups. Ransomware protection.",
-              "Cloud replication: AWS to Azure. Multi-cloud DR.",
-              "Veeam, Commvault, AWS Backup popular solutions."
-            ],
-            "bonus_fact": "Ransomware targets backups. Immutable backups (write-once) = can't be encrypted."
-          }
-        },
-        {
-          "id": "dr4",
-          "task": "DR Testing & Training",
-          "subtitle": "Practice makes perfect",
-          "icon": "school",
-          "unlock_content": {
-            "title": "Validation",
-            "points": [
-              "Tabletop: Annual. Discuss scenario, walk through plan.",
-              "Simulation: Semi-annual. Partial failover, non-prod.",
-              "Full DR test: Annual. Actual failover to DR site. Production cutover.",
-              "Document gaps: Update plan based on test results.",
-              "Train staff: Everyone knows their role in DR."
-            ],
-            "bonus_fact": "Untested DR plan = useless. Colonial learned hard way. Test, test, test."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 3,
-    "type": "quiz",
-    "title": "Evaluación",
-    "duration": 60,
-    "content": {
-      "question": "RTO vs RPO difference?",
-      "options": [
-        {
-          "id": "a",
-          "text": "Son lo mismo",
-          "is_correct": false,
-          "feedback": "Incorrecto. Conceptos diferentes."
-        },
-        {
-          "id": "b",
-          "text": "RTO = max downtime tolerable. RPO = max data loss tolerable.",
-          "is_correct": true,
-          "feedback": "CORRECTO! RTO (Recovery Time Objective): How long can system be down? Ex: Payment system RTO=1 hour. Must restore within 1 hour. RPO (Recovery Point Objective): How much data loss acceptable? Ex: RPO=15 min means last 15 min of transactions might be lost. Need: Backup every 15 min. Trade-off: Lower RTO/RPO = more expensive (hot standby, real-time replication). Colonial: RTO should have been <1 day. Actual: 6 days."
-        },
-        {
-          "id": "c",
-          "text": "RTO = tiempo de backup. RPO = frecuencia",
-          "is_correct": false,
-          "feedback": "Incorrecto. Confusión. RPO drives backup frequency pero RPO ≠ backup time."
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
   }
-]
+}

@@ -1,305 +1,320 @@
-[
-  {
-    "screen_id": 1,
-    "type": "step_revelation",
-    "title": "Caso Real: Target Data Breach (2013)",
-    "duration": 180,
-    "content": {
-      "story_title": "El Día que Target Perdió 40 Millones de Tarjetas",
-      "story_intro": "Black Friday 2013. El día de mayor ventas del año. Un proveedor de aire acondicionado. Una red comprometida. Un desastre de $292 millones.",
-      "steps": [
-        {
-          "id": "1",
-          "icon": "store",
-          "title": "27 de Noviembre, 2013 - Black Friday",
-          "content": "Target, uno de los retailers más grandes de Estados Unidos, está en plena temporada navideña. 40 millones de clientes compran con sus tarjetas de crédito. Los sistemas de punto de venta (POS) procesan transacciones normalmente. Pero algo está terriblemente mal.",
-          "insight": "Los atacantes habían estado dentro de la red de Target desde el 15 de noviembre, 12 días antes del Black Friday. Esperaron pacientemente el momento de máximo tráfico."
-        },
-        {
-          "id": "2",
-          "icon": "ac_unit",
-          "title": "El Eslabón Débil: Fazio Mechanical",
-          "content": "Los hackers no atacaron directamente a Target. Comprometieron a Fazio Mechanical, una pequeña empresa de HVAC (aire acondicionado) de Pennsylvania con solo 50 empleados. Fazio tenía acceso remoto a la red de Target para monitorear sistemas de refrigeración en las tiendas. Credenciales robadas = puerta de entrada.",
-          "insight": "Este es un clásico ataque de Supply Chain. El target real (Target) era muy seguro. Pero sus proveedores no tanto. Los atacantes siempre buscan el eslabón más débil."
-        },
-        {
-          "id": "3",
-          "icon": "bug_report",
-          "title": "El Malware POS: BlackPOS/KAPTOXA",
-          "content": "Una vez dentro, los atacantes instalaron BlackPOS (también conocido como KAPTOXA), un malware especializado en robar datos de tarjetas de crédito directamente de la memoria RAM de los sistemas de punto de venta. Cada vez que un cliente deslizaba su tarjeta, el malware capturaba: número de tarjeta, fecha de expiración, CVV. Todo antes de que fuera cifrado para transmisión.",
-          "insight": "El malware atacaba la memoria RAM porque ahí los datos están en texto claro (plaintext). Una vez cifrados para transmisión, serían inútiles. Timing perfecto del ataque."
-        },
-        {
-          "id": "4",
-          "icon": "cloud_upload",
-          "title": "Exfiltración Masiva",
-          "content": "Los datos robados fueron enviados a servidores controlados por los atacantes en Rusia y Brasil. 40 millones de números de tarjeta. 70 millones de registros de clientes (nombres, direcciones, teléfonos, emails). Todo salió de la red de Target sin ser detectado por sus sistemas de seguridad.",
-          "insight": "Target tenía FireEye instalado. El sistema DETECTÓ el malware y ALERTÓ. Pero el equipo de seguridad en Bangalore, India, no escaló la alerta. Fallo humano, no tecnológico."
-        },
-        {
-          "id": "5",
-          "icon": "newspaper",
-          "title": "18 de Diciembre: La Noticia Explota",
-          "content": "Brian Krebs, periodista de seguridad, publica la historia. Target se ve obligado a admitir públicamente el breach. Las acciones de Target caen 46%. El CEO Gregg Steinhafel renuncia. Demandas colectivas. Multas regulatorias. Investigaciones del FBI.",
-          "insight": "Target detectó el problema internamente días antes, pero no lo hizo público inmediatamente. La transparencia tardía empeoró la crisis de reputación."
-        },
-        {
-          "id": "6",
-          "icon": "attach_money",
-          "title": "El Daño Final",
-          "content": "Costo total: $292 millones USD en pérdidas directas. Acuerdos legales: $18.5M a 47 estados. Pérdida de confianza: incalculable. Cambios en la industria: adopción masiva de chip-and-PIN en Estados Unidos. Target tuvo que reinventar completamente su programa de seguridad.",
-          "insight": "Los atacantes operaban desde Rusia. Solo uno fue arrestado años después. Los datos robados se vendieron en el mercado negro por millones. Muchas tarjetas nunca fueron recuperadas."
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 2,
-    "type": "memory_cards",
-    "title": "La Tríada CIA: Fundamentos de Seguridad",
-    "duration": 240,
-    "content": {
-      "description": "Los 3 pilares fundamentales de la seguridad según NIST SP 800-12. Voltea cada tarjeta para dominar estos conceptos.",
-      "cards": [
-        {
-          "id": "1",
-          "front": {
+{
+  "id": "c1_l1",
+  "title": "Principios Fundamentales (CIA Triad)",
+  "description": "Caso Real: Target Data Breach (2013)",
+  "type": "interactive",
+  "duration_minutes": 17,
+  "xp_reward": 20,
+  "order_index": 1,
+  "course_id": 1,
+  "total_screens": 5,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Caso Real: Target Data Breach (2013)",
+      "duration": 180,
+      "content": {
+        "story_title": "El Día que Target Perdió 40 Millones de Tarjetas",
+        "story_intro": "Black Friday 2013. El día de mayor ventas del año. Un proveedor de aire acondicionado. Una red comprometida. Un desastre de $292 millones.",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "store",
+            "title": "27 de Noviembre, 2013 - Black Friday",
+            "content": "Target, uno de los retailers más grandes de Estados Unidos, está en plena temporada navideña. 40 millones de clientes compran con sus tarjetas de crédito. Los sistemas de punto de venta (POS) procesan transacciones normalmente. Pero algo está terriblemente mal.",
+            "insight": "Los atacantes habían estado dentro de la red de Target desde el 15 de noviembre, 12 días antes del Black Friday. Esperaron pacientemente el momento de máximo tráfico."
+          },
+          {
+            "id": "2",
+            "icon": "ac_unit",
+            "title": "El Eslabón Débil: Fazio Mechanical",
+            "content": "Los hackers no atacaron directamente a Target. Comprometieron a Fazio Mechanical, una pequeña empresa de HVAC (aire acondicionado) de Pennsylvania con solo 50 empleados. Fazio tenía acceso remoto a la red de Target para monitorear sistemas de refrigeración en las tiendas. Credenciales robadas = puerta de entrada.",
+            "insight": "Este es un clásico ataque de Supply Chain. El target real (Target) era muy seguro. Pero sus proveedores no tanto. Los atacantes siempre buscan el eslabón más débil."
+          },
+          {
+            "id": "3",
+            "icon": "bug_report",
+            "title": "El Malware POS: BlackPOS/KAPTOXA",
+            "content": "Una vez dentro, los atacantes instalaron BlackPOS (también conocido como KAPTOXA), un malware especializado en robar datos de tarjetas de crédito directamente de la memoria RAM de los sistemas de punto de venta. Cada vez que un cliente deslizaba su tarjeta, el malware capturaba: número de tarjeta, fecha de expiración, CVV. Todo antes de que fuera cifrado para transmisión.",
+            "insight": "El malware atacaba la memoria RAM porque ahí los datos están en texto claro (plaintext). Una vez cifrados para transmisión, serían inútiles. Timing perfecto del ataque."
+          },
+          {
+            "id": "4",
+            "icon": "cloud_upload",
+            "title": "Exfiltración Masiva",
+            "content": "Los datos robados fueron enviados a servidores controlados por los atacantes en Rusia y Brasil. 40 millones de números de tarjeta. 70 millones de registros de clientes (nombres, direcciones, teléfonos, emails). Todo salió de la red de Target sin ser detectado por sus sistemas de seguridad.",
+            "insight": "Target tenía FireEye instalado. El sistema DETECTÓ el malware y ALERTÓ. Pero el equipo de seguridad en Bangalore, India, no escaló la alerta. Fallo humano, no tecnológico."
+          },
+          {
+            "id": "5",
+            "icon": "newspaper",
+            "title": "18 de Diciembre: La Noticia Explota",
+            "content": "Brian Krebs, periodista de seguridad, publica la historia. Target se ve obligado a admitir públicamente el breach. Las acciones de Target caen 46%. El CEO Gregg Steinhafel renuncia. Demandas colectivas. Multas regulatorias. Investigaciones del FBI.",
+            "insight": "Target detectó el problema internamente días antes, pero no lo hizo público inmediatamente. La transparencia tardía empeoró la crisis de reputación."
+          },
+          {
+            "id": "6",
+            "icon": "attach_money",
+            "title": "El Daño Final",
+            "content": "Costo total: $292 millones USD en pérdidas directas. Acuerdos legales: $18.5M a 47 estados. Pérdida de confianza: incalculable. Cambios en la industria: adopción masiva de chip-and-PIN en Estados Unidos. Target tuvo que reinventar completamente su programa de seguridad.",
+            "insight": "Los atacantes operaban desde Rusia. Solo uno fue arrestado años después. Los datos robados se vendieron en el mercado negro por millones. Muchas tarjetas nunca fueron recuperadas."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "La Tríada CIA: Fundamentos de Seguridad",
+      "duration": 240,
+      "content": {
+        "description": "Los 3 pilares fundamentales de la seguridad según NIST SP 800-12. Voltea cada tarjeta para dominar estos conceptos.",
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "lock",
+              "term": "Confidencialidad",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Garantizar que la información solo sea accesible para personas autorizadas. Proteger datos sensibles contra acceso no autorizado mediante cifrado, control de acceso y clasificación de datos.",
+              "example": "En Target, los 40 millones de números de tarjeta fueron accedidos por atacantes NO autorizados. Violación SEVERA de confidencialidad. El cifrado en reposo hubiera ayudado.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "verified",
+              "term": "Integridad",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Asegurar que la información no ha sido alterada sin autorización. Los datos deben permanecer exactos, completos y confiables. Se usa hashing (SHA-256), checksums y firmas digitales para verificar.",
+              "example": "Ukrainian Power Grid (2015): El malware BlackEnergy modificó configuraciones SCADA sin autorización. Los operadores no podían confiar en lo que veían en pantalla. Integridad comprometida = caos operacional.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "schedule",
+              "term": "Disponibilidad",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Asegurar que los sistemas y datos estén accesibles cuando se necesitan. Requiere redundancia, backups offline, planes de disaster recovery (DRP) y protección contra ataques DDoS.",
+              "example": "Colonial Pipeline (2021): Ransomware DarkSide cifró sistemas. Pipeline tuvo que CERRAR operaciones por 6 días. Gasolineras en la costa este sin combustible. Disponibilidad = continuidad de negocio.",
+              "color": "#FF9800"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "memory_cards",
+      "title": "Más Allá de CIA: El Framework AAA",
+      "duration": 180,
+      "content": {
+        "description": "Conceptos complementarios esenciales para seguridad completa",
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "fingerprint",
+              "term": "Authentication",
+              "color": "#9C27B0"
+            },
+            "back": {
+              "definition": "Verificar la identidad del usuario o sistema. Responde: ¿Quién eres? Métodos: passwords, MFA (multi-factor), biometría, certificados digitales, tokens hardware.",
+              "example": "Si Target hubiera implementado MFA para acceso remoto de proveedores, Fazio Mechanical necesitaría algo más que credenciales robadas. MFA hubiera bloqueado el ataque inicial.",
+              "color": "#BA68C8"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "vpn_key",
+              "term": "Authorization",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Permisos otorgados después de autenticación. Responde: ¿Qué puedes hacer? Implementado con RBAC (Role-Based Access Control), ACLs (Access Control Lists), políticas de least privilege.",
+              "example": "Fazio Mechanical solo necesitaba acceso a sistemas HVAC. ¿Por qué tenía acceso a la red de POS? Fallo de autorización = movimiento lateral sin restricciones.",
+              "color": "#E57373"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "history",
+              "term": "Accounting (Auditing)",
+              "color": "#00796B"
+            },
+            "back": {
+              "definition": "Registro de todas las actividades. Responde: ¿Qué hiciste y cuándo? Logs, SIEM (Security Information and Event Management), auditorías, timestamps. Esencial para forensics y compliance.",
+              "example": "Target SÍ tenía logs. Así descubrieron que FireEye había alertado del malware pero nadie actuó. Los logs fueron críticos para la investigación post-incidente y demandas.",
+              "color": "#26A69A"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "verified_user",
+              "term": "Non-Repudiation",
+              "color": "#0288D1"
+            },
+            "back": {
+              "definition": "Imposibilidad de negar que realizaste una acción. Usa firmas digitales, timestamps criptográficos, blockchain. Crítico para transacciones legales y contratos digitales.",
+              "example": "En investigaciones forenses, los logs firmados digitalmente no pueden ser repudiados. Un atacante no puede decir 'yo no fui' si hay evidencia criptográficamente verificable.",
+              "color": "#0288D1"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "quiz",
+      "title": "Evaluación: ¿Cuál Principio se Violó?",
+      "duration": 120,
+      "content": {
+        "question": "En el ataque a Target, los hackers robaron 40 millones de números de tarjeta de crédito. Los datos NO fueron modificados, solo copiados. Los sistemas siguieron funcionando normalmente durante el ataque. ¿Qué principio de la tríada CIA fue PRINCIPALMENTE violado?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Disponibilidad - Los sistemas dejaron de funcionar",
+            "is_correct": false,
+            "feedback": "Incorrecto. Los sistemas de Target siguieron funcionando normalmente. No hubo caída de servicio. Las transacciones continuaron procesándose. La disponibilidad NO fue comprometida."
+          },
+          {
+            "id": "b",
+            "text": "Confidencialidad - Datos privados accedidos por no autorizados",
+            "is_correct": true,
+            "feedback": "¡CORRECTO! Los números de tarjeta son información CONFIDENCIAL que solo debería ser accesible por personas autorizadas (Target, procesadores de pago, bancos). Los atacantes NO tenían autorización. Esto es una violación directa de CONFIDENCIALIDAD."
+          },
+          {
+            "id": "c",
+            "text": "Integridad - Los datos fueron modificados",
+            "is_correct": false,
+            "feedback": "Incorrecto. Los datos NO fueron modificados ni alterados. Los números de tarjeta seguían siendo exactos y correctos. Solo fueron COPIADOS y exfiltrados. La integridad permaneció intacta."
+          },
+          {
+            "id": "d",
+            "text": "Todos los principios fueron violados por igual",
+            "is_correct": false,
+            "feedback": "Incorrecto. Mientras que breaches complejos pueden violar múltiples principios, en este caso específico la CONFIDENCIALIDAD fue el principio principalmente comprometido. Disponibilidad e Integridad permanecieron intactas."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "progress_checklist",
+      "title": "Clasificador CIA: Identifica Principios Violados",
+      "duration": 300,
+      "content": {
+        "title": "Analiza Cada Escenario y Identifica Principios Comprometidos",
+        "items": [
+          {
+            "id": "ddos",
+            "task": "DDoS tumba sitio de ecommerce durante Black Friday",
+            "subtitle": "Ataque distribuido de denegación de servicio",
+            "icon": "cloud_off",
+            "unlock_content": {
+              "title": "Análisis del Escenario",
+              "points": [
+                "Principio violado: DISPONIBILIDAD",
+                "El servicio no está accesible para usuarios legítimos",
+                "No hay robo de datos (Confidencialidad OK)",
+                "No hay modificación de datos (Integridad OK)",
+                "Impacto: Pérdida de ventas, reputación dañada",
+                "Mitigación: CDN con protección DDoS (Cloudflare, Akamai), rate limiting, scaling automático"
+              ],
+              "bonus_fact": "El ataque DDoS más grande registrado fue de 3.47 Tbps contra Microsoft Azure en 2021. Duró solo 10 minutos pero envió 340 millones de paquetes por segundo."
+            }
+          },
+          {
+            "id": "ransomware",
+            "task": "Ransomware cifra archivos de hospital, no pueden acceder a historiales médicos",
+            "subtitle": "Ataque de ransomware con cifrado",
             "icon": "lock",
-            "term": "Confidencialidad",
-            "color": "#1976D2"
+            "unlock_content": {
+              "title": "Análisis del Escenario",
+              "points": [
+                "Principios violados: DISPONIBILIDAD + potencial CONFIDENCIALIDAD",
+                "Disponibilidad: Archivos cifrados = inaccesibles. Operaciones paralizadas",
+                "Si hay exfiltración (doble extorsión): Confidencialidad también comprometida",
+                "Integridad: Los datos pueden estar intactos después de descifrar (si se paga o hay backup)",
+                "Impacto CRÍTICO en sector salud: Cirugías canceladas, pacientes en riesgo",
+                "Defensa: Backups offline (air-gapped), segmentación de red, endpoint detection"
+              ],
+              "bonus_fact": "El ransomware Ryuk causó $61 millones en daños solo al sector salud de EE.UU. en 2020. El FBI recomienda NO pagar el rescate porque financia más ataques."
+            }
           },
-          "back": {
-            "definition": "Garantizar que la información solo sea accesible para personas autorizadas. Proteger datos sensibles contra acceso no autorizado mediante cifrado, control de acceso y clasificación de datos.",
-            "example": "En Target, los 40 millones de números de tarjeta fueron accedidos por atacantes NO autorizados. Violación SEVERA de confidencialidad. El cifrado en reposo hubiera ayudado.",
-            "color": "#42A5F5"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "verified",
-            "term": "Integridad",
-            "color": "#388E3C"
+          {
+            "id": "database_tampering",
+            "task": "Atacante modifica registros financieros en base de datos del banco",
+            "subtitle": "Manipulación directa de datos",
+            "icon": "edit",
+            "unlock_content": {
+              "title": "Análisis del Escenario",
+              "points": [
+                "Principio violado: INTEGRIDAD",
+                "Datos alterados sin autorización = no confiables",
+                "Los saldos de cuentas podrían ser incorrectos",
+                "Auditorías financieras fallarían",
+                "Podría incluir Confidencialidad si el atacante leyó datos sensibles primero",
+                "Prevención: Database encryption, audit logs inmutables, checksums, WAF (Web Application Firewall)"
+              ],
+              "bonus_fact": "En 2016, hackers del Banco Central de Bangladesh manipularon mensajes SWIFT para transferir $81 millones. Un typo en una transferencia alertó a los bancos y detuvo otros $850M."
+            }
           },
-          "back": {
-            "definition": "Asegurar que la información no ha sido alterada sin autorización. Los datos deben permanecer exactos, completos y confiables. Se usa hashing (SHA-256), checksums y firmas digitales para verificar.",
-            "example": "Ukrainian Power Grid (2015): El malware BlackEnergy modificó configuraciones SCADA sin autorización. Los operadores no podían confiar en lo que veían en pantalla. Integridad comprometida = caos operacional.",
-            "color": "#66BB6A"
-          }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "schedule",
-            "term": "Disponibilidad",
-            "color": "#F57C00"
+          {
+            "id": "insider_threat",
+            "task": "Empleado vende lista de clientes a competidor",
+            "subtitle": "Amenaza interna con acceso legítimo",
+            "icon": "person",
+            "unlock_content": {
+              "title": "Análisis del Escenario",
+              "points": [
+                "Principio violado: CONFIDENCIALIDAD",
+                "Información confidencial divulgada a partes no autorizadas",
+                "El empleado tenía acceso legítimo (autenticación OK) pero uso no autorizado",
+                "Violación de políticas de uso aceptable y NDAs",
+                "Posible violación legal: GDPR, CCPA según jurisdicción",
+                "Defensa: DLP (Data Loss Prevention), User Behavior Analytics, principio de least privilege"
+              ],
+              "bonus_fact": "Según Verizon DBIR 2023, insiders causan el 34% de los breaches. Empleados con acceso privilegiado son el mayor riesgo porque tienen llaves del reino."
+            }
           },
-          "back": {
-            "definition": "Asegurar que los sistemas y datos estén accesibles cuando se necesitan. Requiere redundancia, backups offline, planes de disaster recovery (DRP) y protección contra ataques DDoS.",
-            "example": "Colonial Pipeline (2021): Ransomware DarkSide cifró sistemas. Pipeline tuvo que CERRAR operaciones por 6 días. Gasolineras en la costa este sin combustible. Disponibilidad = continuidad de negocio.",
-            "color": "#FF9800"
+          {
+            "id": "mitm",
+            "task": "Atacante intercepta y modifica transacción bancaria en tránsito",
+            "subtitle": "Man-in-the-Middle attack",
+            "icon": "swap_horiz",
+            "unlock_content": {
+              "title": "Análisis del Escenario",
+              "points": [
+                "Principios violados: CONFIDENCIALIDAD + INTEGRIDAD",
+                "Confidencialidad: El atacante LEYÓ la transacción (interceptó)",
+                "Integridad: El atacante MODIFICÓ la transacción (cambió destinatario/monto)",
+                "Disponibilidad: Generalmente OK, la transacción llega (aunque modificada)",
+                "Escenario clásico: WiFi público sin cifrado, ARP spoofing en LAN",
+                "Prevención: TLS/SSL obligatorio, certificate pinning, VPN para redes no confiables"
+              ],
+              "bonus_fact": "El ataque MITM más famoso fue Superfish en laptops Lenovo (2015). Venían con certificado raíz preinstalado que permitía interceptar HTTPS. Afectó a millones de usuarios."
+            }
           }
-        }
-      ]
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 3,
-    "type": "memory_cards",
-    "title": "Más Allá de CIA: El Framework AAA",
-    "duration": 180,
-    "content": {
-      "description": "Conceptos complementarios esenciales para seguridad completa",
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "fingerprint",
-            "term": "Authentication",
-            "color": "#9C27B0"
-          },
-          "back": {
-            "definition": "Verificar la identidad del usuario o sistema. Responde: ¿Quién eres? Métodos: passwords, MFA (multi-factor), biometría, certificados digitales, tokens hardware.",
-            "example": "Si Target hubiera implementado MFA para acceso remoto de proveedores, Fazio Mechanical necesitaría algo más que credenciales robadas. MFA hubiera bloqueado el ataque inicial.",
-            "color": "#BA68C8"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "vpn_key",
-            "term": "Authorization",
-            "color": "#D32F2F"
-          },
-          "back": {
-            "definition": "Permisos otorgados después de autenticación. Responde: ¿Qué puedes hacer? Implementado con RBAC (Role-Based Access Control), ACLs (Access Control Lists), políticas de least privilege.",
-            "example": "Fazio Mechanical solo necesitaba acceso a sistemas HVAC. ¿Por qué tenía acceso a la red de POS? Fallo de autorización = movimiento lateral sin restricciones.",
-            "color": "#E57373"
-          }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "history",
-            "term": "Accounting (Auditing)",
-            "color": "#00796B"
-          },
-          "back": {
-            "definition": "Registro de todas las actividades. Responde: ¿Qué hiciste y cuándo? Logs, SIEM (Security Information and Event Management), auditorías, timestamps. Esencial para forensics y compliance.",
-            "example": "Target SÍ tenía logs. Así descubrieron que FireEye había alertado del malware pero nadie actuó. Los logs fueron críticos para la investigación post-incidente y demandas.",
-            "color": "#26A69A"
-          }
-        },
-        {
-          "id": "4",
-          "front": {
-            "icon": "verified_user",
-            "term": "Non-Repudiation",
-            "color": "#0288D1"
-          },
-          "back": {
-            "definition": "Imposibilidad de negar que realizaste una acción. Usa firmas digitales, timestamps criptográficos, blockchain. Crítico para transacciones legales y contratos digitales.",
-            "example": "En investigaciones forenses, los logs firmados digitalmente no pueden ser repudiados. Un atacante no puede decir 'yo no fui' si hay evidencia criptográficamente verificable.",
-            "color": "#0288D1"
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "quiz",
-    "title": "Evaluación: ¿Cuál Principio se Violó?",
-    "duration": 120,
-    "content": {
-      "question": "En el ataque a Target, los hackers robaron 40 millones de números de tarjeta de crédito. Los datos NO fueron modificados, solo copiados. Los sistemas siguieron funcionando normalmente durante el ataque. ¿Qué principio de la tríada CIA fue PRINCIPALMENTE violado?",
-      "options": [
-        {
-          "id": "a",
-          "text": "Disponibilidad - Los sistemas dejaron de funcionar",
-          "is_correct": false,
-          "feedback": "Incorrecto. Los sistemas de Target siguieron funcionando normalmente. No hubo caída de servicio. Las transacciones continuaron procesándose. La disponibilidad NO fue comprometida."
-        },
-        {
-          "id": "b",
-          "text": "Confidencialidad - Datos privados accedidos por no autorizados",
-          "is_correct": true,
-          "feedback": "¡CORRECTO! Los números de tarjeta son información CONFIDENCIAL que solo debería ser accesible por personas autorizadas (Target, procesadores de pago, bancos). Los atacantes NO tenían autorización. Esto es una violación directa de CONFIDENCIALIDAD."
-        },
-        {
-          "id": "c",
-          "text": "Integridad - Los datos fueron modificados",
-          "is_correct": false,
-          "feedback": "Incorrecto. Los datos NO fueron modificados ni alterados. Los números de tarjeta seguían siendo exactos y correctos. Solo fueron COPIADOS y exfiltrados. La integridad permaneció intacta."
-        },
-        {
-          "id": "d",
-          "text": "Todos los principios fueron violados por igual",
-          "is_correct": false,
-          "feedback": "Incorrecto. Mientras que breaches complejos pueden violar múltiples principios, en este caso específico la CONFIDENCIALIDAD fue el principio principalmente comprometido. Disponibilidad e Integridad permanecieron intactas."
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 5,
-    "type": "progress_checklist",
-    "title": "Clasificador CIA: Identifica Principios Violados",
-    "duration": 300,
-    "content": {
-      "title": "Analiza Cada Escenario y Identifica Principios Comprometidos",
-      "items": [
-        {
-          "id": "ddos",
-          "task": "DDoS tumba sitio de ecommerce durante Black Friday",
-          "subtitle": "Ataque distribuido de denegación de servicio",
-          "icon": "cloud_off",
-          "unlock_content": {
-            "title": "Análisis del Escenario",
-            "points": [
-              "Principio violado: DISPONIBILIDAD",
-              "El servicio no está accesible para usuarios legítimos",
-              "No hay robo de datos (Confidencialidad OK)",
-              "No hay modificación de datos (Integridad OK)",
-              "Impacto: Pérdida de ventas, reputación dañada",
-              "Mitigación: CDN con protección DDoS (Cloudflare, Akamai), rate limiting, scaling automático"
-            ],
-            "bonus_fact": "El ataque DDoS más grande registrado fue de 3.47 Tbps contra Microsoft Azure en 2021. Duró solo 10 minutos pero envió 340 millones de paquetes por segundo."
-          }
-        },
-        {
-          "id": "ransomware",
-          "task": "Ransomware cifra archivos de hospital, no pueden acceder a historiales médicos",
-          "subtitle": "Ataque de ransomware con cifrado",
-          "icon": "lock",
-          "unlock_content": {
-            "title": "Análisis del Escenario",
-            "points": [
-              "Principios violados: DISPONIBILIDAD + potencial CONFIDENCIALIDAD",
-              "Disponibilidad: Archivos cifrados = inaccesibles. Operaciones paralizadas",
-              "Si hay exfiltración (doble extorsión): Confidencialidad también comprometida",
-              "Integridad: Los datos pueden estar intactos después de descifrar (si se paga o hay backup)",
-              "Impacto CRÍTICO en sector salud: Cirugías canceladas, pacientes en riesgo",
-              "Defensa: Backups offline (air-gapped), segmentación de red, endpoint detection"
-            ],
-            "bonus_fact": "El ransomware Ryuk causó $61 millones en daños solo al sector salud de EE.UU. en 2020. El FBI recomienda NO pagar el rescate porque financia más ataques."
-          }
-        },
-        {
-          "id": "database_tampering",
-          "task": "Atacante modifica registros financieros en base de datos del banco",
-          "subtitle": "Manipulación directa de datos",
-          "icon": "edit",
-          "unlock_content": {
-            "title": "Análisis del Escenario",
-            "points": [
-              "Principio violado: INTEGRIDAD",
-              "Datos alterados sin autorización = no confiables",
-              "Los saldos de cuentas podrían ser incorrectos",
-              "Auditorías financieras fallarían",
-              "Podría incluir Confidencialidad si el atacante leyó datos sensibles primero",
-              "Prevención: Database encryption, audit logs inmutables, checksums, WAF (Web Application Firewall)"
-            ],
-            "bonus_fact": "En 2016, hackers del Banco Central de Bangladesh manipularon mensajes SWIFT para transferir $81 millones. Un typo en una transferencia alertó a los bancos y detuvo otros $850M."
-          }
-        },
-        {
-          "id": "insider_threat",
-          "task": "Empleado vende lista de clientes a competidor",
-          "subtitle": "Amenaza interna con acceso legítimo",
-          "icon": "person",
-          "unlock_content": {
-            "title": "Análisis del Escenario",
-            "points": [
-              "Principio violado: CONFIDENCIALIDAD",
-              "Información confidencial divulgada a partes no autorizadas",
-              "El empleado tenía acceso legítimo (autenticación OK) pero uso no autorizado",
-              "Violación de políticas de uso aceptable y NDAs",
-              "Posible violación legal: GDPR, CCPA según jurisdicción",
-              "Defensa: DLP (Data Loss Prevention), User Behavior Analytics, principio de least privilege"
-            ],
-            "bonus_fact": "Según Verizon DBIR 2023, insiders causan el 34% de los breaches. Empleados con acceso privilegiado son el mayor riesgo porque tienen llaves del reino."
-          }
-        },
-        {
-          "id": "mitm",
-          "task": "Atacante intercepta y modifica transacción bancaria en tránsito",
-          "subtitle": "Man-in-the-Middle attack",
-          "icon": "swap_horiz",
-          "unlock_content": {
-            "title": "Análisis del Escenario",
-            "points": [
-              "Principios violados: CONFIDENCIALIDAD + INTEGRIDAD",
-              "Confidencialidad: El atacante LEYÓ la transacción (interceptó)",
-              "Integridad: El atacante MODIFICÓ la transacción (cambió destinatario/monto)",
-              "Disponibilidad: Generalmente OK, la transacción llega (aunque modificada)",
-              "Escenario clásico: WiFi público sin cifrado, ARP spoofing en LAN",
-              "Prevención: TLS/SSL obligatorio, certificate pinning, VPN para redes no confiables"
-            ],
-            "bonus_fact": "El ataque MITM más famoso fue Superfish en laptops Lenovo (2015). Venían con certificado raíz preinstalado que permitía interceptar HTTPS. Afectó a millones de usuarios."
-          }
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "Black Friday 2013. El día de mayor ventas del año. Un proveedor de aire acondicionado. Una red comprometida. Un desastre de $292 millones."
   }
-]
+}

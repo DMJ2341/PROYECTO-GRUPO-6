@@ -1,207 +1,222 @@
-[
-  {
-    "screen_id": 1,
-    "type": "step_revelation",
-    "title": "Caso: Target Point-of-Sale Breach (2013)",
-    "duration": 220,
-    "content": {
-      "story_title": "Target: 40M Credit Cards via HVAC Vendor",
-      "story_intro": "Supply chain + POS malware = massive breach during holiday shopping",
-      "steps": [
-        {
-          "id": "1",
-          "icon": "hvac",
-          "title": "Supply Chain Entry: Fazio Mechanical",
-          "content": "Attackers phished Fazio Mechanical (HVAC vendor). Small vendor tenía VPN access a Target network para billing. Compromised Fazio credentials → Target network access.",
-          "insight": "Supply chain is weakest link. Vendors with network access = attack vector. Trust pero verify."
-        },
-        {
-          "id": "2",
-          "icon": "bug_report",
-          "title": "Malware: BlackPOS RAM Scraper",
-          "content": "Deployed BlackPOS malware en POS terminals. Memory scraping: captura credit card data ANTES de encryption. Track 1&2 data (full card info including CVV).",
-          "insight": "POS malware scrapes RAM donde cards están en plaintext momentarily. P2PE (Point-to-Point Encryption) mitiga."
-        },
-        {
-          "id": "3",
-          "icon": "warning",
-          "title": "Detection Failure: FireEye Alerted, Ignored",
-          "content": "Target tenía FireEye (top-tier security). FireEye detectó malware, alertó security team. PERO: Alert ignored/dismissed as false positive. Breach continuó 2+ weeks.",
-          "insight": "Having tools ≠ being secure. Alert fatigue, lack of trained analysts = detection failures."
-        },
-        {
-          "id": "4",
-          "icon": "credit_card",
-          "title": "Exfiltration: 40M Cards Stolen",
-          "content": "Nov-Dec 2013 (holiday shopping season). 40M credit/debit cards, 70M customer records total. Data exfiltrated to servers en Brazil y Russia. Sold on dark web.",
-          "insight": "Timing: holiday season = max transactions = max value. Attackers pick timing strategically."
-        },
-        {
-          "id": "5",
-          "icon": "gavel",
-          "title": "Aftermath: $292M Cost",
-          "content": "$292M total cost: settlements, legal fees, remediation, brand damage. CEO/CIO resigned. New CISO hired. PCI compliance questioned. Class action lawsuits.",
-          "insight": "Breach costs go beyond immediate response. Brand damage, executive turnover, years of lawsuits."
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 2,
-    "type": "memory_cards",
-    "title": "Detection Technologies",
-    "duration": 240,
-    "content": {
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "analytics",
-            "term": "SIEM - Security Information & Event Management",
-            "color": "#1976D2"
+{
+  "id": "c4_l2",
+  "title": "Inyección SQL",
+  "description": "Caso: Target Point-of-Sale Breach (2013)",
+  "type": "interactive",
+  "duration_minutes": 14,
+  "xp_reward": 20,
+  "order_index": 2,
+  "course_id": 4,
+  "total_screens": 4,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Caso: Target Point-of-Sale Breach (2013)",
+      "duration": 220,
+      "content": {
+        "story_title": "Target: 40M Credit Cards via HVAC Vendor",
+        "story_intro": "Supply chain + POS malware = massive breach during holiday shopping",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "hvac",
+            "title": "Supply Chain Entry: Fazio Mechanical",
+            "content": "Attackers phished Fazio Mechanical (HVAC vendor). Small vendor tenía VPN access a Target network para billing. Compromised Fazio credentials → Target network access.",
+            "insight": "Supply chain is weakest link. Vendors with network access = attack vector. Trust pero verify."
           },
-          "back": {
-            "definition": "Centralized log aggregation y correlation. Collect logs from all sources (firewalls, servers, endpoints). Rules y ML para detect anomalies. Alerting.",
-            "example": "Splunk, QRadar, Sentinel. Target tenía FireEye (SIEM-like) pero ignored alerts. SIEM only as good as SOC analyzing it. Alert fatigue real.",
-            "color": "#42A5F5"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "computer",
-            "term": "EDR - Endpoint Detection & Response",
-            "color": "#388E3C"
+          {
+            "id": "2",
+            "icon": "bug_report",
+            "title": "Malware: BlackPOS RAM Scraper",
+            "content": "Deployed BlackPOS malware en POS terminals. Memory scraping: captura credit card data ANTES de encryption. Track 1&2 data (full card info including CVV).",
+            "insight": "POS malware scrapes RAM donde cards están en plaintext momentarily. P2PE (Point-to-Point Encryption) mitiga."
           },
-          "back": {
-            "definition": "Agent en endpoints. Behavioral analysis, process monitoring, network connections, file integrity. Detect malware, lateral movement. Response: isolate, kill processes.",
-            "example": "CrowdStrike, SentinelOne, Microsoft Defender ATP. Target needed EDR en POS terminals. Would detect BlackPOS memory scraping.",
-            "color": "#66BB6A"
-          }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "network_check",
-            "term": "NDR - Network Detection & Response",
-            "color": "#F57C00"
+          {
+            "id": "3",
+            "icon": "warning",
+            "title": "Detection Failure: FireEye Alerted, Ignored",
+            "content": "Target tenía FireEye (top-tier security). FireEye detectó malware, alertó security team. PERO: Alert ignored/dismissed as false positive. Breach continuó 2+ weeks.",
+            "insight": "Having tools ≠ being secure. Alert fatigue, lack of trained analysts = detection failures."
           },
-          "back": {
-            "definition": "Network traffic analysis. Detect lateral movement, C2 beaconing, data exfiltration. East-west traffic monitoring (not just north-south perimeter).",
-            "example": "Darktrace, ExtraHop, Corelight (Zeek). Target: NDR hubiera detectado exfiltration a Brazil/Russia. Unusual destinations.",
-            "color": "#FFB74D"
-          }
-        },
-        {
-          "id": "4",
-          "front": {
-            "icon": "cloud",
-            "term": "UEBA - User & Entity Behavior Analytics",
-            "color": "#7B1FA2"
+          {
+            "id": "4",
+            "icon": "credit_card",
+            "title": "Exfiltration: 40M Cards Stolen",
+            "content": "Nov-Dec 2013 (holiday shopping season). 40M credit/debit cards, 70M customer records total. Data exfiltrated to servers en Brazil y Russia. Sold on dark web.",
+            "insight": "Timing: holiday season = max transactions = max value. Attackers pick timing strategically."
           },
-          "back": {
-            "definition": "Baseline normal behavior. Detect anomalies: logins from unusual locations, access unusual files, off-hours activity. ML-driven.",
-            "example": "Exabeam, Securonix. Target: UEBA hubiera detectado Fazio credentials used from unusual location to access unusual systems (POS).",
-            "color": "#BA68C8"
+          {
+            "id": "5",
+            "icon": "gavel",
+            "title": "Aftermath: $292M Cost",
+            "content": "$292M total cost: settlements, legal fees, remediation, brand damage. CEO/CIO resigned. New CISO hired. PCI compliance questioned. Class action lawsuits.",
+            "insight": "Breach costs go beyond immediate response. Brand damage, executive turnover, years of lawsuits."
           }
-        }
-      ]
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "Detection Technologies",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "analytics",
+              "term": "SIEM - Security Information & Event Management",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Centralized log aggregation y correlation. Collect logs from all sources (firewalls, servers, endpoints). Rules y ML para detect anomalies. Alerting.",
+              "example": "Splunk, QRadar, Sentinel. Target tenía FireEye (SIEM-like) pero ignored alerts. SIEM only as good as SOC analyzing it. Alert fatigue real.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "computer",
+              "term": "EDR - Endpoint Detection & Response",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Agent en endpoints. Behavioral analysis, process monitoring, network connections, file integrity. Detect malware, lateral movement. Response: isolate, kill processes.",
+              "example": "CrowdStrike, SentinelOne, Microsoft Defender ATP. Target needed EDR en POS terminals. Would detect BlackPOS memory scraping.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "network_check",
+              "term": "NDR - Network Detection & Response",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Network traffic analysis. Detect lateral movement, C2 beaconing, data exfiltration. East-west traffic monitoring (not just north-south perimeter).",
+              "example": "Darktrace, ExtraHop, Corelight (Zeek). Target: NDR hubiera detectado exfiltration a Brazil/Russia. Unusual destinations.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "cloud",
+              "term": "UEBA - User & Entity Behavior Analytics",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Baseline normal behavior. Detect anomalies: logins from unusual locations, access unusual files, off-hours activity. ML-driven.",
+              "example": "Exabeam, Securonix. Target: UEBA hubiera detectado Fazio credentials used from unusual location to access unusual systems (POS).",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "SOC (Security Operations Center)",
+      "duration": 300,
+      "content": {
+        "items": [
+          {
+            "id": "soc1",
+            "task": "SOC Tiers",
+            "subtitle": "Escalation model",
+            "icon": "layers",
+            "unlock_content": {
+              "title": "SOC Structure",
+              "points": [
+                "Tier 1 (Analysts): Triage alerts. Initial investigation. Known playbooks. Escalate unknowns.",
+                "Tier 2 (Incident Responders): Deep dive investigations. Threat hunting. Complex incidents.",
+                "Tier 3 (Threat Hunters/Engineers): Proactive hunting. Tool tuning. Advanced threats.",
+                "SOC Manager: Metrics, staffing, process improvement.",
+                "Target issue: Analysts dismissed FireEye alert. Training gap."
+              ],
+              "bonus_fact": "Good SOC: 24/7 coverage, clear escalation paths, continuous training, low analyst burnout."
+            }
+          },
+          {
+            "id": "soc2",
+            "task": "Alert Fatigue Problem",
+            "subtitle": "Too many false positives",
+            "icon": "notifications_off",
+            "unlock_content": {
+              "title": "The Challenge",
+              "points": [
+                "Average SOC: 10K+ alerts/day. Analysts can review ~100/day.",
+                "99% are false positives (benign). Finding 1% true positives = needle in haystack.",
+                "Result: Alert fatigue. Analysts become numb. Miss critical alerts (Target).",
+                "Solutions: SOAR automation, ML for prioritization, tuning rules, alert suppression.",
+                "Measurement: MTTD (Mean Time To Detect), MTTR (Mean Time To Respond)"
+              ],
+              "bonus_fact": "Ponemon study: Average data breach discovered after 207 days. Detection is hard."
+            }
+          },
+          {
+            "id": "soc3",
+            "task": "Threat Intelligence Integration",
+            "subtitle": "Context for decisions",
+            "icon": "info",
+            "unlock_content": {
+              "title": "Intelligence-Driven",
+              "points": [
+                "Tactical: IoCs (IPs, domains, hashes). Block known bad.",
+                "Operational: TTPs (Tactics, Techniques, Procedures). Detect behavior.",
+                "Strategic: Adversary motivations, trends. Inform strategy.",
+                "Feeds: MISP, Threat Connect, commercial (Recorded Future, Mandiant).",
+                "Target: Threat intel on BlackPOS existed. Should have hunted for it."
+              ],
+              "bonus_fact": "MITRE ATT&CK framework maps TTPs. SOC uses to detect techniques, not just IoCs."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "quiz",
+      "title": "Evaluación - Detection",
+      "duration": 90,
+      "content": {
+        "question": "Target breach: ¿Por qué FireEye detection failed?",
+        "options": [
+          {
+            "id": "a",
+            "text": "FireEye no detectó el malware",
+            "is_correct": false,
+            "feedback": "Incorrecto. FireEye SÍ detectó BlackPOS malware y alertó security team. Technology funcionó."
+          },
+          {
+            "id": "b",
+            "text": "Security team dismissed alerts como false positives. Alert fatigue + lack of training.",
+            "is_correct": true,
+            "feedback": "CORRECTO! FireEye detected malware y alertó multiple times. Security analysts dismissed alerts creyendo eran false positives. Causas: 1) Alert fatigue (too many alerts daily). 2) Lack of training to recognize true positives. 3) No escalation cuando uncertain. 4) Culture que no empowered analysts to act. Having best tools ≠ security. Need trained SOC + proper processes. Target paid for FireEye pero no aprovechó."
+          },
+          {
+            "id": "c",
+            "text": "BlackPOS era zero-day sin signatures",
+            "is_correct": false,
+            "feedback": "Incorrecto. BlackPOS no era zero-day. Variants conocidos. FireEye lo detectó, lo cual prueba tenía signatures/behavior patterns."
+          },
+          {
+            "id": "d",
+            "text": "Target no tenía SIEM",
+            "is_correct": false,
+            "feedback": "Incorrecto. Target tenía FireEye (enterprise-grade). Problem no fue lack of tools sino people/process."
+          }
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 3,
-    "type": "progress_checklist",
-    "title": "SOC (Security Operations Center)",
-    "duration": 300,
-    "content": {
-      "items": [
-        {
-          "id": "soc1",
-          "task": "SOC Tiers",
-          "subtitle": "Escalation model",
-          "icon": "layers",
-          "unlock_content": {
-            "title": "SOC Structure",
-            "points": [
-              "Tier 1 (Analysts): Triage alerts. Initial investigation. Known playbooks. Escalate unknowns.",
-              "Tier 2 (Incident Responders): Deep dive investigations. Threat hunting. Complex incidents.",
-              "Tier 3 (Threat Hunters/Engineers): Proactive hunting. Tool tuning. Advanced threats.",
-              "SOC Manager: Metrics, staffing, process improvement.",
-              "Target issue: Analysts dismissed FireEye alert. Training gap."
-            ],
-            "bonus_fact": "Good SOC: 24/7 coverage, clear escalation paths, continuous training, low analyst burnout."
-          }
-        },
-        {
-          "id": "soc2",
-          "task": "Alert Fatigue Problem",
-          "subtitle": "Too many false positives",
-          "icon": "notifications_off",
-          "unlock_content": {
-            "title": "The Challenge",
-            "points": [
-              "Average SOC: 10K+ alerts/day. Analysts can review ~100/day.",
-              "99% are false positives (benign). Finding 1% true positives = needle in haystack.",
-              "Result: Alert fatigue. Analysts become numb. Miss critical alerts (Target).",
-              "Solutions: SOAR automation, ML for prioritization, tuning rules, alert suppression.",
-              "Measurement: MTTD (Mean Time To Detect), MTTR (Mean Time To Respond)"
-            ],
-            "bonus_fact": "Ponemon study: Average data breach discovered after 207 days. Detection is hard."
-          }
-        },
-        {
-          "id": "soc3",
-          "task": "Threat Intelligence Integration",
-          "subtitle": "Context for decisions",
-          "icon": "info",
-          "unlock_content": {
-            "title": "Intelligence-Driven",
-            "points": [
-              "Tactical: IoCs (IPs, domains, hashes). Block known bad.",
-              "Operational: TTPs (Tactics, Techniques, Procedures). Detect behavior.",
-              "Strategic: Adversary motivations, trends. Inform strategy.",
-              "Feeds: MISP, Threat Connect, commercial (Recorded Future, Mandiant).",
-              "Target: Threat intel on BlackPOS existed. Should have hunted for it."
-            ],
-            "bonus_fact": "MITRE ATT&CK framework maps TTPs. SOC uses to detect techniques, not just IoCs."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "quiz",
-    "title": "Evaluación - Detection",
-    "duration": 90,
-    "content": {
-      "question": "Target breach: ¿Por qué FireEye detection failed?",
-      "options": [
-        {
-          "id": "a",
-          "text": "FireEye no detectó el malware",
-          "is_correct": false,
-          "feedback": "Incorrecto. FireEye SÍ detectó BlackPOS malware y alertó security team. Technology funcionó."
-        },
-        {
-          "id": "b",
-          "text": "Security team dismissed alerts como false positives. Alert fatigue + lack of training.",
-          "is_correct": true,
-          "feedback": "CORRECTO! FireEye detected malware y alertó multiple times. Security analysts dismissed alerts creyendo eran false positives. Causas: 1) Alert fatigue (too many alerts daily). 2) Lack of training to recognize true positives. 3) No escalation cuando uncertain. 4) Culture que no empowered analysts to act. Having best tools ≠ security. Need trained SOC + proper processes. Target paid for FireEye pero no aprovechó."
-        },
-        {
-          "id": "c",
-          "text": "BlackPOS era zero-day sin signatures",
-          "is_correct": false,
-          "feedback": "Incorrecto. BlackPOS no era zero-day. Variants conocidos. FireEye lo detectó, lo cual prueba tenía signatures/behavior patterns."
-        },
-        {
-          "id": "d",
-          "text": "Target no tenía SIEM",
-          "is_correct": false,
-          "feedback": "Incorrecto. Target tenía FireEye (enterprise-grade). Problem no fue lack of tools sino people/process."
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "Supply chain + POS malware = massive breach during holiday shopping"
   }
-]
+}

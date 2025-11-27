@@ -1,122 +1,137 @@
-[
-  {
-    "screen_id": 1,
-    "type": "memory_cards",
-    "title": "VPN Technologies",
-    "duration": 240,
-    "content": {
-      "cards": [
-        {
-          "id": "1",
-          "front": {
-            "icon": "vpn_lock",
-            "term": "Site-to-Site VPN",
-            "color": "#1976D2"
+{
+  "id": "c2_l5",
+  "title": "Segmentación de Redes",
+  "description": "VPN Technologies",
+  "type": "interactive",
+  "duration_minutes": 8,
+  "xp_reward": 20,
+  "order_index": 5,
+  "course_id": 2,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "VPN Technologies",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "vpn_lock",
+              "term": "Site-to-Site VPN",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Conecta networks entre offices/data centers. IPsec tunnel. Routers/firewalls terminan tunnel. Transparent para users.",
+              "example": "HQ en NY, branch en LA. Site-to-site VPN = single network lógico. IPsec with ESP (encryption) + AH (authentication).",
+              "color": "#42A5F5"
+            }
           },
-          "back": {
-            "definition": "Conecta networks entre offices/data centers. IPsec tunnel. Routers/firewalls terminan tunnel. Transparent para users.",
-            "example": "HQ en NY, branch en LA. Site-to-site VPN = single network lógico. IPsec with ESP (encryption) + AH (authentication).",
-            "color": "#42A5F5"
-          }
-        },
-        {
-          "id": "2",
-          "front": {
-            "icon": "phone_iphone",
-            "term": "Remote Access VPN",
-            "color": "#388E3C"
+          {
+            "id": "2",
+            "front": {
+              "icon": "phone_iphone",
+              "term": "Remote Access VPN",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Usuarios remotos conectan a corporate network. Client software. SSL/TLS based (easier) o IPsec (más secure).",
+              "example": "OpenVPN, Cisco AnyConnect, WireGuard. COVID-19: Remote work exploded VPN usage. Bandwidth bottleneck.",
+              "color": "#66BB6A"
+            }
           },
-          "back": {
-            "definition": "Usuarios remotos conectan a corporate network. Client software. SSL/TLS based (easier) o IPsec (más secure).",
-            "example": "OpenVPN, Cisco AnyConnect, WireGuard. COVID-19: Remote work exploded VPN usage. Bandwidth bottleneck.",
-            "color": "#66BB6A"
+          {
+            "id": "3",
+            "front": {
+              "icon": "language",
+              "term": "Zero Trust Network Access (ZTNA)",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Alternative a VPN. No 'trusted network'. Identity-based access. Micro-segmentation. Never trust, verify always.",
+              "example": "Cloudflare Access, Zscaler Private Access. User autentica, accede SOLO recursos específicos. No full network access como VPN tradicional.",
+              "color": "#FFB74D"
+            }
           }
-        },
-        {
-          "id": "3",
-          "front": {
-            "icon": "language",
-            "term": "Zero Trust Network Access (ZTNA)",
-            "color": "#F57C00"
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "VPN Best Practices",
+      "duration": 180,
+      "content": {
+        "items": [
+          {
+            "id": "bp1",
+            "task": "Strong Authentication",
+            "subtitle": "MFA obligatorio",
+            "icon": "verified_user",
+            "unlock_content": {
+              "title": "No Solo Passwords",
+              "points": [
+                "MFA: TOTP, push notification, hardware token",
+                "Certificate-based auth mejor que passwords",
+                "Disable split-tunneling (force all traffic through VPN)",
+                "Monitor for concurrent sessions (same user, different locations)"
+              ],
+              "bonus_fact": "VPN sin MFA = low-hanging fruit para attackers. Credential stuffing hits VPNs hard."
+            }
           },
-          "back": {
-            "definition": "Alternative a VPN. No 'trusted network'. Identity-based access. Micro-segmentation. Never trust, verify always.",
-            "example": "Cloudflare Access, Zscaler Private Access. User autentica, accede SOLO recursos específicos. No full network access como VPN tradicional.",
-            "color": "#FFB74D"
+          {
+            "id": "bp2",
+            "task": "Modern Protocols",
+            "subtitle": "Upgrade legacy",
+            "icon": "update",
+            "unlock_content": {
+              "title": "Protocol Selection",
+              "points": [
+                "WireGuard: Modern, fast, secure. 4K lines code vs OpenVPN 70K",
+                "IKEv2: Mobile-friendly, reconnects seamlessly",
+                "Avoid PPTP (broken), L2TP/IPsec (slow)",
+                "TLS 1.3 for SSL VPNs"
+              ],
+              "bonus_fact": "WireGuard: Auditable, included in Linux kernel. OpenVPN works pero heavy."
+            }
           }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 2,
-    "type": "progress_checklist",
-    "title": "VPN Best Practices",
-    "duration": 180,
-    "content": {
-      "items": [
-        {
-          "id": "bp1",
-          "task": "Strong Authentication",
-          "subtitle": "MFA obligatorio",
-          "icon": "verified_user",
-          "unlock_content": {
-            "title": "No Solo Passwords",
-            "points": [
-              "MFA: TOTP, push notification, hardware token",
-              "Certificate-based auth mejor que passwords",
-              "Disable split-tunneling (force all traffic through VPN)",
-              "Monitor for concurrent sessions (same user, different locations)"
-            ],
-            "bonus_fact": "VPN sin MFA = low-hanging fruit para attackers. Credential stuffing hits VPNs hard."
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación - VPN",
+      "duration": 60,
+      "content": {
+        "question": "¿Diferencia entre VPN tradicional y ZTNA?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Son lo mismo",
+            "is_correct": false,
+            "feedback": "Incorrecto. Son approaches diferentes para remote access."
+          },
+          {
+            "id": "b",
+            "text": "VPN da acceso a network completo; ZTNA da acceso granular a recursos específicos",
+            "is_correct": true,
+            "feedback": "CORRECTO! VPN tradicional: User conecta, tiene acceso a entire corporate network (flat network). ZTNA: Identity-based, user accede SOLO a apps/recursos específicos authorized. Zero Trust = never trust network location, always verify identity + context."
+          },
+          {
+            "id": "c",
+            "text": "ZTNA no usa encryption",
+            "is_correct": false,
+            "feedback": "Incorrecto. ZTNA SÍ usa encryption (TLS). Diferencia no es encryption sino modelo de trust y granularidad de access."
           }
-        },
-        {
-          "id": "bp2",
-          "task": "Modern Protocols",
-          "subtitle": "Upgrade legacy",
-          "icon": "update",
-          "unlock_content": {
-            "title": "Protocol Selection",
-            "points": [
-              "WireGuard: Modern, fast, secure. 4K lines code vs OpenVPN 70K",
-              "IKEv2: Mobile-friendly, reconnects seamlessly",
-              "Avoid PPTP (broken), L2TP/IPsec (slow)",
-              "TLS 1.3 for SSL VPNs"
-            ],
-            "bonus_fact": "WireGuard: Auditable, included in Linux kernel. OpenVPN works pero heavy."
-          }
-        }
-      ]
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 3,
-    "type": "quiz",
-    "title": "Evaluación - VPN",
-    "duration": 60,
-    "content": {
-      "question": "¿Diferencia entre VPN tradicional y ZTNA?",
-      "options": [
-        {
-          "id": "a",
-          "text": "Son lo mismo",
-          "is_correct": false,
-          "feedback": "Incorrecto. Son approaches diferentes para remote access."
-        },
-        {
-          "id": "b",
-          "text": "VPN da acceso a network completo; ZTNA da acceso granular a recursos específicos",
-          "is_correct": true,
-          "feedback": "CORRECTO! VPN tradicional: User conecta, tiene acceso a entire corporate network (flat network). ZTNA: Identity-based, user accede SOLO a apps/recursos específicos authorized. Zero Trust = never trust network location, always verify identity + context."
-        },
-        {
-          "id": "c",
-          "text": "ZTNA no usa encryption",
-          "is_correct": false,
-          "feedback": "Incorrecto. ZTNA SÍ usa encryption (TLS). Diferencia no es encryption sino modelo de trust y granularidad de access."
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
   }
-]
+}

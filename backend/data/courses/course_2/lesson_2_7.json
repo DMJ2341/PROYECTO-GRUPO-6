@@ -1,195 +1,210 @@
-[
-  {
-    "screen_id": 1,
-    "type": "step_revelation",
-    "title": "Evaluación Final: Diseña Network Segura",
-    "duration": 240,
-    "content": {
-      "story_title": "Scenario: Startup E-Commerce Security",
-      "story_intro": "Eres Network Security Engineer. Diseña arquitectura para startup con 100 empleados, e-commerce site, customer data",
-      "steps": [
-        {
-          "id": "1",
-          "icon": "business",
-          "title": "Requirements",
-          "content": "E-commerce: 10K transactions/day, credit cards (PCI DSS), customer PII. Employees: Remote + office hybrid. Dev team necesita prod access. Budget: $200K/year.",
-          "insight": "Compliance (PCI DSS) drives architecture. Security + performance + cost trade-off."
-        },
-        {
-          "id": "2",
-          "icon": "architecture",
-          "title": "Tu Misión",
-          "content": "Diseñar: 1) Network topology (DMZ, VLANs, segmentation). 2) Firewall rules y policies. 3) Remote access solution. 4) Monitoring strategy. 5) Incident response plan.",
-          "insight": "No existe 'perfect' architecture, solo trade-offs. Defense in depth es key."
-        }
-      ]
+{
+  "id": "c2_l7",
+  "title": "Evaluación Final Curso 2",
+  "description": "Evaluación Final: Diseña Network Segura",
+  "type": "interactive",
+  "duration_minutes": 16,
+  "xp_reward": 20,
+  "order_index": 7,
+  "course_id": 2,
+  "total_screens": 4,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Evaluación Final: Diseña Network Segura",
+      "duration": 240,
+      "content": {
+        "story_title": "Scenario: Startup E-Commerce Security",
+        "story_intro": "Eres Network Security Engineer. Diseña arquitectura para startup con 100 empleados, e-commerce site, customer data",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "business",
+            "title": "Requirements",
+            "content": "E-commerce: 10K transactions/day, credit cards (PCI DSS), customer PII. Employees: Remote + office hybrid. Dev team necesita prod access. Budget: $200K/year.",
+            "insight": "Compliance (PCI DSS) drives architecture. Security + performance + cost trade-off."
+          },
+          {
+            "id": "2",
+            "icon": "architecture",
+            "title": "Tu Misión",
+            "content": "Diseñar: 1) Network topology (DMZ, VLANs, segmentation). 2) Firewall rules y policies. 3) Remote access solution. 4) Monitoring strategy. 5) Incident response plan.",
+            "insight": "No existe 'perfect' architecture, solo trade-offs. Defense in depth es key."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Architecture Design",
+      "duration": 360,
+      "content": {
+        "items": [
+          {
+            "id": "arch1",
+            "task": "Perimeter Defense",
+            "subtitle": "Internet boundary",
+            "icon": "shield",
+            "unlock_content": {
+              "title": "Design",
+              "points": [
+                "NGFW: Palo Alto o Fortinet ($50K/year)",
+                "WAF: Cloudflare Pro ($2K/year) para e-commerce",
+                "DDoS protection: Cloudflare included",
+                "IDS/IPS: Suricata on firewall"
+              ],
+              "bonus_fact": "WAF es mandatory para PCI DSS. NGFW detecta malware, blocks C2."
+            }
+          },
+          {
+            "id": "arch2",
+            "task": "DMZ + Segmentation",
+            "subtitle": "Separate tiers",
+            "icon": "lan",
+            "unlock_content": {
+              "title": "Design",
+              "points": [
+                "DMZ: Web servers, API gateway",
+                "VLAN 10: Database servers (PCI scope)",
+                "VLAN 20: Employee workstations",
+                "VLAN 30: Dev/test environment",
+                "VLAN 40: Guest WiFi",
+                "Firewalls between VLANs, least privilege rules"
+              ],
+              "bonus_fact": "PCI DSS: Cardholder data must be segmented. Smaller scope = easier compliance."
+            }
+          },
+          {
+            "id": "arch3",
+            "task": "Remote Access",
+            "subtitle": "WFH employees",
+            "icon": "vpn_key",
+            "unlock_content": {
+              "title": "Design",
+              "points": [
+                "ZTNA: Cloudflare Access ($3/user/month = $3.6K/year)",
+                "MFA: Duo Security ($3/user/month = $3.6K/year)",
+                "No traditional VPN (ZTNA replace)",
+                "Split by role: Devs access VLAN 30, regular employees access apps only"
+              ],
+              "bonus_fact": "ZTNA cheaper + more secure than VPN at scale. No VPN bottleneck."
+            }
+          },
+          {
+            "id": "arch4",
+            "task": "Monitoring",
+            "subtitle": "Visibility",
+            "icon": "monitor_heart",
+            "unlock_content": {
+              "title": "Design",
+              "points": [
+                "SIEM: Splunk Cloud ($5K/GB/year, ~$50K/year)",
+                "EDR: CrowdStrike ($50/endpoint/year = $5K)",
+                "Network monitoring: Zeek (free), flow analysis",
+                "Log retention: 1 year (PCI requirement)"
+              ],
+              "bonus_fact": "SIEM is expensive pero mandatory para compliance y IR. Cloud SIEM scales better."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "Incident Response Plan",
+      "duration": 240,
+      "content": {
+        "items": [
+          {
+            "id": "ir1",
+            "task": "IR Team",
+            "subtitle": "Roles and responsibilities",
+            "icon": "groups",
+            "unlock_content": {
+              "title": "Structure",
+              "points": [
+                "IR Lead: CTO (startup = limited headcount)",
+                "Technical: Sr. Engineers (2)",
+                "Communications: Marketing/PR",
+                "Legal: Outside counsel on retainer",
+                "24/7 on-call rotation"
+              ],
+              "bonus_fact": "Startup IR: Lean team, clear roles. No SOC yet, rely on vendor support (CrowdStrike, Cloudflare)."
+            }
+          },
+          {
+            "id": "ir2",
+            "task": "Playbooks",
+            "subtitle": "Document procedures",
+            "icon": "menu_book",
+            "unlock_content": {
+              "title": "Key Scenarios",
+              "points": [
+                "Ransomware: Isolate, backup check, negotiate decision tree",
+                "DDoS: Activate Cloudflare, scale infrastructure",
+                "Data breach: Forensics, notification (PCI 72 hours), PR",
+                "Insider threat: Disable access, HR involvement, legal"
+              ],
+              "bonus_fact": "Playbooks save hours in crisis. Update quarterly with lessons learned."
+            }
+          },
+          {
+            "id": "ir3",
+            "task": "Testing",
+            "subtitle": "Practice makes perfect",
+            "icon": "science",
+            "unlock_content": {
+              "title": "Drills",
+              "points": [
+                "Tabletop exercises: Quarterly (4 hours)",
+                "Red team: Annual penetration test ($20K)",
+                "Purple team: Semi-annual (internal + vendor)",
+                "Phishing simulation: Monthly (KnowBe4)"
+              ],
+              "bonus_fact": "Companies que test IR respond 50% faster to real incidents. Budget $30K/year for testing."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "progress_checklist",
+      "title": "Budget Breakdown",
+      "duration": 120,
+      "content": {
+        "items": [
+          {
+            "id": "budget",
+            "task": "Security Budget Summary",
+            "subtitle": "Total: ~$170K/year",
+            "icon": "attach_money",
+            "unlock_content": {
+              "title": "Cost Analysis",
+              "points": [
+                "NGFW: $50K",
+                "WAF + DDoS: $2K",
+                "ZTNA: $3.6K",
+                "MFA: $3.6K",
+                "SIEM: $50K",
+                "EDR: $5K",
+                "Training: $10K",
+                "Pen testing: $20K",
+                "Compliance audit: $25K",
+                "Total: $169.2K (within $200K budget)"
+              ],
+              "bonus_fact": "15-20% of IT budget should be security. This = 85% of budget, leaving buffer for incidents."
+            }
+          }
+        ]
+      }
     }
-  },
-  {
-    "screen_id": 2,
-    "type": "progress_checklist",
-    "title": "Architecture Design",
-    "duration": 360,
-    "content": {
-      "items": [
-        {
-          "id": "arch1",
-          "task": "Perimeter Defense",
-          "subtitle": "Internet boundary",
-          "icon": "shield",
-          "unlock_content": {
-            "title": "Design",
-            "points": [
-              "NGFW: Palo Alto o Fortinet ($50K/year)",
-              "WAF: Cloudflare Pro ($2K/year) para e-commerce",
-              "DDoS protection: Cloudflare included",
-              "IDS/IPS: Suricata on firewall"
-            ],
-            "bonus_fact": "WAF es mandatory para PCI DSS. NGFW detecta malware, blocks C2."
-          }
-        },
-        {
-          "id": "arch2",
-          "task": "DMZ + Segmentation",
-          "subtitle": "Separate tiers",
-          "icon": "lan",
-          "unlock_content": {
-            "title": "Design",
-            "points": [
-              "DMZ: Web servers, API gateway",
-              "VLAN 10: Database servers (PCI scope)",
-              "VLAN 20: Employee workstations",
-              "VLAN 30: Dev/test environment",
-              "VLAN 40: Guest WiFi",
-              "Firewalls between VLANs, least privilege rules"
-            ],
-            "bonus_fact": "PCI DSS: Cardholder data must be segmented. Smaller scope = easier compliance."
-          }
-        },
-        {
-          "id": "arch3",
-          "task": "Remote Access",
-          "subtitle": "WFH employees",
-          "icon": "vpn_key",
-          "unlock_content": {
-            "title": "Design",
-            "points": [
-              "ZTNA: Cloudflare Access ($3/user/month = $3.6K/year)",
-              "MFA: Duo Security ($3/user/month = $3.6K/year)",
-              "No traditional VPN (ZTNA replace)",
-              "Split by role: Devs access VLAN 30, regular employees access apps only"
-            ],
-            "bonus_fact": "ZTNA cheaper + more secure than VPN at scale. No VPN bottleneck."
-          }
-        },
-        {
-          "id": "arch4",
-          "task": "Monitoring",
-          "subtitle": "Visibility",
-          "icon": "monitor_heart",
-          "unlock_content": {
-            "title": "Design",
-            "points": [
-              "SIEM: Splunk Cloud ($5K/GB/year, ~$50K/year)",
-              "EDR: CrowdStrike ($50/endpoint/year = $5K)",
-              "Network monitoring: Zeek (free), flow analysis",
-              "Log retention: 1 year (PCI requirement)"
-            ],
-            "bonus_fact": "SIEM is expensive pero mandatory para compliance y IR. Cloud SIEM scales better."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 3,
-    "type": "progress_checklist",
-    "title": "Incident Response Plan",
-    "duration": 240,
-    "content": {
-      "items": [
-        {
-          "id": "ir1",
-          "task": "IR Team",
-          "subtitle": "Roles and responsibilities",
-          "icon": "groups",
-          "unlock_content": {
-            "title": "Structure",
-            "points": [
-              "IR Lead: CTO (startup = limited headcount)",
-              "Technical: Sr. Engineers (2)",
-              "Communications: Marketing/PR",
-              "Legal: Outside counsel on retainer",
-              "24/7 on-call rotation"
-            ],
-            "bonus_fact": "Startup IR: Lean team, clear roles. No SOC yet, rely on vendor support (CrowdStrike, Cloudflare)."
-          }
-        },
-        {
-          "id": "ir2",
-          "task": "Playbooks",
-          "subtitle": "Document procedures",
-          "icon": "menu_book",
-          "unlock_content": {
-            "title": "Key Scenarios",
-            "points": [
-              "Ransomware: Isolate, backup check, negotiate decision tree",
-              "DDoS: Activate Cloudflare, scale infrastructure",
-              "Data breach: Forensics, notification (PCI 72 hours), PR",
-              "Insider threat: Disable access, HR involvement, legal"
-            ],
-            "bonus_fact": "Playbooks save hours in crisis. Update quarterly with lessons learned."
-          }
-        },
-        {
-          "id": "ir3",
-          "task": "Testing",
-          "subtitle": "Practice makes perfect",
-          "icon": "science",
-          "unlock_content": {
-            "title": "Drills",
-            "points": [
-              "Tabletop exercises: Quarterly (4 hours)",
-              "Red team: Annual penetration test ($20K)",
-              "Purple team: Semi-annual (internal + vendor)",
-              "Phishing simulation: Monthly (KnowBe4)"
-            ],
-            "bonus_fact": "Companies que test IR respond 50% faster to real incidents. Budget $30K/year for testing."
-          }
-        }
-      ]
-    }
-  },
-  {
-    "screen_id": 4,
-    "type": "progress_checklist",
-    "title": "Budget Breakdown",
-    "duration": 120,
-    "content": {
-      "items": [
-        {
-          "id": "budget",
-          "task": "Security Budget Summary",
-          "subtitle": "Total: ~$170K/year",
-          "icon": "attach_money",
-          "unlock_content": {
-            "title": "Cost Analysis",
-            "points": [
-              "NGFW: $50K",
-              "WAF + DDoS: $2K",
-              "ZTNA: $3.6K",
-              "MFA: $3.6K",
-              "SIEM: $50K",
-              "EDR: $5K",
-              "Training: $10K",
-              "Pen testing: $20K",
-              "Compliance audit: $25K",
-              "Total: $169.2K (within $200K budget)"
-            ],
-            "bonus_fact": "15-20% of IT budget should be security. This = 85% of budget, leaving buffer for incidents."
-          }
-        }
-      ]
-    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "Eres Network Security Engineer. Diseña arquitectura para startup con 100 empleados, e-commerce site, customer data"
   }
-]
+}
