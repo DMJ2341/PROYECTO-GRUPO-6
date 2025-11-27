@@ -12,7 +12,8 @@ import com.example.cyberlearnapp.network.models.DailyTermWrapper
 
 @Composable
 fun DailyTermCard(wrapper: DailyTermWrapper) {
-    val term = wrapper.dailyTerm
+    // ✅ CORREGIDO: Se usa 'term' en lugar de 'dailyTerm' (según DailyTermWrapper.kt)
+    val term = wrapper.term
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2D2D44)) // Color oscuro "Cyber"
@@ -23,7 +24,8 @@ fun DailyTermCard(wrapper: DailyTermWrapper) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Término del Día", style = MaterialTheme.typography.labelMedium, color = Color.Gray)
                 Spacer(modifier = Modifier.weight(1f))
-                Badge { Text(term.category) }
+                // NOTA: Se asume que term.category no es nulo, o se necesita manejo de nulos aquí.
+                Badge { Text(term.category ?: "General") }
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
@@ -38,9 +40,16 @@ fun DailyTermCard(wrapper: DailyTermWrapper) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFFB0BEC5)
             )
-            if (wrapper.xpEarned > 0) {
+            // ✅ CORREGIDO: Se usa 'xpReward' en lugar de 'xpEarned' (según DailyTermWrapper.kt)
+            if (wrapper.xpReward > 0) {
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("+${wrapper.xpEarned} XP ganados", color = Color.Yellow, style = MaterialTheme.typography.labelSmall)
+                // ✅ CORREGIDO: Se usa 'xpReward' en lugar de 'xpEarned'
+                Text(
+                    "+${wrapper.xpReward} XP ganados",
+                    color = Color.Yellow,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

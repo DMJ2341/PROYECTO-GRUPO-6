@@ -3,17 +3,7 @@ package com.example.cyberlearnapp.network.models
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// --- GLOSARIO BASE (GlossaryTerm) ---
-@Serializable
-data class GlossaryTerm(
-    val id: Int,
-    val term: String,
-    val acronym: String? = null,
-    val definition: String,
-    val category: String? = null,
-    val difficulty: String? = null,
-    val example: String? = null // Incluido si el backend lo proporciona
-)
+// --- CLASE GlossaryTerm ELIMINADA (Para evitar Redeclaration) ---
 
 // --- WRAPPER DEL TÉRMINO DIARIO ---
 @Serializable

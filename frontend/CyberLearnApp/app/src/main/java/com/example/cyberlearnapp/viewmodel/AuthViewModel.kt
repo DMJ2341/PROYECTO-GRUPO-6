@@ -76,6 +76,7 @@ class AuthViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     val data = response.body()!!
                     AuthManager.saveToken(data.accessToken)
+                    AuthManager.saveRefreshToken(data.refreshToken) // ⬅️ CORREGIDO: Guardar Refresh Token
                     _currentUser.value = data.user
                     _authState.value = AuthState.Success
                 } else {
@@ -95,6 +96,7 @@ class AuthViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     val data = response.body()!!
                     AuthManager.saveToken(data.accessToken)
+                    AuthManager.saveRefreshToken(data.refreshToken) // ⬅️ CORREGIDO: Guardar Refresh Token
                     _currentUser.value = data.user
                     _authState.value = AuthState.Success
                 } else {

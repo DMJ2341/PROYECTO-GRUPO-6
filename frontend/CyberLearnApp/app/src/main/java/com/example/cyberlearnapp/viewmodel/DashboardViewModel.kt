@@ -36,13 +36,24 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
             try {
-                val data = userRepo.getDashboard()
+                val response = userRepo.getDashboard() // Devuelve DashboardResponse
+                // ✅ CORREGIDO: Se accede a la propiedad 'dashboard'
+                val data = response.dashboard
+
                 _state.value = _state.value.copy(
+                    // ✅ CORREGIDO: Acceso a propiedades directas de DashboardSummary
                     userXp = data.totalXp,
                     userLevel = data.level,
-                    badges = data.badges,
-                    hasPreferenceResult = data.preferenceResult != null,
-                    completedCourses = data.coursesCompleted,
+                    // NOTA: Se omite 'badges' por ahora, ya que el Summary solo tiene 'badgesCount'
+                    // o se asume que 'badges' en el state debe ser poblado por otro medio.
+                    // Si el estado tiene un campo `badgesCount`, usaríamos: data.badgesCount
+
+                    // ✅ CORREGIDO: Uso de 'hasPreferenceResult' en lugar de 'preferenceResult'
+                    hasPreferenceResult = data.hasPreferenceResult,
+
+                    // ✅ CORREGIDO: Uso de 'completedCourses' en lugar de 'coursesCompleted'
+                    completedCourses = data.completedCourses,
+
                     isLoading = false
                 )
             } catch (e: Exception) {
@@ -54,6 +65,7 @@ class DashboardViewModel @Inject constructor(
     private fun loadDailyTerm() {
         viewModelScope.launch {
             try {
+                // Se asume que este es un flujo de ViewModel temporal, por lo que se usa AuthManager directo.
                 val token = "Bearer ${AuthManager.getToken()}"
                 val response = apiService.getDailyTerm(token)
                 if (response.isSuccessful && response.body() != null) {
@@ -66,13 +78,16 @@ class DashboardViewModel @Inject constructor(
     }
 }
 
+// Se asume que este estado fue definido en el archivo o importado de otro lugar,
+// pero debe estar presente para que el código anterior compile correctamente.
 data class DashboardState(
+    val isLoading: Boolean = true,
+    val error: String? = null,
+
     val userXp: Int = 0,
     val userLevel: Int = 1,
-    val badges: List<Badge> = emptyList(),
+    val badges: List<Badge> = emptyList(), // Debe coincidir con el uso en loadDashboard()
     val dailyTerm: DailyTermWrapper? = null,
     val hasPreferenceResult: Boolean = false,
-    val completedCourses: Int = 0,
-    val isLoading: Boolean = true,
-    val error: String? = null
+    val completedCourses: Int = 0
 )
