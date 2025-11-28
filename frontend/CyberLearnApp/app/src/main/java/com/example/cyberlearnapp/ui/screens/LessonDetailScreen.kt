@@ -8,7 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -16,10 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyberlearnapp.ui.screens.lessons.LessonScreenRender
 import com.example.cyberlearnapp.viewmodel.LessonViewModel
-
-// ✅ IMPORTACIÓN CLAVE PARA EL COLOR DE ÉXITO
 import com.example.cyberlearnapp.ui.theme.SuccessGreen
-
 
 @Composable
 fun LessonDetailScreen(
@@ -38,30 +34,62 @@ fun LessonDetailScreen(
 
     var currentScreenIndex by remember { mutableIntStateOf(0) }
 
-    // ✅ Diálogo de Victoria / XP
     if (completionResult != null) {
         AlertDialog(
             onDismissRequest = { },
-            icon = { Icon(Icons.Default.CheckCircle, contentDescription = null, tint = SuccessGreen, modifier = Modifier.size(48.dp)) },
-            title = { Text("¡Lección Completada!", color = MaterialTheme.colorScheme.onSurface) },
+            icon = {
+                Icon(
+                    Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    tint = SuccessGreen,
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            title = {
+                Text(
+                    "¡Lección Completada!",
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
             text = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                    Text("¡Excelente trabajo!", color = MaterialTheme.colorScheme.onSurface)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        "¡Excelente trabajo!",
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        "+${completionResult?.xp_earned} XP",
+                        "+${completionResult?.xp_earned ?: 0} XP",
                         style = MaterialTheme.typography.headlineLarge,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
+
+                    completionResult?.course_progress?.let { progress ->
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            "Progreso del curso: ${progress.percentage}%",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             },
             confirmButton = {
                 Button(
                     onClick = {
+                        viewModel.resetCompletionResult()
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("refresh_dashboard", true)
                         navController.popBackStack()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
                 ) {
                     Text("Continuar", color = MaterialTheme.colorScheme.onPrimary)
                 }
@@ -81,18 +109,34 @@ fun LessonDetailScreen(
             if (isLoading && lessonResponse == null) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             } else if (error != null) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
-                    Icon(Icons.Default.Lock, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(64.dp))
-                    Text("Acceso Bloqueado", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onBackground)
-                    Text("Completa las lecciones anteriores primero.", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onBackground)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(32.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Lock,
+                        null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Text(
+                        "Acceso Bloqueado",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        "Completa las lecciones anteriores primero.",
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { navController.popBackStack() }) { Text("Volver") }
+                    Button(onClick = { navController.popBackStack() }) {
+                        Text("Volver")
+                    }
                 }
             } else if (lessonResponse != null) {
                 val totalScreens = lessonResponse!!.screens.size
 
-                // ✅ CORRECCIÓN: SIN verticalScroll en el padre
-                // Los LazyColumn dentro de los renderers manejan su propio scroll
                 LessonScreenRender(
                     lesson = lessonResponse!!,
                     screenIndex = currentScreenIndex,

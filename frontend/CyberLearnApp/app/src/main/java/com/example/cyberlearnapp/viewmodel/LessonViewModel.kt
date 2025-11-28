@@ -1,5 +1,6 @@
 package com.example.cyberlearnapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.models.LessonCompletionData
@@ -25,7 +26,6 @@ class LessonViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
-    // ✅ Estado para notificar a la UI que se completó y ganaste XP
     private val _completionResult = MutableStateFlow<LessonCompletionData?>(null)
     val completionResult: StateFlow<LessonCompletionData?> = _completionResult
 
@@ -48,13 +48,27 @@ class LessonViewModel @Inject constructor(
     fun completeLesson(lessonId: String) {
         viewModelScope.launch {
             try {
-                // No ponemos loading aquí para no interrumpir la UI bruscamente, o usamos uno sutil
+                Log.d("LessonViewModel", "🎯 Iniciando completeLesson para: $lessonId")
+
                 val result = repository.markLessonComplete(lessonId)
-                _completionResult.value = result // ✅ Dispara el diálogo en la UI
+
+                Log.d("LessonViewModel", "📦 Resultado recibido: $result")
+
+                if (result != null) {
+                    Log.d("LessonViewModel", "✅ XP ganado: ${result.xp_earned}")
+                    Log.d("LessonViewModel", "✅ Lección completada: ${result.lesson_completed}")
+                    _completionResult.value = result
+                } else {
+                    Log.e("LessonViewModel", "❌ Resultado es null")
+                }
             } catch (e: Exception) {
+                Log.e("LessonViewModel", "❌ Error completando lección: ${e.message}", e)
                 e.printStackTrace()
-                // Si falla en red, podrías guardar localmente o reintentar
             }
         }
+    }
+
+    fun resetCompletionResult() {
+        _completionResult.value = null
     }
 }
