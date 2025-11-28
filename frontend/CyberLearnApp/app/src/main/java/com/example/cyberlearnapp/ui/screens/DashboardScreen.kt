@@ -13,9 +13,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import com.example.cyberlearnapp.ui.components.BadgeCard
 import com.example.cyberlearnapp.ui.components.DailyTermCard
@@ -29,19 +32,18 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    // ✅ REFRESH AUTOMÁTICO cuando vuelves de completar lección
-    val refreshTrigger = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.getStateFlow("refresh_dashboard", false)
-        ?.collectAsState()
-
-    LaunchedEffect(refreshTrigger?.value) {
-        if (refreshTrigger?.value == true) {
-            viewModel.refreshDashboard()
-            navController.currentBackStackEntry
-                ?.savedStateHandle
-                ?.set("refresh_dashboard", false)
+    // ✅ SOLUCIÓN ROBUSTA: Detectar ON_RESUME para actualizar XP
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshDashboard()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
@@ -89,6 +91,7 @@ fun DashboardScreen(
 
                 Spacer(Modifier.height(20.dp))
 
+                // ✅ XP Bar se actualiza automáticamente
                 XpLevelBar(
                     currentXp = state.userXp,
                     level = state.userLevel
@@ -136,88 +139,42 @@ fun DashboardScreen(
                 if (!state.hasPreferenceResult) {
                     Button(
                         onClick = { navController.navigate("preference_test") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = 2.dp,
-                            pressedElevation = 6.dp
-                        )
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.School,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        Icon(imageVector = Icons.Default.School, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text(
-                            "Descubre tu Rol (Test Vocacional)",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text("Descubre tu Rol (Test Vocacional)", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                     }
                 } else if (state.completedCourses >= 5) {
                     Button(
                         onClick = { navController.navigate("final_exam/intro") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = 2.dp,
-                            pressedElevation = 6.dp
-                        )
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.EmojiEvents,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        Icon(imageVector = Icons.Default.EmojiEvents, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text(
-                            "Examen Final Integrador",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text("Examen Final Integrador", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                     }
                 } else {
                     OutlinedButton(
                         onClick = { navController.navigate("preference_result") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        border = ButtonDefaults.outlinedButtonBorder.copy(
-                            width = 2.dp
-                        )
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text(
-                            "Ver mi Perfil Profesional",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text("Ver mi Perfil Profesional", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                     }
 
                     Spacer(Modifier.height(12.dp))
-
                     LinearProgressIndicator(
-                        progress = state.completedCourses / 5f,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp),
+                        progress = { state.completedCourses / 5f },
+                        modifier = Modifier.fillMaxWidth().height(8.dp),
                         color = MaterialTheme.colorScheme.primary,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
-
                     Spacer(Modifier.height(8.dp))
-
                     Text(
                         text = "${state.completedCourses}/5 cursos completados",
                         style = MaterialTheme.typography.bodySmall,
@@ -242,29 +199,16 @@ fun DashboardScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
+                    modifier = Modifier.fillMaxWidth().padding(32.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "🎖️",
-                            style = MaterialTheme.typography.displayLarge
-                        )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = "🎖️", style = MaterialTheme.typography.displayLarge)
                         Spacer(Modifier.height(12.dp))
-                        Text(
-                            text = "Completa lecciones para ganar insignias",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Text(text = "Completa lecciones para ganar insignias", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -280,7 +224,6 @@ fun DashboardScreen(
                 }
             }
         }
-
         Spacer(Modifier.height(32.dp))
     }
 }

@@ -22,20 +22,29 @@ class UserViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    init {
+        loadProfile()
+    }
+
+    // ✅ PÚBLICO: Se puede llamar desde ProfileScreen
     fun loadProfile() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                // Forzamos una llamada fresca al repositorio
                 val userProfile = userRepository.getUserProfile()
-                // ✅ CORRECCIÓN: Se asigna userProfile.user, no la respuesta entera.
                 _user.value = userProfile.user
             } catch (e: Exception) {
-                // Manejar error
+                // Manejo de error silencioso o log
+                e.printStackTrace()
             } finally {
                 _isLoading.value = false
             }
         }
     }
+
+    // ✅ Alias para ser explícito en la UI
+    fun refreshUserState() = loadProfile()
 
     fun logout() {
         userRepository.logout()
