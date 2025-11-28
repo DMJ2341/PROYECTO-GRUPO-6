@@ -17,14 +17,14 @@ import com.example.cyberlearnapp.viewmodel.*
 fun NavGraph(
     navController: NavHostController,
     startDestination: String = "auth",
-    paddingValues: PaddingValues // Acepta el padding del Scaffold
+    paddingValues: PaddingValues
 ) {
     val authViewModel: AuthViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = Modifier.padding(paddingValues) // APLICA EL PADDING AQUÍ
+        modifier = Modifier.padding(paddingValues)
     ) {
 
         // --- AUTH ---
@@ -50,7 +50,7 @@ fun NavGraph(
             CoursesScreen(navController = navController, viewModel = courseViewModel)
         }
 
-        // --- ✅ GLOSARIO ---
+        // --- GLOSARIO ---
         composable("glossary") {
             val glossaryViewModel: GlossaryViewModel = hiltViewModel()
             GlossaryScreen(navController = navController, viewModel = glossaryViewModel)
@@ -62,8 +62,21 @@ fun NavGraph(
                 onBackClick = { navController.popBackStack() },
                 onLogout = {
                     authViewModel.logout()
-                    navController.navigate("auth") { popUpTo(0) { inclusive = true } }
+                    navController.navigate("auth") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                // ✅ NUEVO: Navegación a pantalla de badges
+                onNavigateToBadges = {
+                    navController.navigate("badges")
                 }
+            )
+        }
+
+        // --- ✅ NUEVO: PANTALLA DE BADGES ---
+        composable("badges") {
+            BadgesScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -76,8 +89,8 @@ fun NavGraph(
             val courseViewModel: CourseViewModel = hiltViewModel()
             CourseDetailScreen(
                 navController = navController,
-                viewModel = courseViewModel,
-                courseId = courseId
+                courseId = courseId,
+                viewModel = courseViewModel
             )
         }
 
@@ -87,7 +100,6 @@ fun NavGraph(
             arguments = listOf(navArgument("lessonId") { type = NavType.StringType })
         ) { backStackEntry ->
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
-            // LessonViewModel se inyecta dentro de la pantalla
             LessonDetailScreen(
                 navController = navController,
                 lessonId = lessonId

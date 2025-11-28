@@ -1,8 +1,6 @@
 package com.example.cyberlearnapp.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -20,7 +18,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
-import com.example.cyberlearnapp.ui.components.BadgeCard
 import com.example.cyberlearnapp.ui.components.DailyTermCard
 import com.example.cyberlearnapp.ui.components.XpLevelBar
 import com.example.cyberlearnapp.viewmodel.DashboardViewModel
@@ -34,7 +31,7 @@ fun DashboardScreen(
     val state by viewModel.state.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // ✅ SOLUCIÓN ROBUSTA: Detectar ON_RESUME para actualizar XP
+    // ✅ REFRESH AUTOMÁTICO: Detectar ON_RESUME
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -54,15 +51,13 @@ fun DashboardScreen(
         return
     }
 
-    val badgeRowCount = (state.badges.size / 3) + 1
-    val gridHeight = 120.dp * badgeRowCount.toFloat()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
+        // ✅ HEADER CON XP
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -91,7 +86,7 @@ fun DashboardScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                // ✅ XP Bar se actualiza automáticamente
+                // XP Bar
                 XpLevelBar(
                     currentXp = state.userXp,
                     level = state.userLevel
@@ -101,6 +96,7 @@ fun DashboardScreen(
 
         Spacer(Modifier.height(24.dp))
 
+        // ✅ TÉRMINO DEL DÍA
         state.dailyTerm?.let { term ->
             Text(
                 text = "📚 Término del Día",
@@ -116,6 +112,7 @@ fun DashboardScreen(
             Spacer(Modifier.height(24.dp))
         }
 
+        // ✅ SIGUIENTE PASO
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -140,23 +137,43 @@ fun DashboardScreen(
                     Button(
                         onClick = { navController.navigate("preference_test") },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.School, contentDescription = null, modifier = Modifier.size(24.dp))
+                        Icon(
+                            imageVector = Icons.Default.School,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
                         Spacer(Modifier.width(12.dp))
-                        Text("Descubre tu Rol (Test Vocacional)", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+                        Text(
+                            "Descubre tu Rol (Test Vocacional)",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 } else if (state.completedCourses >= 5) {
                     Button(
                         onClick = { navController.navigate("final_exam/intro") },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.EmojiEvents, contentDescription = null, modifier = Modifier.size(24.dp))
+                        Icon(
+                            imageVector = Icons.Default.EmojiEvents,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
                         Spacer(Modifier.width(12.dp))
-                        Text("Examen Final Integrador", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+                        Text(
+                            "Examen Final Integrador",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 } else {
                     OutlinedButton(
@@ -164,17 +181,24 @@ fun DashboardScreen(
                         modifier = Modifier.fillMaxWidth().height(56.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Ver mi Perfil Profesional", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+                        Text(
+                            "Ver mi Perfil Profesional",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
 
                     Spacer(Modifier.height(12.dp))
+
                     LinearProgressIndicator(
                         progress = { state.completedCourses / 5f },
                         modifier = Modifier.fillMaxWidth().height(8.dp),
                         color = MaterialTheme.colorScheme.primary,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
+
                     Spacer(Modifier.height(8.dp))
+
                     Text(
                         text = "${state.completedCourses}/5 cursos completados",
                         style = MaterialTheme.typography.bodySmall,
@@ -184,46 +208,8 @@ fun DashboardScreen(
             }
         }
 
-        Spacer(Modifier.height(32.dp))
+        // ✅ REMOVIDO: Sección de badges (ahora está en Perfil)
 
-        Text(
-            text = "🏆 Mis Insignias",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Spacer(Modifier.height(12.dp))
-
-        if (state.badges.isEmpty()) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(32.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = "🎖️", style = MaterialTheme.typography.displayLarge)
-                        Spacer(Modifier.height(12.dp))
-                        Text(text = "Completa lecciones para ganar insignias", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
-            }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.height(gridHeight)
-            ) {
-                items(state.badges.size) { index ->
-                    BadgeCard(badge = state.badges[index])
-                }
-            }
-        }
         Spacer(Modifier.height(32.dp))
     }
 }
