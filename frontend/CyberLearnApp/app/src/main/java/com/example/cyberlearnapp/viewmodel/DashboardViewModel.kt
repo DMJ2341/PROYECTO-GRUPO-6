@@ -37,12 +37,12 @@ class DashboardViewModel @Inject constructor(
     fun loadAllData() {
         refreshDashboard()
         loadDailyTerm()
+        loadBadges()  // ✅ AGREGADO
     }
 
     // ✅ PÚBLICO: Para ser llamado desde DashboardScreen con ON_RESUME
     fun refreshDashboard() {
         viewModelScope.launch {
-            // No ponemos isLoading = true para evitar parpadeos en refresh
             try {
                 val response = userRepo.getDashboard()
                 val data = response.dashboard
@@ -71,6 +71,19 @@ class DashboardViewModel @Inject constructor(
                 _state.value = _state.value.copy(dailyTerm = dailyTermWrapper)
             } catch (e: Exception) {
                 // Error silencioso para daily term
+            }
+        }
+    }
+
+    // ✅ NUEVO: Carga las badges ganadas del usuario
+    private fun loadBadges() {
+        viewModelScope.launch {
+            try {
+                val userBadges = userRepo.getUserBadges()
+                _state.value = _state.value.copy(badges = userBadges)
+            } catch (e: Exception) {
+                // Error silencioso
+                e.printStackTrace()
             }
         }
     }

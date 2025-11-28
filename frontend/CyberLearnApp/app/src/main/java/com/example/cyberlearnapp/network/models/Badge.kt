@@ -9,19 +9,13 @@ data class Badge(
     val name: String,
     val description: String,
     val icon: String,
-
-    @SerialName("xp_required")
-    val xpRequired: Int? = null,
-
-    @SerialName("earned_at")
-    val earnedAt: String? = null,
-
-    @SerialName("earned_value")
-    val earnedValue: Int? = null
+    @SerialName("xp_required") val xpRequired: Int? = null,
+    @SerialName("earned_at") val earnedAt: String? = null,
+    @SerialName("earned_value") val earnedValue: Int? = null
 )
 
 @Serializable
-data class BadgesResponse(
+data class UserBadgesResponse(
     val success: Boolean,
     val badges: List<Badge>
 )

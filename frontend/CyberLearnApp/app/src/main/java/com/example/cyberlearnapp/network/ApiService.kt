@@ -119,4 +119,9 @@ interface ApiService {
 
     @POST("api/preference-test/retake")
     suspend fun retakePreferenceTest(@Header("Authorization") token: String): Response<Unit>
+
+    @GET("api/user/badges")
+    suspend fun getUserBadges(
+        @Header("Authorization") token: String
+    ): Response<UserBadgesResponse>
 }
