@@ -1,4 +1,4 @@
-# backend/app.py - VERSIÓN CORREGIDA CON DESBLOQUEO POR CURSO COMPLETO
+# backend/app.py - VERSIÓN 3.2.1 - XP CORREGIDO
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.db import get_session, create_all
@@ -35,17 +35,12 @@ from services.course_service import CourseService
 from services.badge_service import BadgeService
 from services.progress_service import mark_lesson_completed, get_user_course_progress
 from services.auth_service import AuthService
-from services.lesson_service import (
-    create_lesson, 
-    get_lesson_content, 
-    is_course_accessible,
-    get_course_lessons_with_status
-)
+from services.lesson_service import create_lesson
 from services.streak_service import StreakService
 from services.glossary_favorite_service import toggle_favorite, get_user_favorites, is_favorite
 from services.daily_term_service import get_daily_term_for_user, complete_daily_term
 from services.exam_service import ExamService
-from services.preference_quiz import get_preference_questions, submit_preference_answers, engine
+from services.preference_quiz import get_preference_questions, submit_preference_answers, engine  # ✅ CORRECTO
 
 # -------------------------------------------------------------------
 # SENTRY CONFIG
@@ -111,7 +106,7 @@ def health_check():
     return jsonify({
         'status': 'OK', 
         'message': 'CyberLearn API Operativa',
-        'version': '3.2.0',
+        'version': '3.2.1',  # ✅ ACTUALIZADO
         'database': 'Conectada',
         'environment': 'Producción'
     })
@@ -259,46 +254,24 @@ def logout_route(current_user_id):
         return jsonify({"error": "Error en logout"}), 500
 
 # ==========================================
-# 📚 CURSOS (CON VERIFICACIÓN DE ACCESO)
+# 📚 CURSOS Y LECCIONES
 # ==========================================
 
 @app.route('/api/courses', methods=['GET'])
-@token_required
-def get_courses(current_user_id):
-    """
-    Obtiene todos los cursos con información de acceso.
-    
-    NUEVA LÓGICA:
-    - Curso 1: Siempre accesible
-    - Cursos 2-5: Requieren curso anterior completo
-    """
+def get_courses():
     try:
         session = get_session()
         try:
-            courses = session.query(Course).order_by(Course.id).all()
+            courses = session.query(Course).all()
             out = []
-            
-            for course in courses:
-                # Verificar acceso al curso
-                access_info = is_course_accessible(current_user_id, course.id)
-                
-                # Obtener progreso del curso
-                progress = session.query(UserCourseProgress).filter_by(
-                    user_id=current_user_id,
-                    course_id=course.id
-                ).first()
-                
+            for c in courses:
                 out.append({
-                    'id': course.id,
-                    'title': course.title,
-                    'description': course.description,
-                    'level': course.level,
-                    'xp_reward': course.xp_reward,
-                    'image_url': course.image_url or "",
-                    'is_locked': not access_info['accessible'],  # ← NUEVO
-                    'lock_reason': access_info.get('reason', ''),  # ← NUEVO
-                    'required_course_id': access_info.get('required_course_id'),  # ← NUEVO
-                    'progress_percentage': progress.percentage if progress else 0
+                    'id': c.id,
+                    'title': c.title,
+                    'description': c.description,
+                    'level': c.level,
+                    'xp_reward': c.xp_reward,
+                    'image_url': c.image_url or ""
                 })
             return jsonify(out)
         finally:
@@ -307,23 +280,32 @@ def get_courses(current_user_id):
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error interno al obtener cursos"}), 500
 
-# ==========================================
-# 📖 LECCIONES (CON NUEVA LÓGICA DE DESBLOQUEO)
-# ==========================================
-
 @app.route('/api/courses/<int:course_id>/lessons', methods=['GET'])
-@token_required
-def get_course_lessons(current_user_id, course_id):
-    """
-    Obtiene lecciones del curso con estado de bloqueo basado en acceso al curso.
-    
-    NUEVA LÓGICA:
-    - Si el curso está accesible, todas las lecciones están desbloqueadas
-    - Si el curso está bloqueado, todas las lecciones están bloqueadas
-    """
+def get_course_lessons(course_id):
     try:
-        lessons = get_course_lessons_with_status(current_user_id, course_id)
-        return jsonify(lessons)
+        session = get_session()
+        try:
+            lessons = session.query(Lesson).filter_by(course_id=course_id).order_by(Lesson.order_index).all()
+            
+            if not lessons:
+                return jsonify([]), 200
+            
+            result = []
+            for l in lessons:
+                result.append({
+                    'id': l.id,
+                    'course_id': l.course_id,
+                    'title': l.title,
+                    'description': l.description,
+                    'type': l.type,
+                    'duration_minutes': l.duration_minutes,
+                    'xp_reward': getattr(l, 'xp_reward', 10),
+                    'order_index': l.order_index,
+                    'is_completed': False 
+                })
+            return jsonify(result)
+        finally:
+            session.close()
     except Exception as e:
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error interno"}), 500
@@ -331,17 +313,48 @@ def get_course_lessons(current_user_id, course_id):
 @app.route('/api/lessons/<lesson_id>', methods=['GET'])
 @token_required
 def get_lesson_secure(current_user_id, lesson_id):
-    """
-    Obtiene una lección verificando acceso al curso.
-    
-    NUEVA LÓGICA:
-    - Verifica si el curso está accesible
-    - Si sí, devuelve el contenido completo
-    - Si no, devuelve error 403 con información del curso requerido
-    """
+    """Obtiene una lección con validación de bloqueo secuencial."""
     try:
-        result, status_code = get_lesson_content(current_user_id, lesson_id)
-        return jsonify(result), status_code
+        session = get_session()
+        try:
+            lesson = session.query(Lesson).filter_by(id=lesson_id).first()
+            if not lesson:
+                return jsonify({"error": "Lección no encontrada"}), 404
+            
+            previous_lesson = session.query(Lesson)\
+                .filter(Lesson.course_id == lesson.course_id, Lesson.order_index < lesson.order_index)\
+                .order_by(desc(Lesson.order_index))\
+                .first()
+
+            if previous_lesson:
+                prog = session.query(UserLessonProgress).filter_by(
+                    user_id=current_user_id,
+                    lesson_id=previous_lesson.id,
+                    completed=True
+                ).first()
+
+                if not prog:
+                    return jsonify({
+                        "error": "Lección bloqueada",
+                        "message": f"Debes completar la lección '{previous_lesson.title}' antes de acceder a esta.",
+                        "previous_lesson_id": previous_lesson.id
+                    }), 403
+            
+            return jsonify({
+                "success": True,
+                "id": lesson.id,
+                "title": lesson.title,
+                "description": lesson.description,
+                "content": lesson.content,
+                "type": lesson.type,
+                "screens": lesson.screens,
+                "total_screens": getattr(lesson, 'total_screens', 0),
+                "duration_minutes": lesson.duration_minutes,
+                "xp_reward": getattr(lesson, 'xp_reward', 10),
+                "order_index": lesson.order_index
+            })
+        finally:
+            session.close()
     except Exception as e:
         sentry_sdk.capture_exception(e)
         print(f"❌ Error en lesson: {e}")
@@ -372,10 +385,31 @@ def get_user_profile(current_user_id):
             user = session.query(User).filter_by(id=current_user_id).first()
             if not user:
                 return jsonify({"error": "Usuario no encontrado"}), 404
-            return jsonify({"success": True, "user": {
-                "id": user.id, "email": user.email, "name": user.name,
-                "created_at": user.created_at.isoformat() if user.created_at else None
-            }})
+            
+            # ✅ AGREGADO: Contar cursos completados
+            completed_courses = session.query(UserCourseProgress).filter_by(
+                user_id=current_user_id,
+                percentage=100
+            ).count()
+            
+            # ✅ AGREGADO: Contar insignias
+            badges_count = session.query(UserBadge).filter_by(
+                user_id=current_user_id
+            ).count()
+            
+            return jsonify({
+                "success": True,
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "name": user.name,
+                    "created_at": user.created_at.isoformat() if user.created_at else None,
+                    "total_xp": user.total_xp,  # ✅ AGREGADO
+                    "level": (user.total_xp // 100) + 1,  # ✅ AGREGADO
+                    "completed_courses": completed_courses,  # ✅ AGREGADO
+                    "badges_count": badges_count  # ✅ AGREGADO
+                }
+            })
         finally:
             session.close()
     except Exception as e:
@@ -387,10 +421,14 @@ def get_user_profile(current_user_id):
 def get_user_dashboard(current_user_id):
     try:
         session = get_session()
-        act_service = ActivityService()
         streak_service = StreakService()
 
-        total_xp = act_service.get_total_xp(current_user_id)
+        # ✅ CORREGIDO: Obtener user y leer total_xp directamente
+        user = session.query(User).filter_by(id=current_user_id).first()
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        
+        total_xp = user.total_xp  # ✅ Lee de users.total_xp, NO de activities
         current_streak = streak_service.get_current_streak(current_user_id)
         streak_bonus = streak_service.get_streak_bonus(current_streak)
         user_badges_count = session.query(UserBadge).filter_by(user_id=current_user_id).count()
@@ -399,9 +437,6 @@ def get_user_dashboard(current_user_id):
         courses = session.query(Course).order_by(Course.id).all()
 
         for course in courses:
-            # Verificar acceso
-            access_info = is_course_accessible(current_user_id, course.id)
-            
             progress = session.query(UserCourseProgress).filter_by(
                 user_id=current_user_id,
                 course_id=course.id
@@ -417,9 +452,7 @@ def get_user_dashboard(current_user_id):
                     "total_lessons": progress.total_lessons,
                     "percentage": progress.percentage,
                     "completed": progress.percentage == 100,
-                    "completed_at": progress.completed_at.isoformat() if progress.completed_at else None,
-                    "is_locked": not access_info['accessible'],
-                    "lock_reason": access_info.get('reason', '')
+                    "completed_at": progress.completed_at.isoformat() if progress.completed_at else None
                 }
             else:
                 total_lessons = session.query(Lesson).filter_by(course_id=course.id).count()
@@ -432,46 +465,36 @@ def get_user_dashboard(current_user_id):
                     "total_lessons": total_lessons,
                     "percentage": 0,
                     "completed": False,
-                    "completed_at": None,
-                    "is_locked": not access_info['accessible'],
-                    "lock_reason": access_info.get('reason', '')
+                    "completed_at": None
                 }
             course_progress_list.append(course_data)
 
-        # Encontrar siguiente curso accesible
         next_course = None
         for prog in course_progress_list:
-            if not prog["is_locked"] and prog["percentage"] < 100:
+            if prog["percentage"] < 100:
                 next_course = {
                     "course_id": prog["course_id"],
                     "title": prog["title"],
-                    "level": "En curso" if prog["percentage"] > 0 else "Disponible"
+                    "level": "En curso" if prog["percentage"] > 0 else "Nuevo"
                 }
                 break
-        
-        if not next_course:
-            # Buscar primer curso bloqueado
-            for prog in course_progress_list:
-                if prog["is_locked"]:
-                    next_course = {
-                        "course_id": prog["course_id"],
-                        "title": prog["title"],
-                        "level": "Bloqueado",
-                        "lock_reason": prog["lock_reason"]
-                    }
-                    break
         
         if not next_course and course_progress_list:
              next_course = {"title": "¡Todo completado!", "level": "Maestro"}
         elif not next_course:
              next_course = {"title": "Sin cursos disponibles", "level": "-"}
 
+        # ✅ AGREGADO: Verificar si tiene resultado del test vocacional
+        has_preference_result = session.query(UserPreferenceResult).filter_by(
+            user_id=current_user_id
+        ).first() is not None
+
         session.close()
 
         return jsonify({
             "success": True,
             "dashboard": {
-                "total_xp": total_xp,
+                "total_xp": total_xp,  # ✅ Ahora lee de user.total_xp correctamente
                 "level": (total_xp // 100) + 1,
                 "current_streak": current_streak,
                 "streak_bonus": streak_bonus,
@@ -479,7 +502,9 @@ def get_user_dashboard(current_user_id):
                 "courses_progress": course_progress_list,
                 "next_course": next_course,
                 "completed_courses": sum(1 for c in course_progress_list if c["completed"]),
-                "total_courses": len(course_progress_list)
+                "total_courses": len(course_progress_list),
+                "has_preference_result": has_preference_result,  # ✅ AGREGADO
+                "final_exam_passed": False  # ✅ AGREGADO
             }
         })
 
@@ -709,6 +734,10 @@ def submit_final_exam(current_user_id):
     result = service.submit_exam(current_user_id, answers)
     return jsonify({"success": True, "result": result})
 
+# ==========================================
+# TEST DE PREFERENCIAS VOCACIONALES
+# ==========================================
+
 @app.route('/api/preference-test/questions', methods=['GET'])
 @token_required
 def get_preference_test_questions(current_user_id):
@@ -740,7 +769,7 @@ def submit_preference_test(current_user_id):
 @token_required
 def get_preference_result(current_user_id):
     try:
-        result = engine.get_user_result(current_user_id) 
+        result = engine.get_user_result(current_user_id)  # ✅ Usa engine de preference_quiz
         
         if not result:
             return jsonify({"success": True, "has_result": False})
@@ -800,8 +829,8 @@ def home():
     return jsonify({
         "message": "🚀 CyberLearn API - Servidor de Producción",
         "status": "activo", 
-        "version": "3.2.0 - Course-Based Unlocking",
-        "features": "Auth, CMS, Progress, Badges, Glossary, Assessments, Course Unlocking"
+        "version": "3.2.1 - XP Fixed",  # ✅ ACTUALIZADO
+        "features": "Auth, CMS, Progress, Badges, Glossary, Assessments"
     })
 
 if __name__ == '__main__':
