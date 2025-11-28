@@ -1,4 +1,4 @@
-# backend/services/badge_service.py
+# backend/services/badge_service.py - NO CAMBIOS NECESARIOS
 from database.db import get_session
 from models.badge import Badge
 from models.user_badge import UserBadge
@@ -32,6 +32,7 @@ class BadgeService:
         if not user: return []
 
         # 1. Badges de XP (Ej: 100 XP, 500 XP)
+        # ✅ user.total_xp ES CORRECTO según models/user.py línea 13
         xp_badges = session.query(Badge).filter_by(trigger_type='xp_milestone').all()
         for badge in xp_badges:
             if user.total_xp >= int(badge.trigger_value):

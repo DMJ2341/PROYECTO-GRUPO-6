@@ -1,10 +1,21 @@
-# backend/services/activity_service.py - LÓGICA PARA ACTIVIDADES Y XP (CORRECTO)
+# backend/services/activity_service.py - CORREGIDO PARA EVITAR CONFLICTOS DE SESIÓN
 from database.db import get_session
 from models.activity import Activity
+from datetime import datetime
 
 class ActivityService:
-    def create_activity(self, user_id, activity_type, points, lesson_id=None, description=None):
-        session = get_session()
+    def create_activity(self, user_id, activity_type, points, lesson_id=None, description=None, session=None):
+        """
+        Crea una nueva actividad.
+        
+        Args:
+            session: Si se provee, usa esta sesión existente (NO hace commit).
+                    Si es None, crea su propia sesión y hace commit.
+        """
+        own_session = session is None
+        if own_session:
+            session = get_session()
+        
         try:
             new_activity = Activity(
                 user_id=user_id,
@@ -14,10 +25,23 @@ class ActivityService:
                 description=description
             )
             session.add(new_activity)
-            session.commit()
-            return new_activity.id
+            
+            # Solo hacer commit si es nuestra propia sesión
+            if own_session:
+                session.commit()
+                return new_activity.id
+            else:
+                # Si usamos sesión externa, solo agregamos el objeto
+                # El commit lo hará quien nos llamó
+                session.flush()  # Para obtener el ID
+                return new_activity.id
+        except Exception as e:
+            if own_session:
+                session.rollback()
+            raise e
         finally:
-            session.close()
+            if own_session:
+                session.close()
 
     def get_total_xp(self, user_id):
         session = get_session()
