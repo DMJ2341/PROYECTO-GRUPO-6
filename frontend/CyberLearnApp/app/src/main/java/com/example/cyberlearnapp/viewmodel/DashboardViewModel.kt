@@ -3,7 +3,6 @@ package com.example.cyberlearnapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.models.DailyTermWrapper
-import com.example.cyberlearnapp.network.models.Badge
 import com.example.cyberlearnapp.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +15,6 @@ data class DashboardState(
     val error: String? = null,
     val userXp: Int = 0,
     val userLevel: Int = 1,
-    val badges: List<Badge> = emptyList(),
     val dailyTerm: DailyTermWrapper? = null,
     val hasPreferenceResult: Boolean = false,
     val completedCourses: Int = 0
@@ -37,7 +35,6 @@ class DashboardViewModel @Inject constructor(
     fun loadAllData() {
         refreshDashboard()
         loadDailyTerm()
-        loadBadges()  // ✅ AGREGADO
     }
 
     // ✅ PÚBLICO: Para ser llamado desde DashboardScreen con ON_RESUME
@@ -71,19 +68,6 @@ class DashboardViewModel @Inject constructor(
                 _state.value = _state.value.copy(dailyTerm = dailyTermWrapper)
             } catch (e: Exception) {
                 // Error silencioso para daily term
-            }
-        }
-    }
-
-    // ✅ NUEVO: Carga las badges ganadas del usuario
-    private fun loadBadges() {
-        viewModelScope.launch {
-            try {
-                val userBadges = userRepo.getUserBadges()
-                _state.value = _state.value.copy(badges = userBadges)
-            } catch (e: Exception) {
-                // Error silencioso
-                e.printStackTrace()
             }
         }
     }
