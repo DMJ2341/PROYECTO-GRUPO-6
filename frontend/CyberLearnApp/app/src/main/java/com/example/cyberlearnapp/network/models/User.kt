@@ -8,10 +8,26 @@ data class User(
     val id: Int,
     val email: String,
     val name: String? = null,
-    @SerialName("created_at") val createdAt: String? = null
+
+    @SerialName("created_at")
+    val createdAt: String? = null,
+
+    // ✅ AGREGADO: Campos de gamificación que devuelve el backend
+    @SerialName("total_xp")
+    val totalXp: Int = 0,
+
+    @SerialName("level")
+    val level: Int = 1,
+
+    // ✅ AGREGADO: Si el backend devuelve estos campos en /api/user/profile
+    @SerialName("completed_courses")
+    val completedCourses: Int? = null,
+
+    @SerialName("badges_count")
+    val badgesCount: Int? = null
 )
 
-// ✅ CORRECCIÓN: Definición de la respuesta del endpoint /api/user/profile
+// Respuesta del endpoint /api/user/profile
 @Serializable
 data class UserProfileResponse(
     val success: Boolean,

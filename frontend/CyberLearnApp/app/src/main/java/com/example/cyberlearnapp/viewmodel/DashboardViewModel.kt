@@ -35,17 +35,14 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun loadAllData() {
-        loadDashboard()
+        refreshDashboard()
         loadDailyTerm()
     }
 
+    // ✅ PÚBLICO: Para ser llamado desde DashboardScreen con ON_RESUME
     fun refreshDashboard() {
-        loadDashboard()
-    }
-
-    private fun loadDashboard() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
+            // No ponemos isLoading = true para evitar parpadeos en refresh
             try {
                 val response = userRepo.getDashboard()
                 val data = response.dashboard
@@ -55,10 +52,14 @@ class DashboardViewModel @Inject constructor(
                     userLevel = data.level,
                     hasPreferenceResult = data.hasPreferenceResult,
                     completedCourses = data.completedCourses,
-                    isLoading = false
+                    isLoading = false,
+                    error = null
                 )
             } catch (e: Exception) {
-                _state.value = _state.value.copy(isLoading = false, error = e.message)
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    error = e.message
+                )
             }
         }
     }
@@ -69,7 +70,7 @@ class DashboardViewModel @Inject constructor(
                 val dailyTermWrapper = userRepo.getDailyTerm()
                 _state.value = _state.value.copy(dailyTerm = dailyTermWrapper)
             } catch (e: Exception) {
-                // Error silencioso
+                // Error silencioso para daily term
             }
         }
     }
