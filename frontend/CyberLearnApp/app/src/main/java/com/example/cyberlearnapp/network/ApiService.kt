@@ -22,7 +22,6 @@ interface ApiService {
     fun refreshToken(@Body request: Map<String, String>): Call<AuthResponse>
 
     @POST("api/auth/logout")
-    // ✅ CORREGIDO: Usamos Response<Unit> para la simplicidad de la respuesta 200 OK.
     suspend fun logout(@Header("Authorization") token: String, @Body request: Map<String, String>): Response<Unit>
 
     @GET("api/user/dashboard")
@@ -38,8 +37,10 @@ interface ApiService {
     @GET("api/courses")
     suspend fun getCourses(): Response<List<Course>>
 
+    // ✅ CORREGIDO: Agregado @Header("Authorization") token
     @GET("api/courses/{courseId}/lessons")
     suspend fun getCourseLessons(
+        @Header("Authorization") token: String,
         @Path("courseId") courseId: Int
     ): Response<List<Lesson>>
 
@@ -56,18 +57,12 @@ interface ApiService {
     ): Response<LessonCompletionResponse>
 
     @GET("api/progress/course/{courseId}")
-    // ✅ CORREGIDO: El backend devuelve un JSON de progreso. Usamos Map<String, Any> o un modelo simple.
-    // Dado que el backend devuelve un objeto pequeño (percentage, completed_lessons, etc.),
-    // asumimos que un modelo simple de progreso existe o usamos Map<String, Any> si no lo encontramos.
-    // Usaremos Map<String, Any> para evitar errores de modelo no encontrado.
     suspend fun getCourseProgress(
         @Header("Authorization") token: String,
         @Path("courseId") courseId: Int
     ): Response<Map<String, Any>>
 
     @GET("api/progress/all")
-    // ✅ CORREGIDO: El backend devuelve un wrapper con una lista de progreso (List<CourseProgress>).
-    // Usamos Map<String, Any> para capturar el wrapper {"success": true, "courses": [...]}
     suspend fun getAllProgress(@Header("Authorization") token: String): Response<Map<String, Any>>
 
     // ==========================================
@@ -84,7 +79,6 @@ interface ApiService {
     ): Response<CompleteDailyTermResponse>
 
     @GET("api/glossary")
-    // El backend devuelve {"success": true, "terms": [...]} (GlossaryResponse)
     suspend fun getGlossaryTerms(): Response<GlossaryResponse>
 
     @GET("api/glossary/search")
@@ -93,11 +87,10 @@ interface ApiService {
     ): Response<GlossaryResponse>
 
     @POST("api/glossary/{glossaryId}/favorite")
-    // ✅ CORREGIDO: Respuesta personalizada del backend. Usamos Map<String, Any>
     suspend fun toggleGlossaryFavorite(
         @Header("Authorization") token: String,
         @Path("glossaryId") glossaryId: Int
-    ): Response<Map<String, Any>> // Respuesta: {"success": true, "is_favorite": true, "action": "added"}
+    ): Response<Map<String, Any>>
 
     // ==========================================
     // 🎓 EVALUACIONES
@@ -125,6 +118,5 @@ interface ApiService {
     suspend fun getPreferenceResult(@Header("Authorization") token: String): Response<PreferenceResultWrapper>
 
     @POST("api/preference-test/retake")
-    // ✅ CORREGIDO: Usamos Response<Unit> para la simplicidad de la respuesta 200 OK.
     suspend fun retakePreferenceTest(@Header("Authorization") token: String): Response<Unit>
 }

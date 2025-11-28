@@ -71,7 +71,11 @@ fun LessonScreenRender(
         )
 
         // Contenido principal (con scroll)
-        Box(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
             when (type) {
                 "step_revelation" -> RenderStepRevelation(contentData)
                 "story_hook" -> RenderStoryHook(contentData)

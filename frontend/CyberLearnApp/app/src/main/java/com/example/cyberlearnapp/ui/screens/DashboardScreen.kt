@@ -30,6 +30,21 @@ fun DashboardScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
+    // ✅ REFRESH AUTOMÁTICO cuando vuelves de completar lección
+    val refreshTrigger = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getStateFlow("refresh_dashboard", false)
+        ?.collectAsState()
+
+    LaunchedEffect(refreshTrigger?.value) {
+        if (refreshTrigger?.value == true) {
+            viewModel.refreshDashboard()
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.set("refresh_dashboard", false)
+        }
+    }
+
     if (state.isLoading) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -37,11 +52,7 @@ fun DashboardScreen(
         return
     }
 
-    // Calcula el número de filas necesarias para el LazyVerticalGrid
     val badgeRowCount = (state.badges.size / 3) + 1
-
-    // Altura del LazyVerticalGrid: (número de filas) * (altura aproximada por fila: 120.dp)
-    // Se usa toFloat() para permitir la multiplicación Dp * Float.
     val gridHeight = 120.dp * badgeRowCount.toFloat()
 
     Column(
@@ -50,7 +61,6 @@ fun DashboardScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        // ✅ ENCABEZADO - Usuario y Nivel
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -62,7 +72,6 @@ fun DashboardScreen(
             Column(
                 modifier = Modifier.padding(20.dp)
             ) {
-                // Saludo
                 Text(
                     text = "¡Hola, Hacker! 👋",
                     style = MaterialTheme.typography.headlineMedium,
@@ -80,7 +89,6 @@ fun DashboardScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                // Barra de XP y Nivel
                 XpLevelBar(
                     currentXp = state.userXp,
                     level = state.userLevel
@@ -90,7 +98,6 @@ fun DashboardScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        // ✅ TÉRMINO DEL DÍA
         state.dailyTerm?.let { term ->
             Text(
                 text = "📚 Término del Día",
@@ -106,7 +113,6 @@ fun DashboardScreen(
             Spacer(Modifier.height(24.dp))
         }
 
-        // ✅ BOTÓN DE ACCIÓN PRINCIPAL
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -128,7 +134,6 @@ fun DashboardScreen(
                 Spacer(Modifier.height(16.dp))
 
                 if (!state.hasPreferenceResult) {
-                    // Test Vocacional
                     Button(
                         onClick = { navController.navigate("preference_test") },
                         modifier = Modifier
@@ -156,7 +161,6 @@ fun DashboardScreen(
                         )
                     }
                 } else if (state.completedCourses >= 5) {
-                    // Examen Final
                     Button(
                         onClick = { navController.navigate("final_exam/intro") },
                         modifier = Modifier
@@ -184,7 +188,6 @@ fun DashboardScreen(
                         )
                     }
                 } else {
-                    // Ver Perfil Profesional
                     OutlinedButton(
                         onClick = { navController.navigate("preference_result") },
                         modifier = Modifier
@@ -204,8 +207,6 @@ fun DashboardScreen(
 
                     Spacer(Modifier.height(12.dp))
 
-                    // Progreso de cursos
-                    // Asume que state.completedCourses es un Float o se puede convertir a Float
                     LinearProgressIndicator(
                         progress = state.completedCourses / 5f,
                         modifier = Modifier
@@ -228,7 +229,6 @@ fun DashboardScreen(
 
         Spacer(Modifier.height(32.dp))
 
-        // ✅ SECCIÓN DE INSIGNIAS
         Text(
             text = "🏆 Mis Insignias",
             style = MaterialTheme.typography.titleLarge,
@@ -273,7 +273,6 @@ fun DashboardScreen(
                 columns = GridCells.Fixed(3),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                // LÍNEA CORREGIDA: Usa gridHeight para asignar la altura
                 modifier = Modifier.height(gridHeight)
             ) {
                 items(state.badges.size) { index ->
@@ -282,7 +281,6 @@ fun DashboardScreen(
             }
         }
 
-        // Padding inferior para breathing room
         Spacer(Modifier.height(32.dp))
     }
 }
