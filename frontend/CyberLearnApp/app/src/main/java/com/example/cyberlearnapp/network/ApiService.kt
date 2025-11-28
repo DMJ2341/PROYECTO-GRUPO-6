@@ -37,7 +37,7 @@ interface ApiService {
     @GET("api/courses")
     suspend fun getCourses(): Response<List<Course>>
 
-    // ✅ CORREGIDO: Agregado @Header("Authorization") token
+    // ✅ MÉTODO ÚNICO: getCourseLessons (eliminado duplicado)
     @GET("api/courses/{courseId}/lessons")
     suspend fun getCourseLessons(
         @Header("Authorization") token: String,

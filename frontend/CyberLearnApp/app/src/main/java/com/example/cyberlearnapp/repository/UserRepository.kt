@@ -35,6 +35,7 @@ class UserRepository @Inject constructor(
         apiService.getUserProfile(getToken()).body()!!
     }
 
+
     // ✅ CORRECCIÓN: Se añade la función 'logout' que el ViewModel espera
     // Unresolved reference 'logout' resuelto.
     fun logout() {

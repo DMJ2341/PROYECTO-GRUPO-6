@@ -8,7 +8,6 @@ import com.example.cyberlearnapp.repository.CourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,64 +16,58 @@ class CourseViewModel @Inject constructor(
     private val repository: CourseRepository
 ) : ViewModel() {
 
-    // Lista de cursos (Pantalla principal)
     private val _courses = MutableStateFlow<List<Course>>(emptyList())
-    val courses: StateFlow<List<Course>> = _courses.asStateFlow()
+    val courses: StateFlow<List<Course>> = _courses
 
-    // Lista de lecciones (Pantalla de detalle)
-    private val _lessons = MutableStateFlow<List<Lesson>>(emptyList())
-    val lessons: StateFlow<List<Lesson>> = _lessons.asStateFlow()
+    private val _selectedCourse = MutableStateFlow<Course?>(null)
+    val selectedCourse: StateFlow<Course?> = _selectedCourse
+
+    private val _courseLessons = MutableStateFlow<List<Lesson>>(emptyList())
+    val courseLessons: StateFlow<List<Lesson>> = _courseLessons
 
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error.asStateFlow()
-
-    init {
-        loadCourses()
-    }
+    val error: StateFlow<String?> = _error
 
     fun loadCourses() {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                val result = repository.getCourses()
-                // repository.getCourses() devuelve List<Course> directamente (según tu código)
-                if (result.isNotEmpty()) {
-                    _courses.value = result
-                } else {
-                    _error.value = "No se encontraron cursos."
-                }
+                val result = repository.getAllCourses()
+                _courses.value = result
             } catch (e: Exception) {
-                _error.value = "Error: ${e.message}"
+                _error.value = e.message ?: "Error desconocido"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    fun loadLessons(courseId: Int) {
+    fun loadCourseDetail(courseId: Int) {
         viewModelScope.launch {
             _isLoading.value = true
-            _lessons.value = emptyList()
             try {
-                // ✅ Usa el método correcto del repositorio para obtener lecciones
-                val result = repository.getCourseLessons(courseId)
-
-                if (result.isNotEmpty()) {
-                    _lessons.value = result
-                } else {
-                    // Evita un error si la lista está vacía, solo notifica al usuario.
-                    _lessons.value = emptyList()
-                    _error.value = "Este curso no tiene lecciones disponibles aún."
-                }
+                val course = repository.getCourseDetail(courseId)
+                _selectedCourse.value = course
             } catch (e: Exception) {
-                _error.value = "Error al cargar lecciones: ${e.message}"
-                e.printStackTrace()
+                _error.value = e.message
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    // ✅ NUEVA: Carga lecciones con estado de completado
+    fun loadCourseLessons(courseId: Int) {
+        viewModelScope.launch {
+            try {
+                val lessons = repository.getCourseLessons(courseId)
+                _courseLessons.value = lessons
+            } catch (e: Exception) {
+                _error.value = e.message
             }
         }
     }
