@@ -3,7 +3,6 @@ package com.example.cyberlearnapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.models.DailyTermWrapper
-import com.example.cyberlearnapp.network.models.Badge
 import com.example.cyberlearnapp.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +15,6 @@ data class DashboardState(
     val error: String? = null,
     val userXp: Int = 0,
     val userLevel: Int = 1,
-    val badges: List<Badge> = emptyList(),
     val dailyTerm: DailyTermWrapper? = null,
     val hasPreferenceResult: Boolean = false,
     val completedCourses: Int = 0
@@ -42,7 +40,6 @@ class DashboardViewModel @Inject constructor(
     // ✅ PÚBLICO: Para ser llamado desde DashboardScreen con ON_RESUME
     fun refreshDashboard() {
         viewModelScope.launch {
-            // No ponemos isLoading = true para evitar parpadeos en refresh
             try {
                 val response = userRepo.getDashboard()
                 val data = response.dashboard

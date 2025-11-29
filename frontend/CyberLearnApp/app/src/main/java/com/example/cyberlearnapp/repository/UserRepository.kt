@@ -6,6 +6,8 @@ import com.example.cyberlearnapp.network.models.CompleteDailyTermResponse
 import com.example.cyberlearnapp.network.models.DashboardResponse
 import com.example.cyberlearnapp.network.models.DailyTermWrapper
 import com.example.cyberlearnapp.network.models.UserProfileResponse
+import com.example.cyberlearnapp.network.models.Badge
+import com.example.cyberlearnapp.network.models.UserBadgesResponse
 import com.example.cyberlearnapp.network.models.AuthResponse
 import com.example.cyberlearnapp.utils.AuthManager
 import com.example.cyberlearnapp.utils.safeApiCall
@@ -35,9 +37,17 @@ class UserRepository @Inject constructor(
         apiService.getUserProfile(getToken()).body()!!
     }
 
+    suspend fun getUserBadges(): List<Badge> {
+        val token = AuthManager.getToken() ?: throw Exception("No hay sesión activa")
+        val response = apiService.getUserBadges("Bearer $token")
 
-    // ✅ CORRECCIÓN: Se añade la función 'logout' que el ViewModel espera
-    // Unresolved reference 'logout' resuelto.
+        return if (response.isSuccessful && response.body()?.success == true) {
+            response.body()?.badges ?: emptyList()
+        } else {
+            emptyList()
+        }
+    }
+
     fun logout() {
         authManager.clear()
     }
