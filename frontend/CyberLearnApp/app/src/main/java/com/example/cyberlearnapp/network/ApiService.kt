@@ -16,7 +16,14 @@ interface ApiService {
     suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
     @POST("api/auth/register")
-    suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
+    suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
+
+    // ✅ NUEVOS ENDPOINTS
+    @POST("api/auth/verify-email")
+    suspend fun verifyEmail(@Body request: VerifyEmailRequest): Response<AuthResponse>
+
+    @POST("api/auth/resend-code")
+    suspend fun resendVerificationCode(@Body request: ResendCodeRequest): Response<MessageResponse>
 
     @POST("api/auth/refresh")
     fun refreshToken(@Body request: Map<String, String>): Call<AuthResponse>
@@ -37,7 +44,6 @@ interface ApiService {
     @GET("api/courses")
     suspend fun getCourses(): Response<List<Course>>
 
-    // ✅ MÉTODO ÚNICO: getCourseLessons (eliminado duplicado)
     @GET("api/courses/{courseId}/lessons")
     suspend fun getCourseLessons(
         @Header("Authorization") token: String,
