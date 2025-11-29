@@ -167,35 +167,6 @@ def reset_password_route():
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error reseteando contraseña"}), 500
 
-# ==========================================
-# 👤 AUTH (LOGIN / REGISTER / REFRESH)
-# ==========================================
-
-@app.route('/api/auth/register', methods=['POST'])
-def register():
-    try:
-        data = request.get_json()
-        
-        if not data or not data.get('email') or not data.get('password'):
-            return jsonify({"error": "Email y password son requeridos"}), 400
-        
-        auth_service = AuthService()
-        result = auth_service.register(data)
-        
-        return jsonify({
-            "success": True,
-            "message": "Usuario registrado",
-            "access_token": result['access_token'],
-            "refresh_token": result['refresh_token'],
-            "user": result['user']
-        }), 201
-        
-    except ValueError as ve:
-        return jsonify({"error": str(ve)}), 400
-    except Exception as e:
-        sentry_sdk.capture_exception(e)
-        print(f"❌ Error en register: {e}")
-        return jsonify({"error": "Error interno"}), 500
 
 @app.route('/api/auth/login', methods=['POST'])
 def login():
@@ -820,6 +791,82 @@ def get_pref_test_stats(current_user_id):
         })
     finally:
         session.close()
+        
+# ==========================================
+# 📧 VERIFICACIÓN DE EMAIL (NUEVOS ENDPOINTS)
+# ==========================================
+
+@app.route('/api/auth/verify-email', methods=['POST'])
+def verify_email_route():
+    """Verifica el código de email enviado al usuario."""
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        code = data.get('code')
+        
+        if not email or not code:
+            return jsonify({"error": "Email y código son requeridos"}), 400
+        
+        auth_service = AuthService()
+        result = auth_service.verify_email(email, code)
+        
+        return jsonify(result), 200
+        
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        print(f"❌ Error en verify-email: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+@app.route('/api/auth/resend-code', methods=['POST'])
+def resend_code_route():
+    """Reenvía el código de verificación."""
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({"error": "Email es requerido"}), 400
+        
+        auth_service = AuthService()
+        result = auth_service.resend_verification_code(email)
+        
+        return jsonify(result), 200
+        
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({"error": "Error interno"}), 500
+
+# ==========================================
+# MODIFICAR EL ENDPOINT DE REGISTER EXISTENTE
+# ==========================================
+
+@app.route('/api/auth/register', methods=['POST'])
+def register():
+    try:
+        data = request.get_json()
+        
+        if not data or not data.get('email') or not data.get('password'):
+            return jsonify({"error": "Email y password son requeridos"}), 400
+        
+        if not data.get('name'):
+            return jsonify({"error": "El nombre es requerido"}), 400
+        
+        auth_service = AuthService()
+        result = auth_service.register(data)
+        
+        # ✅ NUEVA RESPUESTA: Usuario creado pero debe verificar
+        return jsonify(result), 201
+        
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        print(f"❌ Error en register: {e}")
+        return jsonify({"error": "Error interno"}), 500
 
 # ==========================================
 # 🚀 INICIO
