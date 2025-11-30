@@ -72,8 +72,43 @@ interface ApiService {
     suspend fun getAllProgress(@Header("Authorization") token: String): Response<Map<String, Any>>
 
     // ==========================================
-    // 📖 GLOSARIO & TÉRMINO DIARIO
-    // ==========================================
+// 📖 GLOSARIO MEJORADO
+// ==========================================
+
+    @GET("api/glossary")
+    suspend fun getGlossaryTerms(
+        @Header("Authorization") token: String
+    ): Response<GlossaryResponse>
+
+    @GET("api/glossary/search")
+    suspend fun searchGlossaryTerms(
+        @Header("Authorization") token: String,
+        @Query("q") query: String? = null
+    ): Response<GlossaryResponse>
+
+    @POST("api/glossary/{glossaryId}/mark-learned")
+    suspend fun markTermAsLearned(
+        @Header("Authorization") token: String,
+        @Path("glossaryId") glossaryId: Int,
+        @Body request: MarkLearnedRequest
+    ): Response<MarkLearnedResponse>
+
+    @GET("api/glossary/learned")
+    suspend fun getLearnedTerms(
+        @Header("Authorization") token: String
+    ): Response<GlossaryResponse>
+
+    @GET("api/glossary/stats")
+    suspend fun getGlossaryStats(
+        @Header("Authorization") token: String
+    ): Response<GlossaryStatsResponse>
+
+    @POST("api/glossary/{glossaryId}/quiz-attempt")
+    suspend fun recordQuizAttempt(
+        @Header("Authorization") token: String,
+        @Path("glossaryId") glossaryId: Int,
+        @Body request: QuizAttemptRequest
+    ): Response<QuizAttemptResponse>
 
     @GET("api/daily-term")
     suspend fun getDailyTerm(@Header("Authorization") token: String): Response<DailyTermWrapper>
@@ -84,19 +119,6 @@ interface ApiService {
         @Body request: CompleteDailyTermRequest
     ): Response<CompleteDailyTermResponse>
 
-    @GET("api/glossary")
-    suspend fun getGlossaryTerms(): Response<GlossaryResponse>
-
-    @GET("api/glossary/search")
-    suspend fun searchGlossaryTerms(
-        @Query("q") query: String? = null
-    ): Response<GlossaryResponse>
-
-    @POST("api/glossary/{glossaryId}/favorite")
-    suspend fun toggleGlossaryFavorite(
-        @Header("Authorization") token: String,
-        @Path("glossaryId") glossaryId: Int
-    ): Response<Map<String, Any>>
 
     // ==========================================
     // 🎓 EVALUACIONES
