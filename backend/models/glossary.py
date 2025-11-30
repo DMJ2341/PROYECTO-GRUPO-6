@@ -1,32 +1,48 @@
 # backend/models/glossary.py
+from database.db import Base
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from datetime import datetime
-from database.db import Base 
 
 class Glossary(Base):
     __tablename__ = 'glossary'
+    
     id = Column(Integer, primary_key=True)
-    term = Column(String(255), unique=True, nullable=False)
+    
+    # Campos Bilingües
+    term_en = Column(String(255), nullable=False)
+    term_es = Column(String(255), nullable=False)
+    definition_en = Column(Text, nullable=False)
+    definition_es = Column(Text, nullable=False)
+    
+    # Metadata
     acronym = Column(String(50), nullable=True)
-    definition = Column(Text, nullable=False)
-    example = Column(Text, nullable=True)
     category = Column(String(100), nullable=True)
-    difficulty = Column(String(50), default='Básico')
+    difficulty = Column(String(50), default='beginner')
+    
+    # Ejemplos
+    example_en = Column(Text, nullable=True)
+    example_es = Column(Text, nullable=True)
+    
+    # ✅ ESTA ES LA COLUMNA DE VALIDACIÓN IMPORTANTE
     where_you_hear_it = Column(String(255), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow) # <-- COLUMNA QUE FALTABA EN LA BD
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     def to_dict(self):
-        """Devuelve una representación de diccionario del término."""
         return {
             'id': self.id,
-            'term': self.term,
+            'term_en': self.term_en,
+            'term_es': self.term_es,
+            'term': self.term_es, # Compatibilidad
+            'definition_en': self.definition_en,
+            'definition_es': self.definition_es,
+            'definition': self.definition_es, # Compatibilidad
             'acronym': self.acronym,
-            'definition': self.definition,
-            'example': self.example,
             'category': self.category,
             'difficulty': self.difficulty,
-            'where_you_hear_it': self.where_you_hear_it
+            'example_en': self.example_en,
+            'example_es': self.example_es,
+            'example': self.example_es, # Compatibilidad
+            # Enviamos el dato al frontend
+            'reference': self.where_you_hear_it 
         }
-
-    def __repr__(self):
-        return f"<Glossary(term='{self.term}')>"

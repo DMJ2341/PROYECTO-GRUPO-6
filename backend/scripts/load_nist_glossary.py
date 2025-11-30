@@ -4,50 +4,63 @@ import json
 import os
 import sys
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import func
 
-# Añadir el path para importar módulos locales (db, models)
+# Añadir el path para importar módulos locales
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from database.db import get_session, create_all
 from models.glossary import Glossary
-# Si no has arreglado activity.py y glossary.py, debes hacerlo antes de ejecutar este script.
 
-# --- CONFIGURACIÓN DE FILTROS ---
+# --- CONFIGURACIÓN ---
 MAX_TERMS = 500 
-MIN_DEFINITION_LENGTH = 30
 
 def load_terms_from_json(session, terms_data):
     """Procesa una lista de términos desde JSON y los carga a la BD."""
     count = 0
-    
-    # Inicia una variable de control para saber si hubo un error en la sesión
     error_occurred = False
     
-    for term_data in terms_data:
+    # Extraer la lista si el JSON tiene una clave raíz "terms" (común en APIs), 
+    # o usar la lista directa si el JSON es una lista [].
+    if isinstance(terms_data, dict) and "terms" in terms_data:
+        items = terms_data["terms"]
+    else:
+        items = terms_data
+
+    print(f"📂 Procesando {len(items)} elementos...")
+
+    for term_data in items:
         try:
-            # 1. Limpieza y validación básica
-            term_name = term_data.get('term', '').strip()
-            definition = term_data.get('definition', '').strip()
+            # 1. Obtener datos bilingües del JSON
+            # Nota: Usamos .get() con valores por defecto para evitar errores si falta algo
+            t_en = term_data.get('term_en', '').strip()
+            t_es = term_data.get('term_es', '').strip()
+            d_en = term_data.get('definition_en', '').strip()
+            d_es = term_data.get('definition_es', '').strip()
             
-            if not term_name or len(definition) < MIN_DEFINITION_LENGTH:
+            # Validación: Deben existir al menos los términos y definiciones básicos
+            if not t_en or not t_es or not d_en or not d_es:
+                print(f"⚠️ Saltando término incompleto: {t_en or t_es}")
                 continue
             
-            # 2. Verificar duplicados por término
-            # Esta SELECT es la que falla cuando la transacción está abortada.
-            existing_term = session.query(Glossary).filter_by(term=term_name).first()
-            if existing_term:
+            # 2. Verificar duplicados (buscamos por el término en inglés como clave principal)
+            existing = session.query(Glossary).filter_by(term_en=t_en).first()
+            if existing:
+                # Opcional: Actualizar si ya existe
                 continue
 
-            # 3. Crear el nuevo objeto Glossary
+            # 3. Crear el nuevo objeto Glossary con estructura BILINGÜE
             new_term = Glossary(
-                term=term_name,
-                acronym=term_data.get('acronym', None),
-                definition=definition,
-                example=term_data.get('example', None),
-                category=term_data.get('category', 'Ciberseguridad'), 
-                difficulty=term_data.get('difficulty', 'Intermedio'),
-                where_you_hear_it=term_data.get('where_you_hear_it', None)
+                term_en=t_en,
+                term_es=t_es,
+                definition_en=d_en,
+                definition_es=d_es,
+                # Metadata opcional
+                acronym=term_data.get('acronym'),
+                category=term_data.get('category', 'General'),
+                difficulty=term_data.get('difficulty', 'beginner'),
+                example_en=term_data.get('example_en'),
+                example_es=term_data.get('example_es'),
+                where_you_hear_it=term_data.get('source') # O el campo que corresponda en tu JSON
             )
 
             session.add(new_term)
@@ -56,55 +69,47 @@ def load_terms_from_json(session, terms_data):
                 break
         
         except IntegrityError as e:
-            # Error por clave duplicada o nulls. Se maneja y se continúa.
-            print(f"❌ Error de Integridad para {term_name}: {e}")
-            session.rollback() # ✅ ROLLBACK NECESARIO
+            print(f"❌ Error de integridad: {e}")
+            session.rollback()
             error_occurred = True
-            continue
         except Exception as e:
-            # Error genérico (el error de transacción abortada anterior)
-            print(f"❌ Error al procesar el término {term_data.get('term')}: {e}")
-            session.rollback() # ✅ ROLLBACK NECESARIO
+            print(f"❌ Error general en {term_data.get('term_en', 'Desconocido')}: {e}")
+            session.rollback()
             error_occurred = True
-            continue
 
     if not error_occurred and count > 0:
         session.commit()
-    elif error_occurred:
-        # En caso de que el error ocurra y no se haya hecho rollback
-        session.rollback() 
-        print("Advertencia: Se realizó un Rollback debido a errores en la carga de datos.")
-
+        print("💾 Commit realizado con éxito.")
+    
     return count
 
 def run_glossary_loader():
-    print("--- 🚀 INICIANDO CARGA DE GLOSARIO ---")
+    print("--- 🚀 INICIANDO CARGA DE GLOSARIO BILINGÜE ---")
     session = get_session()
     
     try:
+        # Asegúrate de que este archivo también tenga la estructura nueva (term_en, term_es, etc.)
         data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'glossary_data.json')
         
         with open(data_path, 'r', encoding='utf-8') as f:
-            glossary_terms = json.load(f)
-            print(f"✅ Cargados {len(glossary_terms)} términos desde el archivo local.")
+            glossary_json = json.load(f)
+            print("✅ Archivo JSON leído correctamente.")
+            
     except FileNotFoundError:
-        print("❌ Error: Asegúrate de que backend/data/glossary_data.json existe en la ruta correcta.")
+        print(f"❌ Error: No se encuentra el archivo en {data_path}")
         return
     except json.JSONDecodeError:
-        print("❌ Error: El archivo JSON de glosario está mal formado.")
+        print("❌ Error: JSON mal formado.")
         return
 
     try:
-        total_loaded = load_terms_from_json(session, glossary_terms)
-        print(f"🎉 Éxito: Se cargaron/actualizaron {total_loaded} términos de glosario en la base de datos.")
+        total = load_terms_from_json(session, glossary_json)
+        print(f"🎉 Finalizado: {total} términos cargados.")
     except Exception as e:
-        print(f"❌ Error crítico durante la carga de BD: {e}")
+        print(f"❌ Error crítico: {e}")
     finally:
-        # Usamos close() que es correcto para la sesión obtenida con get_session()
-        session.close() 
+        session.close()
 
 if __name__ == '__main__':
-    # Asegurarse de que las tablas estén actualizadas
-    print("🔄 Verificando y creando tablas de modelos (ej. columna created_at)...")
-    create_all() 
+    create_all() # Asegura que la tabla exista antes de insertar
     run_glossary_loader()

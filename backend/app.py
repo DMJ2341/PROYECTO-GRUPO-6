@@ -27,6 +27,7 @@ from models.assessments import (
     PreferenceQuestion, UserPreferenceResult
 )
 
+
 # --- SERVICIOS ---
 from services.activity_service import ActivityService
 from services.glossary_service import get_all_glossary_terms, search_glossary, get_glossary_stats
@@ -41,6 +42,14 @@ from services.glossary_favorite_service import toggle_favorite, get_user_favorit
 from services.daily_term_service import get_daily_term_for_user, complete_daily_term
 from services.exam_service import ExamService
 from services.preference_quiz import get_preference_questions, submit_preference_answers, engine  # ✅ CORRECTO
+from services.glossary_service import (
+    get_all_glossary_terms, 
+    search_glossary, 
+    mark_term_as_learned,
+    get_learned_terms,
+    get_glossary_stats,
+    record_quiz_attempt
+)
 
 # -------------------------------------------------------------------
 # SENTRY CONFIG
@@ -565,119 +574,86 @@ def get_user_badges(current_user_id):
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error interno al obtener medallas"}), 500
 
+
 # ==========================================
-# 📖 GLOSARIO (TÉRMINO DIARIO Y BÚSQUEDA)
+# 📖 GLOSARIO MEJORADO
 # ==========================================
 
 @app.route('/api/glossary', methods=['GET'])
-def get_glossary_route():
+@token_required
+def get_glossary_route(current_user_id):
+    """Obtiene todos los términos con progreso del usuario."""
     try:
-        terms = get_all_glossary_terms()
+        terms = get_all_glossary_terms(user_id=current_user_id)
         return jsonify({"success": True, "terms": terms})
     except Exception as e:
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error cargando glosario"}), 500
 
 @app.route('/api/glossary/search', methods=['GET'])
-def search_glossary_route():
+@token_required
+def search_glossary_route(current_user_id):
+    """Busca términos en el glosario."""
     query = request.args.get('q', '')
     if len(query) < 2:
         return jsonify({"success": True, "terms": []})
     try:
-        results = search_glossary(query)
+        results = search_glossary(query, user_id=current_user_id)
         return jsonify({"success": True, "terms": results})
     except Exception as e:
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error en búsqueda"}), 500
 
-@app.route('/api/daily-term', methods=['GET'])
+@app.route('/api/glossary/<int:glossary_id>/mark-learned', methods=['POST'])
 @token_required
-def daily_term_v2(current_user_id):
+def mark_learned_route(current_user_id, glossary_id):
+    """Marca un término como aprendido/no aprendido."""
     try:
-        result = get_daily_term_for_user(current_user_id)
-        if not result:
-             return jsonify({"error": "No hay términos disponibles"}), 404
-        return jsonify({
-            "success": True,
-            "daily_term": result["term"],
-            "xp_earned": result.get("xp_reward", 0),
-            "already_viewed_today": result["already_viewed"]
-        })
+        data = request.get_json()
+        is_learned = data.get('is_learned', True)
+        
+        result = mark_term_as_learned(current_user_id, glossary_id, is_learned)
+        return jsonify(result), 200
     except Exception as e:
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Error cargando término del día"}), 500
-    
-@app.route('/api/daily-term/complete', methods=['POST'])
-@token_required
-def complete_daily_term_route(current_user_id):
-    data = request.get_json()
-    term_id = data.get('term_id')
-    
-    if not term_id:
-        return jsonify({"error": "ID del término es requerido"}), 400
+        return jsonify({"error": "Error marcando término"}), 500
 
+@app.route('/api/glossary/learned', methods=['GET'])
+@token_required
+def get_learned_terms_route(current_user_id):
+    """Obtiene solo los términos aprendidos (para quiz)."""
     try:
-        result = complete_daily_term(current_user_id, term_id)
-        if result['success']:
-            return jsonify(result), 200
-        else:
-            return jsonify(result), 409 
+        terms = get_learned_terms(current_user_id)
+        return jsonify({"success": True, "terms": terms})
     except Exception as e:
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Error interno al completar el término"}), 500
+        return jsonify({"error": "Error obteniendo términos aprendidos"}), 500
 
 @app.route('/api/glossary/stats', methods=['GET'])
-def glossary_stats():
+@token_required
+def glossary_stats_route(current_user_id):
+    """Obtiene estadísticas del glosario del usuario."""
     try:
-        stats = get_glossary_stats()
+        stats = get_glossary_stats(user_id=current_user_id)
         return jsonify({"success": True, "stats": stats})
     except Exception as e:
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error obteniendo estadísticas"}), 500
 
-@app.route('/api/glossary/favorites', methods=['GET'])
+@app.route('/api/glossary/<int:glossary_id>/quiz-attempt', methods=['POST'])
 @token_required
-def get_favorites(current_user_id):
+def quiz_attempt_route(current_user_id, glossary_id):
+    """Registra un intento de quiz (práctica)."""
     try:
-        favorites = get_user_favorites(current_user_id)
-        return jsonify({"success": True, "favorites": favorites})
+        data = request.get_json()
+        is_correct = data.get('is_correct', False)
+        
+        result = record_quiz_attempt(current_user_id, glossary_id, is_correct)
+        return jsonify(result), 200
     except Exception as e:
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Error cargando favoritos"}), 500
+        return jsonify({"error": "Error registrando intento"}), 500
 
-@app.route('/api/glossary/<int:glossary_id>/favorite', methods=['POST'])
-@token_required
-def toggle_glossary_favorite(current_user_id, glossary_id):
-    try:
-        result = toggle_favorite(current_user_id, glossary_id)
-        return jsonify({
-            "success": True,
-            "glossary_id": glossary_id,
-            "is_favorite": result["is_favorite"],
-            "action": result["action"]
-        })
-    except Exception as e:
-        sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Error al marcar favorito"}), 500
-
-@app.route('/api/glossary/term/<int:glossary_id>', methods=['GET'])
-@token_required
-def get_term_with_favorite(current_user_id, glossary_id):
-    session = get_session()
-    try:
-        term = session.query(Glossary).get(glossary_id)
-        if not term:
-            return jsonify({"error": "Término no encontrado"}), 404
-
-        is_fav = is_favorite(current_user_id, glossary_id)
-
-        return jsonify({
-            "success": True,
-            "term": term.to_dict(),
-            "is_favorite": is_fav
-        })
-    finally:
-        session.close()
 
 # ==========================================
 # 🎓 EXÁMENES Y APTITUD (EVALUACIONES)

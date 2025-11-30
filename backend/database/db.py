@@ -23,6 +23,7 @@ from models.user_badge import UserBadge
 from models.activity import Activity
 from models.badge import Badge
 from models.glossary import Glossary
+from models.user_glossary_progress import UserGlossaryProgress  # ✅ ESTA LÍNEA ES NUEVA
 from models.daily_term_log import DailyTermLog
 from models.password_reset_token import PasswordResetToken
 from models.user_glossary_favorite import UserGlossaryFavorite
