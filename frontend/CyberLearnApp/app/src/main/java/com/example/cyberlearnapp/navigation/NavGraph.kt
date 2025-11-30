@@ -72,7 +72,7 @@ fun NavGraph(
         /* ----------  GLOSARIO  ---------- */
         composable("glossary") {
             val glossaryViewModel: GlossaryViewModel = hiltViewModel()
-            GlossaryScreen(navController = navController, viewModel = glossaryViewModel)
+            GlossaryScreen(viewModel = glossaryViewModel)  // ✅ SIN navController
         }
 
         /* ----------  PROFILE  ---------- */
@@ -101,7 +101,11 @@ fun NavGraph(
         ) { backStackEntry ->
             val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
             val courseViewModel: CourseViewModel = hiltViewModel()
-            CourseDetailScreen(navController = navController, courseId = courseId, viewModel = courseViewModel)
+            CourseDetailScreen(
+                navController = navController,
+                courseId = courseId,
+                viewModel = courseViewModel
+            )
         }
 
         /* ----------  LESSON DETAIL  ---------- */
