@@ -27,36 +27,55 @@ fun NavGraph(
         modifier = Modifier.padding(paddingValues)
     ) {
 
-        // --- AUTH ---
+        /* ----------  AUTH  ---------- */
         composable("auth") {
             AuthScreen(
-                viewModel = authViewModel,
                 onLoginSuccess = {
                     navController.navigate("dashboard") {
                         popUpTo("auth") { inclusive = true }
                     }
+                },
+                onNavigateToVerification = { email ->
+                    navController.navigate("email_verification/$email")
                 }
             )
         }
 
-        // --- DASHBOARD ---
+        /* ----------  EMAIL VERIFICATION  ---------- */
+        composable(
+            route = "email_verification/{email}",
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            EmailVerificationScreen(
+                email = email,
+                onVerificationSuccess = {
+                    navController.navigate("dashboard") {
+                        popUpTo("auth") { inclusive = true }
+                    }
+                },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        /* ----------  DASHBOARD  ---------- */
         composable("dashboard") {
             DashboardScreen(navController = navController)
         }
 
-        // --- COURSES ---
+        /* ----------  COURSES  ---------- */
         composable("courses") {
             val courseViewModel: CourseViewModel = hiltViewModel()
             CoursesScreen(navController = navController, viewModel = courseViewModel)
         }
 
-        // --- GLOSARIO ---
+        /* ----------  GLOSARIO  ---------- */
         composable("glossary") {
             val glossaryViewModel: GlossaryViewModel = hiltViewModel()
-            GlossaryScreen(navController = navController, viewModel = glossaryViewModel)
+            GlossaryScreen(viewModel = glossaryViewModel)  // ✅ SIN navController
         }
 
-        // --- PROFILE ---
+        /* ----------  PROFILE  ---------- */
         composable("profile") {
             ProfileScreen(
                 onBackClick = { navController.popBackStack() },
@@ -66,21 +85,16 @@ fun NavGraph(
                         popUpTo(0) { inclusive = true }
                     }
                 },
-                // ✅ NUEVO: Navegación a pantalla de badges
-                onNavigateToBadges = {
-                    navController.navigate("badges")
-                }
+                onNavigateToBadges = { navController.navigate("badges") }
             )
         }
 
-        // --- ✅ NUEVO: PANTALLA DE BADGES ---
+        /* ----------  BADGES  ---------- */
         composable("badges") {
-            BadgesScreen(
-                onBackClick = { navController.popBackStack() }
-            )
+            BadgesScreen(onBackClick = { navController.popBackStack() })
         }
 
-        // --- DETALLE CURSO ---
+        /* ----------  COURSE DETAIL  ---------- */
         composable(
             route = "course_detail/{courseId}",
             arguments = listOf(navArgument("courseId") { type = NavType.IntType })
@@ -94,16 +108,13 @@ fun NavGraph(
             )
         }
 
-        // --- DETALLE LECCIÓN ---
+        /* ----------  LESSON DETAIL  ---------- */
         composable(
             route = "lesson_detail/{lessonId}",
             arguments = listOf(navArgument("lessonId") { type = NavType.StringType })
         ) { backStackEntry ->
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
-            LessonDetailScreen(
-                navController = navController,
-                lessonId = lessonId
-            )
+            LessonDetailScreen(navController = navController, lessonId = lessonId)
         }
     }
 }
