@@ -1,0 +1,215 @@
+{
+  "id": "c3_l3",
+  "title": "Cifrado Asimétrico",
+  "description": "Caso: Uber CISO Charged (2022)",
+  "type": "interactive",
+  "duration_minutes": 13,
+  "xp_reward": 20,
+  "order_index": 3,
+  "course_id": 3,
+  "total_screens": 4,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Caso: Uber CISO Charged (2022)",
+      "duration": 200,
+      "content": {
+        "story_title": "Uber 2016 Breach Cover-Up",
+        "story_intro": "CISO criminally charged por cover-up de breach de 57M records",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "data_thresholding",
+            "title": "El Breach: GitHub Credentials",
+            "content": "2016: Attackers encontraron AWS credentials de Uber en GitHub public repo. Accedieron S3 bucket con 57M rider/driver records: names, emails, phone, license numbers.",
+            "insight": "Secrets in code = common mistake. GitHub scanning encontraría esto hoy."
+          },
+          {
+            "id": "2",
+            "icon": "payments",
+            "title": "El Cover-Up: $100K 'Bug Bounty'",
+            "content": "CISO Joe Sullivan pagó $100K a attackers para destroy data y firmar NDA. Disfrazado como bug bounty. NO disclosure a reguladores (FTC) ni afectados. Obstruction of justice.",
+            "insight": "Cover-ups SIEMPRE se descubren. Legal obligation de disclosure en 48-72 hours (varies by jurisdiction)."
+          },
+          {
+            "id": "3",
+            "icon": "gavel",
+            "title": "Criminal Charges",
+            "content": "2020: DOJ acusó Sullivan de obstruction y misprision of felony. First CISO criminally charged. 2022: Encontrado guilty. Sentencia: 3 años probation, $50K fine.",
+            "insight": "CISOs tienen duty to disclose breaches. Cover-up = criminal liability. Ethics > job security."
+          },
+          {
+            "id": "4",
+            "icon": "article",
+            "title": "Lecciones: Incident Response",
+            "content": "Proper response: 1) Contain breach. 2) Forensics. 3) Notify regulators (GDPR 72h, varies by region). 4) Notify affected individuals. 5) Public statement. Transparency builds trust.",
+            "insight": "Sullivan case establece precedente: CISO liability es real. Ethics y compliance son non-negotiable."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "Identity Governance",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "manage_accounts",
+              "term": "Identity Lifecycle",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Birth → Joiner (hire) → Mover (role change) → Leaver (termination). Provisioning/de-provisioning automation. Reduce manual errors.",
+              "example": "Hire: Auto-create accounts en AD, email, apps. Promotion: Update group memberships. Termination: Disable ALL access within 1 hour. HR system integration critical.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "assignment_turned_in",
+              "term": "Access Certification",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Periodic review de access rights. Manager certifica: 'Does employee still need this access?'. Detect privilege creep, orphaned accounts.",
+              "example": "Quarterly campaigns. SailPoint, Saviynt tools. Manager recibe list de subordinates' access. Certify or revoke. Compliance requirement (SOX).",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "policy",
+              "term": "Segregation of Duties (SoD)",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "No single person controla end-to-end process. Prevents fraud. One person requests, otro approves. Finance: quien crea invoice ≠ quien paga.",
+              "example": "Sarbanes-Oxley requirement. SAP: User NO puede create vendor y approve payment. Toxic combinations detected by IGA tools.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "info",
+              "term": "Data Privacy Compliance",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "GDPR, CCPA, HIPAA, etc. Right to be forgotten. Data minimization. Consent management. Breach notification (72 hours GDPR).",
+              "example": "Uber: Failure to disclose within required timeframe = violation. GDPR fines up to 4% global revenue. Privacy by design.",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "Breach Response Checklist",
+      "duration": 300,
+      "content": {
+        "items": [
+          {
+            "id": "ir_step1",
+            "task": "Detection & Containment",
+            "subtitle": "Stop the bleeding",
+            "icon": "emergency",
+            "unlock_content": {
+              "title": "Immediate Actions",
+              "points": [
+                "Detect: SIEM alert, user report, third-party notification",
+                "Isolate: Segment compromised systems. Prevent lateral movement.",
+                "Preserve evidence: Don't destroy logs. Chain of custody for forensics.",
+                "Activate IR team: CISO, Legal, PR, Engineering",
+                "Document: Timestamped log of all actions taken"
+              ],
+              "bonus_fact": "First 24 hours critical. Containment speed reduces damage exponentially."
+            }
+          },
+          {
+            "id": "ir_step2",
+            "task": "Investigation & Notification",
+            "subtitle": "Understand scope",
+            "icon": "search",
+            "unlock_content": {
+              "title": "Forensics & Compliance",
+              "points": [
+                "Forensics: Third-party firm (Mandiant, CrowdStrike). Determine scope, root cause.",
+                "Legal analysis: Which laws apply? GDPR (EU), CCPA (CA), HIPAA (health), etc.",
+                "Regulatory notification: GDPR 72h, state laws vary (CA 48h). Counsel advises.",
+                "Individual notification: Email affected users. Offer credit monitoring if PII.",
+                "Don't cover up: Uber lesson. Transparency > trying to hide."
+              ],
+              "bonus_fact": "GDPR fines: British Airways £183M, Marriott £99M. Notification delay increases penalty."
+            }
+          },
+          {
+            "id": "ir_step3",
+            "task": "Recovery & Lessons Learned",
+            "subtitle": "Return to normal",
+            "icon": "restore",
+            "unlock_content": {
+              "title": "Post-Incident",
+              "points": [
+                "Eradication: Remove attacker presence. Patch vulnerabilities. Rotate credentials.",
+                "Recovery: Restore from clean backups. Gradual bring-up with monitoring.",
+                "Post-mortem: What went wrong? What went right? Blameless culture.",
+                "Remediation: Implement fixes. Update IR playbook.",
+                "Training: Share lessons company-wide. Improve defenses."
+              ],
+              "bonus_fact": "Companies with tested IR plans recover 50% faster and 30% cheaper."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "quiz",
+      "title": "Evaluación - Compliance",
+      "duration": 90,
+      "content": {
+        "question": "Uber CISO fue criminally charged porque:",
+        "options": [
+          {
+            "id": "a",
+            "text": "Permitió el breach",
+            "is_correct": false,
+            "feedback": "Incorrecto. Breaches pasan. No es criminal tener breach. Lo criminal fue el cover-up."
+          },
+          {
+            "id": "b",
+            "text": "Ocultó breach de reguladores, pagó attackers para firmar NDA, obstruyó investigación",
+            "is_correct": true,
+            "feedback": "CORRECTO! Joe Sullivan: 1) Sabía de breach (57M records). 2) NO notificó FTC (legal requirement). 3) Pagó $100K a attackers disfrazado como bug bounty. 4) Hizo firmar NDA a attackers. 5) Cuando FTC investigaba Uber, no reveló. Obstruction of justice. First CISO criminally prosecuted. Lesson: Transparency es mandatory, cover-up es criminal."
+          },
+          {
+            "id": "c",
+            "text": "No implementó MFA",
+            "is_correct": false,
+            "feedback": "Incorrecto. Technical controls pueden tener gaps sin ser criminales. Cover-up ES criminal."
+          },
+          {
+            "id": "d",
+            "text": "Usó bug bounty program",
+            "is_correct": false,
+            "feedback": "Incorrecto. Bug bounties son legítimos. Problema: esto NO era bug bounty real, era payoff para silence."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "CISO criminally charged por cover-up de breach de 57M records"
+  }
+}

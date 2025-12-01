@@ -1,119 +1,178 @@
 package com.example.cyberlearnapp.network
 
-import com.example.cyberlearnapp.network.models.InteractiveLessonResponse
-import com.example.cyberlearnapp.network.models.LessonProgressRequest
-import com.example.cyberlearnapp.network.models.SuccessResponse
-import com.example.cyberlearnapp.network.models.Progress
-import com.example.cyberlearnapp.network.models.User
-import com.example.cyberlearnapp.network.models.CompleteActivityRequest
-import com.example.cyberlearnapp.network.models.CompleteActivityResponse
-import com.example.cyberlearnapp.network.models.BadgeResponse
+import com.example.cyberlearnapp.models.* // Importamos tus nuevos modelos (TestQuestionsResponse, etc)
+import com.example.cyberlearnapp.network.models.*
+import com.example.cyberlearnapp.network.models.assessments.*
+import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ApiService {
 
-    @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequest): Response<AuthResponse>
+    // ==========================================
+    // 🔒 AUTH & PERFIL
+    // ==========================================
 
-    @POST("auth/login")
+    @POST("api/auth/login")
     suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
-    @GET("user/progress")
-    suspend fun getUserProgress(@Header("Authorization") token: String): Response<Progress>
+    @POST("api/auth/register")
+    suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
 
-    @POST("user/complete-activity")
-    suspend fun completeActivity(
-        @Header("Authorization") token: String,
-        @Body request: CompleteActivityRequest
-    ): Response<CompleteActivityResponse>
+    @POST("api/auth/verify-email")
+    suspend fun verifyEmail(@Body request: VerifyEmailRequest): Response<AuthResponse>
 
-    @GET("user/badges")
-    suspend fun getUserBadges(
-        @Header("Authorization") token: String
-    ): Response<BadgeResponse>
+    @POST("api/auth/resend-code")
+    suspend fun resendVerificationCode(@Body request: ResendCodeRequest): Response<MessageResponse>
 
-    // --- NUEVA FUNCIÓN ---
-    @GET("courses")
-    suspend fun getAllCourses(
-        @Header("Authorization") token: String
-    ): Response<List<Course>> // Devuelve una lista de Cursos
+    @POST("api/auth/refresh")
+    fun refreshToken(@Body request: Map<String, String>): Call<AuthResponse>
 
-    // --- FIN NUEVA FUNCIÓN ---
+    @POST("api/auth/logout")
+    suspend fun logout(@Header("Authorization") token: String, @Body request: Map<String, String>): Response<Unit>
 
-    @GET("courses/{courseId}/lessons")
+    @GET("api/user/dashboard")
+    suspend fun getDashboard(@Header("Authorization") token: String): Response<DashboardResponse>
+
+    @GET("api/user/profile")
+    suspend fun getUserProfile(@Header("Authorization") token: String): Response<UserProfileResponse>
+
+    @GET("api/user/badges")
+    suspend fun getUserBadges(@Header("Authorization") token: String): Response<UserBadgesResponse>
+
+    // ==========================================
+    // 📚 CURSOS Y LECCIONES
+    // ==========================================
+
+    @GET("api/courses")
+    suspend fun getCourses(): Response<List<Course>>
+
+    @GET("api/courses/{courseId}/lessons")
     suspend fun getCourseLessons(
-        @Path("courseId") courseId: String,
-        @Header("Authorization") token: String
-    ): Response<LessonsResponse>
-
-    @GET("lessons/{lessonId}")
-    suspend fun getLessonContent(
-        @Path("lessonId") lessonId: String,
-        @Header("Authorization") token: String
-    ): Response<Lesson>
-
-    @GET("lessons/{lessonId}/interactive")
-    suspend fun getInteractiveLesson(
-        @Path("lessonId") lessonId: String,
-        @Header("Authorization") token: String
-    ): Response<InteractiveLessonResponse>
-
-    @POST("lessons/{lessonId}/progress")
-    suspend fun saveLessonProgress(
-        @Path("lessonId") lessonId: String,
         @Header("Authorization") token: String,
-        @Body progress: LessonProgressRequest
-    ): Response<SuccessResponse>
+        @Path("courseId") courseId: Int
+    ): Response<List<Lesson>>
+
+    @GET("api/lessons/{lessonId}")
+    suspend fun getLessonDetail(
+        @Header("Authorization") token: String,
+        @Path("lessonId") lessonId: String
+    ): Response<LessonResponse>
+
+    @POST("api/progress/lesson/{lessonId}")
+    suspend fun completeLesson(
+        @Header("Authorization") token: String,
+        @Path("lessonId") lessonId: String
+    ): Response<LessonCompletionResponse>
+
+    @GET("api/progress/course/{courseId}")
+    suspend fun getCourseProgress(
+        @Header("Authorization") token: String,
+        @Path("courseId") courseId: Int
+    ): Response<Map<String, Any>>
+
+    @GET("api/progress/all")
+    suspend fun getAllProgress(@Header("Authorization") token: String): Response<Map<String, Any>>
+
+    // ==========================================
+    // 📖 GLOSARIO
+    // ==========================================
+
+    @GET("api/glossary")
+    suspend fun getGlossaryTerms(
+        @Header("Authorization") token: String
+    ): Response<GlossaryResponse>
+
+    @GET("api/glossary/search")
+    suspend fun searchGlossaryTerms(
+        @Header("Authorization") token: String,
+        @Query("q") query: String? = null
+    ): Response<GlossaryResponse>
+
+    @POST("api/glossary/{glossaryId}/mark-learned")
+    suspend fun markTermAsLearned(
+        @Header("Authorization") token: String,
+        @Path("glossaryId") glossaryId: Int,
+        @Body request: MarkLearnedRequest
+    ): Response<MarkLearnedResponse>
+
+    @GET("api/glossary/learned")
+    suspend fun getLearnedTerms(
+        @Header("Authorization") token: String
+    ): Response<GlossaryResponse>
+
+    @GET("api/glossary/stats")
+    suspend fun getGlossaryStats(
+        @Header("Authorization") token: String
+    ): Response<GlossaryStatsResponse>
+
+    @POST("api/glossary/{glossaryId}/quiz-attempt")
+    suspend fun recordQuizAttempt(
+        @Header("Authorization") token: String,
+        @Path("glossaryId") glossaryId: Int,
+        @Body request: QuizAttemptRequest
+    ): Response<QuizAttemptResponse>
+
+    @GET("api/daily-term")
+    suspend fun getDailyTerm(@Header("Authorization") token: String): Response<DailyTermWrapper>
+
+    @POST("api/daily-term/complete")
+    suspend fun completeDailyTerm(
+        @Header("Authorization") token: String,
+        @Body request: CompleteDailyTermRequest
+    ): Response<CompleteDailyTermResponse>
+
+
+    // ==========================================
+    // 🎓 EVALUACIONES (EXAMEN FINAL)
+    // ==========================================
+
+    @GET("api/exam/final")
+    suspend fun getFinalExam(@Header("Authorization") token: String): Response<ExamStartResponse>
+
+    @POST("api/exam/final/submit")
+    suspend fun submitFinalExam(
+        @Header("Authorization") token: String,
+        @Body body: ExamSubmitRequest
+    ): Response<ExamResultResponse>
+
+    // ==========================================
+    // 🎯 TEST DE PREFERENCIAS (NUEVO)
+    // ==========================================
+    // Nota: Agregamos "api/" al inicio porque tus rutas en Flask son /api/test/...
+
+    @GET("api/test/questions")
+    suspend fun getQuestions(
+        @Header("Authorization") token: String
+    ): Response<TestQuestionsResponse>
+
+    @POST("api/test/submit")
+    suspend fun submitTest(
+        @Header("Authorization") token: String,
+        @Body submission: TestSubmission
+    ): Response<TestSubmitResponse>
+
+    @GET("api/test/recommendations/{role}")
+    suspend fun getRecommendations(
+        @Header("Authorization") token: String,
+        @Path("role") role: String
+    ): Response<RecommendationsResponse>
+
+    @GET("api/test/result")
+    suspend fun getUserResult(
+        @Header("Authorization") token: String
+    ): Response<UserTestResultResponse>
+
+    @GET("api/test/history")
+    suspend fun getHistory(
+        @Header("Authorization") token: String
+    ): Response<TestHistoryResponse>
+
+    @POST("api/test/retake")
+    suspend fun retakeTest(
+        @Header("Authorization") token: String
+    ): Response<BasicResponse>
 }
 
-// --- CLASES DE DATOS (DATA CLASSES) ---
-
-data class RegisterRequest(
-    val email: String,
-    val password: String,
-    val name: String
-)
-
-data class LoginRequest(
-    val email: String,
-    val password: String
-)
-
-data class AuthResponse(
-    val success: Boolean,
-    val message: String,
-    val token: String?,
-    val user: User?
-)
-
-// --- NUEVA DATA CLASS PARA COURSE ---
-data class Course(
-    val id: String,
-    val title: String,
-    val description: String,
-    val level: String,
-    val xp_reward: Int,
-    val image_url: String // Para el emoji 🚀
-)
-// --- FIN NUEVA DATA CLASS ---
-
-data class Lesson(
-    val id: String,
-    val lesson_id: String = "",
-    val title: String,
-    val content: String = "",
-    val order: Int = 0,
-    val xp_reward: Int = 0,
-    val duration_minutes: Int = 0,
-    val course_id: String = ""
-)
-
-data class LessonsResponse(
-    val lessons: List<Lesson>
-)
-
+// Clase auxiliar simple para respuestas vacías o básicas
+data class BasicResponse(val success: Boolean, val message: String? = null)

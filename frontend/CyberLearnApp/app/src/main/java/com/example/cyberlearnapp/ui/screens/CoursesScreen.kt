@@ -1,87 +1,187 @@
 package com.example.cyberlearnapp.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.cyberlearnapp.ui.components.CourseCard
 import com.example.cyberlearnapp.viewmodel.CourseViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoursesScreen(
-    courseViewModel: CourseViewModel,
-    onCourseClick: (String, String, String, String, Int, String) -> Unit
+    navController: NavController,
+    viewModel: CourseViewModel
 ) {
-    // Observa el estado del ViewModel
-    val uiState by courseViewModel.uiState.collectAsState()
+    val courses by viewModel.courses.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
-    // Llama a la API solo una vez cuando la pantalla aparece
     LaunchedEffect(Unit) {
-        courseViewModel.loadAllCourses()
+        if (courses.isEmpty()) {
+            viewModel.loadCourses()
+        }
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        Text(
-            text = "Cursos Disponibles",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        // ✅ HEADER MEJORADO
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Cursos Disponibles",
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
 
-        // Manejo de estados (Cargando, Error, Éxito)
+                Spacer(Modifier.height(4.dp))
+
+                Text(
+                    text = "${courses.size} cursos para dominar",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Botón de filtros (opcional, puedes implementarlo después)
+            IconButton(
+                onClick = { /* TODO: Implement filters */ }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = "Filtrar cursos",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        // ✅ ESTADOS: Loading, Error, Content
         when {
-            uiState.isLoading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+            isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(48.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "Cargando cursos...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
-            uiState.error != null -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "Error: ${uiState.error}", color = MaterialTheme.colorScheme.error)
+
+            error != null -> {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "⚠️ Error al cargar cursos",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+
+                        Spacer(Modifier.height(8.dp))
+
+                        Text(
+                            text = error ?: "Error desconocido",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+
+                        Spacer(Modifier.height(16.dp))
+
+                        Button(
+                            onClick = { viewModel.loadCourses() },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Text("Reintentar")
+                        }
+                    }
                 }
             }
+
+            courses.isEmpty() -> {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(48.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "📚",
+                                style = MaterialTheme.typography.displayLarge
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            Text(
+                                text = "No hay cursos disponibles",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+
             else -> {
-                // Estado de éxito: Muestra la lista de cursos de la API
+                // ✅ LISTA DE CURSOS CON MEJOR ESPACIADO
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
-                    items(uiState.courseList) { course ->
+                    items(courses) { course ->
                         CourseCard(
-                            emoji = course.image_url,
-                            title = course.title,
-                            description = course.description,
-                            level = course.level,
-                            xp = course.xp_reward,
-                            progress = 0, // El progreso real vendría del UserViewModel
-                            onCourseClick = {
-                                onCourseClick(
-                                    course.id,
-                                    course.title,
-                                    course.description,
-                                    course.level,
-                                    course.xp_reward,
-                                    course.image_url
-                                )
+                            course = course,
+                            onClick = {
+                                navController.navigate("course_detail/${course.id}")
                             }
                         )
                     }

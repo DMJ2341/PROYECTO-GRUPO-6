@@ -1,24 +1,45 @@
-from database.db import db
+# backend/models/user.py
+from database.db import Base
+from sqlalchemy import Column, Integer, String, DateTime, Date, Boolean
 from datetime import datetime
 
-class User(db.Model):
-    __tablename__ = 'users'  # ← Cambiar de 'user' a 'users'
+class User(Base):
+    __tablename__ = 'users'
     
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    name = db.Column(db.String(100))
-    xp_total = db.Column(db.Integer, default=0)
-    level = db.Column(db.Integer, default=1)
-    streak = db.Column(db.Integer, default=0)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    last_login = db.Column(db.DateTime)
-    last_activity = db.Column(db.DateTime)
-
-class UserBadge(db.Model):
-    __tablename__ = 'user_badge'  # Ya está bien
+    id = Column(Integer, primary_key=True)
+    email = Column(String(120), unique=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    name = Column(String(100))
     
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # ← Cambiar referencia
-    badge_id = db.Column(db.String(50), nullable=False)
-    earned_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # ✅ NUEVOS CAMPOS DE VERIFICACIÓN
+    email_verified = Column(Boolean, default=False)
+    email_verified_at = Column(DateTime, nullable=True)
+    terms_accepted_at = Column(DateTime, nullable=True)
+    
+    # Campos de gamificación
+    total_xp = Column(Integer, default=0)
+    current_streak = Column(Integer, default=0)
+    max_streak = Column(Integer, default=0)
+    last_activity_date = Column(Date)
+    
+    # Metadata
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def __repr__(self):
+        return f"<User {self.email}>"
+    
+    def is_verified(self):
+        """Verifica si el usuario ha confirmado su email."""
+        return self.email_verified
+    
+    def is_academic_email(self):
+        """Detecta si es correo académico."""
+        academic_domains = ['@uni.pe']
+        return any(self.email.endswith(domain) for domain in academic_domains)
+    
+    def get_institution(self):
+        """Retorna la institución del usuario si es académico."""
+        if '@uni.pe' in self.email:
+            return 'UNI'
+        return None

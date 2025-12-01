@@ -1,25 +1,22 @@
-from database.db import db
+# backend/models/lesson.py
+from database.db import Base
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
-class Lesson(db.Model):
+class Lesson(Base):
     __tablename__ = 'lessons'
-
-    # Columnas que coinciden con tu script upload_lessons.py
-    lesson_id = db.Column(db.String, primary_key=True)
     
-    # Establece la relación con la tabla 'courses'
-    course_id = db.Column(db.String, db.ForeignKey('courses.id'), nullable=False)
+    id = Column(String, primary_key=True)  # ID string como "fundamentos_leccion_1"
+    course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)
+    title = Column(String(200), nullable=False)
+    description = Column(String(500))
+    type = Column(String(50))
+    content = Column(JSONB, nullable=False)  # JSONB para todo el contenido interactivo
+    screens = Column(JSONB)  # JSONB para pantallas (tabs, timelines, labs)
+    total_screens = Column(Integer, default=0)
+    duration_minutes = Column(Integer, default=15)
+    xp_reward = Column(Integer, default=50)
+    order_index = Column(Integer, nullable=False)
     
-    title = db.Column(db.String, nullable=False)
-    lesson_order = db.Column(db.Integer)
-    xp_reward = db.Column(db.Integer)
-    duration_minutes = db.Column(db.Integer)
-    lesson_type = db.Column(db.String(50)) # 'text' o 'interactive'
-    
-    # 'screens' se guarda como JSON. Usamos JSONB para PostgreSQL.
-    screens = db.Column(JSONB) 
-    
-    total_screens = db.Column(db.Integer)
-    
-    # 'content' es para lecciones de solo texto (como la Triada CIA)
-    content = db.Column(db.Text)
+    course = relationship("Course", backref="lessons")

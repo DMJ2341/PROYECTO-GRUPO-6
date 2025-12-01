@@ -1,0 +1,186 @@
+{
+  "id": "c4_l4",
+  "title": "Autenticación Segura",
+  "description": "Forensics Fundamentals",
+  "type": "interactive",
+  "duration_minutes": 9,
+  "xp_reward": 20,
+  "order_index": 4,
+  "course_id": 4,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "Forensics Fundamentals",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "fingerprint",
+              "term": "Chain of Custody",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Documented trail de evidence. Who collected, when, where, how stored, who accessed. Legal admissibility requires unbroken chain.",
+              "example": "Disk image: SHA256 hash at collection = verification later. USB write blocker to prevent tampering. Signed logs. Court will reject evidence con broken chain.",
+              "color": "#EF5350"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "save",
+              "term": "Forensic Imaging",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Bit-for-bit copy de storage. Preserva deleted files, slack space, metadata. Never analyze original - work on copy. Tools: FTK Imager, dd, EnCase.",
+              "example": "Target breach: Image POS terminals antes de analysis. Original evidence preserved. DD command con hash verification.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "memory",
+              "term": "Memory Forensics",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Analyze RAM. Volatile data: running processes, network connections, encryption keys, credentials. Gone on shutdown. Capture ASAP.",
+              "example": "Volatility framework. BlackPOS lived in RAM scraping cards. Memory dump would show malicious process. Colonial: Should NOT power off for this reason.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "timeline",
+              "term": "Timeline Analysis",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Reconstruct events chronologically. File system timestamps (MAC: Modified, Accessed, Created), log entries, registry changes. Determine sequence.",
+              "example": "Target: When did breach start? Fazio credentials first use → Malware deployment → First card stolen → Discovery. Timeline = story.",
+              "color": "#66BB6A"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Digital Forensics Process",
+      "duration": 240,
+      "content": {
+        "items": [
+          {
+            "id": "forensics1",
+            "task": "Identification & Preservation",
+            "subtitle": "Secure evidence",
+            "icon": "verified",
+            "unlock_content": {
+              "title": "First Steps",
+              "points": [
+                "Identify: What systems compromised? What data?",
+                "Photograph: Take photos of screen, cables, physical setup",
+                "Document: Notes with timestamps. Who did what when.",
+                "Preserve: Power on? Leave as-is. Capture RAM if still on.",
+                "Chain of custody: Start documentation trail immediately."
+              ],
+              "bonus_fact": "DO NOT power off ransomware-infected system until RAM captured. Encryption keys in memory."
+            }
+          },
+          {
+            "id": "forensics2",
+            "task": "Collection & Acquisition",
+            "subtitle": "Gather evidence",
+            "icon": "cloud_download",
+            "unlock_content": {
+              "title": "Data Collection",
+              "points": [
+                "Order of volatility: RAM → Network connections → Running processes → Disk → Logs → Archives",
+                "Live response: Capture volatile data before shutdown.",
+                "Disk imaging: Bit-for-bit copy with hash verification",
+                "Network capture: PCAPs if ongoing attack",
+                "Cloud: API-based collection, snapshots"
+              ],
+              "bonus_fact": "Mobile devices: Airplane mode immediately. Prevent remote wipe commands."
+            }
+          },
+          {
+            "id": "forensics3",
+            "task": "Analysis & Examination",
+            "subtitle": "Find the story",
+            "icon": "search",
+            "unlock_content": {
+              "title": "Deep Dive",
+              "points": [
+                "File system analysis: Deleted files recovery, hidden data",
+                "Log analysis: Event logs, web logs, database logs",
+                "Malware analysis: Static (strings, metadata) + Dynamic (sandbox)",
+                "Registry forensics (Windows): Persistence, user activity",
+                "Timeline reconstruction: Piece together sequence of events"
+              ],
+              "bonus_fact": "Anti-forensics techniques: Attackers timestomp, clear logs, encrypt. Hunter must adapt."
+            }
+          },
+          {
+            "id": "forensics4",
+            "task": "Reporting",
+            "subtitle": "Communicate findings",
+            "icon": "article",
+            "unlock_content": {
+              "title": "Documentation",
+              "points": [
+                "Executive summary: What happened, impact, recommendations",
+                "Technical details: Tools used, findings, evidence location",
+                "Timeline: Visual representation of attack",
+                "Chain of custody: Append to report",
+                "Legal language: May be used in court or regulatory response"
+              ],
+              "bonus_fact": "Good forensics report = clear, reproducible, legally sound. Technical pero understandable."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación",
+      "duration": 60,
+      "content": {
+        "question": "¿Por qué forensic imaging antes de analysis?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Más rápido analizar image que original",
+            "is_correct": false,
+            "feedback": "Incorrecto. Performance no es la razón principal."
+          },
+          {
+            "id": "b",
+            "text": "Preservar original evidence. Analysis puede alterar data. Chain of custody.",
+            "is_correct": true,
+            "feedback": "CORRECTO! 1) Preserve original: Any analysis alters timestamps, access logs. Original must remain pristine. 2) Chain of custody: Original stored securely. Work on verified copy. 3) Repeatability: Multiple analysts can work on separate copies. 4) Legal: Court requires original untampered. Hash verification proves copy integrity. Analogy: Crime scene photos - don't disturb crime scene, work from photos."
+          },
+          {
+            "id": "c",
+            "text": "Backups son más fáciles de analizar",
+            "is_correct": false,
+            "feedback": "Incorrecto. No es sobre backups sino evidence integrity."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
+  }
+}

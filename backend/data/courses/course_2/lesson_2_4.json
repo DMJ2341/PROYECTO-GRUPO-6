@@ -1,0 +1,128 @@
+{
+  "id": "c2_l4",
+  "title": "VPN y Túneles Seguros",
+  "description": "Caso: NotPetya (2017)",
+  "type": "interactive",
+  "duration_minutes": 8,
+  "xp_reward": 20,
+  "order_index": 4,
+  "course_id": 2,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Caso: NotPetya (2017)",
+      "duration": 200,
+      "content": {
+        "story_title": "NotPetya: $10B Wiper Disguised as Ransomware",
+        "story_intro": "Nation-state attack (Russia) targeting Ukraine que se propagó globally",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "precision_manufacturing",
+            "title": "Vector: Supply Chain",
+            "content": "NotPetya entró vía M.E.Doc (Ukrainian tax software). Attackers comprometieron update server, pushed malicious update. 80% de Ukrainian companies usaban M.E.Doc.",
+            "insight": "Supply chain attack bypassa todas las defensas. Trust en vendor = single point of failure."
+          },
+          {
+            "id": "2",
+            "icon": "bolt",
+            "title": "Propagation: EternalBlue + More",
+            "content": "NotPetya usó EternalBlue (SMB) + Mimikatz (credential theft) + PsExec + WMI. Multi-vector propagation. Lateral movement rapidísimo.",
+            "insight": "Worm moderno usa TODAS las técnicas. No solo un exploit, sino full arsenal."
+          },
+          {
+            "id": "3",
+            "icon": "delete_forever",
+            "title": "Payload: Wiper, Not Ransom",
+            "content": "Disfrazado como ransomware, pero MBR overwrite = unrecoverable. No decryption key real. Goal: destruction, not money. Maersk, Merck, FedEx devastados. $10B+ damages.",
+            "insight": "Geopolitical cyber warfare tiene collateral damage global. NotPetya: aimed at Ukraine, hit world."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "Network Attacks Types",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "person_search",
+              "term": "Man-in-the-Middle (MITM)",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Attacker intercepts communication entre dos parties. Read, modify, inject traffic. Requiere position en network path.",
+              "example": "ARP spoofing en LAN. Rogue WiFi AP. DNS hijacking. Defensa: TLS/HTTPS end-to-end, certificate pinning, DNSSEC.",
+              "color": "#EF5350"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "repeat",
+              "term": "Replay Attack",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Capturar legit network traffic y re-enviar later para gain unauthorized access. Old pero efectivo contra weak protocols.",
+              "example": "Capture authentication packet, replay para login. Defensa: Nonces, timestamps, session tokens, TLS with forward secrecy.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "api",
+              "term": "API Abuse",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Exploit APIs sin proper authentication, rate limiting, input validation. Scraping, credential stuffing, business logic bypass.",
+              "example": "Enumerate users, brute force tokens, bypass payment. Defensa: API gateway, rate limiting, OAuth, input validation.",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación",
+      "duration": 60,
+      "content": {
+        "question": "NotPetya propagation fue efectiva porque:",
+        "options": [
+          {
+            "id": "a",
+            "text": "Usó zero-day vulnerability",
+            "is_correct": false,
+            "feedback": "Incorrecto. NotPetya usó EternalBlue que ya era conocido (MS17-010 patch existía). No era zero-day."
+          },
+          {
+            "id": "b",
+            "text": "Multi-vector: Supply chain + EternalBlue + Mimikatz + lateral movement tools",
+            "is_correct": true,
+            "feedback": "CORRECTO! NotPetya combinó: 1) Supply chain (M.E.Doc trojanized update), 2) EternalBlue (SMB exploit), 3) Mimikatz (credentials), 4) PsExec/WMI (lateral movement). Single defense no era suficiente. Defense in depth necesario."
+          },
+          {
+            "id": "c",
+            "text": "Ransomware es imparable",
+            "is_correct": false,
+            "feedback": "Incorrecto. NotPetya ni siquiera era ransomware real, era wiper. Y sí es prevenible con: patching, segmentation, backups."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "Nation-state attack (Russia) targeting Ukraine que se propagó globally"
+  }
+}

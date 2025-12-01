@@ -1,15 +1,21 @@
 package com.example.cyberlearnapp.network.models
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class BadgeResponse(
-    @SerializedName("success") val success: Boolean,
-    @SerializedName("badges") val badges: List<UserBadge>
+@Serializable
+data class Badge(
+    val id: Int,
+    val name: String,
+    val description: String,
+    val icon: String,
+    @SerialName("xp_required") val xpRequired: Int? = null,
+    @SerialName("earned_at") val earnedAt: String? = null,
+    @SerialName("earned_value") val earnedValue: Int? = null
 )
 
-data class UserBadge(
-    @SerializedName("id") val id: String,
-    @SerializedName("name") val name: String,
-    @SerializedName("icon") val icon: String,
-    @SerializedName("earned_at") val earnedAt: String?
+@Serializable
+data class UserBadgesResponse(
+    val success: Boolean,
+    val badges: List<Badge>
 )

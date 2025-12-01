@@ -1,0 +1,208 @@
+{
+  "id": "c4_l7",
+  "title": "Evaluación Final Curso 4",
+  "description": "Evaluación Final: Build SOC from Scratch",
+  "type": "interactive",
+  "duration_minutes": 14,
+  "xp_reward": 20,
+  "order_index": 7,
+  "course_id": 4,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Evaluación Final: Build SOC from Scratch",
+      "duration": 240,
+      "content": {
+        "story_title": "Scenario: Startup Needs SOC",
+        "story_intro": "500 employees, SaaS product, $50M revenue. Build SOC capability.",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "business",
+            "title": "Company Profile",
+            "content": "Tech startup, 500 employees hybrid work. SaaS platform (AWS). Customer data: PII, payment info. Compliance: SOC 2, ISO 27001. Budget: $1M/year for SOC.",
+            "insight": "Startup constraints: Limited budget, fast growth, cloud-native, need to show compliance."
+          },
+          {
+            "id": "2",
+            "icon": "security",
+            "title": "Your Mission",
+            "content": "Design: 1) SOC team structure. 2) Technology stack (SIEM, EDR, etc). 3) Processes & playbooks. 4) Metrics & KPIs. 5) Budget allocation.",
+            "insight": "Balance: Security, cost, complexity, time-to-value. Can't have SOC in 1 week but need quick wins."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "SOC Design",
+      "duration": 360,
+      "content": {
+        "items": [
+          {
+            "id": "design1",
+            "task": "Team Structure",
+            "subtitle": "Right people",
+            "icon": "groups",
+            "unlock_content": {
+              "title": "Staffing Model",
+              "points": [
+                "Option A: In-house SOC. Hire: 1 SOC Manager, 4 Tier 1 Analysts (shift coverage), 2 Tier 2 IR. Cost: ~$700K/year salaries.",
+                "Option B: Hybrid. 1 internal SOC lead + MDR (Managed Detection & Response) vendor. Cost: ~$400K/year.",
+                "Option C: Full outsource to MSSP. Cost: ~$300K/year. Trade-off: Control vs cost.",
+                "Recommendation for startup: Hybrid (B). 1 internal lead, outsource 24/7 monitoring to MDR.",
+                "Training: Continuous. SANS, certifications (GCIH, GCIA)."
+              ],
+              "bonus_fact": "SOC analyst average salary: $75K (Tier 1), $95K (Tier 2), $130K (Manager). Retention challenge."
+            }
+          },
+          {
+            "id": "design2",
+            "task": "Technology Stack",
+            "subtitle": "Right tools",
+            "icon": "construction",
+            "unlock_content": {
+              "title": "Tool Selection",
+              "points": [
+                "SIEM: Microsoft Sentinel (cloud-native, $150K/year for 500 users)",
+                "EDR: CrowdStrike ($50/endpoint/year = $25K)",
+                "NDR: Corelight (Zeek-based, $50K/year)",
+                "SOAR: Sentinel built-in (included)",
+                "Threat Intel: MISP (free) + Recorded Future ($30K/year)",
+                "Vulnerability Management: Tenable ($40K/year)",
+                "Total tech: ~$300K/year"
+              ],
+              "bonus_fact": "Cloud-native tools (Sentinel) scale better for startups than on-prem SIEM (Splunk)."
+            }
+          },
+          {
+            "id": "design3",
+            "task": "Processes & Playbooks",
+            "subtitle": "Operationalize",
+            "icon": "menu_book",
+            "unlock_content": {
+              "title": "SOC Procedures",
+              "points": [
+                "Incident classification: P1 (critical), P2 (high), P3 (medium), P4 (low)",
+                "Playbooks: Ransomware, phishing, data exfil, insider threat, DDoS",
+                "Escalation: When to escalate Tier 1 → Tier 2 → Management → CEO",
+                "On-call rotation: 24/7 coverage with MDR vendor + internal lead backup",
+                "Retainers: Incident response firm (Mandiant, CrowdStrike) for major incidents"
+              ],
+              "bonus_fact": "Having IR firm on retainer saves days during crisis. Pre-negotiated rates, faster response."
+            }
+          },
+          {
+            "id": "design4",
+            "task": "Metrics & KPIs",
+            "subtitle": "Measure success",
+            "icon": "analytics",
+            "unlock_content": {
+              "title": "SOC Metrics",
+              "points": [
+                "MTTD: Mean Time To Detect. Goal: <1 hour for critical",
+                "MTTR: Mean Time To Respond. Goal: <4 hours for critical",
+                "Alert volume: Track trend. Tuning reduces over time.",
+                "False positive rate: Goal <20%",
+                "Coverage: % of attack surface monitored",
+                "Compliance: SOC 2 audit findings (goal: zero)"
+              ],
+              "bonus_fact": "Metrics drive improvement. Weekly review, monthly trend analysis, quarterly deep dive."
+            }
+          },
+          {
+            "id": "design5",
+            "task": "Budget Allocation",
+            "subtitle": "$1M/year",
+            "icon": "attach_money",
+            "unlock_content": {
+              "title": "Budget Breakdown",
+              "points": [
+                "People: Hybrid model $400K (1 internal + MDR)",
+                "Technology: SIEM, EDR, NDR, etc $300K",
+                "Training: Certifications, conferences $50K",
+                "IR retainer: Incident response firm $100K/year",
+                "Threat intel: Commercial feeds $30K",
+                "Tools/licenses: Misc $50K",
+                "Contingency: 10% buffer $70K",
+                "Total: $1M"
+              ],
+              "bonus_fact": "Rule of thumb: 40% people, 30% tech, 20% services, 10% buffer. Adjust based on needs."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "Implementation Roadmap",
+      "duration": 240,
+      "content": {
+        "items": [
+          {
+            "id": "roadmap1",
+            "task": "Phase 1: Foundation (Months 1-2)",
+            "subtitle": "Quick wins",
+            "icon": "rocket_launch",
+            "unlock_content": {
+              "title": "Initial Setup",
+              "points": [
+                "Deploy EDR on all endpoints (Week 1)",
+                "Enable cloud SIEM (Sentinel) + integrate logs (Week 2-3)",
+                "Hire SOC lead (parallel recruiting)",
+                "Contract MDR vendor for 24/7 monitoring (Week 4)",
+                "Basic playbooks: Phishing, malware (Week 5-6)",
+                "Go-live: Basic detection & response capability (Month 2)"
+              ],
+              "bonus_fact": "Cloud tools = fast deployment. EDR + SIEM operational in weeks, not months."
+            }
+          },
+          {
+            "id": "roadmap2",
+            "task": "Phase 2: Enhancement (Months 3-6)",
+            "subtitle": "Mature capabilities",
+            "icon": "trending_up",
+            "unlock_content": {
+              "title": "Capability Building",
+              "points": [
+                "Deploy NDR for network visibility (Month 3)",
+                "Threat intel integration (Month 3-4)",
+                "Advanced playbooks: Ransomware, insider threat (Month 4-5)",
+                "SOAR automation: Tier 1 triage (Month 5)",
+                "Threat hunting program launch (Month 6)",
+                "SOC 2 audit prep (Month 6)"
+              ],
+              "bonus_fact": "By Month 6: Detection coverage 70%, basic hunting, automated triage. Respectable SOC."
+            }
+          },
+          {
+            "id": "roadmap3",
+            "task": "Phase 3: Optimization (Months 7-12)",
+            "subtitle": "Continuous improvement",
+            "icon": "settings",
+            "unlock_content": {
+              "title": "Maturity Growth",
+              "points": [
+                "Expand SOAR automation (50% alert auto-triage)",
+                "Purple team exercises: Test detection (Quarterly)",
+                "Advanced hunting: Weekly proactive hunts",
+                "Metrics dashboard: Real-time SOC visibility",
+                "Tabletop exercises: Test IR playbooks",
+                "SOC 2 certification achieved (Month 12)"
+              ],
+              "bonus_fact": "Year 1 goal: Functional SOC, SOC 2 certified, demonstrable security improvement. Foundation for growth."
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "500 employees, SaaS product, $50M revenue. Build SOC capability."
+  }
+}

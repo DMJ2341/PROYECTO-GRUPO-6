@@ -1,0 +1,188 @@
+{
+  "id": "c5_l3",
+  "title": "Contención y Erradicación",
+  "description": "Security Metrics & KPIs",
+  "type": "interactive",
+  "duration_minutes": 10,
+  "xp_reward": 20,
+  "order_index": 3,
+  "course_id": 5,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "Security Metrics & KPIs",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "speed",
+              "term": "Mean Time To Patch (MTTP)",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Average time from vulnerability disclosure to patch deployment. Goal: <30 days standard, <7 days critical, <24 hours emergency (CVSS 10.0).",
+              "example": "Equifax MTTP: 60+ days for CVSS 10.0. Industry standard: <7 days. Order of magnitude failure. Track by severity: Critical, High, Medium, Low.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "security",
+              "term": "Security Posture Score",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Aggregate metric. Factors: Vuln count weighted by severity, patch compliance, security control coverage, incident count. Trend over time.",
+              "example": "Score 0-100. Target: >80. Components: Critical vulns (-10 each), patch SLA compliance (+20), security tool coverage (+20). Executive dashboard.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "shield",
+              "term": "Control Effectiveness",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "% of security controls functioning as intended. Annual assessment. Identify control gaps. Drives remediation priorities.",
+              "example": "NIST 800-53: 300 controls for High systems. Assessment: 285 effective (95%), 10 partially (3%), 5 ineffective (2%). Fix the 15 gaps.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "verified_user",
+              "term": "Compliance Rate",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "% compliant with policies/regulations. Examples: Patch policy compliance, training completion, access review completion. Audit readiness.",
+              "example": "Patch policy: 95% systems patched within 30 days. Training: 100% annual security awareness. Equifax: Low compliance = breach.",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Building Security Metrics Program",
+      "duration": 300,
+      "content": {
+        "items": [
+          {
+            "id": "metrics1",
+            "task": "Define Objectives",
+            "subtitle": "What to measure?",
+            "icon": "flag",
+            "unlock_content": {
+              "title": "Metrics Strategy",
+              "points": [
+                "Align with business goals: Reduce risk, ensure compliance, enable business",
+                "SMART metrics: Specific, Measurable, Achievable, Relevant, Time-bound",
+                "Leading indicators: Predictive (vuln count). Lagging: Historical (breach count).",
+                "Balance: Don't just measure easy things. Measure important things.",
+                "Equifax need: MTTP, vulnerability debt, monitoring uptime"
+              ],
+              "bonus_fact": "Bad metric: Total firewall rules. Good metric: % critical assets protected by firewall."
+            }
+          },
+          {
+            "id": "metrics2",
+            "task": "Collect Data",
+            "subtitle": "Automation critical",
+            "icon": "data_usage",
+            "unlock_content": {
+              "title": "Data Collection",
+              "points": [
+                "Automate: Manual collection = stale data. APIs from tools.",
+                "Sources: SIEM, vulnerability scanner, ticketing system, asset inventory",
+                "Frequency: Real-time dashboards, weekly reports, monthly trends",
+                "Data quality: Garbage in, garbage out. Validate accuracy.",
+                "Equifax: Had scanner data pero not aggregated/analyzed"
+              ],
+              "bonus_fact": "SOAR can aggregate metrics from disparate tools into single dashboard."
+            }
+          },
+          {
+            "id": "metrics3",
+            "task": "Analyze & Report",
+            "subtitle": "Insights for action",
+            "icon": "analytics",
+            "unlock_content": {
+              "title": "Analysis & Reporting",
+              "points": [
+                "Executive dashboard: High-level trends, red/yellow/green status",
+                "Technical reports: Detailed findings for security team",
+                "Trend analysis: Month-over-month, year-over-year",
+                "Benchmarking: Compare to industry peers, best practices",
+                "Actionable: Every metric should drive decision",
+                "Equifax: Metrics existed pero no accountability for poor performance"
+              ],
+              "bonus_fact": "Good metrics answer: Are we getting better or worse? Where to invest?"
+            }
+          },
+          {
+            "id": "metrics4",
+            "task": "Continuous Improvement",
+            "subtitle": "Iterate",
+            "icon": "trending_up",
+            "unlock_content": {
+              "title": "Metrics Maturity",
+              "points": [
+                "Review quarterly: Are metrics still relevant?",
+                "Add new metrics as program matures",
+                "Retire metrics that don't drive action",
+                "Adjust targets: Initial target 70%, mature target 95%",
+                "Culture: Data-driven security decisions",
+                "Equifax lesson: Metrics without consequences = useless"
+              ],
+              "bonus_fact": "Mature orgs: Security metrics integrated into executive scorecards. C-suite accountability."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación - Metrics",
+      "duration": 60,
+      "content": {
+        "question": "¿Por qué security metrics importantes?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Solo para compliance checkbox",
+            "is_correct": false,
+            "feedback": "Incorrecto. Compliance es benefit pero not primary purpose."
+          },
+          {
+            "id": "b",
+            "text": "Drive accountability, measure improvement, justify budget, identify gaps",
+            "is_correct": true,
+            "feedback": "CORRECTO! Metrics purposes: 1) Accountability: MTTP metric = patch team responsible. 2) Improvement: Trending shows if getting better/worse. 3) Budget justification: 'Need $X to reduce MTTP from 30→7 days'. 4) Gap identification: Control effectiveness 60% = need investment. 5) Executive communication: Translate security to business language. Equifax: Had metrics pero no accountability. MTTP 60+ days pero no consequences. Metrics without action = theater."
+          },
+          {
+            "id": "c",
+            "text": "Para hacer security team look busy",
+            "is_correct": false,
+            "feedback": "Incorrecto. Vanity metrics (ex: total scans run) don't matter. Outcome metrics (ex: vulns remediated) matter."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
+  }
+}

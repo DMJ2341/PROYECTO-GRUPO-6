@@ -1,152 +1,213 @@
 package com.example.cyberlearnapp.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.cyberlearnapp.ui.theme.*
-import com.example.cyberlearnapp.ui.components.ProgressCard
-import com.example.cyberlearnapp.ui.components.CourseCard
-import com.example.cyberlearnapp.viewmodel.UserViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavController
+import com.example.cyberlearnapp.ui.components.DailyTermCard
+import com.example.cyberlearnapp.ui.components.XpLevelBar
+import com.example.cyberlearnapp.viewmodel.DashboardViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    userViewModel: UserViewModel,
-    onCourseClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    navController: NavController,
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
-    val userProgress by userViewModel.userProgress.collectAsState()
-    val isLoading by userViewModel.isLoading.collectAsState()
-    val errorMessage by userViewModel.errorMessage.collectAsState()
+    val state by viewModel.state.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    // ✅ Cargar datos cuando se abre la pantalla
-    LaunchedEffect(Unit) {
-        println("🔹 Dashboard - Cargando progreso del usuario...")
-        userViewModel.loadUserProgress()
+    // ✅ REFRESH AUTOMÁTICO: Detectar ON_RESUME
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshDashboard()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
-    Box(
-        modifier = modifier
+    if (state.isLoading) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    Column(
+        modifier = Modifier
             .fillMaxSize()
-            .background(PrimaryDark)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        when {
-            isLoading && userProgress == null -> {
-                // ✅ SOLUCIÓN: Solo mostrar "Cargando..." la PRIMERA vez
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = AccentCyan)
-                    Text(
-                        text = "Cargando...",
-                        color = TextWhite,
-                        modifier = Modifier.padding(top = 80.dp)
-                    )
-                }
-            }
+        // ✅ HEADER CON XP
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp)
+            ) {
+                Text(
+                    text = "¡Hola, Hacker! 👋",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
 
-            errorMessage != null -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "❌ Error",
-                            color = TextWhite,
-                            style = MaterialTheme.typography.headlineMedium
+                Spacer(Modifier.height(4.dp))
+
+                Text(
+                    text = "Hermitaño del Día",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(Modifier.height(20.dp))
+
+                // XP Bar
+                XpLevelBar(
+                    currentXp = state.userXp,
+                    level = state.userLevel
+                )
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        // ✅ TÉRMINO DEL DÍA
+        state.dailyTerm?.let { dailyTermWrapper ->
+            Text(
+                text = "📚 Término del Día",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            DailyTermCard(term = dailyTermWrapper.term)
+
+            Spacer(Modifier.height(24.dp))
+        }
+
+        // ✅ SIGUIENTE PASO
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp)
+            ) {
+                Text(
+                    text = "🎯 Siguiente Paso",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                if (!state.hasPreferenceResult) {
+                    Button(
+                        onClick = { navController.navigate("preference_test") },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.School,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
                         )
+                        Spacer(Modifier.width(12.dp))
                         Text(
-                            text = errorMessage ?: "Error desconocido",
-                            color = TextGray,
-                            modifier = Modifier.padding(top = 8.dp)
+                            "Descubre tu Rol (Test Vocacional)",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
                         )
-                        Button(
-                            onClick = { userViewModel.loadUserProgress() },
-                            modifier = Modifier.padding(top = 16.dp)
-                        ) {
-                            Text("Reintentar")
-                        }
                     }
-                }
-            }
+                } else if (state.completedCourses >= 5) {
+                    Button(
+                        onClick = { navController.navigate("final_exam/intro") },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.EmojiEvents,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            "Examen Final Integrador",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                } else {
+                    OutlinedButton(
+                        onClick = { navController.navigate("preference_result") },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            "Ver mi Perfil Profesional",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
 
-            userProgress != null -> {
-                // ✅ CONTENIDO PRINCIPAL - Ya tenemos datos
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
-                ) {
+                    Spacer(Modifier.height(12.dp))
+
+                    LinearProgressIndicator(
+                        progress = { state.completedCourses / 5f },
+                        modifier = Modifier.fillMaxWidth().height(8.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
                     Text(
-                        text = "CyberLearn",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = TextWhite,
-                        fontWeight = FontWeight.Bold
+                        text = "${state.completedCourses}/5 cursos completados",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-
-                    Text(
-                        text = "Aprende. Hackea. Protege.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = AccentCyan,
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
-
-                    ProgressCard(
-                        progress = userProgress!!,
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
-
-                    Text(
-                        text = "Continúa aprendiendo",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = TextWhite,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
-                    CourseCard(
-                        emoji = "🚀",
-                        title = "Fundamentos de Ciberseguridad",
-                        description = "El curso obligatorio para iniciar",
-                        level = "Principiante",
-                        xp = 150,
-                        progress = 0,
-                        onCourseClick = { onCourseClick("Fundamentos de Ciberseguridad") }
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    CourseCard(
-                        emoji = "🎣",
-                        title = "Phishing e Ingeniería Social",
-                        description = "Detecta correos falsos",
-                        level = "Principiante",
-                        xp = 35,
-                        progress = 0,
-                        onCourseClick = { onCourseClick("Phishing e Ingeniería Social") }
-                    )
-
-                    Spacer(modifier = Modifier.height(80.dp))
-                }
-            }
-
-            else -> {
-                // Estado inicial - mostrar algo mientras carga (sin texto)
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = AccentCyan)
                 }
             }
         }
+
+        Spacer(Modifier.height(32.dp))
     }
 }

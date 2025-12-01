@@ -1,61 +1,52 @@
-from models.user import User
-from models.activity import UserActivity
-from database.db import db
-from datetime import datetime, timedelta
+# backend/services/activity_service.py - CORREGIDO PARA EVITAR CONFLICTOS DE SESIÓN
+from database.db import get_session
+from models.activity import Activity
+from datetime import datetime
 
 class ActivityService:
-    @staticmethod
-    def record_activity(user_id, activity_type, lesson_id=None, difficulty=1):
-        # Calcular XP usando fórmula: (Dificultad * 10) + (Racha * 2)
-        user = User.query.get(user_id)
-        streak = ActivityService._calculate_streak(user)
-        xp_earned = (difficulty * 10) + (streak * 2)
+    def create_activity(self, user_id, activity_type, points, lesson_id=None, description=None, session=None):
+        """
+        Crea una nueva actividad.
         
-        # Crear actividad
-        activity = UserActivity(
-            user_id=user_id,
-            activity_type=activity_type,
-            xp_earned=xp_earned,
-            lesson_id=lesson_id,
-            difficulty=difficulty
-        )
+        Args:
+            session: Si se provee, usa esta sesión existente (NO hace commit).
+                    Si es None, crea su propia sesión y hace commit.
+        """
+        own_session = session is None
+        if own_session:
+            session = get_session()
         
-        # Actualizar usuario
-        user.xp_total += xp_earned
-        user.level = ActivityService._calculate_level(user.xp_total)
-        user.streak = streak
-        user.last_activity = datetime.utcnow()
-        
-        db.session.add(activity)
-        db.session.commit()
-        
-        return {
-            'xp_earned': xp_earned,
-            'new_total_xp': user.xp_total,
-            'new_level': user.level,
-            'streak': streak
-        }
-    
-    @staticmethod
-    def _calculate_streak(user):
-        if not user.last_activity:
-            return 1
-        
-        today = datetime.utcnow().date()
-        last_activity_date = user.last_activity.date()
-        
-        if last_activity_date == today:
-            return user.streak
-        elif (today - last_activity_date).days == 1:
-            return user.streak + 1
-        else:
-            return 1
-    
-    @staticmethod
-    def _calculate_level(xp_total):
-        level = 1
-        xp_required = 0
-        while xp_total >= xp_required:
-            level += 1
-            xp_required += level * 100
-        return level - 1
+        try:
+            new_activity = Activity(
+                user_id=user_id,
+                activity_type=activity_type,
+                points=points,
+                lesson_id=lesson_id,
+                description=description
+            )
+            session.add(new_activity)
+            
+            # Solo hacer commit si es nuestra propia sesión
+            if own_session:
+                session.commit()
+                return new_activity.id
+            else:
+                # Si usamos sesión externa, solo agregamos el objeto
+                # El commit lo hará quien nos llamó
+                session.flush()  # Para obtener el ID
+                return new_activity.id
+        except Exception as e:
+            if own_session:
+                session.rollback()
+            raise e
+        finally:
+            if own_session:
+                session.close()
+
+    def get_total_xp(self, user_id):
+        session = get_session()
+        try:
+            activities = session.query(Activity).filter_by(user_id=user_id).all()
+            return sum(a.points for a in activities)
+        finally:
+            session.close()

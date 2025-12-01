@@ -1,0 +1,178 @@
+{
+  "id": "c5_l6",
+  "title": "Evaluación Final Curso 5",
+  "description": "Evaluación Final: Risk Program Design",
+  "type": "interactive",
+  "duration_minutes": 10,
+  "xp_reward": 20,
+  "order_index": 6,
+  "course_id": 5,
+  "total_screens": 2,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Evaluación Final: Risk Program Design",
+      "duration": 240,
+      "content": {
+        "story_title": "Scenario: Design Risk Management Program",
+        "story_intro": "1000-employee company, healthcare sector. No formal risk program. Build from scratch.",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "local_hospital",
+            "title": "Company Profile",
+            "content": "Healthcare tech company. 1000 employees. Revenue $200M. Products: EHR software (cloud SaaS), patient portal. Data: 500K patient PHI. Compliance: HIPAA mandatory.",
+            "insight": "Healthcare = high risk. PHI breach = $10M+ cost. HIPAA fines. Reputation damage. Risk program is critical."
+          },
+          {
+            "id": "2",
+            "icon": "shield",
+            "title": "Your Mission",
+            "content": "Design: 1) Risk governance structure. 2) Risk assessment process. 3) Vulnerability management. 4) Third-party risk program. 5) BCP/DR. 6) Metrics & reporting. Budget: $2M/year.",
+            "insight": "Comprehensive risk program touches: governance, technical controls, processes, people, vendors, resilience."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Risk Program Design",
+      "duration": 360,
+      "content": {
+        "items": [
+          {
+            "id": "prog1",
+            "task": "Governance Structure",
+            "subtitle": "Who's accountable?",
+            "icon": "account_tree",
+            "unlock_content": {
+              "title": "Org Structure",
+              "points": [
+                "CISO: Reports to CEO or CRO. NOT to CIO (conflict of interest).",
+                "GRC team: 1 Director, 2 risk analysts, 1 compliance analyst ($600K/year).",
+                "Risk committee: Quarterly. CISO, CFO, CTO, General Counsel, CEO.",
+                "Board reporting: Quarterly risk report to Board. Cyber risk = board-level.",
+                "Policies: Risk management policy, acceptable use, incident response."
+              ],
+              "bonus_fact": "CISO reporting to CIO = problem. Budget/priority conflicts. CISO should be peer to CIO."
+            }
+          },
+          {
+            "id": "prog2",
+            "task": "Risk Assessment",
+            "subtitle": "Understand landscape",
+            "icon": "assessment",
+            "unlock_content": {
+              "title": "Assessment Cadence",
+              "points": [
+                "Annual: Comprehensive risk assessment. All assets, threats, vulns.",
+                "Quarterly: Risk register review. Update statuses, new risks.",
+                "Ad-hoc: Trigger events (new system, M&A, major threat).",
+                "Methodology: NIST RMF. Categorize (High for PHI), Select controls, Assess.",
+                "Tools: GRC platform (ServiceNow GRC, RSA Archer). $150K/year."
+              ],
+              "bonus_fact": "Risk assessment WITHOUT remediation = waste. Must have accountability for risk treatment."
+            }
+          },
+          {
+            "id": "prog3",
+            "task": "Vulnerability Management",
+            "subtitle": "Close technical gaps",
+            "icon": "bug_report",
+            "unlock_content": {
+              "title": "VM Program",
+              "points": [
+                "Scanning: Tenable, Qualys. Weekly authenticated scans. $100K/year.",
+                "Prioritization: CVSS + exploitability + asset criticality.",
+                "SLA: Critical 7 days, High 30 days, Medium 90 days.",
+                "Exception process: Must document, approve, compensating controls.",
+                "Metrics: MTTP, vulnerability debt, SLA compliance.",
+                "Equifax lesson: VM program only works if enforced."
+              ],
+              "bonus_fact": "MTTP is THE metric. Target: Critical <7 days. Track monthly. Executive visibility."
+            }
+          },
+          {
+            "id": "prog4",
+            "task": "Third-Party Risk",
+            "subtitle": "Vendor security",
+            "icon": "handshake",
+            "unlock_content": {
+              "title": "TPRM Program",
+              "points": [
+                "Inventory: All vendors. Classify by criticality (access to PHI = critical).",
+                "Assessment: SIG questionnaire, SOC 2 review, security ratings.",
+                "Contracts: Security clauses (breach notification, audit rights, liability).",
+                "Monitoring: Annual re-assessment, continuous ratings (BitSight $50K/year).",
+                "Tools: OneTrust, ProcessUnity for vendor tracking. $100K/year.",
+                "Target lesson: Small vendor = big risk. Assess ALL."
+              ],
+              "bonus_fact": "Critical vendors: Annual on-site audit or third-party assessment. Don't just trust questionnaire."
+            }
+          },
+          {
+            "id": "prog5",
+            "task": "BCP/DR",
+            "subtitle": "Resilience",
+            "icon": "restore",
+            "unlock_content": {
+              "title": "Continuity Planning",
+              "points": [
+                "BIA: Define RTOs/RPOs. EHR system = Tier 1 (RTO 4 hours).",
+                "Backups: 3-2-1 rule. Veeam backup solution $200K/year.",
+                "DR site: AWS multi-region for DR. Estimated $300K/year.",
+                "Testing: Annual full DR test. Quarterly tabletop.",
+                "Insurance: Cyber liability $10M coverage. $150K/year premium.",
+                "Colonial lesson: DR plan must be tested. Backups must work."
+              ],
+              "bonus_fact": "Cyber insurance: Requires MFA, EDR, backups, IR plan. Ensures baseline security."
+            }
+          },
+          {
+            "id": "prog6",
+            "task": "Metrics & Reporting",
+            "subtitle": "Measure & improve",
+            "icon": "analytics",
+            "unlock_content": {
+              "title": "Metrics Dashboard",
+              "points": [
+                "Key metrics: MTTP, vulnerability debt, control effectiveness, incident count.",
+                "Executive dashboard: Real-time. Red/yellow/green status.",
+                "Quarterly board report: Risk trends, top risks, mitigation status.",
+                "Annual attestation: CEO/CISO sign attestation of risk program effectiveness.",
+                "Continuous improvement: Review metrics quarterly, adjust targets."
+              ],
+              "bonus_fact": "Board wants: Are we secure? What are top risks? What's being done? Keep simple."
+            }
+          },
+          {
+            "id": "prog7",
+            "task": "Budget Summary",
+            "subtitle": "$2M allocation",
+            "icon": "attach_money",
+            "unlock_content": {
+              "title": "Cost Breakdown",
+              "points": [
+                "People: GRC team $600K",
+                "Tools: GRC platform $150K, Scanner $100K, Vendor mgmt $100K, BitSight $50K",
+                "DR: AWS multi-region $300K, Veeam $200K",
+                "Cyber insurance: $150K",
+                "Training: Security awareness $100K, GRC certs $50K",
+                "Consulting: Annual risk assessment $150K",
+                "Misc/contingency: $200K",
+                "Total: $2M"
+              ],
+              "bonus_fact": "30% people, 25% tools, 25% DR/insurance, 20% services/training. Typical distribution."
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "1000-employee company, healthcare sector. No formal risk program. Build from scratch."
+  }
+}

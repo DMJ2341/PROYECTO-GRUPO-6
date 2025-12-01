@@ -1,13 +1,23 @@
-from database.db import db
+# backend/models/activity.py
+from database.db import Base
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from datetime import datetime
+from enum import Enum # <-- NUEVA IMPORTACIÓN NECESARIA
 
-class UserActivity(db.Model):
-    __tablename__ = 'user_activity'  # Ya está bien
-    
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # ← Cambiar referencia
-    activity_type = db.Column(db.String(50), nullable=False)
-    xp_earned = db.Column(db.Integer, nullable=False)
-    lesson_id = db.Column(db.String(100))
-    difficulty = db.Column(db.Integer, default=1)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+# ✅ AÑADIDO: Enum para tipos de actividad
+class ActivityType(Enum):
+    DAILY_TERM = 'DAILY_TERM'
+    LESSON_COMPLETED = 'LESSON_COMPLETED'
+    EXAM_PASSED = 'EXAM_PASSED'
+    BADGE_EARNED = 'BADGE_EARNED'
+    # Añade otros tipos según tu lógica
+
+class Activity(Base):
+    __tablename__ = 'activities'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    activity_type = Column(String(50), nullable=False) # Usa el valor del Enum aquí
+    points = Column(Integer, default=0)
+    lesson_id = Column(String)  # String ID
+    description = Column(String(200))
+    created_at = Column(DateTime, default=datetime.utcnow)

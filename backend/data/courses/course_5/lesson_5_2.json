@@ -1,0 +1,247 @@
+{
+  "id": "c5_l2",
+  "title": "Detección y Análisis",
+  "description": "Caso: NIST Risk Management Framework (RMF)",
+  "type": "interactive",
+  "duration_minutes": 13,
+  "xp_reward": 20,
+  "order_index": 2,
+  "course_id": 5,
+  "total_screens": 4,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Caso: NIST Risk Management Framework (RMF)",
+      "duration": 200,
+      "content": {
+        "story_title": "RMF: Federal Standard para Risk Management",
+        "story_intro": "NIST SP 800-37. Mandatory para federal agencies. Adoptado por private sector.",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "category",
+            "title": "Step 1: Categorize",
+            "content": "Categorize information system y data según impact (Low, Moderate, High). FIPS 199 criteria: Confidentiality, Integrity, Availability. Determines baseline controls.",
+            "insight": "Healthcare data = High. Email system = Moderate. Public website = Low. Categorization drives everything."
+          },
+          {
+            "id": "2",
+            "icon": "checklist",
+            "title": "Step 2: Select",
+            "content": "Select security controls from NIST SP 800-53. Baselines: Low (100+ controls), Moderate (200+), High (300+). Tailor to org needs. Cost-benefit analysis.",
+            "insight": "Don't implement all controls blindly. Tailor to threats, resources, mission. Document rationale."
+          },
+          {
+            "id": "3",
+            "icon": "build",
+            "title": "Step 3: Implement",
+            "content": "Implement selected controls. Document HOW implemented. Configuration, procedures, training. Evidence collection for assessment.",
+            "insight": "Implementation ≠ checking box. Must be effective, documented, maintainable. Equifax: Had controls on paper pero no enforced."
+          },
+          {
+            "id": "4",
+            "icon": "fact_check",
+            "title": "Step 4: Assess",
+            "content": "Independent assessor evaluates control effectiveness. Testing: Interviews, documentation review, technical testing. Identify deficiencies. Risk assessment report.",
+            "insight": "Independent assessment critical. Self-assessment = bias. Third party finds gaps you miss."
+          },
+          {
+            "id": "5",
+            "icon": "verified",
+            "title": "Step 5: Authorize",
+            "content": "Authorizing Official (AO) reviews assessment. Accept residual risk? Sign Authority to Operate (ATO). Valid 3 years typically. Conditions may apply.",
+            "insight": "AO accountable for risk. Can reject if too high. ATO = permission to operate with known risks."
+          },
+          {
+            "id": "6",
+            "icon": "autorenew",
+            "title": "Step 6: Monitor",
+            "content": "Continuous monitoring. Vulnerability scans, log review, config checks. Annual assessment. Report changes. Maintain ATO.",
+            "insight": "Security is NOT one-time. Continuous monitoring = maintain ATO. Equifax: Monitoring failed (expired cert)."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "NIST SP 800-53 Control Families",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "security",
+              "term": "AC - Access Control",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Limit system access to authorized users. Least privilege, separation of duties, account management, access enforcement, remote access controls.",
+              "example": "AC-2: Account Management. AC-3: Access Enforcement. AC-6: Least Privilege. Equifax: Over-privileged accounts may have contributed.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "update",
+              "term": "SI - System & Information Integrity",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Detect, report, correct flaws. Malware protection, monitoring, vulnerability management. SI-2: Flaw Remediation (patching).",
+              "example": "SI-2: Equifax FAILED. Patch available, not applied. SI-4: System Monitoring. Expired cert = monitoring failure.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "domain_verification",
+              "term": "RA - Risk Assessment",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Periodic risk assessment. Vulnerability scanning, threat modeling, impact analysis. RA-3: Risk Assessment, RA-5: Vulnerability Monitoring.",
+              "example": "RA-5: Vulnerability scans. Equifax had scans pero no remediation. Assessment without action = useless.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "play_arrow",
+              "term": "IR - Incident Response",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Incident handling capability. Preparation, detection, analysis, containment, eradication, recovery. IR-4: Incident Handling.",
+              "example": "IR-6: Incident Reporting. Equifax delayed public disclosure = violation de timely reporting best practice.",
+              "color": "#EF5350"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "Risk Assessment Process",
+      "duration": 300,
+      "content": {
+        "items": [
+          {
+            "id": "ra1",
+            "task": "Identify Assets & Threats",
+            "subtitle": "What to protect?",
+            "icon": "inventory",
+            "unlock_content": {
+              "title": "Asset & Threat Identification",
+              "points": [
+                "Assets: Hardware, software, data, people, facilities",
+                "Criticality: Mission-critical, important, routine",
+                "Threats: Natural (flood), human (hacker), environmental (fire)",
+                "Threat actors: Nation-state, criminals, insiders, hacktivists",
+                "Equifax: Crown jewels = 147M records. Threat = financially motivated attackers"
+              ],
+              "bonus_fact": "Asset valuation: Replacement cost + data value + business impact. Crown jewels deserve most protection."
+            }
+          },
+          {
+            "id": "ra2",
+            "task": "Identify Vulnerabilities",
+            "subtitle": "Where are gaps?",
+            "icon": "bug_report",
+            "unlock_content": {
+              "title": "Vulnerability Assessment",
+              "points": [
+                "Technical: Unpatched software, misconfigurations, weak passwords",
+                "Physical: Unlocked doors, lack of cameras",
+                "Administrative: Poor policies, lack of training",
+                "Discovery: Vulnerability scans, penetration testing, audits",
+                "Equifax vulnerabilities: Unpatched Struts, no segmentation, monitoring gaps"
+              ],
+              "bonus_fact": "Vulnerability ≠ risk. Risk = Vulnerability × Threat × Impact. All three factors matter."
+            }
+          },
+          {
+            "id": "ra3",
+            "task": "Analyze Risk",
+            "subtitle": "Likelihood × Impact",
+            "icon": "calculate",
+            "unlock_content": {
+              "title": "Risk Analysis",
+              "points": [
+                "Qualitative: High/Medium/Low. Faster, subjective.",
+                "Quantitative: ALE (Annual Loss Expectancy) = SLE × ARO. Slower, objective.",
+                "Risk matrix: Plot likelihood vs impact",
+                "Inherent risk: Before controls. Residual risk: After controls.",
+                "Equifax: Inherent risk HIGH (CVSS 10.0). Residual risk STILL HIGH (no patch)."
+              ],
+              "bonus_fact": "Quantitative example: SLE=$10M (breach cost), ARO=0.2 (20% chance/year) = ALE=$2M. Worth spending $500K on controls?"
+            }
+          },
+          {
+            "id": "ra4",
+            "task": "Document & Report",
+            "subtitle": "Communicate findings",
+            "icon": "article",
+            "unlock_content": {
+              "title": "Risk Register",
+              "points": [
+                "Risk register: Centralized log of all identified risks",
+                "For each risk: Description, likelihood, impact, mitigation, owner, status",
+                "Heat map: Visual representation for executives",
+                "Update frequency: Quarterly or when significant changes",
+                "Escalation: Board-level risks reported to board",
+                "Equifax: Risk register should have flagged Struts as critical"
+              ],
+              "bonus_fact": "Good risk register is LIVING document. Not create once and forget. Regular reviews mandatory."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "quiz",
+      "title": "Evaluación - RMF",
+      "duration": 60,
+      "content": {
+        "question": "NIST RMF Step que Equifax falló primarily?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Categorize (Step 1)",
+            "is_correct": false,
+            "feedback": "Incorrecto. Equifax likely categorizó data correctamente (High). Problem no fue categorization."
+          },
+          {
+            "id": "b",
+            "text": "Implement & Monitor (Steps 3 & 6): Controls documented pero no enforced/monitored",
+            "is_correct": true,
+            "feedback": "CORRECTO! Step 3 (Implement): SI-2 (Flaw Remediation) existía on paper pero patch process BROKE. Implementation inefectiva. Step 6 (Monitor): Continuous monitoring falló. SSL cert expiró = couldn't monitor traffic. Vulnerability scans no triggered action. Monitor controls (SI-4) failed. Lesson: Having control ≠ control working. Must verify effectiveness continuously. Authorization (Step 5) should have been revoked when monitoring failed."
+          },
+          {
+            "id": "c",
+            "text": "Select (Step 2)",
+            "is_correct": false,
+            "feedback": "Incorrecto. Equifax likely selected appropriate controls (SI-2, SI-4). Selection wasn't problem - execution was."
+          },
+          {
+            "id": "d",
+            "text": "Assess (Step 4)",
+            "is_correct": false,
+            "feedback": "Partially. Independent assessment might have caught gaps pero primary failure: Implementation & Monitoring."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "NIST SP 800-37. Mandatory para federal agencies. Adoptado por private sector."
+  }
+}

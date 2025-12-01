@@ -1,106 +1,74 @@
 package com.example.cyberlearnapp.viewmodel
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.models.CompleteActivityRequest
-import com.example.cyberlearnapp.repository.UserRepository // <-- 1. IMPORTAR UserRepository
+import com.example.cyberlearnapp.network.models.LessonCompletionData
+import com.example.cyberlearnapp.network.models.LessonResponse
+import com.example.cyberlearnapp.repository.LessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first // <-- 2. IMPORTAR flow.first
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class LessonUiState(
-    val lessonTitle: String = "",
-    val lessonContent: String = "",
-    val isCompleting: Boolean = false,
-    val xpEarned: Int = 0,
-    val isLoading: Boolean = false, // <-- 3. Añadir estado de carga
-    val errorMessage: String? = null
-)
-
 @HiltViewModel
 class LessonViewModel @Inject constructor(
-    private val apiService: ApiService,
-    private val userRepository: UserRepository // <-- 4. Inyectar UserRepository
+    private val repository: LessonRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(LessonUiState())
-    val uiState: StateFlow<LessonUiState> = _uiState.asStateFlow()
+    private val _lesson = MutableStateFlow<LessonResponse?>(null)
+    val lesson: StateFlow<LessonResponse?> = _lesson
 
-    fun loadLessonContent(lessonId: String) {
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error
+
+    private val _completionResult = MutableStateFlow<LessonCompletionData?>(null)
+    val completionResult: StateFlow<LessonCompletionData?> = _completionResult
+
+    fun loadLesson(lessonId: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            _isLoading.value = true
+            _error.value = null
             try {
-                // 5. OBTENER EL TOKEN REAL
-                val token = userRepository.getToken().first()
-                if (token == null) {
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Usuario no autenticado")
-                    return@launch
-                }
-
-                // 6. LLAMAR A LA API REAL
-                val response = apiService.getLessonContent(lessonId, "Bearer $token")
-
-                if (response.isSuccessful && response.body() != null) {
-                    val lesson = response.body()!!
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        lessonTitle = lesson.title,
-                        lessonContent = lesson.content
-                    )
-                } else {
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Error al cargar contenido")
-                }
-
+                val result = repository.getLesson(lessonId)
+                _lesson.value = result
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Error de red: ${e.message}")
+                _error.value = e.message ?: "Error desconocido"
+                _lesson.value = null
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
-    fun completeLesson(lessonId: String, difficulty: Int = 1, onCompleted: (Int) -> Unit) {
+    fun completeLesson(lessonId: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isCompleting = true, errorMessage = null)
-
-            // 7. OBTENER EL TOKEN REAL
-            val token = userRepository.getToken().first()
-            if (token == null) {
-                _uiState.value = _uiState.value.copy(isCompleting = false, errorMessage = "Usuario no autenticado")
-                return@launch
-            }
-
             try {
-                val response = apiService.completeActivity(
-                    token = "Bearer $token", // <-- 8. USAR EL TOKEN REAL
-                    request = CompleteActivityRequest(
-                        type = "lesson_completed",
-                        lessonId = lessonId,
-                        difficulty = difficulty
-                    )
-                )
+                Log.d("LessonViewModel", "🎯 Iniciando completeLesson para: $lessonId")
 
-                if (response.isSuccessful) {
-                    val xpEarned = response.body()?.activityResult?.xpEarned ?: 0
-                    _uiState.value = _uiState.value.copy(xpEarned = xpEarned, isCompleting = false)
-                    onCompleted(xpEarned)
+                val result = repository.markLessonComplete(lessonId)
+
+                Log.d("LessonViewModel", "📦 Resultado recibido: $result")
+
+                if (result != null) {
+                    Log.d("LessonViewModel", "✅ XP ganado: ${result.xp_earned}")
+                    Log.d("LessonViewModel", "✅ Lección completada: ${result.lesson_completed}")
+                    _completionResult.value = result
                 } else {
-                    _uiState.value = _uiState.value.copy(
-                        errorMessage = "Error al completar lección: ${response.code()}",
-                        isCompleting = false
-                    )
+                    Log.e("LessonViewModel", "❌ Resultado es null")
                 }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = "Error de conexión: ${e.message}",
-                    isCompleting = false
-                )
+                Log.e("LessonViewModel", "❌ Error completando lección: ${e.message}", e)
+                e.printStackTrace()
             }
         }
     }
 
-    // 9. Eliminar la función private getToken() que estaba hardcodeada
+    fun resetCompletionResult() {
+        _completionResult.value = null
+    }
 }

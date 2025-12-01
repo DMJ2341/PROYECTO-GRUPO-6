@@ -1,0 +1,17 @@
+[Unit]
+Description=CyberLearn Backend API
+After=network.target postgresql.service
+
+[Service]
+User=is-maria.gavino.p
+Group=is-maria.gavino.p
+WorkingDirectory=/home/is-maria.gavino.p/PROYECTO-GRUPO-6/backend
+Environment="PATH=/home/is-maria.gavino.p/PROYECTO-GRUPO-6/venv/bin"
+ExecStart=/home/is-maria.gavino.p/PROYECTO-GRUPO-6/venv/bin/gunicorn --config gunicorn_config.py app:app
+
+# Reiniciar automáticamente si falla
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
