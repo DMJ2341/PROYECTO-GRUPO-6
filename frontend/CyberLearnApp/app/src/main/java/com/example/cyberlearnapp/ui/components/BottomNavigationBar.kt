@@ -14,30 +14,45 @@ fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         Triple("Inicio", Screens.Dashboard.route, Icons.Default.Home),
         Triple("Cursos", Screens.Courses.route, Icons.Default.School),
-        // Triple("Logros", Screens.Achievements.route, Icons.Default.EmojiEvents), // Eliminado
-        Triple("Glosario", Screens.Glossary.route, Icons.Default.MenuBook), // ✅ Glosario con ícono de libro
+
+        // ✅ CORRECCIÓN AQUÍ: Usamos Screens.PreferenceTest.route (que vale "preference_test")
+        // NO uses el string "test" porque esa ruta no existe en tu NavGraph.
+        Triple("Test", Screens.PreferenceTest.route, Icons.Default.Assignment), // Usa Assignment si Psychology falla
+
+        Triple("Glosario", Screens.Glossary.route, Icons.Default.MenuBook),
         Triple("Perfil", Screens.Profile.route, Icons.Default.Person)
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    NavigationBar {
-        items.forEach { (label, route, icon) ->
-            NavigationBarItem(
-                icon = { Icon(icon, contentDescription = label) },
-                label = { Text(label) },
-                selected = currentRoute == route,
-                onClick = {
-                    if (currentRoute != route) {
-                        navController.navigate(route) {
-                            popUpTo(Screens.Dashboard.route) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
+    // Opcional: Mostrar barra también si estamos en resultados del test
+    val showBottomBar = items.any { it.second == currentRoute } || currentRoute == "test_result"
+
+    if (showBottomBar) {
+        NavigationBar {
+            items.forEach { (label, route, icon) ->
+                // Lógica para resaltar el botón si estamos en el test o en sus resultados
+                val isSelected = currentRoute == route ||
+                        (route == Screens.PreferenceTest.route && currentRoute == "test_result")
+
+                NavigationBarItem(
+                    icon = { Icon(icon, contentDescription = label) },
+                    label = { Text(label) },
+                    selected = isSelected,
+                    onClick = {
+                        if (currentRoute != route) {
+                            navController.navigate(route) {
+                                popUpTo(Screens.Dashboard.route) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

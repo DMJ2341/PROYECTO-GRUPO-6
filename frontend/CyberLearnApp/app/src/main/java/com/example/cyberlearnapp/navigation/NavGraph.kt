@@ -3,15 +3,18 @@ package com.example.cyberlearnapp.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
 import com.example.cyberlearnapp.viewmodel.*
+import com.example.cyberlearnapp.utils.AuthManager
 
 @Composable
 fun NavGraph(
@@ -69,10 +72,110 @@ fun NavGraph(
             CoursesScreen(navController = navController, viewModel = courseViewModel)
         }
 
-        /* ----------  GLOSARIO  ---------- */
-        composable("glossary") {
-            val glossaryViewModel: GlossaryViewModel = hiltViewModel()
-            GlossaryScreen(viewModel = glossaryViewModel)  // ✅ SIN navController
+        /* ----------  GLOSARIO FLOW (Shared ViewModel) ---------- */
+        navigation(startDestination = "glossary_main", route = "glossary") {
+
+            composable("glossary_main") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("glossary")
+                }
+                val glossaryViewModel: GlossaryViewModel = hiltViewModel(parentEntry)
+                GlossaryScreen(navController = navController, viewModel = glossaryViewModel)
+            }
+
+            composable("flashcard") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("glossary")
+                }
+                val glossaryViewModel: GlossaryViewModel = hiltViewModel(parentEntry)
+                FlashcardScreen(navController = navController, viewModel = glossaryViewModel)
+            }
+
+            composable("quiz") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("glossary")
+                }
+                val glossaryViewModel: GlossaryViewModel = hiltViewModel(parentEntry)
+                QuizScreen(navController = navController, viewModel = glossaryViewModel)
+            }
+
+            composable(
+                route = "practice_result/{correct}/{total}",
+                arguments = listOf(
+                    navArgument("correct") { type = NavType.IntType },
+                    navArgument("total") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val correct = backStackEntry.arguments?.getInt("correct") ?: 0
+                val total = backStackEntry.arguments?.getInt("total") ?: 0
+
+                PracticeResultScreen(
+                    navController = navController,
+                    correctCount = correct,
+                    totalCount = total
+                )
+            }
+        }
+
+        /* ----------  🎯 TEST DE PREFERENCIAS FLOW (4 Pantallas) ---------- */
+        navigation(startDestination = "test_questions", route = Screens.PreferenceTest.route) {
+
+            // 1. Pantalla de Preguntas (Test)
+            composable("test_questions") { backStackEntry ->
+                // Compartir ViewModel: Obtenemos el VM del grafo padre "preference_test"
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screens.PreferenceTest.route)
+                }
+                val testViewModel: TestViewModel = hiltViewModel(parentEntry)
+
+                // Obtener token directamente del AuthManager
+                val token = AuthManager.getToken() ?: ""
+
+                TestScreen(
+                    navController = navController,
+                    viewModel = testViewModel,
+                    token = token
+                )
+            }
+
+            // 2. Resumen del Resultado
+            composable("test_result_summary") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screens.PreferenceTest.route)
+                }
+                val testViewModel: TestViewModel = hiltViewModel(parentEntry)
+
+                TestResultSummaryScreen(
+                    navController = navController,
+                    viewModel = testViewModel
+                )
+            }
+
+            // 3. Recomendaciones (Certificaciones, Labs, Paths)
+            composable("test_recommendations") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screens.PreferenceTest.route)
+                }
+                val testViewModel: TestViewModel = hiltViewModel(parentEntry)
+
+                TestRecommendationsScreen(
+                    navController = navController,
+                    viewModel = testViewModel
+                )
+            }
+
+            // 4. Skills Detalladas
+            composable("test_skills") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screens.PreferenceTest.route)
+                }
+                val testViewModel: TestViewModel = hiltViewModel(parentEntry)
+
+                TestSkillsScreen(
+                    navController = navController,
+                    viewModel = testViewModel
+                )
+            }
         }
 
         /* ----------  PROFILE  ---------- */

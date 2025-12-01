@@ -97,7 +97,7 @@ fun DashboardScreen(
         Spacer(Modifier.height(24.dp))
 
         // ✅ TÉRMINO DEL DÍA
-        state.dailyTerm?.let { term ->
+        state.dailyTerm?.let { dailyTermWrapper ->
             Text(
                 text = "📚 Término del Día",
                 style = MaterialTheme.typography.titleLarge,
@@ -107,7 +107,7 @@ fun DashboardScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            DailyTermCard(wrapper = term)
+            DailyTermCard(term = dailyTermWrapper.term)
 
             Spacer(Modifier.height(24.dp))
         }
@@ -207,8 +207,6 @@ fun DashboardScreen(
                 }
             }
         }
-
-        // ✅ REMOVIDO: Sección de badges (ahora está en Perfil)
 
         Spacer(Modifier.height(32.dp))
     }
