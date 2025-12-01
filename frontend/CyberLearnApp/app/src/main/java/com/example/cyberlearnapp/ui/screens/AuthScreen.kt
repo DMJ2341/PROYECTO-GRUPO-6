@@ -1,8 +1,6 @@
 package com.example.cyberlearnapp.ui.screens
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,22 +27,20 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.cyberlearnapp.viewmodel.AuthState // ✅ Importación Correcta
+import com.example.cyberlearnapp.viewmodel.AuthState
 import com.example.cyberlearnapp.viewmodel.AuthViewModel
 import com.example.cyberlearnapp.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 // =========================================================================
-// CONSTANTES LEGALES
+// CONSTANTES LEGALES (AJUSTADAS)
 // =========================================================================
 object LegalConstants {
     const val VERSION_TERMINOS = "1.2"
-    const val FECHA_ACTUALIZACION = "Diciembre 2024"
+    const val FECHA_ACTUALIZACION = "Diciembre 2025"
+    // Ajuste: Edad mínima 14 años (legal en Perú para consentimiento adolescente)
     const val EDAD_MINIMA_CONSENTIMIENTO = 14
-    const val EDAD_MAXIMA_MENOR = 18
-    const val EDAD_MAXIMA_USUARIO = 25
-    const val EDAD_MINIMA_USUARIO = 15
     const val EMAIL_SOPORTE = "soporte@cyberlearn.app"
     const val EMAIL_DATOS_PERSONALES = "datospersonales@cyberlearn.app"
     const val DIRECCION_LEGAL = "Lima, Perú"
@@ -86,7 +82,6 @@ fun AuthScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val allConsentsAccepted = termsAccepted && privacyAccepted && dataProcessingAccepted && ageConfirmed
 
-    // Navegación
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Success -> {
@@ -102,7 +97,7 @@ fun AuthScreen(
         }
     }
 
-    // Reset errores
+    // Reset errores al aceptar
     LaunchedEffect(termsAccepted) { if (termsAccepted) showTermsError = false }
     LaunchedEffect(privacyAccepted) { if (privacyAccepted) showPrivacyError = false }
     LaunchedEffect(dataProcessingAccepted) { if (dataProcessingAccepted) showDataProcessingError = false }
@@ -146,13 +141,12 @@ fun AuthScreen(
             )
 
             Text(
-                text = if (isRegister) "Crea tu cuenta para empezar" else "Bienvenido de vuelta",
+                text = if (isRegister) "Únete y aprende ciberseguridad" else "Bienvenido de vuelta",
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            // Formulario
             if (isRegister) {
                 OutlinedTextField(
                     value = name,
@@ -166,7 +160,9 @@ fun AuthScreen(
                         unfocusedTextColor = TextPrimary,
                         focusedBorderColor = PrimaryCyan,
                         unfocusedBorderColor = SurfaceActive,
-                        cursorColor = PrimaryCyan
+                        cursorColor = PrimaryCyan,
+                        focusedLabelColor = PrimaryCyan,
+                        unfocusedLabelColor = TextTertiary
                     )
                 )
                 Spacer(Modifier.height(12.dp))
@@ -184,14 +180,16 @@ fun AuthScreen(
                     unfocusedTextColor = TextPrimary,
                     focusedBorderColor = PrimaryCyan,
                     unfocusedBorderColor = SurfaceActive,
-                    cursorColor = PrimaryCyan
+                    cursorColor = PrimaryCyan,
+                    focusedLabelColor = PrimaryCyan,
+                    unfocusedLabelColor = TextTertiary
                 )
             )
             Spacer(Modifier.height(12.dp))
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it.trim() }, // ✅ TRIM IMPORTANTE
+                onValueChange = { password = it.trim() },
                 label = { Text("Contraseña", color = TextTertiary) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -220,7 +218,9 @@ fun AuthScreen(
                     unfocusedTextColor = TextPrimary,
                     focusedBorderColor = PrimaryCyan,
                     unfocusedBorderColor = SurfaceActive,
-                    cursorColor = PrimaryCyan
+                    cursorColor = PrimaryCyan,
+                    focusedLabelColor = PrimaryCyan,
+                    unfocusedLabelColor = TextTertiary
                 )
             )
 
@@ -229,15 +229,16 @@ fun AuthScreen(
                 PasswordStrengthIndicator(password)
             }
 
-            // CONSENTIMIENTOS
+            // SECCIÓN DE CONSENTIMIENTOS
             if (isRegister) {
                 Spacer(Modifier.height(20.dp))
                 LegalNoticeCard()
                 Spacer(Modifier.height(16.dp))
 
+                // 1. EDAD
                 ConsentCard(
                     title = "Verificación de edad",
-                    description = "Confirmo que tengo entre 14 y 25 años",
+                    description = "Confirmo que tengo al menos ${LegalConstants.EDAD_MINIMA_CONSENTIMIENTO} años",
                     isChecked = ageConfirmed,
                     hasError = showAgeError,
                     onCheckedChange = { if (!it) ageConfirmed = false else showAgeVerificationDialog = true },
@@ -247,9 +248,10 @@ fun AuthScreen(
                 )
                 Spacer(Modifier.height(12.dp))
 
+                // 2. TÉRMINOS
                 ConsentCard(
                     title = "Términos y Condiciones",
-                    description = "He leído y acepto los términos",
+                    description = "Acepto las reglas de uso de la plataforma",
                     isChecked = termsAccepted,
                     hasError = showTermsError,
                     onCheckedChange = { if (!it) termsAccepted = false else showTermsDialog = true },
@@ -259,9 +261,10 @@ fun AuthScreen(
                 )
                 Spacer(Modifier.height(12.dp))
 
+                // 3. PRIVACIDAD
                 ConsentCard(
                     title = "Política de Privacidad",
-                    description = "He sido informado sobre el tratamiento",
+                    description = "Entiendo cómo se protegen mis datos",
                     isChecked = privacyAccepted,
                     hasError = showPrivacyError,
                     onCheckedChange = { if (!it) privacyAccepted = false else showPrivacyDialog = true },
@@ -271,9 +274,10 @@ fun AuthScreen(
                 )
                 Spacer(Modifier.height(12.dp))
 
+                // 4. DATOS
                 ConsentCard(
-                    title = "Consentimiento de Datos",
-                    description = "Autorizo el tratamiento de mis datos",
+                    title = "Tratamiento de Datos",
+                    description = "Autorizo el uso de mis datos académicos",
                     isChecked = dataProcessingAccepted,
                     hasError = showDataProcessingError,
                     onCheckedChange = { if (!it) dataProcessingAccepted = false else showDataProcessingDialog = true },
@@ -292,15 +296,24 @@ fun AuthScreen(
                         Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.Warning, null, tint = ErrorRed, modifier = Modifier.size(20.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text("Debes aceptar todos los consentimientos", style = MaterialTheme.typography.bodySmall, color = TextPrimary)
+                            Text("Debes leer y aceptar todos los consentimientos", style = MaterialTheme.typography.bodySmall, color = TextPrimary)
                         }
                     }
                 }
+
+                // Texto informativo Ley
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = "Tu información está protegida por la Ley N° 29733 de Protección de Datos Personales.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextTertiary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
             }
 
             Spacer(Modifier.height(24.dp))
 
-            // ERRORES
             if (authState is AuthState.Error) {
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
@@ -329,7 +342,6 @@ fun AuthScreen(
                 }
             }
 
-            // BOTÓN ACCIÓN
             Button(
                 onClick = {
                     keyboardController?.hide()
@@ -368,14 +380,14 @@ fun AuthScreen(
         }
     }
 
-    // DIÁLOGOS
+    // DIÁLOGOS (Con contenido COMPLETO ahora)
     if (showAgeVerificationDialog) AgeVerificationDialog({ showAgeVerificationDialog = false }, { ageConfirmed = true; showAgeVerificationDialog = false; showAgeError = false })
     if (showTermsDialog) TermsAndConditionsDialog({ showTermsDialog = false }, { termsAccepted = true; showTermsDialog = false; showTermsError = false })
     if (showPrivacyDialog) PrivacyPolicyDialog({ showPrivacyDialog = false }, { privacyAccepted = true; showPrivacyDialog = false; showPrivacyError = false })
     if (showDataProcessingDialog) DataProcessingConsentDialog({ showDataProcessingDialog = false }, { dataProcessingAccepted = true; showDataProcessingDialog = false; showDataProcessingError = false })
 }
 
-// FUNCIONES AUXILIARES Y COMPONENTES (Iguales que antes pero con colores corregidos)
+// FUNCIONES AUXILIARES
 private fun validateConsents(
     termsAccepted: Boolean, privacyAccepted: Boolean, dataProcessingAccepted: Boolean, ageConfirmed: Boolean,
     onTermsError: () -> Unit, onPrivacyError: () -> Unit, onDataProcessingError: () -> Unit, onAgeError: () -> Unit
@@ -388,18 +400,13 @@ private fun validateConsents(
 
 @Composable
 fun LegalNoticeCard() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = PrimaryCyan.copy(alpha = 0.1f)),
-        border = BorderStroke(1.dp, PrimaryCyan.copy(alpha = 0.3f))
-    ) {
+    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = PrimaryCyan.copy(alpha = 0.1f)), border = BorderStroke(1.dp, PrimaryCyan.copy(alpha = 0.3f))) {
         Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.Top) {
             Icon(Icons.Default.Info, null, tint = PrimaryCyan, modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(8.dp))
             Column {
                 Text("Aviso Legal - Ley N° 29733", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = PrimaryCyan)
-                Spacer(Modifier.height(4.dp))
-                Text("Para crear tu cuenta debes otorgar tu consentimiento libre, previo, expreso e informado.", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                Text("Consentimiento libre, previo, expreso e informado.", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
             }
         }
     }
@@ -412,30 +419,21 @@ fun ConsentCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = when { hasError -> ErrorRed.copy(alpha = 0.1f); isChecked -> SuccessGreen.copy(alpha = 0.1f); else -> SurfaceCard }
-        ),
-        border = BorderStroke(if (hasError || isChecked) 2.dp else 1.dp,
-            when { hasError -> ErrorRed; isChecked -> SuccessGreen; else -> SurfaceActive })
+        colors = CardDefaults.cardColors(containerColor = when { hasError -> ErrorRed.copy(alpha = 0.1f); isChecked -> SuccessGreen.copy(alpha = 0.1f); else -> SurfaceCard }),
+        border = BorderStroke(if (hasError || isChecked) 2.dp else 1.dp, when { hasError -> ErrorRed; isChecked -> SuccessGreen; else -> SurfaceElevated })
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = isChecked, onCheckedChange = onCheckedChange,
-                    colors = CheckboxDefaults.colors(checkedColor = SuccessGreen, uncheckedColor = if (hasError) ErrorRed else TextSecondary, checkmarkColor = TextPrimary)
-                )
+                Checkbox(checked = isChecked, onCheckedChange = onCheckedChange, colors = CheckboxDefaults.colors(checkedColor = SuccessGreen, uncheckedColor = if (hasError) ErrorRed else TextSecondary, checkmarkColor = TextPrimary))
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("$icon ", fontSize = 16.sp)
                         Text(title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = TextPrimary)
                         if (isRequired) Text(" *", color = ErrorRed, fontWeight = FontWeight.Bold)
                     }
-                    Spacer(Modifier.height(2.dp))
                     Text(description, style = MaterialTheme.typography.bodySmall, color = TextSecondary)
                 }
-                IconButton(onClick = onInfoClick, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Default.Info, "Ver detalles", tint = PrimaryCyan, modifier = Modifier.size(20.dp))
-                }
+                IconButton(onClick = onInfoClick, modifier = Modifier.size(32.dp)) { Icon(Icons.Default.Info, null, tint = PrimaryCyan, modifier = Modifier.size(20.dp)) }
             }
         }
     }
@@ -450,10 +448,7 @@ fun PasswordStrengthIndicator(password: String) {
         "Muy fuerte" -> Pair(SuccessGreen, 1f); else -> Pair(TextTertiary, 0f)
     }
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text("Seguridad:", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-            Text(strength, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, color = color)
-        }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("Seguridad:", style = MaterialTheme.typography.bodySmall, color = TextSecondary); Text(strength, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, color = color) }
         Spacer(Modifier.height(4.dp))
         LinearProgressIndicator(progress = { progress }, modifier = Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(2.dp)), color = color, trackColor = SurfaceElevated)
     }
@@ -467,8 +462,9 @@ fun calculatePasswordStrength(password: String): String {
     return when { score <= 2 -> "Muy débil"; score <= 3 -> "Débil"; score <= 4 -> "Media"; score <= 5 -> "Fuerte"; else -> "Muy fuerte" }
 }
 
-// Los diálogos (AgeVerificationDialog, TermsAndConditionsDialog, etc.) van aquí abajo igual que antes
-// Solo asegúrate de cambiar 'CardBg' por 'SurfaceCard' y 'SecondaryDark' por 'SurfaceElevated' dentro de ellos.
+// =========================================================================
+// DIÁLOGOS COMPLETOS (TEXTOS REALES)
+// =========================================================================
 
 @Composable
 fun AgeVerificationDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
@@ -478,56 +474,109 @@ fun AgeVerificationDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss, containerColor = SurfaceElevated,
-        title = { Column { Text("🎂 Verificación de Edad", color = TextPrimary, fontWeight = FontWeight.Bold); Text("Requisito legal según Ley N° 29733", style = MaterialTheme.typography.bodySmall, color = TextSecondary) } },
+        title = { Text("🎂 Verificación de Edad", color = TextPrimary, fontWeight = FontWeight.Bold) },
         text = {
             Column {
                 Card(modifier = Modifier.fillMaxWidth().height(300.dp), colors = CardDefaults.cardColors(containerColor = SurfaceCard)) {
                     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState)) {
-                        // ... Contenido legal ...
-                        Text("Declaración Jurada...", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                        // Agrega el texto completo que tenías antes aquí
-                        Spacer(Modifier.height(300.dp)) // Spacer para forzar scroll si no hay texto
+                        LegalSection("REQUISITOS DE EDAD", "De conformidad con la Ley N° 29733, el tratamiento de datos de menores de 14 años requiere consentimiento parental.\n\nAl marcar la casilla, declaras bajo juramento que:\n\n✓ Tienes ${LegalConstants.EDAD_MINIMA_CONSENTIMIENTO} años cumplidos o más.\n✓ Tienes la capacidad para consentir el uso de tus datos para fines educativos.\n✓ La información proporcionada es veraz.")
+                        Spacer(Modifier.height(300.dp)) // Espacio extra para forzar scroll si la pantalla es grande
                     }
                 }
-                if (!hasScrolledToBottom) { Spacer(Modifier.height(8.dp)); Text("↓ Desplázate para leer todo", style = MaterialTheme.typography.bodySmall, color = PrimaryCyan, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) }
+                if (!hasScrolledToBottom) Text("↓ Baja para aceptar", color = PrimaryCyan, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
             }
         },
-        confirmButton = { Button(onClick = onAccept, enabled = hasScrolledToBottom, colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen, disabledContainerColor = SuccessGreen.copy(alpha = 0.3f))) { Text(if (hasScrolledToBottom) "CONFIRMO MI EDAD" else "Lee el documento...", color = if (hasScrolledToBottom) TextPrimary else TextTertiary) } },
+        confirmButton = { Button(onClick = onAccept, enabled = hasScrolledToBottom, colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen)) { Text("CONFIRMO MI EDAD") } },
         dismissButton = { TextButton(onClick = onDismiss) { Text("CANCELAR", color = TextSecondary) } }
     )
 }
 
-// ... Repite estructura para Terms, Privacy y DataProcessing usando los colores nuevos ...
 @Composable
 fun TermsAndConditionsDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
-     // Usa SurfaceElevated, TextPrimary, TextSecondary, SurfaceCard
+    var hasScrolledToBottom by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+    LaunchedEffect(scrollState.value, scrollState.maxValue) { if (scrollState.maxValue > 0) hasScrolledToBottom = scrollState.value >= scrollState.maxValue - 50 }
+
     AlertDialog(
         onDismissRequest = onDismiss, containerColor = SurfaceElevated,
-        title = { Text("📋 Términos", color = TextPrimary, fontWeight = FontWeight.Bold) },
-        text = { Text("Contenido de términos...", color = TextSecondary) },
-        confirmButton = { Button(onClick = onAccept, colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen)) { Text("ACEPTAR", color = TextPrimary) } },
+        title = { Text("📋 Términos y Condiciones", color = TextPrimary, fontWeight = FontWeight.Bold) },
+        text = {
+            Column {
+                Card(modifier = Modifier.fillMaxWidth().height(350.dp), colors = CardDefaults.cardColors(containerColor = SurfaceCard)) {
+                    Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState)) {
+                        LegalSection("1. OBJETO", "CyberLearn es una plataforma educativa de ciberseguridad.")
+                        LegalSection("2. USO ACEPTABLE", "Te comprometes a utilizar el conocimiento solo con fines éticos y legales. El hacking no autorizado está prohibido y resultará en la eliminación de la cuenta.")
+                        LegalSection("3. PROPIEDAD", "El contenido es propiedad de CyberLearn S.A.C. No se permite la redistribución.")
+                        LegalSection("4. RESPONSABILIDAD", "No nos hacemos responsables por el mal uso de las herramientas enseñadas.")
+                        LegalSection("5. MODIFICACIONES", "Podemos actualizar estos términos notificándote previamente.")
+                        Spacer(Modifier.height(300.dp))
+                    }
+                }
+                if (!hasScrolledToBottom) Text("↓ Baja para aceptar", color = PrimaryCyan, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            }
+        },
+        confirmButton = { Button(onClick = onAccept, enabled = hasScrolledToBottom, colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen)) { Text("ACEPTO TÉRMINOS") } },
         dismissButton = { TextButton(onClick = onDismiss) { Text("CANCELAR", color = TextSecondary) } }
     )
 }
 
 @Composable
 fun PrivacyPolicyDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
+    var hasScrolledToBottom by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+    LaunchedEffect(scrollState.value, scrollState.maxValue) { if (scrollState.maxValue > 0) hasScrolledToBottom = scrollState.value >= scrollState.maxValue - 50 }
+
     AlertDialog(
         onDismissRequest = onDismiss, containerColor = SurfaceElevated,
-        title = { Text("🔒 Privacidad", color = TextPrimary, fontWeight = FontWeight.Bold) },
-        text = { Text("Contenido de privacidad...", color = TextSecondary) },
-        confirmButton = { Button(onClick = onAccept, colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen)) { Text("ACEPTAR", color = TextPrimary) } },
+        title = { Text("🔒 Política de Privacidad", color = TextPrimary, fontWeight = FontWeight.Bold) },
+        text = {
+            Column {
+                Card(modifier = Modifier.fillMaxWidth().height(350.dp), colors = CardDefaults.cardColors(containerColor = SurfaceCard)) {
+                    Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState)) {
+                        LegalSection("1. RESPONSABLE", "CyberLearn App S.A.C., con domicilio en Lima, Perú.")
+                        LegalSection("2. DATOS RECOPILADOS", "Nombre, email y progreso académico. No recopilamos datos sensibles.")
+                        LegalSection("3. FINALIDAD", "Gestión de cuenta y certificación académica.")
+                        LegalSection("4. TUS DERECHOS (ARCO)", "Puedes acceder, rectificar, cancelar u oponerte al tratamiento de tus datos escribiendo a ${LegalConstants.EMAIL_DATOS_PERSONALES}.")
+                        Spacer(Modifier.height(300.dp))
+                    }
+                }
+                if (!hasScrolledToBottom) Text("↓ Baja para aceptar", color = PrimaryCyan, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            }
+        },
+        confirmButton = { Button(onClick = onAccept, enabled = hasScrolledToBottom, colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen)) { Text("HE LEÍDO LA POLÍTICA") } },
         dismissButton = { TextButton(onClick = onDismiss) { Text("CANCELAR", color = TextSecondary) } }
     )
 }
 
 @Composable
 fun DataProcessingConsentDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
+    var hasScrolledToBottom by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+    LaunchedEffect(scrollState.value, scrollState.maxValue) { if (scrollState.maxValue > 0) hasScrolledToBottom = scrollState.value >= scrollState.maxValue - 50 }
+
     AlertDialog(
         onDismissRequest = onDismiss, containerColor = SurfaceElevated,
-        title = { Text("✅ Datos Personales", color = TextPrimary, fontWeight = FontWeight.Bold) },
-        text = { Text("Contenido de consentimiento...", color = TextSecondary) },
-        confirmButton = { Button(onClick = onAccept, colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen)) { Text("OTORGAR CONSENTIMIENTO", color = TextPrimary) } },
+        title = { Text("✅ Consentimiento de Datos", color = TextPrimary, fontWeight = FontWeight.Bold) },
+        text = {
+            Column {
+                Card(modifier = Modifier.fillMaxWidth().height(300.dp), colors = CardDefaults.cardColors(containerColor = SurfaceCard)) {
+                    Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState)) {
+                        LegalSection("CONSENTIMIENTO EXPRESO", "De conformidad con el Art. 5 de la Ley 29733, otorgo mi consentimiento libre, previo, expreso e informado para que CyberLearn trate mis datos personales para fines de gestión educativa y certificación.")
+                        Spacer(Modifier.height(200.dp))
+                    }
+                }
+                if (!hasScrolledToBottom) Text("↓ Baja para aceptar", color = PrimaryCyan, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            }
+        },
+        confirmButton = { Button(onClick = onAccept, enabled = hasScrolledToBottom, colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen)) { Text("OTORGO CONSENTIMIENTO") } },
         dismissButton = { TextButton(onClick = onDismiss) { Text("CANCELAR", color = TextSecondary) } }
     )
+}
+
+@Composable
+fun LegalSection(title: String, content: String) {
+    Column(modifier = Modifier.padding(bottom = 16.dp)) {
+        Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = PrimaryCyan, modifier = Modifier.padding(bottom = 4.dp))
+        Text(content, style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+    }
 }
