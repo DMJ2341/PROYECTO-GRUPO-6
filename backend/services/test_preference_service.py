@@ -1,11 +1,10 @@
-# backend/services/test_preference_service.py
 from database.db import get_session
 from models.test_preference import (
     TestQuestion, Certification, Lab, LearningPath,
-    RoleSkill, AcademicReference, UserTestResult, UserTestAnswer
+    RoleSkill, AcademicReference, TestResult, TestAnswer # ✅ NOMBRES CORREGIDOS
 )
 from datetime import datetime
-
+from sqlalchemy import desc
 
 class TestPreferenceService:
     """
@@ -18,30 +17,14 @@ class TestPreferenceService:
         session = get_session()
         try:
             questions = session.query(TestQuestion).order_by(TestQuestion.order).all()
-            return [
-                {
-                    'id': q.id,
-                    'question': q.question,
-                    'emoji': q.emoji,
-                    'category': q.category,
-                    'order': q.order
-                }
-                for q in questions
-            ]
+            # Usamos el método to_dict() del modelo para más limpieza
+            return [q.to_dict() for q in questions]
         finally:
             session.close()
     
     def submit_test(self, user_id, answers, time_taken=None):
         """
         Procesa las respuestas del test y calcula el resultado
-        
-        Args:
-            user_id: ID del usuario
-            answers: Dict {question_id: rating} con 28 respuestas (rating 1-5)
-            time_taken: Tiempo en segundos que tardó
-            
-        Returns:
-            Dict con resultado completo
         """
         session = get_session()
         try:
@@ -55,8 +38,8 @@ class TestPreferenceService:
             # 3. Determinar rol recomendado usando algoritmo Holland Code
             recommended_role, confidence = self._determine_role(scores)
             
-            # 4. Guardar resultado en BD
-            test_result = UserTestResult(
+            # 4. Guardar resultado en BD usando TestResult (nombre correcto)
+            test_result = TestResult(
                 user_id=user_id,
                 recommended_role=recommended_role,
                 confidence=confidence,
@@ -71,9 +54,9 @@ class TestPreferenceService:
             session.add(test_result)
             session.flush()
             
-            # 5. Guardar respuestas individuales
+            # 5. Guardar respuestas individuales usando TestAnswer (nombre correcto)
             for question_id, rating in answers.items():
-                answer = UserTestAnswer(
+                answer = TestAnswer(
                     test_result_id=test_result.id,
                     question_id=int(question_id),
                     rating=rating
@@ -104,33 +87,26 @@ class TestPreferenceService:
     def _calculate_dimension_scores(self, answers, session):
         """Calcula puntajes por cada dimensión Holland Code"""
         scores = {
-            'INVESTIGATIVE': 0,
-            'REALISTIC': 0,
-            'SOCIAL': 0,
-            'CONVENTIONAL': 0,
-            'ENTERPRISING': 0,
-            'ARTISTIC': 0
+            'INVESTIGATIVE': 0, 'REALISTIC': 0, 'SOCIAL': 0,
+            'CONVENTIONAL': 0, 'ENTERPRISING': 0, 'ARTISTIC': 0
         }
         
-        # Sumar ratings por categoría
-        for question_id, rating in answers.items():
-            question = session.query(TestQuestion).filter_by(id=int(question_id)).first()
-            if question:
-                scores[question.category] += rating
+        # Optimización: Traer todas las preguntas en una consulta para no hacer 28 queries
+        # (Aunque el método actual funciona, es mejor cargar el mapa de categorías una vez)
+        questions = session.query(TestQuestion).all()
+        question_map = {q.id: q.category for q in questions}
+
+        for question_id_str, rating in answers.items():
+            qid = int(question_id_str)
+            if qid in question_map:
+                cat = question_map[qid]
+                scores[cat] += rating
         
         return scores
     
     def _determine_role(self, scores):
         """
         Determina el rol recomendado usando algoritmo Holland Code adaptado
-        
-        Basado en investigación académica:
-        - RED TEAM: Alto en Investigative + Realistic + Artistic (técnico, creativo, análisis)
-        - BLUE TEAM: Alto en Investigative + Conventional + Social (procesos, colaboración)
-        - PURPLE TEAM: Alto en Social + Investigative + balance (puente entre equipos)
-        
-        Returns:
-            (role, confidence): Tupla con rol y nivel de confianza (0-1)
         """
         inv = scores['INVESTIGATIVE']
         real = scores['REALISTIC']
@@ -156,7 +132,7 @@ class TestPreferenceService:
         top_score = sorted_roles[0][1]
         second_score = sorted_roles[1][1]
         
-        # Calcular confianza (diferencia entre top y segundo)
+        # Calcular confianza
         if top_score > 0:
             difference = top_score - second_score
             confidence = min(1.0, max(0.3, difference / top_score))
@@ -172,82 +148,20 @@ class TestPreferenceService:
         
         session = get_session()
         try:
-            # Certificaciones (ordenadas con gratuitas primero)
-            certifications = session.query(Certification)\
-                .filter_by(role=role)\
-                .order_by(Certification.order)\
-                .all()
-            
-            # Labs
-            labs = session.query(Lab)\
-                .filter_by(role=role)\
-                .all()
-            
-            # Learning Paths
-            learning_paths = session.query(LearningPath)\
-                .filter_by(role=role)\
-                .all()
-            
-            # Skills
-            skills = session.query(RoleSkill)\
-                .filter_by(role=role)\
-                .order_by(RoleSkill.order)\
-                .all()
-            
-            # Referencia académica
-            academic_ref = session.query(AcademicReference)\
-                .filter_by(role=role)\
-                .first()
+            certifications = session.query(Certification).filter_by(role=role).order_by(Certification.order).all()
+            labs = session.query(Lab).filter_by(role=role).all()
+            learning_paths = session.query(LearningPath).filter_by(role=role).all()
+            skills = session.query(RoleSkill).filter_by(role=role).order_by(RoleSkill.order).all()
+            academic_ref = session.query(AcademicReference).filter_by(role=role).first()
             
             return {
                 'role': role,
-                'certifications': [
-                    {
-                        'id': c.id,
-                        'name': c.name,
-                        'provider': c.provider,
-                        'is_free': c.is_free,
-                        'url': c.url,
-                        'difficulty': c.difficulty,
-                        'description': c.description,
-                        'price_info': c.price_info
-                    }
-                    for c in certifications
-                ],
-                'labs': [
-                    {
-                        'id': l.id,
-                        'name': l.name,
-                        'platform': l.platform,
-                        'url': l.url,
-                        'is_free': l.is_free,
-                        'description': l.description,
-                        'difficulty': l.difficulty
-                    }
-                    for l in labs
-                ],
-                'learning_paths': [
-                    {
-                        'id': lp.id,
-                        'name': lp.name,
-                        'platform': lp.platform,
-                        'url': lp.url,
-                        'estimated_hours': lp.estimated_hours,
-                        'description': lp.description,
-                        'is_free': lp.is_free
-                    }
-                    for lp in learning_paths
-                ],
-                'skills': [
-                    {
-                        'id': s.id,
-                        'skill': s.skill
-                    }
-                    for s in skills
-                ],
-                'academic_reference': {
-                    'reference': academic_ref.reference
-                } if academic_ref else None
+                # Usamos to_dict() que definiste en los modelos para ser más limpios
+                'certifications': [c.to_dict() for c in certifications],
+                'labs': [l.to_dict() for l in labs],
+                'learning_paths': [lp.to_dict() for lp in learning_paths],
+                'skills': [s.to_dict() for s in skills],
+                'academic_reference': academic_ref.to_dict() if academic_ref else None
             }
         finally:
             session.close()
@@ -256,15 +170,15 @@ class TestPreferenceService:
         """Obtiene el último resultado del test del usuario"""
         session = get_session()
         try:
-            result = session.query(UserTestResult)\
+            # Usamos TestResult (nombre correcto)
+            result = session.query(TestResult)\
                 .filter_by(user_id=user_id)\
-                .order_by(UserTestResult.created_at.desc())\
+                .order_by(TestResult.created_at.desc())\
                 .first()
             
             if not result:
                 return None
             
-            # Obtener top 3 dimensiones
             scores = {
                 'INVESTIGATIVE': result.investigative_score,
                 'REALISTIC': result.realistic_score,
@@ -291,9 +205,9 @@ class TestPreferenceService:
         """Obtiene historial de tests del usuario"""
         session = get_session()
         try:
-            results = session.query(UserTestResult)\
+            results = session.query(TestResult)\
                 .filter_by(user_id=user_id)\
-                .order_by(UserTestResult.created_at.desc())\
+                .order_by(TestResult.created_at.desc())\
                 .all()
             
             return [

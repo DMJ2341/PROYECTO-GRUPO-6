@@ -1,8 +1,9 @@
+# backend/reset_db.py
 from app import app
 from database.db import Base, engine
 from sqlalchemy import text
 
-# Importamos TODOS los modelos
+# Importamos TODOS los modelos actuales para que SQLAlchemy los conozca
 from models.user import User
 from models.course import Course
 from models.lesson import Lesson
@@ -15,32 +16,50 @@ from models.glossary import Glossary
 from models.daily_term_log import DailyTermLog
 from models.password_reset_token import PasswordResetToken
 from models.user_glossary_favorite import UserGlossaryFavorite
-from models.user_glossary_progress import UserGlossaryProgress # Asegúrate de importar el nuevo modelo
+from models.user_glossary_progress import UserGlossaryProgress
+# Nuevos modelos del Test
+from models.test_preference import (
+    TestQuestion, Certification, Lab, LearningPath,
+    RoleSkill, AcademicReference, TestResult, TestAnswer
+)
 
 if __name__ == "__main__":
     with app.app_context():
         print("🔄 Iniciando reinicio de base de datos...")
         
-        # 1. Borrar Vistas y Objetos SQL manuales primero
-        # Usamos CASCADE para asegurarnos de que se vaya todo lo dependiente
+        # 1. Borrar tablas "Zombies" y Vistas manualmente (SQL Crudo)
+        # Esto es necesario porque estas tablas ya no existen en tus modelos de Python,
+        # pero siguen existiendo en PostgreSQL y bloquean el borrado de 'users'.
         try:
             with engine.connect() as connection:
                 with connection.begin():
-                    print("🔥 Borrando Vistas SQL manuales...")
-                    connection.execute(text("DROP VIEW IF EXISTS v_glossary_user_stats CASCADE"))
+                    print("🔥 Limpiando tablas antiguas y huérfanas...")
+                    # Borramos tablas viejas usando CASCADE para romper relaciones
+                    tables_to_drop = [
+                        "v_glossary_user_stats",      # Vista
+                        "user_exam_attempts",         # Tabla vieja
+                        "user_preference_results",    # Tabla vieja
+                        "profile_view_logs",          # Tabla vieja
+                        "final_exam_questions",       # Tabla vieja
+                        "preference_questions"        # Tabla vieja (si existiera con ese nombre)
+                    ]
+                    
+                    for table in tables_to_drop:
+                        connection.execute(text(f"DROP TABLE IF EXISTS {table} CASCADE;"))
+                        connection.execute(text(f"DROP VIEW IF EXISTS {table} CASCADE;"))
+                        
         except Exception as e:
-            print(f"⚠️ Advertencia borrando vistas: {e}")
+            print(f"⚠️ Advertencia limpieza manual: {e}")
 
-        # 2. Borrar tablas de SQLAlchemy
-        print("🗑️  Eliminando tablas...")
+        # 2. Borrar tablas actuales de SQLAlchemy
+        print("🗑️  Eliminando tablas del esquema actual...")
         Base.metadata.drop_all(engine)
         
         # 3. Crear tablas nuevas
         print("✨ Creando tablas nuevas con esquema actualizado...")
         Base.metadata.create_all(engine)
         
-        # 4. Restaurar la Vista (Opcional, pero recomendado si la usas)
-        # Como la vista se borró, la recreamos para que la app no falle si la consulta
+        # 4. Restaurar la Vista (Opcional)
         try:
             with engine.connect() as connection:
                 with connection.begin():

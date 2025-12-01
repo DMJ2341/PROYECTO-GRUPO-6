@@ -1,47 +1,32 @@
-# backend/services/lesson_service.py - VERSIÓN CORREGIDA CON DESBLOQUEO POR CURSO
+# backend/services/lesson_service.py
 
 import uuid
-from models.lesson_schema import Lesson as LessonSchema  # Pydantic
-from models.lesson import Lesson as DBLesson             # SQLAlchemy
+from models.lesson import Lesson as DBLesson
 from models.user_progress import UserLessonProgress, UserCourseProgress
 from database.db import get_session
-from pydantic import ValidationError
-from sqlalchemy import func
+from sqlalchemy import desc
 
 def create_lesson(lesson_data: dict):
-    """
-    Crea una lección validando el JSON y mapeando los campos requeridos.
-    """
-    # 1. Validar con Pydantic
-    try:
-        validated = LessonSchema.model_validate(lesson_data)
-    except ValidationError as e:
-        raise ValueError(f"JSON inválido: {str(e)}")
-
+    """Crea una lección usando los datos del diccionario directamente."""
     session = get_session()
     try:
-        # 2. Generar ID único (String)
+        if 'course_id' not in lesson_data or 'title' not in lesson_data:
+            raise ValueError("Faltan datos obligatorios: course_id o title")
+
         new_id = f"lesson_{uuid.uuid4().hex[:8]}"
         
-        # 3. Convertir Pydantic a Diccionario
-        data_dict = validated.model_dump()
-        
-        # 4. Crear objeto SQLAlchemy
         new_lesson = DBLesson(
             id=new_id,
-            course_id=validated.course_id,
-            title=validated.title,
-            description=validated.description or f"Lección {validated.title}",
-            type=validated.type or "interactive",
-            
-            # Guardamos la data completa en los campos JSONB
-            content=data_dict,          # Todo el JSON
-            screens=data_dict.get('screens', []), # Solo las pantallas
-            
-            total_screens=validated.total_screens,
-            duration_minutes=validated.duration_minutes,
-            xp_reward=validated.xp_reward,
-            order_index=validated.order_index
+            course_id=lesson_data.get('course_id'),
+            title=lesson_data.get('title'),
+            description=lesson_data.get('description') or f"Lección {lesson_data.get('title')}",
+            type=lesson_data.get('type', "interactive"),
+            content=lesson_data,
+            screens=lesson_data.get('screens', []),
+            total_screens=lesson_data.get('total_screens', len(lesson_data.get('screens', []))),
+            duration_minutes=lesson_data.get('duration_minutes', 10),
+            xp_reward=lesson_data.get('xp_reward', 10),
+            order_index=lesson_data.get('order_index', 0)
         )
         
         session.add(new_lesson)
@@ -54,48 +39,18 @@ def create_lesson(lesson_data: dict):
     finally:
         session.close()
 
-
-# =================================================================
-# 🔑 FUNCIÓN CORREGIDA: Desbloqueo por CURSO completo
-# =================================================================
-
 def is_course_accessible(user_id: int, course_id: int):
-    """
-    Verifica si un curso está accesible para el usuario.
-    
-    LÓGICA:
-    - Curso 1: Siempre accesible
-    - Curso 2: Requiere Curso 1 completo (100%)
-    - Curso 3: Requiere Curso 2 completo (100%)
-    - Curso 4: Requiere Curso 3 completo (100%)
-    - Curso 5: Requiere Curso 4 completo (100%)
-    
-    Returns:
-        dict: {
-            "accessible": bool,
-            "reason": str (si no es accesible),
-            "required_course_id": int (si hay prerrequisito)
-        }
-    """
+    """Verifica si un curso está accesible (Prerrequisitos de cursos)."""
     session = get_session()
     try:
-        # Curso 1 siempre está desbloqueado
         if course_id == 1:
-            return {
-                "accessible": True,
-                "reason": "Curso inicial"
-            }
+            return {"accessible": True, "reason": "Curso inicial"}
         
-        # Para cursos 2-5, verificar que el curso anterior esté completo
         required_course_id = course_id - 1
-        
-        # Buscar progreso del curso requerido
         required_progress = session.query(UserCourseProgress).filter_by(
-            user_id=user_id,
-            course_id=required_course_id
+            user_id=user_id, course_id=required_course_id
         ).first()
         
-        # Si no existe progreso o no está al 100%, el curso está bloqueado
         if not required_progress or required_progress.percentage < 100:
             return {
                 "accessible": False,
@@ -103,42 +58,37 @@ def is_course_accessible(user_id: int, course_id: int):
                 "required_course_id": required_course_id
             }
         
-        return {
-            "accessible": True,
-            "reason": f"Curso {required_course_id} completado"
-        }
-        
+        return {"accessible": True, "reason": f"Curso {required_course_id} completado"}
     finally:
         session.close()
 
-
 def get_lesson_content(user_id: int, lesson_id: str):
-    """
-    Recupera el contenido de una lección verificando acceso al curso.
-    
-    NUEVA LÓGICA:
-    - Verifica si el curso de la lección está accesible
-    - Si el curso está accesible, todas sus lecciones lo están
-    """
+    """Recupera el contenido de una lección (solo si está desbloqueada)."""
     session = get_session()
     try:
-        # 1. Obtener los detalles de la lección
         lesson = session.query(DBLesson).filter_by(id=lesson_id).first()
-
         if not lesson:
             return {"error": "Lección no encontrada"}, 404
 
-        # 2. Verificar si el curso está accesible
+        # Verificar curso
         course_access = is_course_accessible(user_id, lesson.course_id)
-        
         if not course_access["accessible"]:
-            return {
-                "error": "Curso bloqueado",
-                "message": course_access["reason"],
-                "required_course_id": course_access.get("required_course_id")
-            }, 403
+            return {"error": "Curso bloqueado", "message": course_access["reason"]}, 403
         
-        # 3. Si el curso está accesible, devolver el contenido
+        # Verificar lección anterior (Secuencialidad)
+        if lesson.order_index > 1:
+            prev = session.query(DBLesson).filter(
+                DBLesson.course_id == lesson.course_id,
+                DBLesson.order_index < lesson.order_index
+            ).order_by(desc(DBLesson.order_index)).first()
+            
+            if prev:
+                prog = session.query(UserLessonProgress).filter_by(
+                    user_id=user_id, lesson_id=prev.id, completed=True
+                ).first()
+                if not prog:
+                    return {"error": "Lección bloqueada", "message": f"Completa '{prev.title}' primero"}, 403
+
         return {
             "success": True,
             "id": lesson.id,
@@ -155,40 +105,37 @@ def get_lesson_content(user_id: int, lesson_id: str):
         }, 200
             
     except Exception as e:
-        session.rollback()
-        return {"error": f"Error interno del servidor: {str(e)}"}, 500
+        return {"error": f"Error interno: {str(e)}"}, 500
     finally:
         session.close()
 
-
 def get_course_lessons_with_status(user_id: int, course_id: int):
-    """
-    Obtiene todas las lecciones de un curso con su estado de acceso.
-    
-    NUEVA LÓGICA:
-    - Si el curso está accesible, todas las lecciones están desbloqueadas
-    - Si el curso está bloqueado, todas las lecciones están bloqueadas
-    """
     session = get_session()
     try:
-        # 1. Verificar acceso al curso
         course_access = is_course_accessible(user_id, course_id)
+        is_course_locked = not course_access["accessible"]
         
-        # 2. Obtener todas las lecciones del curso
-        lessons = session.query(DBLesson).filter_by(
-            course_id=course_id
-        ).order_by(DBLesson.order_index).all()
-        
-        if not lessons:
+        lessons = session.query(DBLesson).filter_by(course_id=course_id).order_by(DBLesson.order_index).all()
+        if not lessons: 
             return []
         
         result = []
-        for lesson in lessons:
-            # Buscar progreso del usuario
+        previous_lesson_completed = True  # Primera lección siempre desbloqueada
+        
+        for i, lesson in enumerate(lessons):
             progress = session.query(UserLessonProgress).filter_by(
-                user_id=user_id,
-                lesson_id=lesson.id
+                user_id=user_id, lesson_id=lesson.id
             ).first()
+            
+            is_completed = progress.completed if progress else False
+            
+            # Lógica de bloqueo clara
+            if is_course_locked:
+                is_locked = True
+            elif i == 0:
+                is_locked = False  # Primera lección SIEMPRE desbloqueada
+            else:
+                is_locked = not previous_lesson_completed
             
             result.append({
                 "id": lesson.id,
@@ -199,11 +146,12 @@ def get_course_lessons_with_status(user_id: int, course_id: int):
                 "duration_minutes": lesson.duration_minutes,
                 "xp_reward": lesson.xp_reward,
                 "order_index": lesson.order_index,
-                "is_completed": progress.completed if progress else False,
-                "is_locked": not course_access["accessible"]  # ← CLAVE: Basado en acceso al curso
+                "is_completed": is_completed,
+                "is_locked": is_locked 
             })
+            
+            previous_lesson_completed = is_completed
         
         return result
-        
     finally:
         session.close()

@@ -27,10 +27,11 @@ from models.user_glossary_progress import UserGlossaryProgress  # ✅ ESTA LÍNE
 from models.daily_term_log import DailyTermLog
 from models.password_reset_token import PasswordResetToken
 from models.user_glossary_favorite import UserGlossaryFavorite
-from models.assessments import (
-    FinalExamQuestion, UserExamAttempt,
-    PreferenceQuestion, UserPreferenceResult
+from models.test_preference import (
+    TestQuestion, Certification, Lab, LearningPath,
+    RoleSkill, AcademicReference, TestResult, TestAnswer
 )
+
 
 def create_all():
     """Crear todas las tablas"""

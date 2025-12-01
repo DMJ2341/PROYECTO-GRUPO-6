@@ -38,7 +38,7 @@ def seed_courses():
             "id": 1,
             "title": "Fundamentos de Seguridad de la Información",
             "description": "Comprender principios fundamentales de seguridad según estándares NIST.",
-            "level": "Principiante", "xp": 100, "bg": "0D8ABC",
+            "level": "Principiante", "xp": 140, "bg": "0D8ABC",
             "lessons": [
                 {"id": "c1_l1", "t": "Principios Fundamentales (CIA Triad)", "d": "Confidencialidad, Integridad y Disponibilidad."},
                 {"id": "c1_l2", "t": "Taxonomía de Amenazas Cibernéticas", "d": "Threat actors y MITRE ATT&CK®."},
@@ -53,7 +53,7 @@ def seed_courses():
             "id": 2,
             "title": "Seguridad de Redes",
             "description": "Arquitecturas de red seguras, TCP/IP y Firewalls.",
-            "level": "Intermedio", "xp": 150, "bg": "555555",
+            "level": "Intermedio", "xp": 140, "bg": "555555",
             "lessons": [
                 {"id": "c2_l1", "t": "Fundamentos TCP/IP", "d": "Modelo OSI y puertos."},
                 {"id": "c2_l2", "t": "Dispositivos de Seguridad", "d": "Firewalls, IDS/IPS y VPNs."},
@@ -68,7 +68,7 @@ def seed_courses():
             "id": 3,
             "title": "Gestión de Identidades y Accesos (IAM)",
             "description": "Implementar y gestionar sistemas de control de acceso (MFA, RBAC).",
-            "level": "Intermedio", "xp": 150, "bg": "6200EA",
+            "level": "Intermedio", "xp": 120, "bg": "6200EA",
             "lessons": [
                 {"id": "c3_l1", "t": "Principios de Control de Acceso", "d": "AAA, ACLs y principios."},
                 {"id": "c3_l2", "t": "Autenticación y Factores", "d": "MFA, Biometría y Passwordless."},
@@ -82,7 +82,7 @@ def seed_courses():
             "id": 4,
             "title": "Respuesta a Incidentes y Forense Digital",
             "description": "Ejecutar procesos de IR según NIST y preservar evidencia.",
-            "level": "Avanzado", "xp": 200, "bg": "C62828",
+            "level": "Avanzado", "xp": 140, "bg": "C62828",
             "lessons": [
                 {"id": "c4_l1", "t": "Fundamentos de Respuesta a Incidentes", "d": "Ciclo de vida NIST y CSIRT."},
                 {"id": "c4_l2", "t": "Detección y Análisis", "d": "Triage e IOCs."},
@@ -97,7 +97,7 @@ def seed_courses():
             "id": 5,
             "title": "Gestión de Riesgos y Cumplimiento",
             "description": "Aplicar frameworks de gestión de riesgos (RMF) y cumplimiento.",
-            "level": "Avanzado", "xp": 200, "bg": "F9A825",
+            "level": "Avanzado", "xp": 120, "bg": "F9A825",
             "lessons": [
                 {"id": "c5_l1", "t": "Fundamentos de Gestión de Riesgos", "d": "Conceptos y cálculo de riesgo."},
                 {"id": "c5_l2", "t": "Risk Management Framework (RMF)", "d": "Los 6 pasos del NIST RMF."},
