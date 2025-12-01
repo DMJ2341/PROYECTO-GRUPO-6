@@ -50,6 +50,7 @@ from services.glossary_service import (
     get_glossary_stats,
     record_quiz_attempt
 )
+from services.test_preference_service import TestPreferenceService
 
 # -------------------------------------------------------------------
 # SENTRY CONFIG
@@ -682,91 +683,216 @@ def submit_final_exam(current_user_id):
     return jsonify({"success": True, "result": result})
 
 # ==========================================
-# TEST DE PREFERENCIAS VOCACIONALES
+# 🎯 TEST DE PREFERENCIAS VOCACIONALES
 # ==========================================
 
-@app.route('/api/preference-test/questions', methods=['GET'])
+@app.route('/api/test/questions', methods=['GET'])
 @token_required
-def get_preference_test_questions(current_user_id):
+def get_test_questions(current_user_id):
+    """
+    Obtiene las 28 preguntas del test
+    GET /api/test/questions
+    """
     try:
-        questions = get_preference_questions()
-        return jsonify({"success": True, "questions": questions})
+        service = TestPreferenceService()
+        questions = service.get_questions()
+        return jsonify({
+            'success': True,
+            'questions': questions,
+            'total': len(questions)
+        }), 200
     except Exception as e:
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": str(e)}), 500
+        return jsonify({'error': 'Error cargando preguntas'}), 500
 
-@app.route('/api/preference-test/submit', methods=['POST'])
+
+@app.route('/api/test/submit', methods=['POST'])
 @token_required
-def submit_preference_test(current_user_id):
-    data = request.get_json()
-    answers = data.get('answers')
-    time_taken = data.get('time_taken')
-
-    if not answers or not isinstance(answers, dict):
-        return jsonify({"error": "Respuestas inválidas"}), 400
-
+def submit_test_preference(current_user_id):
+    """
+    Envía respuestas del test y calcula resultado
+    POST /api/test/submit
+    Body: {
+        "answers": {
+            "1": 5,
+            "2": 4,
+            ...
+        },
+        "time_taken": 320  # segundos (opcional)
+    }
+    """
     try:
-        result = submit_preference_answers(current_user_id, answers, time_taken)
-        return jsonify({"success": True, "result": result})
-    except Exception as e:
-        sentry_sdk.capture_exception(e)
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/preference-test/result', methods=['GET'])
-@token_required
-def get_preference_result(current_user_id):
-    try:
-        result = engine.get_user_result(current_user_id)  # ✅ Usa engine de preference_quiz
+        data = request.get_json()
+        answers = data.get('answers')
+        time_taken = data.get('time_taken')
         
-        if not result:
-            return jsonify({"success": True, "has_result": False})
-        return jsonify({"success": True, "has_result": True, "result": result})
-    except Exception as e:
-        sentry_sdk.capture_exception(e)
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/preference-test/retake', methods=['POST'])
-@token_required
-def retake_preference_test(current_user_id):
-    session = get_session()
-    try:
-        result = session.query(UserPreferenceResult).filter_by(user_id=current_user_id).first()
-        if result:
-            result.retaken = True
-            session.commit()
-        return jsonify({"success": True, "message": "Puedes retomar el test"})
-    except Exception as e:
-        session.rollback()
-        sentry_sdk.capture_exception(e)
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
-
-@app.route('/api/admin/preference-test/stats', methods=['GET'])
-@token_required
-def get_pref_test_stats(current_user_id):
-    session = get_session()
-    try:
-        results = session.query(UserPreferenceResult).all()
-        distribution = {"Red Team": 0, "Blue Team": 0, "Purple Team": 0}
-        total_time = 0
-        for r in results:
-            if r.assigned_profile in distribution:
-                distribution[r.assigned_profile] += 1
-            if r.time_taken:
-                total_time += r.time_taken
+        if not answers or not isinstance(answers, dict):
+            return jsonify({'error': 'Respuestas inválidas'}), 400
         
-        count = len(results)
-        avg_time = round(total_time / count) if count > 0 else 0
+        if len(answers) != 28:
+            return jsonify({
+                'error': f'Se requieren 28 respuestas, recibidas: {len(answers)}'
+            }), 400
+        
+        service = TestPreferenceService()
+        result = service.submit_test(current_user_id, answers, time_taken)
         
         return jsonify({
-            "success": True, 
-            "total_completed": count, 
-            "distribution": distribution, 
-            "avg_time_seconds": avg_time
-        })
-    finally:
-        session.close()
+            'success': True,
+            'result': result
+        }), 200
+        
+    except ValueError as ve:
+        return jsonify({'error': str(ve)}), 400
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error procesando test'}), 500
+
+
+@app.route('/api/test/recommendations/<role>', methods=['GET'])
+@token_required
+def get_test_recommendations(current_user_id, role):
+    """
+    Obtiene recomendaciones completas para un rol
+    GET /api/test/recommendations/RED_TEAM
+    GET /api/test/recommendations/BLUE_TEAM
+    GET /api/test/recommendations/PURPLE_TEAM
+    """
+    try:
+        if role not in ['RED_TEAM', 'BLUE_TEAM', 'PURPLE_TEAM']:
+            return jsonify({'error': 'Rol inválido'}), 400
+        
+        service = TestPreferenceService()
+        recommendations = service.get_recommendations(role)
+        
+        return jsonify({
+            'success': True,
+            'recommendations': recommendations
+        }), 200
+        
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error cargando recomendaciones'}), 500
+
+
+@app.route('/api/test/result', methods=['GET'])
+@token_required
+def get_user_test_result(current_user_id):
+    """
+    Obtiene el último resultado del test del usuario
+    GET /api/test/result
+    """
+    try:
+        service = TestPreferenceService()
+        result = service.get_user_result(current_user_id)
+        
+        if not result:
+            return jsonify({
+                'success': True,
+                'has_result': False
+            }), 200
+        
+        return jsonify({
+            'success': True,
+            'has_result': True,
+            'result': result
+        }), 200
+        
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error obteniendo resultado'}), 500
+
+
+@app.route('/api/test/history', methods=['GET'])
+@token_required
+def get_user_test_history(current_user_id):
+    """
+    Obtiene historial completo de tests del usuario
+    GET /api/test/history
+    """
+    try:
+        service = TestPreferenceService()
+        history = service.get_test_history(current_user_id)
+        
+        return jsonify({
+            'success': True,
+            'history': history,
+            'total': len(history)
+        }), 200
+        
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error obteniendo historial'}), 500
+
+
+@app.route('/api/test/retake', methods=['POST'])
+@token_required
+def retake_test_preference(current_user_id):
+    """
+    Permite retomar el test (no borra resultados anteriores, solo confirma)
+    POST /api/test/retake
+    """
+    try:
+        return jsonify({
+            'success': True,
+            'message': 'Puedes retomar el test cuando desees. Tu historial se mantendrá.'
+        }), 200
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error'}), 500
+
+
+# ==========================================
+# 📊 ESTADÍSTICAS ADMIN (OPCIONAL)
+# ==========================================
+
+@app.route('/api/admin/test/stats', methods=['GET'])
+@token_required
+def get_test_stats_admin(current_user_id):
+    """
+    Estadísticas globales del test (para admin/analytics)
+    GET /api/admin/test/stats
+    """
+    try:
+        session = get_session()
+        try:
+            from models.test_preference import UserTestResult
+            
+            results = session.query(UserTestResult).all()
+            
+            distribution = {
+                'RED_TEAM': 0,
+                'BLUE_TEAM': 0,
+                'PURPLE_TEAM': 0
+            }
+            
+            total_time = 0
+            count = len(results)
+            
+            for r in results:
+                if r.recommended_role in distribution:
+                    distribution[r.recommended_role] += 1
+                if r.time_taken_seconds:
+                    total_time += r.time_taken_seconds
+            
+            avg_time = round(total_time / count) if count > 0 else 0
+            
+            return jsonify({
+                'success': True,
+                'stats': {
+                    'total_completed': count,
+                    'distribution': distribution,
+                    'avg_time_seconds': avg_time,
+                    'avg_time_minutes': round(avg_time / 60, 1) if avg_time > 0 else 0
+                }
+            }), 200
+            
+        finally:
+            session.close()
+            
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error obteniendo estadísticas'}), 500
         
 # ==========================================
 # 📧 VERIFICACIÓN DE EMAIL (NUEVOS ENDPOINTS)
