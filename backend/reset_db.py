@@ -28,38 +28,48 @@ if __name__ == "__main__":
         print("🔄 Iniciando reinicio de base de datos...")
         
         # 1. Borrar tablas "Zombies" y Vistas manualmente (SQL Crudo)
-        # Esto es necesario porque estas tablas ya no existen en tus modelos de Python,
-        # pero siguen existiendo en PostgreSQL y bloquean el borrado de 'users'.
         try:
             with engine.connect() as connection:
                 with connection.begin():
                     print("🔥 Limpiando tablas antiguas y huérfanas...")
-                    # Borramos tablas viejas usando CASCADE para romper relaciones
+                    
+                    # --- PASO A: Borrar VISTAS primero (usando DROP VIEW) ---
+                    # Es crucial borrar las vistas antes que las tablas
+                    views_to_drop = ["v_glossary_user_stats"]
+                    
+                    for view in views_to_drop:
+                        print(f"   - Eliminando vista: {view}")
+                        connection.execute(text(f"DROP VIEW IF EXISTS {view} CASCADE;"))
+
+                    # --- PASO B: Borrar TABLAS antiguas (usando DROP TABLE) ---
                     tables_to_drop = [
-                        "v_glossary_user_stats",      # Vista
-                        "user_exam_attempts",         # Tabla vieja
-                        "user_preference_results",    # Tabla vieja
-                        "profile_view_logs",          # Tabla vieja
-                        "final_exam_questions",       # Tabla vieja
-                        "preference_questions"        # Tabla vieja (si existiera con ese nombre)
+                        "user_exam_attempts",
+                        "user_preference_results",
+                        "profile_view_logs",
+                        "final_exam_questions",
+                        "preference_questions",
+                        # Agrega aquí cualquier otra tabla "zombie" que no esté en tus modelos
                     ]
                     
                     for table in tables_to_drop:
+                        print(f"   - Eliminando tabla: {table}")
                         connection.execute(text(f"DROP TABLE IF EXISTS {table} CASCADE;"))
-                        connection.execute(text(f"DROP VIEW IF EXISTS {table} CASCADE;"))
                         
         except Exception as e:
-            print(f"⚠️ Advertencia limpieza manual: {e}")
+            # Imprimimos el error pero no detenemos el script completo, 
+            # para ver si SQLAlchemy puede encargarse del resto.
+            print(f"⚠️ Advertencia durante limpieza manual: {e}")
 
         # 2. Borrar tablas actuales de SQLAlchemy
         print("🗑️  Eliminando tablas del esquema actual...")
+        # Ahora esto funcionará porque la vista que lo bloqueaba ya fue eliminada arriba
         Base.metadata.drop_all(engine)
         
         # 3. Crear tablas nuevas
         print("✨ Creando tablas nuevas con esquema actualizado...")
         Base.metadata.create_all(engine)
         
-        # 4. Restaurar la Vista (Opcional)
+        # 4. Restaurar la Vista
         try:
             with engine.connect() as connection:
                 with connection.begin():
@@ -82,3 +92,4 @@ if __name__ == "__main__":
              print(f"⚠️ No se pudo restaurar la vista automáticamente: {e}")
 
         print("✅ Base de datos reiniciada exitosamente.")
+
