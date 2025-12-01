@@ -48,8 +48,6 @@ android {
         compose = true
     }
 
-    // ⚠️ CORRECCIÓN: Eliminado kotlinCompilerExtensionVersion porque usas Kotlin 2.0
-    // El compilador de Compose ahora usa la misma versión que Kotlin automáticamente.
 
     packaging {
         resources {
@@ -91,6 +89,7 @@ dependencies {
     // === Imágenes & Animaciones ===
     implementation(libs.coil.compose)
     implementation(libs.lottie.compose)
+    implementation("nl.dionsegijn:konfetti-compose:2.0.4")
 
     // === Accompanist ===
     implementation(libs.accompanist.pager)
@@ -106,4 +105,5 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
 }
