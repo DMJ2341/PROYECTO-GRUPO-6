@@ -12,7 +12,7 @@ class LessonRepository @Inject constructor(
 ) {
     suspend fun getLesson(lessonId: String): LessonResponse? {
         val token = AuthManager.getToken() ?: return null
-        val response = apiService.getLessonDetail(token, lessonId)
+        val response = apiService.getLessonDetail("Bearer $token", lessonId)  // ✅ CORREGIDO
         if (response.isSuccessful) {
             return response.body()
         } else {
@@ -34,7 +34,7 @@ class LessonRepository @Inject constructor(
             return null
         }
 
-        val response = apiService.completeLesson(token, lessonId)
+        val response = apiService.completeLesson("Bearer $token", lessonId)  // ✅ CORREGIDO
 
         Log.d("LessonRepo", "📥 Response code: ${response.code()}")
         Log.d("LessonRepo", "📥 Response successful: ${response.isSuccessful}")
