@@ -1,0 +1,169 @@
+{
+  "id": "c3_l5",
+  "title": "Certificados Digitales",
+  "description": "Cloud IAM",
+  "type": "interactive",
+  "duration_minutes": 9,
+  "xp_reward": 20,
+  "order_index": 5,
+  "course_id": 3,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "Cloud IAM",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "cloud",
+              "term": "AWS IAM",
+              "color": "#FF9900"
+            },
+            "back": {
+              "definition": "Users, Groups, Roles, Policies. Policies en JSON. Least privilege. Service accounts via roles (no long-term keys). Federated access (SSO).",
+              "example": "Policy: Allow S3:GetObject on specific bucket. Role: Lambda execution role. Root account: Never use for daily ops. MFA on root.",
+              "color": "#FFB366"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "cloud",
+              "term": "Azure AD / Entra ID",
+              "color": "#0078D4"
+            },
+            "back": {
+              "definition": "Identity platform. Users, Groups, Service Principals, Managed Identities. RBAC. Conditional Access (Zero Trust). Integration con O365.",
+              "example": "Conditional Access: Allow login IF (MFA passed AND compliant device AND trusted location). Service Principal = app identity.",
+              "color": "#4DA6FF"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "cloud",
+              "term": "GCP IAM",
+              "color": "#4285F4"
+            },
+            "back": {
+              "definition": "Members (users, groups, service accounts). Roles (primitive, predefined, custom). Policies. Organization > Folder > Project hierarchy. Least privilege.",
+              "example": "Predefined roles: roles/storage.objectViewer. Custom roles para granular control. Service account keys: Rotate o mejor use Workload Identity.",
+              "color": "#669DF6"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "api",
+              "term": "Cross-Account Access",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Assume roles across AWS accounts. Azure service principals cross-tenant. Federation. Avoid long-term keys. Use temporary credentials (STS).",
+              "example": "AWS STS AssumeRole: Dev account → Prod account read-only access for troubleshooting. Time-limited credentials. Audit trail.",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Cloud IAM Best Practices",
+      "duration": 240,
+      "content": {
+        "items": [
+          {
+            "id": "cloud1",
+            "task": "Eliminate Root/Admin Daily Use",
+            "subtitle": "Break glass only",
+            "icon": "warning",
+            "unlock_content": {
+              "title": "Privileged Account Management",
+              "points": [
+                "AWS root: MFA obligatorio. Store credentials in vault. Use ONLY for billing/account closure.",
+                "Azure Global Admin: Similar. Daily ops use lower-privileged roles.",
+                "Create admin users con MFA. Use for day-to-day.",
+                "Capital One: Over-privileged roles caused SSRF impact. Least privilege.",
+                "Audit: CloudTrail/Azure Activity Log. Alert on root/admin usage."
+              ],
+              "bonus_fact": "AWS best practice: Root access maybe once a year. Everything else via IAM users/roles."
+            }
+          },
+          {
+            "id": "cloud2",
+            "task": "Service Account Hygiene",
+            "subtitle": "Eliminate long-term keys",
+            "icon": "key",
+            "unlock_content": {
+              "title": "Workload Identity",
+              "points": [
+                "AWS: Use IAM roles for EC2/Lambda. No access keys in code.",
+                "Azure: Managed Identities. App gets token from metadata service.",
+                "GCP: Workload Identity. No service account key files.",
+                "Rotate keys: If must use keys, rotate every 90 days.",
+                "Uber breach: AWS keys in GitHub. Eliminate keys = eliminate this vector."
+              ],
+              "bonus_fact": "GitHub scans for leaked keys. 10K+ repos removed monthly for exposed credentials."
+            }
+          },
+          {
+            "id": "cloud3",
+            "task": "Implement SCPs/Azure Policy",
+            "subtitle": "Guardrails",
+            "icon": "policy",
+            "unlock_content": {
+              "title": "Organization-level Controls",
+              "points": [
+                "AWS SCPs: Organization-wide deny rules. Ex: Deny region outside US.",
+                "Azure Policy: Enforce tagging, allowed VM sizes, require encryption.",
+                "GCP Organization Policies: Similar. Centralized governance.",
+                "Prevent: Developers spinning up expensive resources, data in wrong regions.",
+                "Compliance: GDPR data residency enforced via policy."
+              ],
+              "bonus_fact": "SCPs override ALL IAM permissions. Ultimate guardrail for multi-account environments."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación - Cloud IAM",
+      "duration": 60,
+      "content": {
+        "question": "¿Cómo prevenir Uber-style leak (AWS keys en GitHub)?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Educar developers sobre no commitear keys",
+            "is_correct": false,
+            "feedback": "Incorrecto. Training ayuda pero humans make mistakes. Need technical control."
+          },
+          {
+            "id": "b",
+            "text": "IAM roles con temporary credentials. No long-term keys. GitHub scanning.",
+            "is_correct": true,
+            "feedback": "CORRECTO! 1) Use IAM roles (EC2 instance profile, Lambda execution role) = temporary credentials, auto-rotate. 2) Eliminate service account keys donde posible (AWS roles, Azure Managed Identity, GCP Workload Identity). 3) GitHub secret scanning + pre-commit hooks (detect-secrets). 4) Rotate keys if must use (90 days). 5) AWS CloudTrail alert on key creation. Defense in depth."
+          },
+          {
+            "id": "c",
+            "text": "Private repos en vez de public",
+            "is_correct": false,
+            "feedback": "Incorrecto. Uber keys estaban en private repo. Attacker gained access. Keys no deben existir in code period."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
+  }
+}

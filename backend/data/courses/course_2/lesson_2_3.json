@@ -1,0 +1,115 @@
+{
+  "id": "c2_l3",
+  "title": "Firewalls y IDS/IPS",
+  "description": "Caso: Heartbleed (2014)",
+  "type": "interactive",
+  "duration_minutes": 8,
+  "xp_reward": 20,
+  "order_index": 3,
+  "course_id": 2,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Caso: Heartbleed (2014)",
+      "duration": 180,
+      "content": {
+        "story_title": "Heartbleed: OpenSSL Buffer Over-read",
+        "story_intro": "CVE-2014-0160, CVSS 7.5. Bug en OpenSSL por 2 años afectó 17% de internet",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "favorite_border",
+            "title": "El Bug",
+            "content": "Heartbleed: buffer over-read en TLS heartbeat extension. Permite leer 64KB de memory del server por request. Passwords, private keys, session tokens leakeados.",
+            "insight": "Una línea de código missing bounds check = 500K sites vulnerables."
+          },
+          {
+            "id": "2",
+            "icon": "cloud",
+            "title": "Scope Masivo",
+            "content": "Afectó: Yahoo, Google, Amazon AWS, muchos banks. OpenSSL estaba en 66% de web servers. Bug existió desde 2012, discovered en 2014.",
+            "insight": "Open source critical infrastructure con solo 2 full-time developers. Underfunded = insecure."
+          },
+          {
+            "id": "3",
+            "icon": "build",
+            "title": "Remediation",
+            "content": "Patch: OpenSSL 1.0.1g released. PERO: private keys comprometidas = re-issue ALL certificates. Certificate revocation lists explotaron. Effort masivo.",
+            "insight": "Patching no es suficiente cuando keys están leaked. Certificate rotation es pain."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "TLS/SSL Fundamentals",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "lock",
+              "term": "TLS Handshake",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Establece encrypted connection. 1) ClientHello. 2) ServerHello + Certificate. 3) Key exchange. 4) Finished. Negotiates cipher suite, exchanges keys.",
+              "example": "TLS 1.3: Faster handshake (1-RTT vs 2-RTT). Removes weak ciphers. Mandatory forward secrecy. Heartbleed: TLS 1.0/1.1 affected.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "verified",
+              "term": "Certificates & CAs",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "X.509 certificates. CA (Certificate Authority) firma certificate. Browser trust CA root certificates. Chain of trust.",
+              "example": "Let's Encrypt: Free automated certificates. DigiCert, Sectigo: Commercial CAs. Heartbleed: Had to revoke/reissue millions of certs.",
+              "color": "#66BB6A"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación - Encryption",
+      "duration": 60,
+      "content": {
+        "question": "¿Por qué Heartbleed requirió revocar certificates?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Bug estaba en certificates mismos",
+            "is_correct": false,
+            "feedback": "Incorrecto. Certificates estaban bien. Heartbleed permitía leak PRIVATE KEYS from server memory."
+          },
+          {
+            "id": "b",
+            "text": "Private keys podían ser leakeadas desde server memory",
+            "is_correct": true,
+            "feedback": "CORRECTO! Heartbleed permitía read server memory. Si private key estaba en memory, atacante podía extraerla. Con private key, puede impersonate server, decrypt traffic. Por eso ALL certificates tuvieron que ser revoked y reissued con new keys."
+          },
+          {
+            "id": "c",
+            "text": "CAs fueron comprometidas",
+            "is_correct": false,
+            "feedback": "Incorrecto. CAs no fueron comprometidas. Cada server individual con Heartbleed era vulnerable a key extraction."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "CVE-2014-0160, CVSS 7.5. Bug en OpenSSL por 2 años afectó 17% de internet"
+  }
+}

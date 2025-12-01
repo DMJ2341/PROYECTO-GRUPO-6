@@ -1,0 +1,194 @@
+{
+  "id": "c4_l3",
+  "title": "XSS y CSRF",
+  "description": "Threat Hunting",
+  "type": "interactive",
+  "duration_minutes": 10,
+  "xp_reward": 20,
+  "order_index": 3,
+  "course_id": 4,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "Threat Hunting",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "travel_explore",
+              "term": "Proactive Threat Hunting",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "No esperar alerts. Buscar proactivamente threats que evaded detection. Hypothesis-driven: 'Creo que tenemos X porque Y'. Hunt for evidence.",
+              "example": "Hypothesis: 'Attacker usando living-off-the-land binaries (LOLBins) para evade EDR'. Hunt: Query logs para unusual PowerShell/WMI activity. Target: Hunt for POS anomalies.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "fingerprint",
+              "term": "IoCs vs TTPs",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "IoC (Indicator of Compromise): Hash, IP, domain. Fácil cambiar. TTP (Tactics, Techniques, Procedures): Behavior. Harder to change.",
+              "example": "IoC: Malware hash 'abc123'. Change 1 byte = new hash. TTP: 'Uses Mimikatz for credential dumping' = detectable behavior regardless of hash.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "psychology",
+              "term": "Hypothesis Development",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Generate hunts basado en: threat intel, industry trends, TTPs de APTs relevantes, crown jewels (what attackers want), past incidents.",
+              "example": "Retail: POS malware common. Hypothesis: 'Check for unusual process accessing POS terminal memory'. Target: This hunt would find BlackPOS.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "fact_check",
+              "term": "Hunt Validation",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Hunt results: True positive (found threat), False positive (benign), or Inconclusive. Document findings. Feed back to detection rules.",
+              "example": "Found: Unusual PowerShell accessing lsass.exe = True positive (credential dumping). Update SIEM rule to auto-alert. Continuous improvement loop.",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Threat Hunting Methodology",
+      "duration": 300,
+      "content": {
+        "items": [
+          {
+            "id": "hunt1",
+            "task": "1. Define Hypothesis",
+            "subtitle": "What to hunt for?",
+            "icon": "lightbulb",
+            "unlock_content": {
+              "title": "Hypothesis Creation",
+              "points": [
+                "Based on: Recent threat intel, industry sector risks, crown jewels",
+                "Example hypotheses for retail:",
+                "- 'POS terminals infected with RAM scraper'",
+                "- 'Attacker pivoted from vendor VPN to payment network'",
+                "- 'Credentials exfiltrated via DNS tunneling'",
+                "Target example: 'Fazio credentials used to access non-HVAC systems'"
+              ],
+              "bonus_fact": "Good hypothesis is specific, testable, based on realistic threat model."
+            }
+          },
+          {
+            "id": "hunt2",
+            "task": "2. Gather Data",
+            "subtitle": "What logs needed?",
+            "icon": "storage",
+            "unlock_content": {
+              "title": "Data Sources",
+              "points": [
+                "Endpoint: Process execution, file access, network connections, registry changes",
+                "Network: NetFlow, DNS logs, proxy logs, firewall logs",
+                "Authentication: Login attempts, privilege escalation, lateral movement",
+                "Application: Database queries, web app logs, API calls",
+                "Target needed: POS terminal logs, network traffic from POS to external IPs"
+              ],
+              "bonus_fact": "Data retention critical. Can't hunt if logs deleted. Recommend 90+ days minimum."
+            }
+          },
+          {
+            "id": "hunt3",
+            "task": "3. Execute Hunt",
+            "subtitle": "Query and analyze",
+            "icon": "search",
+            "unlock_content": {
+              "title": "Analysis Techniques",
+              "points": [
+                "Stack counting: Group by rare events. Outliers are interesting.",
+                "Time-series analysis: Detect anomalies in patterns.",
+                "Correlation: Connect dots across data sources.",
+                "Indicators: Search for known bad (IoCs) while hunting for behavior (TTPs).",
+                "Tools: Splunk, ELK, Jupyter notebooks, custom scripts"
+              ],
+              "bonus_fact": "Hunting is art + science. Experience matters. Pattern recognition improves with time."
+            }
+          },
+          {
+            "id": "hunt4",
+            "task": "4. Document & Improve",
+            "subtitle": "Close the loop",
+            "icon": "assignment",
+            "unlock_content": {
+              "title": "Continuous Improvement",
+              "points": [
+                "Document findings: What found, when, how, impact",
+                "True positive → Incident response + New detection rule",
+                "False positive → Refine hypothesis for next hunt",
+                "Inconclusive → Need better data sources",
+                "Share with team: Knowledge transfer, training",
+                "Target lesson: Document 'FireEye alert X dismissed' → Root cause → Training"
+              ],
+              "bonus_fact": "Mature SOCs: Hunt results feed detection engineering. Virtuous cycle."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación - Threat Hunting",
+      "duration": 60,
+      "content": {
+        "question": "Diferencia entre reactive detection y proactive hunting?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Son lo mismo",
+            "is_correct": false,
+            "feedback": "Incorrecto. Muy diferentes approaches."
+          },
+          {
+            "id": "b",
+            "text": "Detection espera alerts; Hunting busca proactivamente threats que evaded detection",
+            "is_correct": true,
+            "feedback": "CORRECTO! Reactive detection: SIEM rules → alerts → investigate. Waits for known bad. Proactive hunting: Hypothesis → query logs → find unknowns. Assumes breach already happened but undetected. Detection finds 70-80% of threats. Hunting finds the stealthy 20-30%. Target: FireEye detected (reactive) pero dismissed. Hunting hubiera found BlackPOS proactively (hypothesis: 'POS memory scraping')."
+          },
+          {
+            "id": "c",
+            "text": "Hunting es solo para APTs, detection para malware común",
+            "is_correct": false,
+            "feedback": "Incorrecto. Hunting aplica a cualquier threat que evades detection, no solo APTs."
+          },
+          {
+            "id": "d",
+            "text": "Detection requiere más skill",
+            "is_correct": false,
+            "feedback": "Incorrecto. Hunting requiere más skill (hypothesis, creativity, deep analysis). Detection es más process-driven."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
+  }
+}

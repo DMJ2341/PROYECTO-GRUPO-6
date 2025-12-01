@@ -1,0 +1,326 @@
+{
+  "id": "c2_l1",
+  "title": "Fundamentos de Redes",
+  "description": "Caso Real: Mirai Botnet (2016)",
+  "type": "interactive",
+  "duration_minutes": 20,
+  "xp_reward": 20,
+  "order_index": 1,
+  "course_id": 2,
+  "total_screens": 5,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Caso Real: Mirai Botnet (2016)",
+      "duration": 240,
+      "content": {
+        "story_title": "Mirai: 600K Dispositivos IoT Weaponizados",
+        "story_intro": "El mayor DDoS de la historia hasta ese momento. Demostró que IoT inseguro puede tumbar internet.",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "router",
+            "title": "Target: Dispositivos IoT Inseguros",
+            "content": "Octubre 2016. Mirai botnet escaneó internet buscando cámaras IP, DVRs, routers con Telnet abierto (puerto 23). Probó 60+ combinaciones de credenciales por defecto: admin/admin, root/12345, etc.",
+            "insight": "IoT devices con credenciales default son bombas de tiempo. Fabricantes shippean millones sin seguridad básica."
+          },
+          {
+            "id": "2",
+            "icon": "bug_report",
+            "title": "Vector: Telnet + Credenciales Default",
+            "content": "Mirai infectó 600,000 dispositivos. Telnet transmite en cleartext, sin encryption. Una vez dentro, descargaba malware que convertía el device en bot. Owner nunca se enteraba - dispositivo seguía funcionando normal.",
+            "insight": "Telnet es LEGACY protocol que NUNCA debió existir en IoT moderno. SSH existe desde 1995."
+          },
+          {
+            "id": "3",
+            "icon": "speed",
+            "title": "Attack: 1.2 Tbps contra Dyn DNS",
+            "content": "21 Oct 2016. Mirai atacó Dyn, major DNS provider. 1.2 Tbps de tráfico UDP flood. DNS es crítico - sin DNS, no hay internet. Twitter, Netflix, GitHub, Reddit, NYTimes cayeron simultáneamente por 11 horas.",
+            "insight": "DNS es single point of failure. UDP amplification: enviar request de 60 bytes, server responde 3000 bytes a víctima."
+          },
+          {
+            "id": "4",
+            "icon": "code",
+            "title": "Source Code Leak",
+            "content": "Creator (Anna-senpai en HackForums) liberó source code de Mirai. Esto spawneó 100+ variantes: Okiru, Satori, Masuta. Script kiddies podían crear botnets masivos. IoT DDoS se democratizó.",
+            "insight": "Open source malware es doble filo. Permite study y defense, pero también weaponiza a cualquiera."
+          },
+          {
+            "id": "5",
+            "icon": "gavel",
+            "title": "Aftermath: IoT Security Crisis",
+            "content": "FBI arrestó creators (Paras Jha, Josiah White, Dalton Norman) en 2017. Pero damage estaba hecho. NIST publicó guidance para IoT security. Regulación comenzó (California SB-327). Industry tuvo wake-up call.",
+            "insight": "Mirai forzó a industria a tomar IoT security en serio. Pero millones de dispositivos vulnerables aún existen."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "Modelo TCP/IP: Las 4 Capas",
+      "duration": 300,
+      "content": {
+        "description": "Arquitectura fundamental de internet según RFC 1122",
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "web",
+              "term": "Application Layer",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Capa 4 (top). Protocolos de usuario final: HTTP, HTTPS, DNS, SMTP, FTP, SSH. Interactúa directamente con aplicaciones. Data es procesada por programas.",
+              "example": "Browser usa HTTP/HTTPS. Email client usa SMTP/IMAP. Vulnerabilidades: phishing (SMTP), XSS (HTTP), DNS poisoning. Mirai usó Telnet en esta capa.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "sync_alt",
+              "term": "Transport Layer",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Capa 3. TCP (reliable, conexión) y UDP (fast, no reliable). Maneja ports, flow control, error recovery. Segmenta data en packets.",
+              "example": "TCP: Web (80/443), Email (25), SSH (22). UDP: DNS (53), streaming, gaming. Vulnerabilidades: SYN flood (TCP), UDP amplification (Mirai usó UDP flood).",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "public",
+              "term": "Internet Layer",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Capa 2. IP addressing y routing. IPv4 (32-bit) o IPv6 (128-bit). ICMP para diagnostics (ping). Routers operan aquí.",
+              "example": "IP packets contienen source/dest IPs. Vulnerabilidades: IP spoofing (falsificar IP origen), ICMP floods (ping of death). IPsec añade encryption.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "settings_ethernet",
+              "term": "Network Access Layer",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Capa 1 (bottom). Hardware: Ethernet, WiFi, fiber. MAC addressing. Physical transmission de bits. NICs y switches operan aquí.",
+              "example": "Ethernet frame contiene MAC addresses. WiFi usa 802.11. Vulnerabilidades: MAC spoofing, ARP poisoning, WiFi eavesdropping (sin encryption).",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "Puertos Críticos y Sus Vulnerabilidades",
+      "duration": 360,
+      "content": {
+        "title": "Well-Known Ports (0-1023)",
+        "items": [
+          {
+            "id": "port_23",
+            "task": "Puerto 23 - Telnet (Mirai Vector)",
+            "subtitle": "NUNCA usar - cleartext total",
+            "icon": "dangerous",
+            "unlock_content": {
+              "title": "🚨 CRÍTICO - Telnet",
+              "points": [
+                "Protocol: TCP, cleartext (sin encryption)",
+                "Uso: Remote shell access (legacy)",
+                "Vulnerabilidad: TODAS las credenciales en plaintext",
+                "Mirai exploit: Brute force con 60+ combos default",
+                "Alternativa: SSH (puerto 22) con key-based auth",
+                "Regla: Si ves Telnet en 2024, es vulnerable 100%"
+              ],
+              "bonus_fact": "Mirai infectó 600K devices en días porque Telnet estaba enabled por default en IoT. SSH hubiera prevenido esto."
+            }
+          },
+          {
+            "id": "port_53",
+            "task": "Puerto 53 - DNS",
+            "subtitle": "UDP/TCP - Critical para internet",
+            "icon": "dns",
+            "unlock_content": {
+              "title": "⚠️ DNS - Infrastructure Crítica",
+              "points": [
+                "Protocol: UDP (queries) y TCP (zone transfers)",
+                "Función: Domain name → IP resolution",
+                "Vulnerabilidad 1: Cache poisoning (inyectar entradas fake)",
+                "Vulnerabilidad 2: Amplification DDoS (60 bytes query → 3000 bytes response)",
+                "Vulnerabilidad 3: DNS tunneling (C2 traffic oculto)",
+                "Defensa: DNSSEC (digital signatures), rate limiting, query logging"
+              ],
+              "bonus_fact": "Mirai atacó Dyn DNS con UDP amplification. Sin DNS, internet colapsa - fue exactamente lo que pasó."
+            }
+          },
+          {
+            "id": "port_445",
+            "task": "Puerto 445 - SMB",
+            "subtitle": "TCP - File sharing (EternalBlue)",
+            "icon": "folder_shared",
+            "unlock_content": {
+              "title": "⚠️ SMB - WannaCry Vector",
+              "points": [
+                "Protocol: TCP, file sharing en Windows",
+                "Uso: Network drives, printer sharing, IPC",
+                "Vulnerabilidad: EternalBlue (CVE-2017-0144, CVSS 9.3)",
+                "WannaCry: Worm que se propagó vía SMB sin authentication",
+                "Defensa: Patch MS17-010, disable SMBv1, segment network",
+                "Scanning: Puerto 445 abierto a internet = red flag massive"
+              ],
+              "bonus_fact": "EternalBlue fue desarrollado por NSA y leaked por Shadow Brokers. Weaponizado en <24 horas."
+            }
+          },
+          {
+            "id": "port_3389",
+            "task": "Puerto 3389 - RDP",
+            "subtitle": "TCP - Remote Desktop",
+            "icon": "desktop_windows",
+            "unlock_content": {
+              "title": "⚠️ RDP - Brute Force Heaven",
+              "points": [
+                "Protocol: TCP, remote desktop access",
+                "Uso: Administración remota de Windows",
+                "Vulnerabilidad 1: BlueKeep (CVE-2019-0708, wormable)",
+                "Vulnerabilidad 2: Brute force attacks (automated)",
+                "Vulnerabilidad 3: MITM si no TLS properly configured",
+                "Defensa: NLA (Network Level Authentication), strong passwords, MFA, VPN only"
+              ],
+              "bonus_fact": "RDP exposed to internet = ransomware gangs' favorite entry. 3M+ RDP servers expuestos constantemente."
+            }
+          },
+          {
+            "id": "port_80_443",
+            "task": "Puertos 80/443 - HTTP/HTTPS",
+            "subtitle": "TCP - Web traffic",
+            "icon": "language",
+            "unlock_content": {
+              "title": "Web Protocols",
+              "points": [
+                "HTTP (80): Cleartext, MITM vulnerable, legacy",
+                "HTTPS (443): TLS encrypted, certificate validation",
+                "Vulnerabilidad HTTP: Session hijacking, credential theft",
+                "Vulnerabilidad HTTPS: SSL/TLS bugs (Heartbleed, POODLE)",
+                "Best practice: HSTS (force HTTPS), TLS 1.3+, cert pinning",
+                "Modern: HTTP/2, HTTP/3 (QUIC) con performance gains"
+              ],
+              "bonus_fact": "Let's Encrypt democratizó HTTPS. Antes cost $$$, ahora free. 95% de web traffic es HTTPS en 2024."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "memory_cards",
+      "title": "TCP vs UDP: Diferencias Críticas",
+      "duration": 240,
+      "content": {
+        "description": "Transport layer protocols y sus trade-offs",
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "sync",
+              "term": "TCP - Reliable",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Transmission Control Protocol (RFC 793). Conexión establecida vía 3-way handshake. Garantiza entrega de packets en orden. Retransmite si packet loss. Flow control con sliding windows.",
+              "example": "Usa TCP: HTTP/HTTPS, SSH, Email, File transfers. Vulnerabilidad: SYN flood (enviar mil SYNs, nunca completar handshake, exhaust server resources).",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "flash_on",
+              "term": "UDP - Fast",
+              "color": "#FF6F00"
+            },
+            "back": {
+              "definition": "User Datagram Protocol (RFC 768). Connectionless, no handshake. No garantiza entrega ni orden. Overhead mínimo. Ideal para real-time donde speed > reliability.",
+              "example": "Usa UDP: DNS, streaming (video/audio), gaming, VoIP, NTP. Vulnerabilidad: Amplification DDoS (Mirai: DNS/NTP reflection attacks).",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "handshake",
+              "term": "TCP 3-Way Handshake",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Establecimiento de conexión: 1) Client→Server: SYN. 2) Server→Client: SYN-ACK. 3) Client→Server: ACK. Connection established. Sequence numbers sincronizados.",
+              "example": "SYN flood attack: Enviar thousands de SYNs, nunca enviar ACK final. Server mantiene half-open connections, exhaust memory. Defense: SYN cookies.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "volume_up",
+              "term": "UDP Amplification",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Attack vector: Enviar request pequeño a server con IP spoofed (víctima). Server responde con response MUCHO más grande a víctima. Amplification factor 10-100x. DDoS masivo con poco bandwidth.",
+              "example": "DNS amplification: 60 byte query → 3000 byte response (50x). NTP: 234x. Mirai usó esto contra Dyn. Defense: Rate limiting, BCP38 (no permitir IP spoofing).",
+              "color": "#EF5350"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "quiz",
+      "title": "Evaluación - Protocolos y Puertos",
+      "duration": 90,
+      "content": {
+        "question": "¿Por qué Mirai tuvo tanto éxito infectando dispositivos IoT?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Usó zero-day exploit imposible de prevenir",
+            "is_correct": false,
+            "feedback": "Incorrecto. Mirai NO usó zero-day. Explotó Telnet con credenciales DEFAULT. Era 100% prevenible simplemente cambiando passwords o disabling Telnet."
+          },
+          {
+            "id": "b",
+            "text": "Telnet (puerto 23) transmite en cleartext + credenciales por defecto nunca cambiadas",
+            "is_correct": true,
+            "feedback": "¡CORRECTO! Mirai scaneaba puerto 23 (Telnet) y probaba 60+ combos de usuario/contraseña default (admin/admin, root/12345). Telnet NO tiene encryption, todo en plaintext. Fabricantes shippean IoT devices con Telnet enabled y passwords default. Users nunca cambian. Receta perfecta para botnet masivo."
+          },
+          {
+            "id": "c",
+            "text": "Los dispositivos IoT no tienen antivirus",
+            "is_correct": false,
+            "feedback": "Incorrecto. Aunque es cierto que IoT devices no tienen antivirus, esto no es la razón principal del éxito de Mirai. El problema fue Telnet + credenciales default. Incluso con antivirus, si alguien logra login con credenciales válidas, game over."
+          },
+          {
+            "id": "d",
+            "text": "Usó DNS tunneling para ocultar C2 traffic",
+            "is_correct": false,
+            "feedback": "Incorrecto. Mirai NO usó DNS tunneling. Simplemente hacía connections directas a C2 servers. El vector de infección fue Telnet brute force, no técnicas avanzadas de evasión."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "El mayor DDoS de la historia hasta ese momento. Demostró que IoT inseguro puede tumbar internet."
+  }
+}

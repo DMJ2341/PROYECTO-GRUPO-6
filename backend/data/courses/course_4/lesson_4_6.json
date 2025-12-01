@@ -1,0 +1,186 @@
+{
+  "id": "c4_l6",
+  "title": "API Security",
+  "description": "Security Orchestration (SOAR)",
+  "type": "interactive",
+  "duration_minutes": 8,
+  "xp_reward": 20,
+  "order_index": 6,
+  "course_id": 4,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "Security Orchestration (SOAR)",
+      "duration": 180,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "smart_toy",
+              "term": "SOAR - Security Orchestration, Automation & Response",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Platform que automatiza response actions. Integrates tools (SIEM, EDR, firewall). Playbooks: IF alert THEN automated actions. Reduce MTTR.",
+              "example": "Palo Alto Cortex XSOAR, Splunk SOAR, Microsoft Sentinel. Playbook: Phishing alert → Auto-isolate user → Scan email → Block sender → Notify SOC.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "account_tree",
+              "term": "Playbooks",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Automated workflows. Trigger → Actions → Decision points. Codify tribal knowledge. Example: Ransomware playbook con steps from detection to recovery.",
+              "example": "Ransomware playbook: 1) Detect (EDR alert) → 2) Isolate endpoint (auto-quarantine) → 3) Kill processes → 4) Block C2 IPs → 5) Alert Tier 2 → 6) Create ticket.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "extension",
+              "term": "Integration",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "SOAR connects disparate tools via APIs. Single pane of glass. Example: SIEM detects → SOAR queries threat intel → Blocks at firewall → Updates ticketing.",
+              "example": "Target scenario: SOAR could auto-escalate FireEye alert → Query VirusTotal → If malicious → Isolate POS terminals → Alert management.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "query_stats",
+              "term": "Metrics & Improvement",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "SOAR tracks: MTTR, MTTD, alert volume, automation rate, false positive rate. Data-driven SOC improvement.",
+              "example": "Before SOAR: MTTR 4 hours. After SOAR: MTTR 30 min (auto-containment). Automation handles 70% of alerts, analysts focus on complex 30%.",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Automation Candidates",
+      "duration": 240,
+      "content": {
+        "items": [
+          {
+            "id": "auto1",
+            "task": "Tier 1 Alert Triage",
+            "subtitle": "Filter noise",
+            "icon": "filter_list",
+            "unlock_content": {
+              "title": "Automate Triage",
+              "points": [
+                "Enrich alerts: Auto-query threat intel, WHOIS, geolocation",
+                "Context gathering: User recent activity, asset criticality",
+                "Severity scoring: ML-based prioritization",
+                "Auto-close: Known false positives (scanner IPs, approved maintenance)",
+                "Escalate: High-severity to human analyst"
+              ],
+              "bonus_fact": "70% of Tier 1 work is automatable. Frees analysts for investigation."
+            }
+          },
+          {
+            "id": "auto2",
+            "task": "Containment Actions",
+            "subtitle": "Speed matters",
+            "icon": "block",
+            "unlock_content": {
+              "title": "Automated Response",
+              "points": [
+                "Endpoint isolation: EDR auto-quarantine on malware detection",
+                "Account disable: Compromised user = auto-disable AD account",
+                "Firewall block: C2 IPs auto-added to block list",
+                "Email quarantine: Phishing detected = recall from all mailboxes",
+                "Colonial benefit: Auto-isolation could limit ransomware spread"
+              ],
+              "bonus_fact": "Manual containment: 30+ min. Automated: <1 min. Ransomware spreads fast."
+            }
+          },
+          {
+            "id": "auto3",
+            "task": "Threat Intel Enrichment",
+            "subtitle": "Context for decisions",
+            "icon": "info",
+            "unlock_content": {
+              "title": "Intelligence Automation",
+              "points": [
+                "IP reputation: Auto-check VirusTotal, AbuseIPDB, internal history",
+                "Domain reputation: WHOIS age, category, threat feeds",
+                "File hash: Check against malware databases",
+                "User risk score: Aggregate risk indicators",
+                "Auto-escalate: High-risk indicators = priority alert"
+              ],
+              "bonus_fact": "Enrichment reduces investigation time 50%. Analyst has context immediately."
+            }
+          },
+          {
+            "id": "auto4",
+            "task": "Reporting & Metrics",
+            "subtitle": "Visibility",
+            "icon": "assessment",
+            "unlock_content": {
+              "title": "Automated Reporting",
+              "points": [
+                "Daily SOC metrics: Alerts handled, MTTR, open investigations",
+                "Weekly executive summary: Trends, top threats, actions taken",
+                "Compliance reports: Auto-generate audit trails",
+                "Incident reports: Template population from SOAR case data",
+                "Target lesson: Automated reporting of FireEye alerts could show pattern of dismissals"
+              ],
+              "bonus_fact": "Manual reporting = hours/week. SOAR = minutes. Time saved for hunting."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación",
+      "duration": 60,
+      "content": {
+        "question": "SOAR primary benefit?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Replace SOC analysts",
+            "is_correct": false,
+            "feedback": "Incorrecto. SOAR augments humans, no reemplaza. Complex decisions need human judgment."
+          },
+          {
+            "id": "b",
+            "text": "Automate repetitive tasks, reduce MTTR, allow analysts to focus on complex threats",
+            "is_correct": true,
+            "feedback": "CORRECTO! SOAR handles 70% repetitive work (enrichment, triage, basic containment). Benefits: 1) Reduce MTTR: Automated containment en seconds vs minutes. 2) Consistent response: Playbooks = same actions every time. 3) Scale: Handle alert volume that humans can't. 4) Analyst retention: Less burnout from repetitive work. 5) Focus: Analysts spend time hunting, investigating complex threats. Target example: SOAR could auto-escalate FireEye alerts con proper enrichment, reducing dismissals."
+          },
+          {
+            "id": "c",
+            "text": "Solo para compliance reporting",
+            "is_correct": false,
+            "feedback": "Incorrecto. Reporting es feature pero main benefit es response automation."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
+  }
+}

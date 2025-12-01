@@ -2,71 +2,72 @@ package com.example.cyberlearnapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.Course
-import com.example.cyberlearnapp.network.Lesson
-import com.example.cyberlearnapp.repository.UserRepository
+import com.example.cyberlearnapp.network.models.Course
+import com.example.cyberlearnapp.network.models.Lesson
+import com.example.cyberlearnapp.repository.CourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class CourseUiState(
-    val courseList: List<Course> = emptyList(),
-    val lessonList: List<Lesson> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String? = null
-)
-
 @HiltViewModel
 class CourseViewModel @Inject constructor(
-    private val apiService: ApiService,
-    private val userRepository: UserRepository
+    private val repository: CourseRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CourseUiState())
-    val uiState = _uiState.asStateFlow()
+    private val _courses = MutableStateFlow<List<Course>>(emptyList())
+    val courses: StateFlow<List<Course>> = _courses
 
-    fun loadAllCourses() {
+    private val _selectedCourse = MutableStateFlow<Course?>(null)
+    val selectedCourse: StateFlow<Course?> = _selectedCourse
+
+    private val _courseLessons = MutableStateFlow<List<Lesson>>(emptyList())
+    val courseLessons: StateFlow<List<Lesson>> = _courseLessons
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error
+
+    fun loadCourses() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            _isLoading.value = true
+            _error.value = null
             try {
-                val token = userRepository.getToken().first() ?: ""
-                val response = apiService.getAllCourses("Bearer $token")
-
-                if (response.isSuccessful) {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        courseList = response.body() ?: emptyList()
-                    )
-                } else {
-                    _uiState.value = _uiState.value.copy(isLoading = false, error = "Error al cargar cursos")
-                }
+                val result = repository.getAllCourses()
+                _courses.value = result
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+                _error.value = e.message ?: "Error desconocido"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
-    fun loadLessonsForCourse(courseId: String) {
+    fun loadCourseDetail(courseId: Int) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            _isLoading.value = true
             try {
-                val token = userRepository.getToken().first() ?: ""
-                val response = apiService.getCourseLessons(courseId, "Bearer $token")
-
-                if (response.isSuccessful) {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        lessonList = response.body()?.lessons ?: emptyList()
-                    )
-                } else {
-                    _uiState.value = _uiState.value.copy(isLoading = false, error = "Error al cargar lecciones")
-                }
+                val course = repository.getCourseDetail(courseId)
+                _selectedCourse.value = course
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    // ✅ NUEVA: Carga lecciones con estado de completado
+    fun loadCourseLessons(courseId: Int) {
+        viewModelScope.launch {
+            try {
+                val lessons = repository.getCourseLessons(courseId)
+                _courseLessons.value = lessons
+            } catch (e: Exception) {
+                _error.value = e.message
             }
         }
     }

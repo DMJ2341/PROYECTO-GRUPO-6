@@ -1,0 +1,1780 @@
+[
+  {
+    "term": "Access Control",
+    "acronym": "AC",
+    "definition": "El proceso de otorgar o denegar solicitudes específicas para: 1) obtener y usar información y recursos relacionados; y 2) ingresar a instalaciones físicas específicas. (NIST SP 800-53 Rev. 5)",
+    "category": "Seguridad",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Advanced Persistent Threat",
+    "acronym": "APT",
+    "definition": "Un adversario que posee niveles sofisticados de experiencia y recursos significativos que le permiten crear oportunidades para lograr sus objetivos mediante el uso de múltiples vectores de ataque. (NIST SP 800-39)",
+    "category": "Amenazas",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Authentication",
+    "acronym": null,
+    "definition": "Verificar la identidad de un usuario, proceso o dispositivo, a menudo como requisito previo para permitir el acceso a recursos en un sistema de información. (NIST SP 800-63-3)",
+    "category": "Identidad",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Authorization",
+    "acronym": null,
+    "definition": "Los derechos de acceso otorgados a un usuario, programa o proceso, o la acción de otorgar dichos derechos. (NIST SP 800-95)",
+    "category": "Seguridad",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Availability",
+    "acronym": null,
+    "definition": "Garantizar el acceso oportuno y confiable al uso de la información. (NIST SP 800-12 Rev. 1)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Backdoor",
+    "acronym": null,
+    "definition": "Un mecanismo oculto de software o hardware que se activa para eludir los controles de seguridad. (NIST SP 800-82 Rev. 2)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Botnet",
+    "acronym": null,
+    "definition": "Una colección de computadoras comprometidas por códigos maliciosos y controladas a través de una red. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Brute Force Attack",
+    "acronym": null,
+    "definition": "Un ataque criptográfico que, en el peor de los casos, debe probar todas las claves posibles para tener éxito. (NIST SP 800-57 Parte 1 Rev. 5)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Certificate Authority",
+    "acronym": "CA",
+    "definition": "Una entidad confiable que emite y revoca certificados de clave pública. (NIST SP 800-32)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Cipher",
+    "acronym": null,
+    "definition": "Una transformación criptográfica de datos para ocultar su significado. (NIST FIPS 140-3)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Confidentiality",
+    "acronym": null,
+    "definition": "Preservar las restricciones autorizadas sobre el acceso y divulgación de información, incluyendo medios para proteger la privacidad personal. (NIST SP 800-53 Rev. 5)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Cryptographic Key",
+    "acronym": null,
+    "definition": "Un valor utilizado para controlar las operaciones criptográficas, como descifrado, cifrado, generación de firmas o verificación de firmas. (NIST SP 800-175B Rev. 1)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Cryptography",
+    "acronym": null,
+    "definition": "El uso de técnicas matemáticas para proporcionar seguridad de servicios como confidencialidad, integridad de datos, autenticación de entidades y autenticación del origen de datos. (NIST SP 800-175A)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Cybersecurity",
+    "acronym": null,
+    "definition": "Prevención de daños, protección y restauración de computadoras, sistemas de comunicaciones electrónicas y comunicaciones electrónicas, incluida la información contenida en ellos, para garantizar su disponibilidad, integridad, autenticación, confidencialidad y no repudio. (NIST SP 800-53 Rev. 5)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Data Breach",
+    "acronym": null,
+    "definition": "La pérdida de control, compromiso, divulgación no autorizada, adquisición no autorizada, o cualquier ocurrencia similar donde una persona no autorizada accede o potencialmente accede a información de identificación personal. (NIST SP 800-53 Rev. 5)",
+    "category": "Incidentes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Denial of Service",
+    "acronym": "DoS",
+    "definition": "La prevención del acceso autorizado a recursos o el retraso de operaciones y funciones sensibles al tiempo. (NIST SP 800-53 Rev. 5)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Digital Signature",
+    "acronym": null,
+    "definition": "El resultado del proceso de transformación criptográfica de datos que, cuando se implementa correctamente, proporciona un mecanismo para verificar el origen, la autenticación, la integridad de los datos y el no repudio del firmante. (NIST SP 800-12 Rev. 1)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Distributed Denial of Service",
+    "acronym": "DDoS",
+    "definition": "Un ataque de denegación de servicio que utiliza múltiples hosts para negar el servicio. (NIST SP 800-61 Rev. 2)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Encryption",
+    "acronym": null,
+    "definition": "Conversión de texto plano en texto cifrado mediante un algoritmo criptográfico. (NIST SP 800-21 2da Ed.)",
+    "category": "Criptografía",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Exploit",
+    "acronym": null,
+    "definition": "Una técnica para violar la seguridad de un sistema informático mediante la explotación de una vulnerabilidad. (NIST SP 800-40 Rev. 4)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Firewall",
+    "acronym": null,
+    "definition": "Un dispositivo o programa que controla el flujo de tráfico de red entre redes o sistemas mediante la aplicación de un conjunto de reglas. (NIST SP 800-41 Rev. 1)",
+    "category": "Defensa",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Hash Function",
+    "acronym": null,
+    "definition": "Una función que mapea una cadena de bits de longitud arbitraria a una cadena de bits de longitud fija. (NIST FIPS 180-4)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Incident",
+    "acronym": null,
+    "definition": "Una ocurrencia que en realidad o potencialmente pone en peligro la confidencialidad, integridad o disponibilidad de un sistema de información. (NIST SP 800-61 Rev. 2)",
+    "category": "Incidentes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Incident Response",
+    "acronym": null,
+    "definition": "La mitigación de violaciones a las políticas de seguridad y prácticas recomendadas. (NIST SP 800-61 Rev. 2)",
+    "category": "Respuesta",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Information Security",
+    "acronym": "InfoSec",
+    "definition": "La protección de información y sistemas de información contra el acceso, uso, divulgación, interrupción, modificación o destrucción no autorizados. (NIST SP 800-12 Rev. 1)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Integrity",
+    "acronym": null,
+    "definition": "Protección contra la modificación o destrucción inadecuada de información, e incluye garantizar la no repudiación y autenticidad de la información. (NIST SP 800-53 Rev. 5)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Intrusion Detection System",
+    "acronym": "IDS",
+    "definition": "Software que detecta intentos de violar la política de seguridad de un sistema. (NIST SP 800-94)",
+    "category": "Defensa",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Intrusion Prevention System",
+    "acronym": "IPS",
+    "definition": "Un sistema que puede detectar una actividad de intrusión y también intentar detener la actividad. (NIST SP 800-94)",
+    "category": "Defensa",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Keylogger",
+    "acronym": null,
+    "definition": "Software o hardware que registra las pulsaciones de teclas de un usuario. (NIST SP 800-69)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Least Privilege",
+    "acronym": null,
+    "definition": "El principio de que un sujeto de seguridad debe recibir solo aquellos privilegios necesarios para realizar sus funciones. (NIST SP 800-53 Rev. 5)",
+    "category": "Principios",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Malware",
+    "acronym": null,
+    "definition": "Software o firmware diseñado para realizar un proceso no autorizado que tendrá un impacto adverso en la confidencialidad, integridad o disponibilidad de un sistema. (NIST SP 800-53 Rev. 5)",
+    "category": "Malware",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Man-in-the-Middle",
+    "acronym": "MITM",
+    "definition": "Un ataque en el que el atacante se posiciona lógicamente entre dos o más entidades que se comunican para interceptar o modificar datos. (NIST SP 800-63-3)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Multi-Factor Authentication",
+    "acronym": "MFA",
+    "definition": "Autenticación que utiliza dos o más factores para lograr la autenticación. Los factores incluyen algo que conoces, algo que tienes y algo que eres. (NIST SP 800-63-3)",
+    "category": "Identidad",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Patch",
+    "acronym": null,
+    "definition": "Una actualización de un sistema operativo, aplicación u otro software emitida específicamente para corregir vulnerabilidades de seguridad particulares. (NIST SP 800-40 Rev. 4)",
+    "category": "Gestión",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Penetration Testing",
+    "acronym": null,
+    "definition": "Un método de prueba de seguridad que involucra simular las acciones de un atacante para identificar vulnerabilidades. (NIST SP 800-115)",
+    "category": "Evaluación",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Personally Identifiable Information",
+    "acronym": "PII",
+    "definition": "Información que se puede usar para distinguir o rastrear la identidad de un individuo, ya sea sola o cuando se combina con otra información. (NIST SP 800-122)",
+    "category": "Privacidad",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Phishing",
+    "acronym": null,
+    "definition": "Una técnica para intentar adquirir información sensible como nombres de usuario, contraseñas y detalles de tarjetas de crédito haciéndose pasar por una entidad confiable en una comunicación electrónica. (NIST SP 800-63-3)",
+    "category": "Ataques",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Public Key Infrastructure",
+    "acronym": "PKI",
+    "definition": "Un marco que consiste en el hardware, software, personas, políticas y procedimientos necesarios para crear, gestionar, distribuir, usar, almacenar y revocar certificados digitales. (NIST SP 800-32)",
+    "category": "Criptografía",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Ransomware",
+    "acronym": null,
+    "definition": "Un tipo de malware que niega el acceso de un usuario a un sistema o datos hasta que se pague un rescate. (NIST SP 800-184)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Risk",
+    "acronym": null,
+    "definition": "Una medida de la extensión en que una entidad está amenazada por una circunstancia o evento potencial. (NIST SP 800-30 Rev. 1)",
+    "category": "Gestión",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Risk Assessment",
+    "acronym": null,
+    "definition": "El proceso de identificar riesgos para las operaciones organizacionales, activos, individuos u otras organizaciones. (NIST SP 800-30 Rev. 1)",
+    "category": "Gestión",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Rootkit",
+    "acronym": null,
+    "definition": "Un conjunto de herramientas utilizadas por un atacante después de obtener acceso de nivel root a un host para ocultar su presencia y actividades. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Security Control",
+    "acronym": null,
+    "definition": "La salvaguarda administrativa, técnica o física prescrita para un sistema de información. (NIST SP 800-53 Rev. 5)",
+    "category": "Fundamentos",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Security Information and Event Management",
+    "acronym": "SIEM",
+    "definition": "Una aplicación que proporciona la capacidad de recopilar información de registro y generar informes a partir de esos registros. (NIST SP 800-137)",
+    "category": "Defensa",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Social Engineering",
+    "acronym": null,
+    "definition": "Un intento de engañar a alguien para que revele información que puede ser utilizada para atacar sistemas o redes. (NIST SP 800-61 Rev. 2)",
+    "category": "Ataques",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Spear Phishing",
+    "acronym": null,
+    "definition": "Un ataque de phishing dirigido a individuos o grupos específicos. (NIST SP 800-82 Rev. 2)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Spyware",
+    "acronym": null,
+    "definition": "Software que es instalado secretamente en un sistema de información para recopilar información sobre individuos u organizaciones sin su conocimiento. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Threat",
+    "acronym": null,
+    "definition": "Cualquier circunstancia o evento con el potencial de impactar adversamente las operaciones organizacionales, activos u individuos. (NIST SP 800-30 Rev. 1)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Threat Actor",
+    "acronym": null,
+    "definition": "Un individuo, grupo u organización que opera con intención maliciosa. (NIST SP 800-150)",
+    "category": "Amenazas",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Trojan Horse",
+    "acronym": null,
+    "definition": "Un programa informático que parece tener una función útil, pero también tiene una función oculta y potencialmente maliciosa. (NIST SP 800-82 Rev. 2)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Two-Factor Authentication",
+    "acronym": "2FA",
+    "definition": "Autenticación que utiliza dos factores distintos, generalmente algo que conoces y algo que tienes. (NIST SP 800-63-3)",
+    "category": "Identidad",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Virus",
+    "acronym": null,
+    "definition": "Un programa informático que puede copiarse a sí mismo e infectar una computadora sin permiso o conocimiento del usuario. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Vulnerability",
+    "acronym": null,
+    "definition": "Debilidad en un sistema de información, procedimientos de seguridad del sistema, controles internos o implementación que podría ser explotada. (NIST SP 800-30 Rev. 1)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Vulnerability Assessment",
+    "acronym": null,
+    "definition": "Examen sistemático de un sistema de información o producto para determinar la adecuación de las medidas de seguridad. (NIST SP 800-115)",
+    "category": "Evaluación",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Worm",
+    "acronym": null,
+    "definition": "Un programa informático autorreplicante que es autocontenido y no requiere un programa anfitrión. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Zero Day",
+    "acronym": null,
+    "definition": "Una vulnerabilidad de día cero es una falla de software previamente desconocida. (NIST SP 800-40 Rev. 4)",
+    "category": "Vulnerabilidades",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Zero Trust",
+    "acronym": "ZT",
+    "definition": "Un conjunto de paradigmas de ciberseguridad en evolución que mueven las defensas de perímetros estáticos basados en red hacia el enfoque en usuarios, activos y recursos. (NIST SP 800-207)",
+    "category": "Arquitectura",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "SQL Injection",
+    "acronym": "SQLi",
+    "definition": "Un ataque que consiste en insertar o inyectar una consulta SQL a través de los datos de entrada desde el cliente hasta la aplicación. (NIST SP 800-44 Version 2)",
+    "category": "Ataques Web",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Cross-Site Scripting",
+    "acronym": "XSS",
+    "definition": "Una vulnerabilidad de seguridad informática que permite a un atacante inyectar código del lado del cliente en páginas web vistas por otros usuarios. (NIST SP 800-95)",
+    "category": "Ataques Web",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Virtual Private Network",
+    "acronym": "VPN",
+    "definition": "Una red virtual construida sobre una infraestructura de red existente que puede proporcionar un mecanismo de comunicación seguro para datos y otra información transmitida entre redes. (NIST SP 800-77)",
+    "category": "Redes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Endpoint Detection and Response",
+    "acronym": "EDR",
+    "definition": "Software diseñado para detectar y responder automáticamente a amenazas de ciberseguridad en dispositivos de punto final. (NIST SP 800-171 Rev. 2)",
+    "category": "Defensa",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Security Operations Center",
+    "acronym": "SOC",
+    "definition": "Un centro de operaciones dedicado a la seguridad de la información que proporciona monitoreo de seguridad 24/7, análisis y respuesta a incidentes. (NIST SP 800-137)",
+    "category": "Operaciones",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Insider Threat",
+    "acronym": null,
+    "definition": "La amenaza que un insider utilizará su acceso autorizado, maliciosa o involuntariamente, para hacer daño a la seguridad de la organización. (NIST SP 800-53 Rev. 5)",
+    "category": "Amenazas",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Defense in Depth",
+    "acronym": null,
+    "definition": "Una estrategia de seguridad de la información que integra personas, tecnología y capacidades de operaciones para establecer barreras variables en múltiples capas. (NIST SP 800-53 Rev. 5)",
+    "category": "Estrategia",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Supply Chain Risk Management",
+    "acronym": "SCRM",
+    "definition": "El proceso de identificar, evaluar y mitigar los riesgos asociados con la cadena de suministro global distribuida y en constante evolución. (NIST SP 800-161 Rev. 1)",
+    "category": "Gestión",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Secure Software Development Lifecycle",
+    "acronym": "SSDLC",
+    "definition": "Una colección de prácticas que soportan el desarrollo de software seguro al reducir la cantidad y severidad de las vulnerabilidades en el software. (NIST SP 800-218)",
+    "category": "Desarrollo",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Cloud Security",
+    "acronym": null,
+    "definition": "La protección de datos, aplicaciones e infraestructura involucrados en la computación en la nube. (NIST SP 800-144)",
+    "category": "Cloud",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Container Security",
+    "acronym": null,
+    "definition": "La práctica de proteger contenedores y sus aplicaciones durante todo el ciclo de vida. (NIST SP 800-190)",
+    "category": "Cloud",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Identity and Access Management",
+    "acronym": "IAM",
+    "definition": "Los métodos y procesos utilizados para gestionar identidades digitales de sujetos y controlar el acceso a recursos organizacionales. (NIST SP 800-162)",
+    "category": "Identidad",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Privileged Access Management",
+    "acronym": "PAM",
+    "definition": "La gestión de acceso y permisos elevados para usuarios, cuentas, procesos y sistemas en un entorno de TI. (NIST SP 800-53 Rev. 5)",
+    "category": "Identidad",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Security Orchestration Automation and Response",
+    "acronym": "SOAR",
+    "definition": "Tecnologías que permiten a las organizaciones recopilar datos sobre amenazas de seguridad y responder a eventos de seguridad de bajo nivel sin intervención humana. (NIST SP 800-161 Rev. 1)",
+    "category": "Operaciones",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Threat Intelligence",
+    "acronym": null,
+    "definition": "Información basada en evidencias sobre amenazas o peligros existentes o emergentes a los activos que puede ser usada para informar decisiones. (NIST SP 800-150)",
+    "category": "Inteligencia",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Security Awareness Training",
+    "acronym": null,
+    "definition": "Entrenamiento diseñado para informar a los usuarios sobre amenazas de seguridad y las políticas y procedimientos de la organización. (NIST SP 800-50)",
+    "category": "Capacitación",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Business Continuity Plan",
+    "acronym": "BCP",
+    "definition": "La documentación de un conjunto predeterminado de instrucciones o procedimientos que describen cómo se sostendrán las funciones de misión esencial de una organización. (NIST SP 800-34 Rev. 1)",
+    "category": "Gestión",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Disaster Recovery Plan",
+    "acronym": "DRP",
+    "definition": "Un plan escrito para recuperar una o más tecnologías de información después de un desastre natural o causado por humanos. (NIST SP 800-34 Rev. 1)",
+    "category": "Gestión",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Security Baseline",
+    "acronym": null,
+    "definition": "El conjunto de controles de seguridad mínimos definidos para una categoría o clasificación de bajo impacto de sistemas de información. (NIST SP 800-53 Rev. 5)",
+    "category": "Configuración",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Hardening",
+    "acronym": null,
+    "definition": "Un proceso destinado a eliminar medios de ataque mediante el parcheo de vulnerabilidades y la desactivación de servicios no esenciales. (NIST SP 800-123)",
+    "category": "Configuración",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Security Posture",
+    "acronym": null,
+    "definition": "La postura de seguridad de una empresa es la fortaleza y resistencia generales de su infraestructura de ciberseguridad. (NIST SP 800-53A Rev. 5)",
+    "category": "Evaluación",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Adware",
+    "acronym": null,
+    "definition": "Software que descarga o muestra automáticamente material publicitario no solicitado cuando un usuario está en línea. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Air Gap",
+    "acronym": null,
+    "definition": "La separación física de un sistema o red de información de otras redes, de modo que el sistema o red aislada no esté conectada a ninguna otra red. (NIST SP 800-82 Rev. 2)",
+    "category": "Arquitectura",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Anonymization",
+    "acronym": null,
+    "definition": "El proceso de convertir datos identificables en datos que no pueden ser utilizados para identificar a un sujeto. (NIST SP 800-188)",
+    "category": "Privacidad",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Anti-Malware",
+    "acronym": null,
+    "definition": "Programas que monitorean una computadora o red para identificar todos los principales tipos de malware y prevenir o contener brotes de malware. (NIST SP 800-69)",
+    "category": "Defensa",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Application Programming Interface",
+    "acronym": "API",
+    "definition": "Un conjunto de rutinas, protocolos y herramientas para construir aplicaciones de software que especifica cómo los componentes de software deben interactuar. (NIST SP 800-95)",
+    "category": "Desarrollo",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Application Security",
+    "acronym": "AppSec",
+    "definition": "Las medidas de seguridad utilizadas para proteger una aplicación contra amenazas externas a lo largo de su ciclo de vida. (NIST SP 800-53A Rev. 5)",
+    "category": "Desarrollo",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Asset",
+    "acronym": null,
+    "definition": "Un elemento de valor para el logro de objetivos organizacionales. (NIST SP 800-30 Rev. 1)",
+    "category": "Gestión",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Asymmetric Cryptography",
+    "acronym": null,
+    "definition": "Criptografía que utiliza claves separadas para cifrado y descifrado, también conocida como criptografía de clave pública. (NIST SP 800-57 Parte 1 Rev. 5)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Attack Surface",
+    "acronym": null,
+    "definition": "El conjunto de puntos en el límite de un sistema donde un atacante puede intentar entrar o extraer datos de ese sistema. (NIST SP 800-160 Vol. 1)",
+    "category": "Arquitectura",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Attack Vector",
+    "acronym": null,
+    "definition": "El camino o medio por el cual un atacante puede obtener acceso a un computador o servidor de red para entregar un payload o resultado malicioso. (NIST SP 800-30 Rev. 1)",
+    "category": "Amenazas",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Audit",
+    "acronym": null,
+    "definition": "Revisión y examen independientes de registros y actividades para evaluar la adecuación de los controles del sistema. (NIST SP 800-12 Rev. 1)",
+    "category": "Cumplimiento",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Audit Log",
+    "acronym": null,
+    "definition": "Un registro cronológico de actividades del sistema que es suficiente para permitir la reconstrucción y el examen de la secuencia de eventos. (NIST SP 800-92)",
+    "category": "Monitoreo",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Backup",
+    "acronym": null,
+    "definition": "Una copia de archivos y programas hechos para facilitar la recuperación en caso de pérdida de los datos originales. (NIST SP 800-34 Rev. 1)",
+    "category": "Continuidad",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Baseline Configuration",
+    "acronym": null,
+    "definition": "Un conjunto documentado de especificaciones para un sistema de información o un elemento de configuración dentro de un sistema. (NIST SP 800-128)",
+    "category": "Configuración",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Biometric",
+    "acronym": null,
+    "definition": "Una característica física que puede ser medida automáticamente y utilizada para reconocer la identidad de un individuo. (NIST SP 800-63-3)",
+    "category": "Identidad",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Black Hat",
+    "acronym": null,
+    "definition": "Un individuo que viola la seguridad informática con intenciones maliciosas o para beneficio personal. (NIST SP 800-12 Rev. 1)",
+    "category": "Amenazas",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Blockchain",
+    "acronym": null,
+    "definition": "Una tecnología de registro distribuido que mantiene una lista creciente de registros de transacciones protegidos de manipulación y revisión. (NIST IR 8202)",
+    "category": "Tecnologías Emergentes",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Blue Team",
+    "acronym": null,
+    "definition": "El grupo responsable de defender la infraestructura de TI de una empresa contra ataques cibernéticos. (NIST SP 800-115)",
+    "category": "Operaciones",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Bot",
+    "acronym": null,
+    "definition": "Un programa que infecta un host y es controlado remotamente por un atacante, el bot herder. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Bring Your Own Device",
+    "acronym": "BYOD",
+    "definition": "La práctica organizacional de permitir que los empleados utilicen dispositivos personales para acceder a recursos empresariales. (NIST SP 800-46 Rev. 2)",
+    "category": "Movilidad",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Buffer Overflow",
+    "acronym": null,
+    "definition": "Una condición en un programa donde una rutina de entrada escribe datos más allá del final del buffer asignado. (NIST SP 800-28 Version 2)",
+    "category": "Vulnerabilidades",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Certificate Revocation List",
+    "acronym": "CRL",
+    "definition": "Una lista de certificados revocados que han sido emitidos por una Autoridad de Certificación. (NIST SP 800-32)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Change Management",
+    "acronym": null,
+    "definition": "El proceso de controlar las modificaciones a hardware, firmware, software y documentación para proteger el sistema contra cambios inadecuados. (NIST SP 800-128)",
+    "category": "Gestión",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Chief Information Officer",
+    "acronym": "CIO",
+    "definition": "El funcionario de la agencia responsable de proporcionar asesoramiento y otra asistencia al jefe de la agencia para garantizar que la TI esté adquirida y administrada apropiadamente. (NIST SP 800-12 Rev. 1)",
+    "category": "Gobernanza",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Chief Information Security Officer",
+    "acronym": "CISO",
+    "definition": "El funcionario responsable de desarrollar e implementar el programa de seguridad de la información de una organización. (NIST SP 800-100)",
+    "category": "Gobernanza",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Cipher Suite",
+    "acronym": null,
+    "definition": "Un conjunto de algoritmos criptográficos utilizados para asegurar una conexión de red. (NIST SP 800-52 Rev. 2)",
+    "category": "Criptografía",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Cleartext",
+    "acronym": null,
+    "definition": "Información no cifrada o en texto plano. (NIST SP 800-21 2da Ed.)",
+    "category": "Criptografía",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Common Vulnerabilities and Exposures",
+    "acronym": "CVE",
+    "definition": "Un diccionario de vulnerabilidades y exposiciones de seguridad conocidas públicamente. (NIST SP 800-51)",
+    "category": "Vulnerabilidades",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Common Vulnerability Scoring System",
+    "acronym": "CVSS",
+    "definition": "Un marco abierto para comunicar las características y gravedad de vulnerabilidades de software. (NIST SP 800-115)",
+    "category": "Vulnerabilidades",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Compliance",
+    "acronym": null,
+    "definition": "La adherencia a requisitos obligatorios establecidos por leyes, reglamentos, estándares u otros documentos. (NIST SP 800-53 Rev. 5)",
+    "category": "Cumplimiento",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Computer Emergency Response Team",
+    "acronym": "CERT",
+    "definition": "Una capacidad establecida para ayudar a una comunidad de patrocinadores, constituyentes o partes interesadas a responder más efectivamente a incidentes de seguridad informáticos. (NIST SP 800-61 Rev. 2)",
+    "category": "Respuesta",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Computer Forensics",
+    "acronym": null,
+    "definition": "La disciplina que combina elementos de derecho y ciencias de la computación para recolectar y analizar datos de sistemas informáticos. (NIST SP 800-86)",
+    "category": "Forense",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Configuration Management",
+    "acronym": "CM",
+    "definition": "Una colección de actividades enfocadas en establecer y mantener la integridad de productos y sistemas mediante el control de los procesos. (NIST SP 800-128)",
+    "category": "Gestión",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Containment",
+    "acronym": null,
+    "definition": "La actividad de respuesta a incidentes que limita el impacto de un incidente y evita que se produzca más daño. (NIST SP 800-61 Rev. 2)",
+    "category": "Respuesta",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Continuous Monitoring",
+    "acronym": null,
+    "definition": "Mantener conciencia continua de vulnerabilidades, amenazas y controles de seguridad de la información para apoyar las decisiones de riesgo organizacional. (NIST SP 800-137)",
+    "category": "Monitoreo",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Correlation",
+    "acronym": null,
+    "definition": "El proceso de identificar relaciones entre múltiples eventos o alertas de seguridad. (NIST SP 800-94)",
+    "category": "Análisis",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Credential",
+    "acronym": null,
+    "definition": "Evidencia sobre un reclamo de identidad. (NIST SP 800-63-3)",
+    "category": "Identidad",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Critical Infrastructure",
+    "acronym": null,
+    "definition": "Sistemas y activos, físicos o virtuales, tan vitales que su incapacidad o destrucción tendría un impacto debilitante en la seguridad, economía o salud pública. (NIST SP 800-82 Rev. 2)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Cryptanalysis",
+    "acronym": null,
+    "definition": "El análisis de un sistema criptográfico para obtener texto plano o claves a partir de texto cifrado sin conocer las claves. (NIST SP 800-57 Parte 1 Rev. 5)",
+    "category": "Criptografía",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Cryptographic Algorithm",
+    "acronym": null,
+    "definition": "Un procedimiento matemático bien definido para lograr seguridad de información como confidencialidad o autenticación. (NIST FIPS 140-3)",
+    "category": "Criptografía",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Cryptographic Module",
+    "acronym": null,
+    "definition": "El conjunto de hardware, software y/o firmware que implementa funciones criptográficas aprobadas. (NIST FIPS 140-3)",
+    "category": "Criptografía",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Cyber Attack",
+    "acronym": null,
+    "definition": "Un ataque, vía ciberespacio, que apunta a sistemas de información empresariales, infraestructura, redes informáticas o dispositivos informáticos personales. (NIST SP 800-30 Rev. 1)",
+    "category": "Ataques",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Cyber Threat Intelligence",
+    "acronym": "CTI",
+    "definition": "Información sobre adversarios que ayuda a mitigar acciones potenciales dañinas. (NIST SP 800-150)",
+    "category": "Inteligencia",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Cybersecurity Framework",
+    "acronym": "CSF",
+    "definition": "Marco desarrollado por NIST que consiste en estándares, pautas y mejores prácticas para gestionar riesgos de ciberseguridad. (NIST CSF v1.1)",
+    "category": "Frameworks",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Data at Rest",
+    "acronym": null,
+    "definition": "Datos que residen en almacenamiento persistente en espera de ser accedidos. (NIST SP 800-111)",
+    "category": "Protección de Datos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Data in Transit",
+    "acronym": null,
+    "definition": "Datos que se están transmitiendo activamente de una ubicación a otra a través de una red privada o pública. (NIST SP 800-111)",
+    "category": "Protección de Datos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Data Loss Prevention",
+    "acronym": "DLP",
+    "definition": "Tecnologías y procesos diseñados para detectar y prevenir la transferencia no autorizada de información sensible. (NIST SP 800-53 Rev. 5)",
+    "category": "Protección de Datos",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Data Mining",
+    "acronym": null,
+    "definition": "El proceso de descubrir patrones en grandes conjuntos de datos que involucran métodos en la intersección de aprendizaje automático, estadísticas y sistemas de bases de datos. (NIST SP 800-188)",
+    "category": "Análisis",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Decryption",
+    "acronym": null,
+    "definition": "El proceso de convertir texto cifrado en texto plano utilizando un algoritmo criptográfico y clave. (NIST SP 800-21 2da Ed.)",
+    "category": "Criptografía",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Demilitarized Zone",
+    "acronym": "DMZ",
+    "definition": "Una subred física o lógica que separa una red interna de confianza de redes externas no confiables. (NIST SP 800-41 Rev. 1)",
+    "category": "Redes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Digital Certificate",
+    "acronym": null,
+    "definition": "Un documento electrónico utilizado para probar la propiedad de una clave pública. (NIST SP 800-32)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Digital Forensics",
+    "acronym": null,
+    "definition": "La aplicación de la ciencia a la identificación, recolección, examen y análisis de datos preservando la integridad de la información. (NIST SP 800-86)",
+    "category": "Forense",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Domain Name System",
+    "acronym": "DNS",
+    "definition": "El sistema de nombres de dominio que traduce nombres de host legibles por humanos en direcciones IP. (NIST SP 800-81-2)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Domain Name System Security Extensions",
+    "acronym": "DNSSEC",
+    "definition": "Extensiones de seguridad para DNS que proporcionan autenticación del origen de datos y verificación de integridad. (NIST SP 800-81-2)",
+    "category": "Redes",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Drive-by Download",
+    "acronym": null,
+    "definition": "Descarga no intencionada de software malicioso a una computadora o dispositivo móvil que expone a los usuarios a riesgos potenciales. (NIST SP 800-83 Rev. 1)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Eavesdropping",
+    "acronym": null,
+    "definition": "La interceptación pasiva de comunicaciones por una entidad no autorizada. (NIST SP 800-95)",
+    "category": "Ataques",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Email Security",
+    "acronym": null,
+    "definition": "Medidas de seguridad destinadas a proteger el acceso a cuentas de correo electrónico y el contenido contra acceso no autorizado, pérdida o compromiso. (NIST SP 800-45 Version 2)",
+    "category": "Comunicaciones",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Encapsulation",
+    "acronym": null,
+    "definition": "El proceso de agregar encabezados y trailers alrededor de algunos datos para crear paquetes de protocolo. (NIST SP 800-77)",
+    "category": "Redes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "End-to-End Encryption",
+    "acronym": "E2EE",
+    "definition": "Cifrado de datos en el extremo de origen con el descifrado previsto en el extremo de destino final. (NIST SP 800-77)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Endpoint",
+    "acronym": null,
+    "definition": "Dispositivo conectado a una red, como una computadora de escritorio, laptop, servidor, teléfono inteligente o tablet. (NIST SP 800-83 Rev. 1)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Eradication",
+    "acronym": null,
+    "definition": "La actividad de respuesta a incidentes que elimina componentes de un incidente. (NIST SP 800-61 Rev. 2)",
+    "category": "Respuesta",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Event",
+    "acronym": null,
+    "definition": "Cualquier cambio observable en un sistema o red. (NIST SP 800-61 Rev. 2)",
+    "category": "Monitoreo",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "False Negative",
+    "acronym": null,
+    "definition": "Cuando un sistema de detección falla en identificar una actividad anómala, maliciosa o indeseable. (NIST SP 800-94)",
+    "category": "Detección",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "False Positive",
+    "acronym": null,
+    "definition": "Cuando un sistema de detección identifica incorrectamente una actividad benigna como actividad maliciosa o anómala. (NIST SP 800-94)",
+    "category": "Detección",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Federal Information Processing Standards",
+    "acronym": "FIPS",
+    "definition": "Estándares para sistemas de seguridad e interoperabilidad desarrollados por NIST para uso en sistemas del gobierno federal. (NIST SP 800-53 Rev. 5)",
+    "category": "Estándares",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Federated Identity",
+    "acronym": null,
+    "definition": "Un medio para vincular la identidad electrónica y los atributos de una persona, almacenados en múltiples sistemas de gestión de identidad distintos. (NIST SP 800-63-3)",
+    "category": "Identidad",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "File Integrity Monitoring",
+    "acronym": "FIM",
+    "definition": "Una práctica de seguridad que implica la revisión de archivos críticos para detectar cambios no autorizados. (NIST SP 800-92)",
+    "category": "Monitoreo",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Forensic Copy",
+    "acronym": null,
+    "definition": "Una duplicación bit por bit exacta de toda la unidad de disco duro. (NIST SP 800-86)",
+    "category": "Forense",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Full Disk Encryption",
+    "acronym": "FDE",
+    "definition": "Cifrado de todos los datos en un disco duro, incluyendo el sistema operativo, archivos de aplicación y datos de usuario. (NIST SP 800-111)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Greyware",
+    "acronym": null,
+    "definition": "Software que exhibe comportamiento molesto o indeseable pero puede ser instalado intencionalmente por los usuarios. (NIST SP 800-69)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Hacker",
+    "acronym": null,
+    "definition": "Un individuo que busca explotar debilidades en sistemas informáticos o redes. (NIST SP 800-12 Rev. 1)",
+    "category": "Amenazas",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Hash Value",
+    "acronym": null,
+    "definition": "El resultado de aplicar una función hash criptográfica a datos. (NIST SP 800-86)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Honeypot",
+    "acronym": null,
+    "definition": "Un sistema engaño que está diseñado para atraer a posibles atacantes lejos de sistemas críticos. (NIST SP 800-123)",
+    "category": "Defensa",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Host-Based Intrusion Detection System",
+    "acronym": "HIDS",
+    "definition": "Un sistema de detección de intrusiones que monitorea las características de un solo host y los eventos que ocurren dentro de ese host. (NIST SP 800-94)",
+    "category": "Defensa",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Hybrid Attack",
+    "acronym": null,
+    "definition": "Un ataque de craqueo de contraseñas que combina ataques de diccionario con técnicas de fuerza bruta. (NIST SP 800-63B)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Hypervisor",
+    "acronym": null,
+    "definition": "Software que crea y ejecuta máquinas virtuales, permitiendo que múltiples sistemas operativos compartan un único sistema host de hardware. (NIST SP 800-125)",
+    "category": "Virtualización",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Impact",
+    "acronym": null,
+    "definition": "El efecto sobre las operaciones organizacionales, activos, individuos u otras organizaciones de una pérdida de confidencialidad, integridad o disponibilidad. (NIST SP 800-30 Rev. 1)",
+    "category": "Gestión de Riesgos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Incident Handling",
+    "acronym": null,
+    "definition": "La mitigación de violaciones a las políticas de seguridad y prácticas recomendadas. (NIST SP 800-61 Rev. 2)",
+    "category": "Respuesta",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Indicator of Compromise",
+    "acronym": "IoC",
+    "definition": "Artefactos observados en una red o sistema operativo que, con alta confianza, indican una intrusión informática. (NIST SP 800-61 Rev. 2)",
+    "category": "Detección",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Information Assurance",
+    "acronym": "IA",
+    "definition": "Medidas que protegen y defienden la información y los sistemas de información garantizando disponibilidad, integridad, autenticación, confidencialidad y no repudio. (NIST SP 800-59)",
+    "category": "Fundamentos",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Information System",
+    "acronym": null,
+    "definition": "Un conjunto discreto de recursos de información organizados para la recopilación, procesamiento, mantenimiento, uso, intercambio, difusión o disposición de información. (NIST SP 800-53 Rev. 5)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Information System Security Officer",
+    "acronym": "ISSO",
+    "definition": "Individuo con responsabilidad asignada por la autoridad designada de mantener la postura de seguridad apropiada para un sistema de información. (NIST SP 800-37 Rev. 2)",
+    "category": "Gobernanza",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Information Technology",
+    "acronym": "IT",
+    "definition": "Cualquier equipo o sistema interconectado o subsistema de equipo que se utiliza para la adquisición, almacenamiento, manipulación, gestión, movimiento, control, visualización, conmutación, intercambio, transmisión o recepción automáticos de datos o información. (NIST SP 800-12 Rev. 1)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Infrastructure as a Service",
+    "acronym": "IaaS",
+    "definition": "La capacidad proporcionada al consumidor para aprovisionar procesamiento, almacenamiento, redes y otros recursos informáticos fundamentales. (NIST SP 800-145)",
+    "category": "Cloud",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Internet of Things",
+    "acronym": "IoT",
+    "definition": "Dispositivos conectables que tienen un IP no trivial y se comunican de forma interactiva dentro de la infraestructura de Internet. (NIST SP 800-183)",
+    "category": "Tecnologías Emergentes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Internet Protocol",
+    "acronym": "IP",
+    "definition": "El protocolo de capa de red estándar utilizado en Internet. (NIST SP 800-77)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "IP Spoofing",
+    "acronym": null,
+    "definition": "Un ataque mediante el cual un sistema intenta hacerse pasar por otro sistema falsificando la dirección IP de origen en paquetes de red. (NIST SP 800-41 Rev. 1)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Kerberos",
+    "acronym": null,
+    "definition": "Un protocolo de autenticación de red ampliamente utilizado que permite a los nodos que se comunican sobre una red no segura demostrar su identidad. (NIST SP 800-63-2)",
+    "category": "Autenticación",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Key Management",
+    "acronym": null,
+    "definition": "Actividades que involucran el manejo de claves criptográficas y otra información relacionada durante todo el ciclo de vida de las claves. (NIST SP 800-57 Parte 1 Rev. 5)",
+    "category": "Criptografía",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Knowledge-Based Authentication",
+    "acronym": "KBA",
+    "definition": "Método de autenticación que utiliza conocimiento de información privada asociada con el solicitante. (NIST SP 800-63-3)",
+    "category": "Autenticación",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Lessons Learned",
+    "acronym": null,
+    "definition": "Conocimiento o comprensión adquirida por experiencia, especialmente después de un incidente de seguridad. (NIST SP 800-61 Rev. 2)",
+    "category": "Respuesta",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Likelihood",
+    "acronym": null,
+    "definition": "Una estimación ponderada de la probabilidad de que una amenaza potencial dada explote una vulnerabilidad particular. (NIST SP 800-30 Rev. 1)",
+    "category": "Gestión de Riesgos",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Local Area Network",
+    "acronym": "LAN",
+    "definition": "Un grupo de computadoras y dispositivos asociados que comparten una línea de comunicaciones común y típicamente comparten los recursos de un solo procesador o servidor. (NIST SP 800-82 Rev. 2)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Logic Bomb",
+    "acronym": null,
+    "definition": "Código malicioso que se activa cuando se cumplen condiciones específicas. (NIST SP 800-12 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Machine Learning",
+    "acronym": "ML",
+    "definition": "Una rama de la inteligencia artificial que se enfoca en construir sistemas que aprendan de los datos. (NIST AI RMF)",
+    "category": "Tecnologías Emergentes",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Macro Virus",
+    "acronym": null,
+    "definition": "Un tipo de virus informático codificado en el lenguaje de macros de una aplicación. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Media Access Control",
+    "acronym": "MAC",
+    "definition": "Un identificador único asignado a un controlador de interfaz de red para comunicaciones en el segmento de red física. (NIST SP 800-48 Rev. 1)",
+    "category": "Redes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Metadata",
+    "acronym": null,
+    "definition": "Información que describe las características de los datos incluyendo, por ejemplo, características estructurales, descriptivas y administrativas. (NIST SP 800-53 Rev. 5)",
+    "category": "Gestión de Datos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Mobile Device Management",
+    "acronym": "MDM",
+    "definition": "Productos que ayudan a las organizaciones a gestionar dispositivos móviles. (NIST SP 800-124 Rev. 2)",
+    "category": "Movilidad",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Network Access Control",
+    "acronym": "NAC",
+    "definition": "Capacidad para restringir el acceso a la red basado en identidad, perfil de seguridad u otros factores. (NIST SP 800-41 Rev. 1)",
+    "category": "Redes",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Network Segmentation",
+    "acronym": null,
+    "definition": "El acto de separar o aislar una red en subredes más pequeñas. (NIST SP 800-125B)",
+    "category": "Arquitectura",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Non-Repudiation",
+    "acronym": null,
+    "definition": "Garantía de que el remitente de información recibe prueba de entrega y el receptor recibe prueba de la identidad del remitente. (NIST SP 800-12 Rev. 1)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Operating System",
+    "acronym": "OS",
+    "definition": "El software principal que administra el hardware y software de una computadora. (NIST SP 800-123)",
+    "category": "Fundamentos",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Operational Technology",
+    "acronym": "OT",
+    "definition": "Hardware y software programables que detectan o causan un cambio mediante el monitoreo o control directo de dispositivos físicos, procesos y eventos. (NIST SP 800-82 Rev. 2)",
+    "category": "Control Industrial",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Password",
+    "acronym": null,
+    "definition": "Una cadena secreta de caracteres utilizada para autenticar una identidad. (NIST SP 800-63-3)",
+    "category": "Autenticación",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Patch Management",
+    "acronym": null,
+    "definition": "El proceso sistemático de notificación, identificación, implementación, instalación y verificación de parches del sistema operativo y del código de aplicación. (NIST SP 800-40 Rev. 4)",
+    "category": "Gestión",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Payload",
+    "acronym": null,
+    "definition": "La porción de un paquete que contiene los datos reales que se están transmitiendo. También se refiere a la parte maliciosa del malware. (NIST SP 800-61 Rev. 2)",
+    "category": "Redes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Pharming",
+    "acronym": null,
+    "definition": "Redirección de usuarios a sitios web fraudulentos mediante el secuestro de servidores DNS o modificación de archivos del sistema. (NIST SP 800-83 Rev. 1)",
+    "category": "Ataques",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Platform as a Service",
+    "acronym": "PaaS",
+    "definition": "La capacidad proporcionada al consumidor para desplegar en la infraestructura de la nube aplicaciones creadas por el consumidor o adquiridas. (NIST SP 800-145)",
+    "category": "Cloud",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Port Scanning",
+    "acronym": null,
+    "definition": "Uso de un programa para identificar remotamente qué puertos de un sistema están abiertos. (NIST SP 800-115)",
+    "category": "Reconocimiento",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Post-Incident Activity",
+    "acronym": null,
+    "definition": "Actividades que se realizan después de resolver un incidente, como análisis de lecciones aprendidas. (NIST SP 800-61 Rev. 2)",
+    "category": "Respuesta",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Privacy",
+    "acronym": null,
+    "definition": "La libertad de la intrusión en los asuntos privados o información de uno. (NIST SP 800-53 Rev. 5)",
+    "category": "Privacidad",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Private Key",
+    "acronym": null,
+    "definition": "La clave secreta en un par de claves asimétricas. (NIST SP 800-57 Parte 1 Rev. 5)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Privilege Escalation",
+    "acronym": null,
+    "definition": "El acto de explotar un error, falla de diseño o supervisión de configuración en un sistema operativo o aplicación de software para obtener acceso elevado. (NIST SP 800-53 Rev. 5)",
+    "category": "Ataques",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Protocol",
+    "acronym": null,
+    "definition": "Un conjunto de reglas que determinan el formato y la transmisión de datos. (NIST SP 800-82 Rev. 2)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Proxy Server",
+    "acronym": null,
+    "definition": "Un servidor que actúa como intermediario entre estaciones de trabajo y el Internet. (NIST SP 800-41 Rev. 1)",
+    "category": "Redes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Public Key",
+    "acronym": null,
+    "definition": "La clave pública en un par de claves asimétricas. (NIST SP 800-57 Parte 1 Rev. 5)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Quantum Cryptography",
+    "acronym": null,
+    "definition": "El uso de propiedades cuánticas mecánicas para realizar tareas criptográficas. (NIST IR 8240)",
+    "category": "Criptografía",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Quarantine",
+    "acronym": null,
+    "definition": "El proceso de almacenar archivos que contienen malware en aislamiento para su posterior examen. (NIST SP 800-83 Rev. 1)",
+    "category": "Respuesta",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Real-Time",
+    "acronym": null,
+    "definition": "Procesamiento de datos en virtualmente el mismo tiempo en que son producidos o recibidos. (NIST SP 800-82 Rev. 2)",
+    "category": "Operaciones",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Recovery",
+    "acronym": null,
+    "definition": "Actividades después de un incidente o evento para restaurar los servicios esenciales. (NIST SP 800-61 Rev. 2)",
+    "category": "Continuidad",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Recovery Point Objective",
+    "acronym": "RPO",
+    "definition": "El punto en el tiempo, previo a una interrupción, al cual los sistemas y datos deben ser recuperados después de que ocurra una interrupción. (NIST SP 800-34 Rev. 1)",
+    "category": "Continuidad",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Recovery Time Objective",
+    "acronym": "RTO",
+    "definition": "El tiempo máximo aceptable que un sistema puede estar inactivo después de que ocurra una interrupción. (NIST SP 800-34 Rev. 1)",
+    "category": "Continuidad",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Red Team",
+    "acronym": null,
+    "definition": "Un grupo que juega el papel de un adversario enemigo o competidor, y proporciona seguridad de retroalimentación desde ese punto de vista. (NIST SP 800-115)",
+    "category": "Evaluación",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Remote Access",
+    "acronym": null,
+    "definition": "Acceso a una computadora organizacional por un usuario que se comunica a través de una red externa. (NIST SP 800-46 Rev. 2)",
+    "category": "Acceso",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Remote Code Execution",
+    "acronym": "RCE",
+    "definition": "Una vulnerabilidad que permite a un atacante ejecutar código arbitrario en un sistema remoto. (NIST SP 800-40 Rev. 4)",
+    "category": "Vulnerabilidades",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Residual Risk",
+    "acronym": null,
+    "definition": "La porción del riesgo que permanece después de que se hayan implementado medidas de seguridad. (NIST SP 800-30 Rev. 1)",
+    "category": "Gestión de Riesgos",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Resilience",
+    "acronym": null,
+    "definition": "La capacidad de prepararse y planificar, absorber, recuperarse y adaptarse más exitosamente a eventos adversos. (NIST SP 800-160 Vol. 2 Rev. 1)",
+    "category": "Continuidad",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Risk Management",
+    "acronym": null,
+    "definition": "El programa y procesos de soporte para determinar, evaluar y priorizar riesgos para las operaciones organizacionales. (NIST SP 800-39)",
+    "category": "Gestión de Riesgos",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Risk Management Framework",
+    "acronym": "RMF",
+    "definition": "Un enfoque estructurado que integra actividades de seguridad, privacidad y gestión de riesgos de la cadena de suministro cibernética. (NIST SP 800-37 Rev. 2)",
+    "category": "Frameworks",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Risk Mitigation",
+    "acronym": null,
+    "definition": "Priorizar, evaluar e implementar los controles apropiados de reducción de riesgos recomendados del proceso de evaluación de riesgos. (NIST SP 800-30 Rev. 1)",
+    "category": "Gestión de Riesgos",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Rogue Access Point",
+    "acronym": null,
+    "definition": "Un punto de acceso inalámbrico que ha sido instalado en una red sin autorización explícita. (NIST SP 800-48 Rev. 1)",
+    "category": "Redes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Role-Based Access Control",
+    "acronym": "RBAC",
+    "definition": "Una forma de control de acceso en la que los permisos del sistema están asignados a roles en lugar de usuarios individuales. (NIST SP 800-162)",
+    "category": "Control de Acceso",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Root Cause Analysis",
+    "acronym": "RCA",
+    "definition": "Un principio de resolución de problemas y método que se enfoca en resolver los problemas subyacentes en lugar de aplicar soluciones rápidas. (NIST SP 800-61 Rev. 2)",
+    "category": "Análisis",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Router",
+    "acronym": null,
+    "definition": "Un dispositivo que reenvía tráfico entre redes basado en información de capa de red. (NIST SP 800-41 Rev. 1)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Sandbox",
+    "acronym": null,
+    "definition": "Un entorno de prueba aislado que permite ejecutar código o abrir archivos sin afectar el sistema operativo. (NIST SP 800-83 Rev. 1)",
+    "category": "Seguridad",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Scareware",
+    "acronym": null,
+    "definition": "Software malicioso diseñado para engañar a las víctimas haciéndoles creer que hay malware en su computadora. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Secure Hash Algorithm",
+    "acronym": "SHA",
+    "definition": "Una familia de funciones hash criptográficas publicadas por NIST. (NIST FIPS 180-4)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Secure Shell",
+    "acronym": "SSH",
+    "definition": "Un protocolo para iniciar sesión de forma segura en un computador remoto a través de una red insegura. (NIST SP 800-77)",
+    "category": "Redes",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Secure Sockets Layer",
+    "acronym": "SSL",
+    "definition": "Un protocolo criptográfico diseñado para proporcionar seguridad de comunicaciones sobre una red informática. (NIST SP 800-52 Rev. 2)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Security Audit",
+    "acronym": null,
+    "definition": "Una revisión independiente y examen de registros y actividades del sistema. (NIST SP 800-53A Rev. 5)",
+    "category": "Cumplimiento",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Security by Design",
+    "acronym": null,
+    "definition": "Un enfoque para el desarrollo de software y sistemas donde la seguridad es considerada desde el principio. (NIST SP 800-160 Vol. 1)",
+    "category": "Desarrollo",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Security Policy",
+    "acronym": null,
+    "definition": "Un conjunto de reglas y prácticas que especifican o regulan cómo un sistema o organización proporciona servicios de seguridad. (NIST SP 800-12 Rev. 1)",
+    "category": "Gobernanza",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Separation of Duties",
+    "acronym": "SoD",
+    "definition": "El principio de que ningún usuario debe recibir permisos que le permitan abusar del sistema por sí solo. (NIST SP 800-12 Rev. 1)",
+    "category": "Principios",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Server",
+    "acronym": null,
+    "definition": "Una computadora que proporciona servicios a otras computadoras en una red. (NIST SP 800-123)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Session Hijacking",
+    "acronym": null,
+    "definition": "La explotación de una sesión de computadora válida para obtener acceso no autorizado a información o servicios. (NIST SP 800-95)",
+    "category": "Ataques",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Single Sign-On",
+    "acronym": "SSO",
+    "definition": "Un servicio de autenticación que permite que un usuario acceda a múltiples sistemas con un solo conjunto de credenciales. (NIST SP 800-63-3)",
+    "category": "Identidad",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Smart Card",
+    "acronym": null,
+    "definition": "Una tarjeta del tamaño de una tarjeta de crédito que contiene al menos un circuito integrado usado para identificación, autenticación o almacenamiento de datos. (NIST SP 800-73-4)",
+    "category": "Autenticación",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Smishing",
+    "acronym": null,
+    "definition": "Ataques de phishing que se realizan a través de mensajes de texto SMS. (NIST SP 800-101 Rev. 1)",
+    "category": "Ataques",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Sniffer",
+    "acronym": null,
+    "definition": "Software que observa y registra el tráfico de red. (NIST SP 800-115)",
+    "category": "Herramientas",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Software as a Service",
+    "acronym": "SaaS",
+    "definition": "La capacidad proporcionada al consumidor para usar las aplicaciones del proveedor ejecutándose en una infraestructura de nube. (NIST SP 800-145)",
+    "category": "Cloud",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Split Tunneling",
+    "acronym": null,
+    "definition": "Una configuración donde un usuario de VPN accede simultáneamente a la red de la organización a través de VPN e Internet directamente. (NIST SP 800-77)",
+    "category": "Redes",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Spoofing",
+    "acronym": null,
+    "definition": "Hacerse pasar por otra persona o entidad con el objetivo de obtener acceso no autorizado. (NIST SP 800-82 Rev. 2)",
+    "category": "Ataques",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Steganography",
+    "acronym": null,
+    "definition": "La práctica de ocultar un mensaje dentro de otro medio de tal manera que solo el remitente y el receptor sepan de su existencia. (NIST SP 800-101 Rev. 1)",
+    "category": "Técnicas",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Supply Chain Attack",
+    "acronym": null,
+    "definition": "Un ataque que busca dañar una organización dirigiéndose a elementos menos seguros en la cadena de suministro. (NIST SP 800-161 Rev. 1)",
+    "category": "Ataques",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Switch",
+    "acronym": null,
+    "definition": "Un dispositivo de red que conecta dispositivos dentro de una red y utiliza conmutación de paquetes para recibir y reenviar datos. (NIST SP 800-41 Rev. 1)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Symmetric Cryptography",
+    "acronym": null,
+    "definition": "Un método de cifrado donde la misma clave se usa tanto para cifrar como para descifrar. (NIST SP 800-175B Rev. 1)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "System Administrator",
+    "acronym": null,
+    "definition": "Persona responsable de la instalación, configuración y mantenimiento continuo de un sistema informático. (NIST SP 800-12 Rev. 1)",
+    "category": "Roles",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Tailgating",
+    "acronym": null,
+    "definition": "Obtener acceso físico no autorizado siguiendo a una persona autorizada a una ubicación controlada. (NIST SP 800-116 Rev. 1)",
+    "category": "Seguridad Física",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Threat Hunting",
+    "acronym": null,
+    "definition": "Un enfoque proactivo de ciberseguridad donde los defensores buscan activamente amenazas que eluden las defensas existentes. (NIST SP 800-150)",
+    "category": "Detección",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Threat Modeling",
+    "acronym": null,
+    "definition": "Un proceso mediante el cual se pueden identificar, enumerar y priorizar amenazas potenciales. (NIST SP 800-154)",
+    "category": "Análisis",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Time-Based One-Time Password",
+    "acronym": "TOTP",
+    "definition": "Una contraseña de un solo uso que utiliza el tiempo actual como fuente de unicidad. (NIST SP 800-63B)",
+    "category": "Autenticación",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Token",
+    "acronym": null,
+    "definition": "Un objeto que un solicitante posee y controla que se usa para autenticar la identidad del solicitante. (NIST SP 800-63-3)",
+    "category": "Autenticación",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Transport Layer Security",
+    "acronym": "TLS",
+    "definition": "Un protocolo criptográfico que proporciona seguridad de comunicaciones sobre una red informática. (NIST SP 800-52 Rev. 2)",
+    "category": "Criptografía",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Unified Threat Management",
+    "acronym": "UTM",
+    "definition": "Una solución de seguridad integral que integra múltiples características de seguridad en un solo dispositivo. (NIST SP 800-41 Rev. 1)",
+    "category": "Defensa",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Virtualization",
+    "acronym": null,
+    "definition": "La simulación de la interfaz de software y hardware de un sistema informático real. (NIST SP 800-125)",
+    "category": "Virtualización",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Vishing",
+    "acronym": null,
+    "definition": "Ataques de phishing que se realizan a través de llamadas telefónicas de voz. (NIST SP 800-101 Rev. 1)",
+    "category": "Ataques",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "War Driving",
+    "acronym": null,
+    "definition": "La práctica de buscar redes inalámbricas Wi-Fi conduciendo alrededor con una laptop, smartphone o dispositivo móvil. (NIST SP 800-48 Rev. 1)",
+    "category": "Reconocimiento",
+    "difficulty": "Intermedio"
+  },
+  {
+    "term": "Watering Hole Attack",
+    "acronym": null,
+    "definition": "Un ataque en el que el atacante compromete sitios web legítimos que son frecuentemente visitados por el objetivo. (NIST SP 800-150)",
+    "category": "Ataques",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Web Application Firewall",
+    "acronym": "WAF",
+    "definition": "Un firewall que filtra, monitorea y bloquea tráfico HTTP hacia y desde una aplicación web. (NIST SP 800-44 Version 2)",
+    "category": "Defensa",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "White Hat",
+    "acronym": null,
+    "definition": "Un hacker ético que usa sus habilidades para propósitos defensivos. (NIST SP 800-115)",
+    "category": "Roles",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Whitelist",
+    "acronym": null,
+    "definition": "Una lista de entidades que se les proporciona acceso particular o privilegios. (NIST SP 800-167)",
+    "category": "Control de Acceso",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Wireless Local Area Network",
+    "acronym": "WLAN",
+    "definition": "Una red de área local que utiliza tecnología de comunicación inalámbrica. (NIST SP 800-48 Rev. 1)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Workstation",
+    "acronym": null,
+    "definition": "Una computadora de escritorio o laptop que está conectada a una red. (NIST SP 800-123)",
+    "category": "Redes",
+    "difficulty": "Básico"
+  },
+  {
+    "term": "Zero-Day Exploit",
+    "acronym": null,
+    "definition": "Un exploit que aprovecha una vulnerabilidad previamente desconocida. (NIST SP 800-40 Rev. 4)",
+    "category": "Vulnerabilidades",
+    "difficulty": "Avanzado"
+  },
+  {
+    "term": "Zombie",
+    "acronym": null,
+    "definition": "Un programa que utiliza secretamente una computadora para lanzar ataques que son difíciles de rastrear hasta el verdadero atacante. (NIST SP 800-83 Rev. 1)",
+    "category": "Malware",
+    "difficulty": "Intermedio"
+  }
+]

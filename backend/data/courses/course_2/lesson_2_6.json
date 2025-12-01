@@ -1,0 +1,137 @@
+{
+  "id": "c2_l6",
+  "title": "Monitoreo de Red",
+  "description": "Wireless Security",
+  "type": "interactive",
+  "duration_minutes": 8,
+  "xp_reward": 20,
+  "order_index": 6,
+  "course_id": 2,
+  "total_screens": 3,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "memory_cards",
+      "title": "Wireless Security",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "wifi",
+              "term": "WEP - Broken",
+              "color": "#D32F2F"
+            },
+            "back": {
+              "definition": "Wired Equivalent Privacy (1997). RC4 encryption con 40-bit key. COMPLETAMENTE broken. Crack-able en minutos con aircrack-ng.",
+              "example": "IV reuse, weak key scheduling. NUNCA usar WEP en 2024. Legacy only. Wi-Fi Alliance deprecated en 2004.",
+              "color": "#EF5350"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "shield",
+              "term": "WPA2/WPA3 - Modern",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "WPA2: AES-CCMP encryption. WPA3: SAE (Simultaneous Authentication of Equals), forward secrecy. Protección contra offline dictionary attacks.",
+              "example": "WPA2-Personal (PSK): Shared password. WPA2-Enterprise: RADIUS authentication. WPA3: Mandatory en WiFi 6. Use WPA3 cuando disponible.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "public",
+              "term": "Rogue Access Points",
+              "color": "#FF6F00"
+            },
+            "back": {
+              "definition": "Unauthorized AP conectado a network. Employee trae router, crea backdoor. Attacker setup fake AP con SSID legítimo (evil twin).",
+              "example": "Coffee shop: Free WiFi - attacker sniffs traffic. Corporate: Employee AP bypasses firewall. Defense: NAC (Network Access Control), wireless IDS.",
+              "color": "#FFB74D"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "progress_checklist",
+      "title": "Secure WiFi Deployment",
+      "duration": 180,
+      "content": {
+        "items": [
+          {
+            "id": "wifi1",
+            "task": "Separate Networks",
+            "subtitle": "Guest isolation",
+            "icon": "device_hub",
+            "unlock_content": {
+              "title": "Network Segmentation",
+              "points": [
+                "Guest WiFi: Separate VLAN, no corporate access",
+                "Corporate WiFi: 802.1X authentication, certificate-based",
+                "IoT WiFi: Isolated VLAN para smart devices",
+                "Management: Separate network para AP admin"
+              ],
+              "bonus_fact": "Guest breach no debe = corporate breach. VLANs son free isolation."
+            }
+          },
+          {
+            "id": "wifi2",
+            "task": "Monitoring",
+            "subtitle": "Detect rogue APs",
+            "icon": "radar",
+            "unlock_content": {
+              "title": "Wireless IDS",
+              "points": [
+                "Scan for unauthorized APs regularly",
+                "Alert on deauth attacks (WiFi jamming)",
+                "Monitor for evil twin APs",
+                "Tools: Kismet, Aircrack-ng suite"
+              ],
+              "bonus_fact": "Rogue AP detection debe ser automated. Manual scanning no escala."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "quiz",
+      "title": "Evaluación - WiFi",
+      "duration": 60,
+      "content": {
+        "question": "¿Por qué WPA3 es mejor que WPA2?",
+        "options": [
+          {
+            "id": "a",
+            "text": "WPA3 usa passwords más largas",
+            "is_correct": false,
+            "feedback": "Incorrecto. Password length depende de user/policy, no del protocol."
+          },
+          {
+            "id": "b",
+            "text": "WPA3 (SAE) protege contra offline dictionary attacks y añade forward secrecy",
+            "is_correct": true,
+            "feedback": "CORRECTO! WPA2: Attacker captura 4-way handshake, offline dictionary attack. WPA3 (SAE): Each connection different keys, forward secrecy (capture viejo no ayuda). Protection contra KRACK attack. Individual data encryption en open networks."
+          },
+          {
+            "id": "c",
+            "text": "WPA3 es más rápido",
+            "is_correct": false,
+            "feedback": "Incorrecto. Performance es similar. Beneficio es security, no speed."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": ""
+  }
+}

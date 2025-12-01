@@ -1,0 +1,258 @@
+{
+  "id": "c3_l1",
+  "title": "Introducción a la Criptografía",
+  "description": "Caso: SolarWinds Supply Chain (2020)",
+  "type": "interactive",
+  "duration_minutes": 17,
+  "xp_reward": 20,
+  "order_index": 1,
+  "course_id": 3,
+  "total_screens": 5,
+  "screens": [
+    {
+      "screen_id": 1,
+      "type": "step_revelation",
+      "title": "Caso: SolarWinds Supply Chain (2020)",
+      "duration": 240,
+      "content": {
+        "story_title": "SolarWinds: Nation-State Supply Chain Attack",
+        "story_intro": "APT29 (Cozy Bear) compromised 18K+ organizations vía trojanized update",
+        "steps": [
+          {
+            "id": "1",
+            "icon": "security",
+            "title": "El Vector: Orion Software Update",
+            "content": "SolarWinds Orion: Network monitoring usado por Fortune 500, gobierno US. Atacantes (APT29/Russia) comprometieron build system. Inyectaron backdoor SUNBURST en update legítimo.",
+            "insight": "Supply chain attack bypassa ALL perimeter defenses. Víctimas instalan malware voluntariamente."
+          },
+          {
+            "id": "2",
+            "icon": "download",
+            "title": "Infection: 18,000 Organizations",
+            "content": "18,000 customers descargaron update trojanizado. SUNBURST backdoor dormant por 2 semanas antes de activar. FireEye, Microsoft, Departamento de Justicia, Tesoro US comprometidos.",
+            "insight": "Dormancy period evade detection inicial. C2 traffic usaba dominios legítimos (avsvmcloud)."
+          },
+          {
+            "id": "3",
+            "icon": "vpn_key",
+            "title": "Privilege Escalation",
+            "content": "SUNBURST permitió robar credentials de admin. Atacantes pivotaron a cloud (O365, Azure AD). Golden SAML attacks: forjar SAML tokens para impersonate any user.",
+            "insight": "On-prem compromise → cloud compromise. Hybrid environments amplify attack surface."
+          },
+          {
+            "id": "4",
+            "icon": "visibility",
+            "title": "Detección: 9 Meses Después",
+            "content": "FireEye detectó en Dic 2020. Breach comenzó en Mar 2020. 9 meses de acceso sin detectar. APT29 exfiltró emails, documentos classified de gobierno.",
+            "insight": "Dwell time promedio de nation-state: 200+ días. Detection es el challenge."
+          },
+          {
+            "id": "5",
+            "icon": "gavel",
+            "title": "Aftermath: Zero Trust Mandate",
+            "content": "Biden Executive Order 14028: Federal agencies deben implementar Zero Trust. SolarWinds CEO testified ante Congreso. Enfoque en supply chain security. SBOM (Software Bill of Materials) requirement.",
+            "insight": "SolarWinds aceleró adopción de Zero Trust architecture en gobierno y enterprise."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "memory_cards",
+      "title": "Authentication Fundamentals",
+      "duration": 240,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "password",
+              "term": "Something You Know",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Factor 1: Passwords, PINs, security questions. Más común pero más vulnerable. Phishing, credential stuffing, brute force.",
+              "example": "Password: Solo knowledge-based. Vulnerable a: keyloggers, phishing, database leaks (Have I Been Pwned). Requiere complexity rules, rotation policies.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "phonelink_lock",
+              "term": "Something You Have",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "Factor 2: Physical token, smartphone, smart card, hardware key. Possession-based. Más seguro que passwords solo.",
+              "example": "FIDO2 keys (YubiKey), TOTP apps (Google Authenticator), push notifications (Duo). SolarWinds: Stolen creds inútiles con MFA hardware.",
+              "color": "#66BB6A"
+            }
+          },
+          {
+            "id": "3",
+            "front": {
+              "icon": "fingerprint",
+              "term": "Something You Are",
+              "color": "#F57C00"
+            },
+            "back": {
+              "definition": "Factor 3: Biometrics. Fingerprint, face recognition, iris scan, voice. Inherence-based. No se puede 'olvidar' pero no se puede cambiar si compromised.",
+              "example": "Touch ID, Face ID, Windows Hello. Spoofing risk con high-res photos. False accept/reject rates. GDPR concerns con biometric data storage.",
+              "color": "#FFB74D"
+            }
+          },
+          {
+            "id": "4",
+            "front": {
+              "icon": "location_on",
+              "term": "Contextual Factors",
+              "color": "#7B1FA2"
+            },
+            "back": {
+              "definition": "Factor adicional: Location (GPS, IP), time of day, device posture, behavior analytics. Risk-based authentication.",
+              "example": "Login desde Russia cuando user normalmente en US = block. Impossible travel. Device fingerprinting. Adaptive MFA aumenta friction solo cuando risk alto.",
+              "color": "#BA68C8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "progress_checklist",
+      "title": "Multi-Factor Authentication (MFA)",
+      "duration": 300,
+      "content": {
+        "items": [
+          {
+            "id": "mfa1",
+            "task": "MFA Types Comparison",
+            "subtitle": "Efectividad y usabilidad",
+            "icon": "compare",
+            "unlock_content": {
+              "title": "MFA Spectrum",
+              "points": [
+                "SMS/Voice (Least secure): SIM swapping, SS7 attacks. Mejor que nada.",
+                "TOTP Apps (Medium): Google Auth, Authy. Phishing-resistant NO. Codes can be phished.",
+                "Push Notifications (Better): Duo, Okta Verify. UX bueno. Push bombing risk.",
+                "Hardware Tokens (Best): FIDO2, YubiKey. Phishing-resistant. Public key crypto.",
+                "Biometrics (Device-local): Touch/Face ID. Convenient pero device-dependent."
+              ],
+              "bonus_fact": "Microsoft: MFA blocks 99.9% of automated attacks. FIDO2 blocks 100% of phishing."
+            }
+          },
+          {
+            "id": "mfa2",
+            "task": "FIDO2/WebAuthn",
+            "subtitle": "Phishing-resistant standard",
+            "icon": "key",
+            "unlock_content": {
+              "title": "Modern Authentication",
+              "points": [
+                "FIDO2: Public key cryptography. Private key never leaves device.",
+                "WebAuthn: Browser API standard. Works con YubiKey, Windows Hello, Touch ID.",
+                "Phishing-resistant: Attacker no puede replay credentials. Domain-bound.",
+                "Passwordless: Can replace passwords entirely. Microsoft, Google, Apple support.",
+                "SolarWinds defense: Hardware MFA hubiera bloqueado credential theft."
+              ],
+              "bonus_fact": "FIDO2 adoption growing 50%/year. Passkeys (Apple/Google) are FIDO2-based."
+            }
+          },
+          {
+            "id": "mfa3",
+            "task": "MFA Bypass Techniques",
+            "subtitle": "Attackers adapt",
+            "icon": "warning",
+            "unlock_content": {
+              "title": "Know the Enemy",
+              "points": [
+                "Push bombing/fatigue: Spam push notifications hasta que user acepta.",
+                "Session hijacking: Steal session token post-MFA. MFA protects login, no session.",
+                "Social engineering: Call helpdesk, reset MFA device claiming 'lost phone'.",
+                "AiTM (Adversary-in-The-Middle): Proxy phishing, relay MFA codes real-time.",
+                "Defense: FIDO2 (no relay possible), anomaly detection, rate limiting MFA attempts."
+              ],
+              "bonus_fact": "Twitter 2020 hack: Insiders bypassed MFA via internal tools. Insider threat is MFA weakness."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "memory_cards",
+      "title": "Single Sign-On (SSO)",
+      "duration": 180,
+      "content": {
+        "cards": [
+          {
+            "id": "1",
+            "front": {
+              "icon": "apps",
+              "term": "SAML 2.0",
+              "color": "#1976D2"
+            },
+            "back": {
+              "definition": "Security Assertion Markup Language. XML-based. IdP (Identity Provider) autentica user, emite SAML assertion, SP (Service Provider) confía.",
+              "example": "Corporate SSO: Okta (IdP) → G Suite, Salesforce, Slack (SPs). SolarWinds attack: Golden SAML forged tokens, bypassed authentication.",
+              "color": "#42A5F5"
+            }
+          },
+          {
+            "id": "2",
+            "front": {
+              "icon": "verified_user",
+              "term": "OAuth 2.0 + OIDC",
+              "color": "#388E3C"
+            },
+            "back": {
+              "definition": "OAuth: Authorization framework (access delegation). OIDC: Authentication layer on OAuth. JSON-based, RESTful. Modern alternative a SAML.",
+              "example": "'Sign in with Google/Apple/Facebook'. OAuth grants access tokens. OIDC adds ID tokens (JWT) con user info. Widely adopted por developers.",
+              "color": "#66BB6A"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "quiz",
+      "title": "Evaluación - Authentication",
+      "duration": 90,
+      "content": {
+        "question": "¿Por qué FIDO2/YubiKey es superior a TOTP apps para MFA?",
+        "options": [
+          {
+            "id": "a",
+            "text": "FIDO2 es más barato",
+            "is_correct": false,
+            "feedback": "Incorrecto. YubiKeys cuestan $25-50, apps son free. Ventaja NO es costo."
+          },
+          {
+            "id": "b",
+            "text": "FIDO2 es phishing-resistant; TOTP codes pueden ser phished/relayed",
+            "is_correct": true,
+            "feedback": "CORRECTO! FIDO2 usa public key crypto. Private key NUNCA sale del hardware token. Domain-bound: solo funciona en sitio legítimo, no en phishing site. TOTP: 6-digit code puede ser phished (user ingresa en fake site) y relayed a sitio real en real-time. SolarWinds: FIDO2 hubiera prevenido credential reuse incluso si passwords leaked."
+          },
+          {
+            "id": "c",
+            "text": "FIDO2 no requiere internet",
+            "is_correct": false,
+            "feedback": "Incorrecto. Ambos pueden funcionar offline/online. Diferencia es phishing resistance."
+          },
+          {
+            "id": "d",
+            "text": "TOTP es más seguro",
+            "is_correct": false,
+            "feedback": "Incorrecto. TOTP es menos seguro. Codes son phishable. FIDO2 es cryptographically secure y phishing-resistant."
+          }
+        ]
+      }
+    }
+  ],
+  "success": true,
+  "content": {
+    "intro": "APT29 (Cozy Bear) compromised 18K+ organizations vía trojanized update"
+  }
+}

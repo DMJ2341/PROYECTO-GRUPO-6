@@ -3,191 +3,194 @@ package com.example.cyberlearnapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.ApiService
-import com.example.cyberlearnapp.network.models.User
+import com.example.cyberlearnapp.network.models.*
+import com.example.cyberlearnapp.utils.AuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.example.cyberlearnapp.repository.UserRepository
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val apiService: ApiService,
-    private val userRepository: UserRepository
+    private val apiService: ApiService
 ) : ViewModel() {
+
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
+    val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
-
-    // ✅ SOLUCIÓN: Estado único para navegación inmediata
-    private val _shouldNavigateToMain = MutableStateFlow(false)
-    val shouldNavigateToMain: StateFlow<Boolean> = _shouldNavigateToMain.asStateFlow()
+    // ✅ NUEVO: Estado de verificación de email
+    private val _verificationEmail = MutableStateFlow<String?>(null)
+    val verificationEmail: StateFlow<String?> = _verificationEmail.asStateFlow()
 
     init {
-        loadStoredUser()
+        checkSession()
     }
 
-    fun loadStoredUser() {
+    private fun checkSession() {
+        val token = AuthManager.getToken()
+        if (!token.isNullOrEmpty()) {
+            _authState.value = AuthState.Loading
+
+            viewModelScope.launch {
+                try {
+                    val response = apiService.getUserProfile("Bearer $token")
+
+                    if (response.isSuccessful && response.body() != null) {
+                        val data = response.body()!!
+                        _currentUser.value = data.user
+                        _authState.value = AuthState.Success
+                    } else {
+                        handleSessionError()
+                    }
+                } catch (e: Exception) {
+                    _authState.value = AuthState.Error("No se pudo validar la sesión: ${e.message}")
+                }
+            }
+        } else {
+            _authState.value = AuthState.Idle
+        }
+    }
+
+    private fun handleSessionError() {
+        AuthManager.clear()
+        _currentUser.value = null
+        _authState.value = AuthState.Idle
+    }
+
+    fun login(email: String, pass: String) {
         viewModelScope.launch {
-            userRepository.getUserData().collect { user ->
-                _currentUser.value = user
-                println("👤 [DEBUG] Usuario cargado desde DataStore: $user")
+            _authState.value = AuthState.Loading
+            try {
+                val response = apiService.login(LoginRequest(email, pass))
+                if (response.isSuccessful && response.body() != null) {
+                    val data = response.body()!!
+                    AuthManager.saveToken(data.accessToken)
+                    AuthManager.saveRefreshToken(data.refreshToken)
+                    _currentUser.value = data.user
+                    _authState.value = AuthState.Success
+                } else {
+                    val errorMsg = when (response.code()) {
+                        401 -> "Credenciales inválidas"
+                        403 -> "Debes verificar tu email antes de iniciar sesión"
+                        else -> "Error en el login"
+                    }
+                    _authState.value = AuthState.Error(errorMsg)
+                }
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error(e.message ?: "Error de conexión")
             }
         }
     }
 
-    fun register(email: String, password: String, name: String) {
-        _isLoading.value = true
-        _errorMessage.value = null
-        _shouldNavigateToMain.value = false
-
+    fun register(name: String, email: String, pass: String, termsAccepted: Boolean) {
         viewModelScope.launch {
+            _authState.value = AuthState.Loading
+
+            // Validaciones en el cliente
+            if (!termsAccepted) {
+                _authState.value = AuthState.Error("Debes aceptar los términos y condiciones")
+                return@launch
+            }
+
+            if (name.isBlank()) {
+                _authState.value = AuthState.Error("El nombre es requerido")
+                return@launch
+            }
+
+            if (pass.length < 8) {
+                _authState.value = AuthState.Error("La contraseña debe tener al menos 8 caracteres")
+                return@launch
+            }
+
             try {
-                println("🔐 [DEBUG] Iniciando registro para: $email")
-                val response = apiService.register(
-                    com.example.cyberlearnapp.network.RegisterRequest(email, password, name)
-                )
+                val response = apiService.register(RegisterRequest(email, pass, name))
+                if (response.isSuccessful && response.body() != null) {
+                    val data = response.body()!!
 
-                println("📡 [DEBUG] Response code registro: ${response.code()}")
-                println("📡 [DEBUG] Response body registro: ${response.body()}")
-
-                if (response.isSuccessful && response.body()?.success == true) {
-                    val userData = response.body()?.user
-                    val token = response.body()?.token ?: ""
-
-                    println("✅ [DEBUG] Token recibido registro: ${if (token.isNotEmpty()) "LONGITUD: ${token.length}" else "VACÍO"}")
-                    println("✅ [DEBUG] User data registro: $userData")
-
-                    if (userData != null && token.isNotEmpty()) {
-                        userRepository.saveLoginData(token, userData)
-                        println("💾 [DEBUG] Datos de registro guardados en DataStore")
-
-                        // ✅ SOLUCIÓN: Actualizar currentUser y activar navegación simultáneamente
-                        _currentUser.value = userData
-
-                        // ✅ CRÍTICO: Primero desactivar loading, LUEGO activar navegación
-                        _isLoading.value = false
-
-                        // Pequeño delay para asegurar que la UI actualizó el loading
-                        kotlinx.coroutines.delay(50)
-
-                        _shouldNavigateToMain.value = true
-
-                        debugAuthStatus()
+                    // ✅ NUEVO: Verificar si requiere verificación
+                    if (data.requiresVerification) {
+                        _verificationEmail.value = email
+                        _authState.value = AuthState.RequiresVerification(email)
                     } else {
-                        println("❌ [DEBUG] Registro: UserData null o token vacío")
-                        _errorMessage.value = "Error: Token vacío recibido del servidor"
-                        _isLoading.value = false
+                        // Flujo antiguo (por si el backend no envía código)
+                        if (data.accessToken != null && data.refreshToken != null) {
+                            AuthManager.saveToken(data.accessToken)
+                            AuthManager.saveRefreshToken(data.refreshToken)
+                            _currentUser.value = data.user
+                            _authState.value = AuthState.Success
+                        }
                     }
                 } else {
-                    val errorMsg = response.body()?.message ?: "Error en el registro"
-                    println("❌ [DEBUG] Registro fallido: $errorMsg")
-                    _errorMessage.value = errorMsg
-                    _isLoading.value = false
+                    _authState.value = AuthState.Error("Error en registro: ${response.message()}")
                 }
             } catch (e: Exception) {
-                println("💥 [DEBUG] Excepción en registro: ${e.message}")
-                _errorMessage.value = "Error de conexión: ${e.message}"
-                _isLoading.value = false
+                _authState.value = AuthState.Error(e.message ?: "Error de conexión")
             }
         }
     }
 
-    fun login(email: String, password: String) {
-        _isLoading.value = true
-        _errorMessage.value = null
-        _shouldNavigateToMain.value = false
-
+    // ✅ NUEVO: Verificar código de email
+    fun verifyEmail(email: String, code: String) {
         viewModelScope.launch {
+            _authState.value = AuthState.Loading
             try {
-                println("🔐 [DEBUG] Iniciando login para: $email")
-                val response = apiService.login(
-                    com.example.cyberlearnapp.network.LoginRequest(email, password)
-                )
-
-                println("📡 [DEBUG] Login response code: ${response.code()}")
-                println("📡 [DEBUG] Login response body: ${response.body()}")
-
-                if (response.isSuccessful && response.body()?.success == true) {
-                    val userData = response.body()?.user
-                    val token = response.body()?.token ?: ""
-
-                    println("✅ [DEBUG] Token recibido login: ${if (token.isNotEmpty()) "LONGITUD: ${token.length} -> ${token.take(30)}..." else "VACÍO"}")
-                    println("✅ [DEBUG] User data login: $userData")
-
-                    if (userData != null && token.isNotEmpty()) {
-                        userRepository.saveLoginData(token, userData)
-                        println("💾 [DEBUG] Datos de login guardados en DataStore")
-
-                        // ✅ SOLUCIÓN: Actualizar currentUser y activar navegación simultáneamente
-                        _currentUser.value = userData
-
-                        // ✅ CRÍTICO: Primero desactivar loading, LUEGO activar navegación
-                        _isLoading.value = false
-
-                        // Pequeño delay para asegurar que la UI actualizó el loading
-                        kotlinx.coroutines.delay(50)
-
-                        _shouldNavigateToMain.value = true
-
-                        debugAuthStatus()
-                    } else {
-                        println("❌ [DEBUG] Login: UserData null o token vacío")
-                        _errorMessage.value = "Error: Token vacío recibido del servidor"
-                        _isLoading.value = false
-                    }
+                val response = apiService.verifyEmail(VerifyEmailRequest(email, code))
+                if (response.isSuccessful && response.body() != null) {
+                    val data = response.body()!!
+                    AuthManager.saveToken(data.accessToken)
+                    AuthManager.saveRefreshToken(data.refreshToken)
+                    _currentUser.value = data.user
+                    _verificationEmail.value = null
+                    _authState.value = AuthState.Success
                 } else {
-                    val errorMsg = response.body()?.message ?: "Error en el login"
-                    println("❌ [DEBUG] Login fallido: $errorMsg")
-                    _errorMessage.value = errorMsg
-                    _isLoading.value = false
+                    val errorMsg = when (response.code()) {
+                        400 -> "Código inválido o expirado"
+                        404 -> "Usuario no encontrado"
+                        else -> "Error verificando email"
+                    }
+                    _authState.value = AuthState.Error(errorMsg)
                 }
             } catch (e: Exception) {
-                println("💥 [DEBUG] Excepción en login: ${e.message}")
-                _errorMessage.value = "Error de conexión: ${e.message}"
-                _isLoading.value = false
+                _authState.value = AuthState.Error(e.message ?: "Error de conexión")
+            }
+        }
+    }
+
+    // ✅ NUEVO: Reenviar código
+    fun resendCode(email: String) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.resendVerificationCode(ResendCodeRequest(email))
+                if (response.isSuccessful) {
+                    _authState.value = AuthState.CodeResent
+                } else {
+                    _authState.value = AuthState.Error("No se pudo reenviar el código")
+                }
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error("Error reenviando código")
             }
         }
     }
 
     fun resetNavigation() {
-        _shouldNavigateToMain.value = false
+        _authState.value = AuthState.Idle
     }
 
     fun logout() {
-        viewModelScope.launch {
-            println("🚪 [DEBUG] Cerrando sesión...")
-            userRepository.clearLoginData()
-            _currentUser.value = null
-            _shouldNavigateToMain.value = false
-            _isLoading.value = false
-            _errorMessage.value = null
-            println("✅ [DEBUG] Sesión cerrada")
-        }
+        handleSessionError()
     }
+}
 
-    private fun debugAuthStatus() {
-        viewModelScope.launch {
-            println("=== 🔍 AUTH DEBUG ===")
-            val token = userRepository.getToken().first()
-            val user = userRepository.getUserData().first()
-
-            println("🔑 Token guardado: ${token?.let { "LONGITUD: ${it.length}" } ?: "NULL"}")
-            println("👤 User guardado: $user")
-            println("=== 🏁 FIN AUTH DEBUG ===")
-        }
-    }
-
-    fun clearError() {
-        _errorMessage.value = null
-    }
+sealed class AuthState {
+    object Idle : AuthState()
+    object Loading : AuthState()
+    object Success : AuthState()
+    data class RequiresVerification(val email: String) : AuthState()  // ✅ NUEVO
+    object CodeResent : AuthState()  // ✅ NUEVO
+    data class Error(val message: String) : AuthState()
 }

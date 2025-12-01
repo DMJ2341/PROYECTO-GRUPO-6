@@ -1,135 +1,223 @@
 package com.example.cyberlearnapp.navigation
 
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
-import androidx.navigation.NavGraphBuilder
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
+import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
-import com.example.cyberlearnapp.viewmodel.AuthViewModel
-import com.example.cyberlearnapp.viewmodel.CourseViewModel
-import com.example.cyberlearnapp.viewmodel.UserViewModel
+import com.example.cyberlearnapp.viewmodel.*
+import com.example.cyberlearnapp.utils.AuthManager
 
-fun NavGraphBuilder.mainGraph(
+@Composable
+fun NavGraph(
     navController: NavHostController,
-    authViewModel: AuthViewModel,
-    userViewModel: UserViewModel,
-    courseViewModel: CourseViewModel
+    startDestination: String = "auth",
+    paddingValues: PaddingValues
 ) {
-    navigation(
-        startDestination = Screens.Dashboard.route, // ✅ CORREGIDO: Dashboard como inicio
-        route = Screens.Main.route // ✅ CORREGIDO: Main es el contenedor
+    val authViewModel: AuthViewModel = hiltViewModel()
+
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        modifier = Modifier.padding(paddingValues)
     ) {
-        // ✅ TODAS las pantallas dentro del main graph
-        composable(Screens.Dashboard.route) {
-            DashboardScreen(
-                userViewModel = userViewModel,
-                onCourseClick = { courseName ->
-                    println("🎯 Curso seleccionado: $courseName")
-                }
-            )
-        }
 
-        composable(Screens.Courses.route) {
-            CoursesScreen(
-                courseViewModel = courseViewModel,
-                onCourseClick = { courseId, courseTitle, courseDescription, courseLevel, courseXp, courseEmoji ->
-                    navController.navigate("course_detail/$courseId/$courseTitle/$courseDescription/$courseLevel/$courseXp/$courseEmoji")
-                }
-            )
-        }
-
-        composable(Screens.Achievements.route) {
-            AchievementsScreen()
-        }
-
-        composable(Screens.Profile.route) {
-            ProfileScreen(
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                onEditProfile = {
-                    println("✏️ Editar perfil")
+        /* ----------  AUTH  ---------- */
+        composable("auth") {
+            AuthScreen(
+                onLoginSuccess = {
+                    navController.navigate("dashboard") {
+                        popUpTo("auth") { inclusive = true }
+                    }
                 },
+                onNavigateToVerification = { email ->
+                    navController.navigate("email_verification/$email")
+                }
+            )
+        }
+
+        /* ----------  EMAIL VERIFICATION  ---------- */
+        composable(
+            route = "email_verification/{email}",
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            EmailVerificationScreen(
+                email = email,
+                onVerificationSuccess = {
+                    navController.navigate("dashboard") {
+                        popUpTo("auth") { inclusive = true }
+                    }
+                },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        /* ----------  DASHBOARD  ---------- */
+        composable("dashboard") {
+            DashboardScreen(navController = navController)
+        }
+
+        /* ----------  COURSES  ---------- */
+        composable("courses") {
+            val courseViewModel: CourseViewModel = hiltViewModel()
+            CoursesScreen(navController = navController, viewModel = courseViewModel)
+        }
+
+        /* ----------  GLOSARIO FLOW (Shared ViewModel) ---------- */
+        navigation(startDestination = "glossary_main", route = "glossary") {
+
+            composable("glossary_main") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("glossary")
+                }
+                val glossaryViewModel: GlossaryViewModel = hiltViewModel(parentEntry)
+                GlossaryScreen(navController = navController, viewModel = glossaryViewModel)
+            }
+
+            composable("flashcard") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("glossary")
+                }
+                val glossaryViewModel: GlossaryViewModel = hiltViewModel(parentEntry)
+                FlashcardScreen(navController = navController, viewModel = glossaryViewModel)
+            }
+
+            composable("quiz") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("glossary")
+                }
+                val glossaryViewModel: GlossaryViewModel = hiltViewModel(parentEntry)
+                QuizScreen(navController = navController, viewModel = glossaryViewModel)
+            }
+
+            composable(
+                route = "practice_result/{correct}/{total}",
+                arguments = listOf(
+                    navArgument("correct") { type = NavType.IntType },
+                    navArgument("total") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val correct = backStackEntry.arguments?.getInt("correct") ?: 0
+                val total = backStackEntry.arguments?.getInt("total") ?: 0
+
+                PracticeResultScreen(
+                    navController = navController,
+                    correctCount = correct,
+                    totalCount = total
+                )
+            }
+        }
+
+        /* ----------  🎯 TEST DE PREFERENCIAS FLOW (4 Pantallas) ---------- */
+        navigation(startDestination = "test_questions", route = Screens.PreferenceTest.route) {
+
+            // 1. Pantalla de Preguntas (Test)
+            composable("test_questions") { backStackEntry ->
+                // Compartir ViewModel: Obtenemos el VM del grafo padre "preference_test"
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screens.PreferenceTest.route)
+                }
+                val testViewModel: TestViewModel = hiltViewModel(parentEntry)
+
+                // Obtener token directamente del AuthManager
+                val token = AuthManager.getToken() ?: ""
+
+                TestScreen(
+                    navController = navController,
+                    viewModel = testViewModel,
+                    token = token
+                )
+            }
+
+            // 2. Resumen del Resultado
+            composable("test_result_summary") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screens.PreferenceTest.route)
+                }
+                val testViewModel: TestViewModel = hiltViewModel(parentEntry)
+
+                TestResultSummaryScreen(
+                    navController = navController,
+                    viewModel = testViewModel
+                )
+            }
+
+            // 3. Recomendaciones (Certificaciones, Labs, Paths)
+            composable("test_recommendations") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screens.PreferenceTest.route)
+                }
+                val testViewModel: TestViewModel = hiltViewModel(parentEntry)
+
+                TestRecommendationsScreen(
+                    navController = navController,
+                    viewModel = testViewModel
+                )
+            }
+
+            // 4. Skills Detalladas
+            composable("test_skills") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screens.PreferenceTest.route)
+                }
+                val testViewModel: TestViewModel = hiltViewModel(parentEntry)
+
+                TestSkillsScreen(
+                    navController = navController,
+                    viewModel = testViewModel
+                )
+            }
+        }
+
+        /* ----------  PROFILE  ---------- */
+        composable("profile") {
+            ProfileScreen(
+                onBackClick = { navController.popBackStack() },
                 onLogout = {
                     authViewModel.logout()
-                    navController.navigate(Screens.Auth.route) {
-                        popUpTo(Screens.Main.route) { inclusive = true }
+                    navController.navigate("auth") {
+                        popUpTo(0) { inclusive = true }
                     }
-                }
+                },
+                onNavigateToBadges = { navController.navigate("badges") }
             )
         }
 
-        // ✅ MANTENER las rutas de detalle de cursos y lecciones
-        composable(
-            route = "course_detail/{courseId}/{courseTitle}/{courseDescription}/{courseLevel}/{courseXp}/{courseEmoji}",
-            arguments = listOf(
-                navArgument("courseId") { type = NavType.StringType },
-                navArgument("courseTitle") { type = NavType.StringType },
-                navArgument("courseDescription") { type = NavType.StringType },
-                navArgument("courseLevel") { type = NavType.StringType },
-                navArgument("courseXp") { type = NavType.IntType },
-                navArgument("courseEmoji") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
-            val courseTitle = backStackEntry.arguments?.getString("courseTitle") ?: ""
-            val courseDescription = backStackEntry.arguments?.getString("courseDescription") ?: ""
-            val courseLevel = backStackEntry.arguments?.getString("courseLevel") ?: ""
-            val courseXp = backStackEntry.arguments?.getInt("courseXp") ?: 0
-            val courseEmoji = backStackEntry.arguments?.getString("courseEmoji") ?: "📚"
+        /* ----------  BADGES  ---------- */
+        composable("badges") {
+            BadgesScreen(onBackClick = { navController.popBackStack() })
+        }
 
+        /* ----------  COURSE DETAIL  ---------- */
+        composable(
+            route = "course_detail/{courseId}",
+            arguments = listOf(navArgument("courseId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+            val courseViewModel: CourseViewModel = hiltViewModel()
             CourseDetailScreen(
-                courseViewModel = courseViewModel,
-                courseId = courseId,
-                courseTitle = courseTitle,
-                courseDescription = courseDescription,
-                courseLevel = courseLevel,
-                courseXp = courseXp,
-                courseEmoji = courseEmoji,
                 navController = navController,
-                onNavigateBack = { navController.navigateUp() }
+                courseId = courseId,
+                viewModel = courseViewModel
             )
         }
 
+        /* ----------  LESSON DETAIL  ---------- */
         composable(
-            route = "lesson/{lessonId}/{lessonTitle}",
-            arguments = listOf(
-                navArgument("lessonId") { type = NavType.StringType },
-                navArgument("lessonTitle") { type = NavType.StringType }
-            )
+            route = "lesson_detail/{lessonId}",
+            arguments = listOf(navArgument("lessonId") { type = NavType.StringType })
         ) { backStackEntry ->
             val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
-            val lessonTitle = backStackEntry.arguments?.getString("lessonTitle") ?: ""
-
-            LessonScreen(
-                lessonId = lessonId,
-                lessonTitle = lessonTitle,
-                onNavigateBack = { navController.navigateUp() },
-                onLessonCompleted = {
-                    navController.navigateUp()
-                }
-            )
-        }
-
-        composable(
-            route = "interactive_lesson/{lessonId}/{lessonTitle}",
-            arguments = listOf(
-                navArgument("lessonId") { type = NavType.StringType },
-                navArgument("lessonTitle") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
-            val lessonTitle = backStackEntry.arguments?.getString("lessonTitle") ?: ""
-
-            InteractiveLessonScreen(
-                lessonId = lessonId,
-                lessonTitle = lessonTitle,
-                onNavigateBack = { navController.navigateUp() },
-                onLessonCompleted = {
-                    navController.navigateUp()
-                }
-            )
+            LessonDetailScreen(navController = navController, lessonId = lessonId)
         }
     }
 }
