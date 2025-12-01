@@ -1,4 +1,4 @@
-# backend/app.py - VERSIÓN CORREGIDA CON DESBLOQUEO POR CURSO COMPLETO
+# backend/app.py - VERSIÓN 3.2.1 - XP CORREGIDO
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.db import get_session, create_all
@@ -27,6 +27,7 @@ from models.assessments import (
     PreferenceQuestion, UserPreferenceResult
 )
 
+
 # --- SERVICIOS ---
 from services.activity_service import ActivityService
 from services.glossary_service import get_all_glossary_terms, search_glossary, get_glossary_stats
@@ -35,17 +36,21 @@ from services.course_service import CourseService
 from services.badge_service import BadgeService
 from services.progress_service import mark_lesson_completed, get_user_course_progress
 from services.auth_service import AuthService
-from services.lesson_service import (
-    create_lesson, 
-    get_lesson_content, 
-    is_course_accessible,
-    get_course_lessons_with_status
-)
+from services.lesson_service import create_lesson
 from services.streak_service import StreakService
 from services.glossary_favorite_service import toggle_favorite, get_user_favorites, is_favorite
 from services.daily_term_service import get_daily_term_for_user, complete_daily_term
 from services.exam_service import ExamService
-from services.preference_quiz import get_preference_questions, submit_preference_answers, engine
+from services.preference_quiz import get_preference_questions, submit_preference_answers, engine  # ✅ CORRECTO
+from services.glossary_service import (
+    get_all_glossary_terms, 
+    search_glossary, 
+    mark_term_as_learned,
+    get_learned_terms,
+    get_glossary_stats,
+    record_quiz_attempt
+)
+from services.test_preference_service import TestPreferenceService
 
 # -------------------------------------------------------------------
 # SENTRY CONFIG
@@ -111,7 +116,7 @@ def health_check():
     return jsonify({
         'status': 'OK', 
         'message': 'CyberLearn API Operativa',
-        'version': '3.2.0',
+        'version': '3.2.1',  # ✅ ACTUALIZADO
         'database': 'Conectada',
         'environment': 'Producción'
     })
@@ -172,35 +177,6 @@ def reset_password_route():
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error reseteando contraseña"}), 500
 
-# ==========================================
-# 👤 AUTH (LOGIN / REGISTER / REFRESH)
-# ==========================================
-
-@app.route('/api/auth/register', methods=['POST'])
-def register():
-    try:
-        data = request.get_json()
-        
-        if not data or not data.get('email') or not data.get('password'):
-            return jsonify({"error": "Email y password son requeridos"}), 400
-        
-        auth_service = AuthService()
-        result = auth_service.register(data)
-        
-        return jsonify({
-            "success": True,
-            "message": "Usuario registrado",
-            "access_token": result['access_token'],
-            "refresh_token": result['refresh_token'],
-            "user": result['user']
-        }), 201
-        
-    except ValueError as ve:
-        return jsonify({"error": str(ve)}), 400
-    except Exception as e:
-        sentry_sdk.capture_exception(e)
-        print(f"❌ Error en register: {e}")
-        return jsonify({"error": "Error interno"}), 500
 
 @app.route('/api/auth/login', methods=['POST'])
 def login():
@@ -259,46 +235,24 @@ def logout_route(current_user_id):
         return jsonify({"error": "Error en logout"}), 500
 
 # ==========================================
-# 📚 CURSOS (CON VERIFICACIÓN DE ACCESO)
+# 📚 CURSOS Y LECCIONES
 # ==========================================
 
 @app.route('/api/courses', methods=['GET'])
-@token_required
-def get_courses(current_user_id):
-    """
-    Obtiene todos los cursos con información de acceso.
-    
-    NUEVA LÓGICA:
-    - Curso 1: Siempre accesible
-    - Cursos 2-5: Requieren curso anterior completo
-    """
+def get_courses():
     try:
         session = get_session()
         try:
-            courses = session.query(Course).order_by(Course.id).all()
+            courses = session.query(Course).all()
             out = []
-            
-            for course in courses:
-                # Verificar acceso al curso
-                access_info = is_course_accessible(current_user_id, course.id)
-                
-                # Obtener progreso del curso
-                progress = session.query(UserCourseProgress).filter_by(
-                    user_id=current_user_id,
-                    course_id=course.id
-                ).first()
-                
+            for c in courses:
                 out.append({
-                    'id': course.id,
-                    'title': course.title,
-                    'description': course.description,
-                    'level': course.level,
-                    'xp_reward': course.xp_reward,
-                    'image_url': course.image_url or "",
-                    'is_locked': not access_info['accessible'],  # ← NUEVO
-                    'lock_reason': access_info.get('reason', ''),  # ← NUEVO
-                    'required_course_id': access_info.get('required_course_id'),  # ← NUEVO
-                    'progress_percentage': progress.percentage if progress else 0
+                    'id': c.id,
+                    'title': c.title,
+                    'description': c.description,
+                    'level': c.level,
+                    'xp_reward': c.xp_reward,
+                    'image_url': c.image_url or ""
                 })
             return jsonify(out)
         finally:
@@ -307,23 +261,32 @@ def get_courses(current_user_id):
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error interno al obtener cursos"}), 500
 
-# ==========================================
-# 📖 LECCIONES (CON NUEVA LÓGICA DE DESBLOQUEO)
-# ==========================================
-
 @app.route('/api/courses/<int:course_id>/lessons', methods=['GET'])
-@token_required
-def get_course_lessons(current_user_id, course_id):
-    """
-    Obtiene lecciones del curso con estado de bloqueo basado en acceso al curso.
-    
-    NUEVA LÓGICA:
-    - Si el curso está accesible, todas las lecciones están desbloqueadas
-    - Si el curso está bloqueado, todas las lecciones están bloqueadas
-    """
+def get_course_lessons(course_id):
     try:
-        lessons = get_course_lessons_with_status(current_user_id, course_id)
-        return jsonify(lessons)
+        session = get_session()
+        try:
+            lessons = session.query(Lesson).filter_by(course_id=course_id).order_by(Lesson.order_index).all()
+            
+            if not lessons:
+                return jsonify([]), 200
+            
+            result = []
+            for l in lessons:
+                result.append({
+                    'id': l.id,
+                    'course_id': l.course_id,
+                    'title': l.title,
+                    'description': l.description,
+                    'type': l.type,
+                    'duration_minutes': l.duration_minutes,
+                    'xp_reward': getattr(l, 'xp_reward', 10),
+                    'order_index': l.order_index,
+                    'is_completed': False 
+                })
+            return jsonify(result)
+        finally:
+            session.close()
     except Exception as e:
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error interno"}), 500
@@ -331,17 +294,48 @@ def get_course_lessons(current_user_id, course_id):
 @app.route('/api/lessons/<lesson_id>', methods=['GET'])
 @token_required
 def get_lesson_secure(current_user_id, lesson_id):
-    """
-    Obtiene una lección verificando acceso al curso.
-    
-    NUEVA LÓGICA:
-    - Verifica si el curso está accesible
-    - Si sí, devuelve el contenido completo
-    - Si no, devuelve error 403 con información del curso requerido
-    """
+    """Obtiene una lección con validación de bloqueo secuencial."""
     try:
-        result, status_code = get_lesson_content(current_user_id, lesson_id)
-        return jsonify(result), status_code
+        session = get_session()
+        try:
+            lesson = session.query(Lesson).filter_by(id=lesson_id).first()
+            if not lesson:
+                return jsonify({"error": "Lección no encontrada"}), 404
+            
+            previous_lesson = session.query(Lesson)\
+                .filter(Lesson.course_id == lesson.course_id, Lesson.order_index < lesson.order_index)\
+                .order_by(desc(Lesson.order_index))\
+                .first()
+
+            if previous_lesson:
+                prog = session.query(UserLessonProgress).filter_by(
+                    user_id=current_user_id,
+                    lesson_id=previous_lesson.id,
+                    completed=True
+                ).first()
+
+                if not prog:
+                    return jsonify({
+                        "error": "Lección bloqueada",
+                        "message": f"Debes completar la lección '{previous_lesson.title}' antes de acceder a esta.",
+                        "previous_lesson_id": previous_lesson.id
+                    }), 403
+            
+            return jsonify({
+                "success": True,
+                "id": lesson.id,
+                "title": lesson.title,
+                "description": lesson.description,
+                "content": lesson.content,
+                "type": lesson.type,
+                "screens": lesson.screens,
+                "total_screens": getattr(lesson, 'total_screens', 0),
+                "duration_minutes": lesson.duration_minutes,
+                "xp_reward": getattr(lesson, 'xp_reward', 10),
+                "order_index": lesson.order_index
+            })
+        finally:
+            session.close()
     except Exception as e:
         sentry_sdk.capture_exception(e)
         print(f"❌ Error en lesson: {e}")
@@ -372,10 +366,31 @@ def get_user_profile(current_user_id):
             user = session.query(User).filter_by(id=current_user_id).first()
             if not user:
                 return jsonify({"error": "Usuario no encontrado"}), 404
-            return jsonify({"success": True, "user": {
-                "id": user.id, "email": user.email, "name": user.name,
-                "created_at": user.created_at.isoformat() if user.created_at else None
-            }})
+            
+            # ✅ AGREGADO: Contar cursos completados
+            completed_courses = session.query(UserCourseProgress).filter_by(
+                user_id=current_user_id,
+                percentage=100
+            ).count()
+            
+            # ✅ AGREGADO: Contar insignias
+            badges_count = session.query(UserBadge).filter_by(
+                user_id=current_user_id
+            ).count()
+            
+            return jsonify({
+                "success": True,
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "name": user.name,
+                    "created_at": user.created_at.isoformat() if user.created_at else None,
+                    "total_xp": user.total_xp,  # ✅ AGREGADO
+                    "level": (user.total_xp // 100) + 1,  # ✅ AGREGADO
+                    "completed_courses": completed_courses,  # ✅ AGREGADO
+                    "badges_count": badges_count  # ✅ AGREGADO
+                }
+            })
         finally:
             session.close()
     except Exception as e:
@@ -387,10 +402,14 @@ def get_user_profile(current_user_id):
 def get_user_dashboard(current_user_id):
     try:
         session = get_session()
-        act_service = ActivityService()
         streak_service = StreakService()
 
-        total_xp = act_service.get_total_xp(current_user_id)
+        # ✅ CORREGIDO: Obtener user y leer total_xp directamente
+        user = session.query(User).filter_by(id=current_user_id).first()
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        
+        total_xp = user.total_xp  # ✅ Lee de users.total_xp, NO de activities
         current_streak = streak_service.get_current_streak(current_user_id)
         streak_bonus = streak_service.get_streak_bonus(current_streak)
         user_badges_count = session.query(UserBadge).filter_by(user_id=current_user_id).count()
@@ -399,9 +418,6 @@ def get_user_dashboard(current_user_id):
         courses = session.query(Course).order_by(Course.id).all()
 
         for course in courses:
-            # Verificar acceso
-            access_info = is_course_accessible(current_user_id, course.id)
-            
             progress = session.query(UserCourseProgress).filter_by(
                 user_id=current_user_id,
                 course_id=course.id
@@ -417,9 +433,7 @@ def get_user_dashboard(current_user_id):
                     "total_lessons": progress.total_lessons,
                     "percentage": progress.percentage,
                     "completed": progress.percentage == 100,
-                    "completed_at": progress.completed_at.isoformat() if progress.completed_at else None,
-                    "is_locked": not access_info['accessible'],
-                    "lock_reason": access_info.get('reason', '')
+                    "completed_at": progress.completed_at.isoformat() if progress.completed_at else None
                 }
             else:
                 total_lessons = session.query(Lesson).filter_by(course_id=course.id).count()
@@ -432,46 +446,36 @@ def get_user_dashboard(current_user_id):
                     "total_lessons": total_lessons,
                     "percentage": 0,
                     "completed": False,
-                    "completed_at": None,
-                    "is_locked": not access_info['accessible'],
-                    "lock_reason": access_info.get('reason', '')
+                    "completed_at": None
                 }
             course_progress_list.append(course_data)
 
-        # Encontrar siguiente curso accesible
         next_course = None
         for prog in course_progress_list:
-            if not prog["is_locked"] and prog["percentage"] < 100:
+            if prog["percentage"] < 100:
                 next_course = {
                     "course_id": prog["course_id"],
                     "title": prog["title"],
-                    "level": "En curso" if prog["percentage"] > 0 else "Disponible"
+                    "level": "En curso" if prog["percentage"] > 0 else "Nuevo"
                 }
                 break
-        
-        if not next_course:
-            # Buscar primer curso bloqueado
-            for prog in course_progress_list:
-                if prog["is_locked"]:
-                    next_course = {
-                        "course_id": prog["course_id"],
-                        "title": prog["title"],
-                        "level": "Bloqueado",
-                        "lock_reason": prog["lock_reason"]
-                    }
-                    break
         
         if not next_course and course_progress_list:
              next_course = {"title": "¡Todo completado!", "level": "Maestro"}
         elif not next_course:
              next_course = {"title": "Sin cursos disponibles", "level": "-"}
 
+        # ✅ AGREGADO: Verificar si tiene resultado del test vocacional
+        has_preference_result = session.query(UserPreferenceResult).filter_by(
+            user_id=current_user_id
+        ).first() is not None
+
         session.close()
 
         return jsonify({
             "success": True,
             "dashboard": {
-                "total_xp": total_xp,
+                "total_xp": total_xp,  # ✅ Ahora lee de user.total_xp correctamente
                 "level": (total_xp // 100) + 1,
                 "current_streak": current_streak,
                 "streak_bonus": streak_bonus,
@@ -479,7 +483,9 @@ def get_user_dashboard(current_user_id):
                 "courses_progress": course_progress_list,
                 "next_course": next_course,
                 "completed_courses": sum(1 for c in course_progress_list if c["completed"]),
-                "total_courses": len(course_progress_list)
+                "total_courses": len(course_progress_list),
+                "has_preference_result": has_preference_result,  # ✅ AGREGADO
+                "final_exam_passed": False  # ✅ AGREGADO
             }
         })
 
@@ -569,119 +575,86 @@ def get_user_badges(current_user_id):
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error interno al obtener medallas"}), 500
 
+
 # ==========================================
-# 📖 GLOSARIO (TÉRMINO DIARIO Y BÚSQUEDA)
+# 📖 GLOSARIO MEJORADO
 # ==========================================
 
 @app.route('/api/glossary', methods=['GET'])
-def get_glossary_route():
+@token_required
+def get_glossary_route(current_user_id):
+    """Obtiene todos los términos con progreso del usuario."""
     try:
-        terms = get_all_glossary_terms()
+        terms = get_all_glossary_terms(user_id=current_user_id)
         return jsonify({"success": True, "terms": terms})
     except Exception as e:
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error cargando glosario"}), 500
 
 @app.route('/api/glossary/search', methods=['GET'])
-def search_glossary_route():
+@token_required
+def search_glossary_route(current_user_id):
+    """Busca términos en el glosario."""
     query = request.args.get('q', '')
     if len(query) < 2:
         return jsonify({"success": True, "terms": []})
     try:
-        results = search_glossary(query)
+        results = search_glossary(query, user_id=current_user_id)
         return jsonify({"success": True, "terms": results})
     except Exception as e:
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error en búsqueda"}), 500
 
-@app.route('/api/daily-term', methods=['GET'])
+@app.route('/api/glossary/<int:glossary_id>/mark-learned', methods=['POST'])
 @token_required
-def daily_term_v2(current_user_id):
+def mark_learned_route(current_user_id, glossary_id):
+    """Marca un término como aprendido/no aprendido."""
     try:
-        result = get_daily_term_for_user(current_user_id)
-        if not result:
-             return jsonify({"error": "No hay términos disponibles"}), 404
-        return jsonify({
-            "success": True,
-            "daily_term": result["term"],
-            "xp_earned": result.get("xp_reward", 0),
-            "already_viewed_today": result["already_viewed"]
-        })
+        data = request.get_json()
+        is_learned = data.get('is_learned', True)
+        
+        result = mark_term_as_learned(current_user_id, glossary_id, is_learned)
+        return jsonify(result), 200
     except Exception as e:
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Error cargando término del día"}), 500
-    
-@app.route('/api/daily-term/complete', methods=['POST'])
-@token_required
-def complete_daily_term_route(current_user_id):
-    data = request.get_json()
-    term_id = data.get('term_id')
-    
-    if not term_id:
-        return jsonify({"error": "ID del término es requerido"}), 400
+        return jsonify({"error": "Error marcando término"}), 500
 
+@app.route('/api/glossary/learned', methods=['GET'])
+@token_required
+def get_learned_terms_route(current_user_id):
+    """Obtiene solo los términos aprendidos (para quiz)."""
     try:
-        result = complete_daily_term(current_user_id, term_id)
-        if result['success']:
-            return jsonify(result), 200
-        else:
-            return jsonify(result), 409 
+        terms = get_learned_terms(current_user_id)
+        return jsonify({"success": True, "terms": terms})
     except Exception as e:
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Error interno al completar el término"}), 500
+        return jsonify({"error": "Error obteniendo términos aprendidos"}), 500
 
 @app.route('/api/glossary/stats', methods=['GET'])
-def glossary_stats():
+@token_required
+def glossary_stats_route(current_user_id):
+    """Obtiene estadísticas del glosario del usuario."""
     try:
-        stats = get_glossary_stats()
+        stats = get_glossary_stats(user_id=current_user_id)
         return jsonify({"success": True, "stats": stats})
     except Exception as e:
         sentry_sdk.capture_exception(e)
         return jsonify({"error": "Error obteniendo estadísticas"}), 500
 
-@app.route('/api/glossary/favorites', methods=['GET'])
+@app.route('/api/glossary/<int:glossary_id>/quiz-attempt', methods=['POST'])
 @token_required
-def get_favorites(current_user_id):
+def quiz_attempt_route(current_user_id, glossary_id):
+    """Registra un intento de quiz (práctica)."""
     try:
-        favorites = get_user_favorites(current_user_id)
-        return jsonify({"success": True, "favorites": favorites})
+        data = request.get_json()
+        is_correct = data.get('is_correct', False)
+        
+        result = record_quiz_attempt(current_user_id, glossary_id, is_correct)
+        return jsonify(result), 200
     except Exception as e:
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Error cargando favoritos"}), 500
+        return jsonify({"error": "Error registrando intento"}), 500
 
-@app.route('/api/glossary/<int:glossary_id>/favorite', methods=['POST'])
-@token_required
-def toggle_glossary_favorite(current_user_id, glossary_id):
-    try:
-        result = toggle_favorite(current_user_id, glossary_id)
-        return jsonify({
-            "success": True,
-            "glossary_id": glossary_id,
-            "is_favorite": result["is_favorite"],
-            "action": result["action"]
-        })
-    except Exception as e:
-        sentry_sdk.capture_exception(e)
-        return jsonify({"error": "Error al marcar favorito"}), 500
-
-@app.route('/api/glossary/term/<int:glossary_id>', methods=['GET'])
-@token_required
-def get_term_with_favorite(current_user_id, glossary_id):
-    session = get_session()
-    try:
-        term = session.query(Glossary).get(glossary_id)
-        if not term:
-            return jsonify({"error": "Término no encontrado"}), 404
-
-        is_fav = is_favorite(current_user_id, glossary_id)
-
-        return jsonify({
-            "success": True,
-            "term": term.to_dict(),
-            "is_favorite": is_fav
-        })
-    finally:
-        session.close()
 
 # ==========================================
 # 🎓 EXÁMENES Y APTITUD (EVALUACIONES)
@@ -709,88 +682,293 @@ def submit_final_exam(current_user_id):
     result = service.submit_exam(current_user_id, answers)
     return jsonify({"success": True, "result": result})
 
-@app.route('/api/preference-test/questions', methods=['GET'])
+# ==========================================
+# 🎯 TEST DE PREFERENCIAS VOCACIONALES
+# ==========================================
+
+@app.route('/api/test/questions', methods=['GET'])
 @token_required
-def get_preference_test_questions(current_user_id):
+def get_test_questions(current_user_id):
+    """
+    Obtiene las 28 preguntas del test
+    GET /api/test/questions
+    """
     try:
-        questions = get_preference_questions()
-        return jsonify({"success": True, "questions": questions})
+        service = TestPreferenceService()
+        questions = service.get_questions()
+        return jsonify({
+            'success': True,
+            'questions': questions,
+            'total': len(questions)
+        }), 200
     except Exception as e:
         sentry_sdk.capture_exception(e)
-        return jsonify({"error": str(e)}), 500
+        return jsonify({'error': 'Error cargando preguntas'}), 500
 
-@app.route('/api/preference-test/submit', methods=['POST'])
+
+@app.route('/api/test/submit', methods=['POST'])
 @token_required
-def submit_preference_test(current_user_id):
-    data = request.get_json()
-    answers = data.get('answers')
-    time_taken = data.get('time_taken')
-
-    if not answers or not isinstance(answers, dict):
-        return jsonify({"error": "Respuestas inválidas"}), 400
-
+def submit_test_preference(current_user_id):
+    """
+    Envía respuestas del test y calcula resultado
+    POST /api/test/submit
+    Body: {
+        "answers": {
+            "1": 5,
+            "2": 4,
+            ...
+        },
+        "time_taken": 320  # segundos (opcional)
+    }
+    """
     try:
-        result = submit_preference_answers(current_user_id, answers, time_taken)
-        return jsonify({"success": True, "result": result})
-    except Exception as e:
-        sentry_sdk.capture_exception(e)
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/preference-test/result', methods=['GET'])
-@token_required
-def get_preference_result(current_user_id):
-    try:
-        result = engine.get_user_result(current_user_id) 
+        data = request.get_json()
+        answers = data.get('answers')
+        time_taken = data.get('time_taken')
         
-        if not result:
-            return jsonify({"success": True, "has_result": False})
-        return jsonify({"success": True, "has_result": True, "result": result})
-    except Exception as e:
-        sentry_sdk.capture_exception(e)
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/preference-test/retake', methods=['POST'])
-@token_required
-def retake_preference_test(current_user_id):
-    session = get_session()
-    try:
-        result = session.query(UserPreferenceResult).filter_by(user_id=current_user_id).first()
-        if result:
-            result.retaken = True
-            session.commit()
-        return jsonify({"success": True, "message": "Puedes retomar el test"})
-    except Exception as e:
-        session.rollback()
-        sentry_sdk.capture_exception(e)
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
-
-@app.route('/api/admin/preference-test/stats', methods=['GET'])
-@token_required
-def get_pref_test_stats(current_user_id):
-    session = get_session()
-    try:
-        results = session.query(UserPreferenceResult).all()
-        distribution = {"Red Team": 0, "Blue Team": 0, "Purple Team": 0}
-        total_time = 0
-        for r in results:
-            if r.assigned_profile in distribution:
-                distribution[r.assigned_profile] += 1
-            if r.time_taken:
-                total_time += r.time_taken
+        if not answers or not isinstance(answers, dict):
+            return jsonify({'error': 'Respuestas inválidas'}), 400
         
-        count = len(results)
-        avg_time = round(total_time / count) if count > 0 else 0
+        if len(answers) != 28:
+            return jsonify({
+                'error': f'Se requieren 28 respuestas, recibidas: {len(answers)}'
+            }), 400
+        
+        service = TestPreferenceService()
+        result = service.submit_test(current_user_id, answers, time_taken)
         
         return jsonify({
-            "success": True, 
-            "total_completed": count, 
-            "distribution": distribution, 
-            "avg_time_seconds": avg_time
-        })
-    finally:
-        session.close()
+            'success': True,
+            'result': result
+        }), 200
+        
+    except ValueError as ve:
+        return jsonify({'error': str(ve)}), 400
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error procesando test'}), 500
+
+
+@app.route('/api/test/recommendations/<role>', methods=['GET'])
+@token_required
+def get_test_recommendations(current_user_id, role):
+    """
+    Obtiene recomendaciones completas para un rol
+    GET /api/test/recommendations/RED_TEAM
+    GET /api/test/recommendations/BLUE_TEAM
+    GET /api/test/recommendations/PURPLE_TEAM
+    """
+    try:
+        if role not in ['RED_TEAM', 'BLUE_TEAM', 'PURPLE_TEAM']:
+            return jsonify({'error': 'Rol inválido'}), 400
+        
+        service = TestPreferenceService()
+        recommendations = service.get_recommendations(role)
+        
+        return jsonify({
+            'success': True,
+            'recommendations': recommendations
+        }), 200
+        
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error cargando recomendaciones'}), 500
+
+
+@app.route('/api/test/result', methods=['GET'])
+@token_required
+def get_user_test_result(current_user_id):
+    """
+    Obtiene el último resultado del test del usuario
+    GET /api/test/result
+    """
+    try:
+        service = TestPreferenceService()
+        result = service.get_user_result(current_user_id)
+        
+        if not result:
+            return jsonify({
+                'success': True,
+                'has_result': False
+            }), 200
+        
+        return jsonify({
+            'success': True,
+            'has_result': True,
+            'result': result
+        }), 200
+        
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error obteniendo resultado'}), 500
+
+
+@app.route('/api/test/history', methods=['GET'])
+@token_required
+def get_user_test_history(current_user_id):
+    """
+    Obtiene historial completo de tests del usuario
+    GET /api/test/history
+    """
+    try:
+        service = TestPreferenceService()
+        history = service.get_test_history(current_user_id)
+        
+        return jsonify({
+            'success': True,
+            'history': history,
+            'total': len(history)
+        }), 200
+        
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error obteniendo historial'}), 500
+
+
+@app.route('/api/test/retake', methods=['POST'])
+@token_required
+def retake_test_preference(current_user_id):
+    """
+    Permite retomar el test (no borra resultados anteriores, solo confirma)
+    POST /api/test/retake
+    """
+    try:
+        return jsonify({
+            'success': True,
+            'message': 'Puedes retomar el test cuando desees. Tu historial se mantendrá.'
+        }), 200
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error'}), 500
+
+
+# ==========================================
+# 📊 ESTADÍSTICAS ADMIN (OPCIONAL)
+# ==========================================
+
+@app.route('/api/admin/test/stats', methods=['GET'])
+@token_required
+def get_test_stats_admin(current_user_id):
+    """
+    Estadísticas globales del test (para admin/analytics)
+    GET /api/admin/test/stats
+    """
+    try:
+        session = get_session()
+        try:
+            from models.test_preference import UserTestResult
+            
+            results = session.query(UserTestResult).all()
+            
+            distribution = {
+                'RED_TEAM': 0,
+                'BLUE_TEAM': 0,
+                'PURPLE_TEAM': 0
+            }
+            
+            total_time = 0
+            count = len(results)
+            
+            for r in results:
+                if r.recommended_role in distribution:
+                    distribution[r.recommended_role] += 1
+                if r.time_taken_seconds:
+                    total_time += r.time_taken_seconds
+            
+            avg_time = round(total_time / count) if count > 0 else 0
+            
+            return jsonify({
+                'success': True,
+                'stats': {
+                    'total_completed': count,
+                    'distribution': distribution,
+                    'avg_time_seconds': avg_time,
+                    'avg_time_minutes': round(avg_time / 60, 1) if avg_time > 0 else 0
+                }
+            }), 200
+            
+        finally:
+            session.close()
+            
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({'error': 'Error obteniendo estadísticas'}), 500
+        
+# ==========================================
+# 📧 VERIFICACIÓN DE EMAIL (NUEVOS ENDPOINTS)
+# ==========================================
+
+@app.route('/api/auth/verify-email', methods=['POST'])
+def verify_email_route():
+    """Verifica el código de email enviado al usuario."""
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        code = data.get('code')
+        
+        if not email or not code:
+            return jsonify({"error": "Email y código son requeridos"}), 400
+        
+        auth_service = AuthService()
+        result = auth_service.verify_email(email, code)
+        
+        return jsonify(result), 200
+        
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        print(f"❌ Error en verify-email: {e}")
+        return jsonify({"error": "Error interno"}), 500
+
+@app.route('/api/auth/resend-code', methods=['POST'])
+def resend_code_route():
+    """Reenvía el código de verificación."""
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({"error": "Email es requerido"}), 400
+        
+        auth_service = AuthService()
+        result = auth_service.resend_verification_code(email)
+        
+        return jsonify(result), 200
+        
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        return jsonify({"error": "Error interno"}), 500
+
+# ==========================================
+# MODIFICAR EL ENDPOINT DE REGISTER EXISTENTE
+# ==========================================
+
+@app.route('/api/auth/register', methods=['POST'])
+def register():
+    try:
+        data = request.get_json()
+        
+        if not data or not data.get('email') or not data.get('password'):
+            return jsonify({"error": "Email y password son requeridos"}), 400
+        
+        if not data.get('name'):
+            return jsonify({"error": "El nombre es requerido"}), 400
+        
+        auth_service = AuthService()
+        result = auth_service.register(data)
+        
+        # ✅ NUEVA RESPUESTA: Usuario creado pero debe verificar
+        return jsonify(result), 201
+        
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        print(f"❌ Error en register: {e}")
+        return jsonify({"error": "Error interno"}), 500
 
 # ==========================================
 # 🚀 INICIO
@@ -800,8 +978,8 @@ def home():
     return jsonify({
         "message": "🚀 CyberLearn API - Servidor de Producción",
         "status": "activo", 
-        "version": "3.2.0 - Course-Based Unlocking",
-        "features": "Auth, CMS, Progress, Badges, Glossary, Assessments, Course Unlocking"
+        "version": "3.2.1 - XP Fixed",  # ✅ ACTUALIZADO
+        "features": "Auth, CMS, Progress, Badges, Glossary, Assessments"
     })
 
 if __name__ == '__main__':

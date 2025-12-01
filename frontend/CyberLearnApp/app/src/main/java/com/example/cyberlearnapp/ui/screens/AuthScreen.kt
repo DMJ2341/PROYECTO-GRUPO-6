@@ -500,7 +500,7 @@ fun AgeVerificationDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
 // ... Repite estructura para Terms, Privacy y DataProcessing usando los colores nuevos ...
 @Composable
 fun TermsAndConditionsDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
-    // Usa SurfaceElevated, TextPrimary, TextSecondary, SurfaceCard
+     // Usa SurfaceElevated, TextPrimary, TextSecondary, SurfaceCard
     AlertDialog(
         onDismissRequest = onDismiss, containerColor = SurfaceElevated,
         title = { Text("📋 Términos", color = TextPrimary, fontWeight = FontWeight.Bold) },

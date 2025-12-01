@@ -1,6 +1,6 @@
-# backend/models/user.py - CORRECCIÓN PARA NAMEERROR 'Date'
+# backend/models/user.py
 from database.db import Base
-from sqlalchemy import Column, Integer, String, DateTime, Date, ForeignKey  # ✅ Añadido Date
+from sqlalchemy import Column, Integer, String, DateTime, Date, Boolean
 from datetime import datetime
 
 class User(Base):
@@ -10,9 +10,36 @@ class User(Base):
     email = Column(String(120), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     name = Column(String(100))
+    
+    # ✅ NUEVOS CAMPOS DE VERIFICACIÓN
+    email_verified = Column(Boolean, default=False)
+    email_verified_at = Column(DateTime, nullable=True)
+    terms_accepted_at = Column(DateTime, nullable=True)
+    
+    # Campos de gamificación
     total_xp = Column(Integer, default=0)
     current_streak = Column(Integer, default=0)
     max_streak = Column(Integer, default=0)
-    last_activity_date = Column(Date)  # ✅ Usa Date
+    last_activity_date = Column(Date)
+    
+    # Metadata
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def __repr__(self):
+        return f"<User {self.email}>"
+    
+    def is_verified(self):
+        """Verifica si el usuario ha confirmado su email."""
+        return self.email_verified
+    
+    def is_academic_email(self):
+        """Detecta si es correo académico."""
+        academic_domains = ['@uni.pe']
+        return any(self.email.endswith(domain) for domain in academic_domains)
+    
+    def get_institution(self):
+        """Retorna la institución del usuario si es académico."""
+        if '@uni.pe' in self.email:
+            return 'UNI'
+        return None
