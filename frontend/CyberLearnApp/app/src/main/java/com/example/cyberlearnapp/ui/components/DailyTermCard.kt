@@ -8,12 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.cyberlearnapp.network.models.DailyTermWrapper
+import com.example.cyberlearnapp.network.models.GlossaryTerm
 
 @Composable
-fun DailyTermCard(wrapper: DailyTermWrapper) {
-    // ✅ CORREGIDO: Se usa 'term' en lugar de 'dailyTerm'
-    val term = wrapper.term
+fun DailyTermCard(term: GlossaryTerm) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2D2D44))
@@ -24,32 +22,21 @@ fun DailyTermCard(wrapper: DailyTermWrapper) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Término del Día", style = MaterialTheme.typography.labelMedium, color = Color.Gray)
                 Spacer(modifier = Modifier.weight(1f))
-                // NOTA: Se asume que term.category no es nulo
                 Badge { Text(term.category ?: "General") }
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = term.term,
+                text = term.termEs,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = term.definition,
+                text = term.definitionEs,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFFB0BEC5)
             )
-            // ✅ CORREGIDO: Se usa 'xpReward' en lugar de 'xpEarned'
-            if (wrapper.xpReward > 0) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    "+${wrapper.xpReward} XP ganados",
-                    color = Color.Yellow,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
         }
     }
 }

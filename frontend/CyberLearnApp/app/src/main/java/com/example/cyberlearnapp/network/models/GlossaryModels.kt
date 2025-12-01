@@ -13,46 +13,27 @@ data class GlossaryResponse(
 data class GlossaryTerm(
     val id: Int,
 
-    // --- CAMPOS QUE VIENEN DEL JSON ---
     @SerialName("term_en") val termEn: String,
     @SerialName("term_es") val termEs: String,
 
     @SerialName("definition_en") val definitionEn: String,
     @SerialName("definition_es") val definitionEs: String,
 
-    // Metadata opcional
     val acronym: String? = null,
     val category: String? = null,
     val difficulty: String? = null,
 
+    @SerialName("where_you_hear_it") val whereYouHearIt: String? = null,
+
     @SerialName("example_en") val exampleEn: String? = null,
     @SerialName("example_es") val exampleEs: String? = null,
 
-    // Progreso
     @SerialName("is_learned") val isLearned: Boolean = false,
+    @SerialName("times_practiced") val timesPracticed: Int = 0,
 
-    // CORRECCIÓN: El logcat mostraba "times_reviewed", no "times_practiced"
-    @SerialName("times_reviewed") val timesReviewed: Int = 0
-) {
-    // --- PROPIEDADES COMPUTADAS (NO SERIALIZABLES) ---
-    // Al estar fuera del constructor, la librería no las busca en el JSON.
-    // Sirven para facilitar el uso en la UI sin cambiar todo tu código.
-
-    val term: String
-        get() = termEs // Retorna español por defecto
-
-    val definition: String
-        get() = definitionEs
-
-    val example: String?
-        get() = exampleEs
-
-    // Alias por si alguna parte de tu código usa 'timesPracticed'
-    val timesPracticed: Int
-        get() = timesReviewed
-}
-
-// --- OTROS MODELOS ---
+    @SerialName("learned_at") val learnedAt: String? = null,
+    val reference: String? = null
+)
 
 @Serializable
 data class MarkLearnedRequest(
@@ -93,7 +74,6 @@ data class QuizAttemptRequest(
 @Serializable
 data class QuizAttemptResponse(
     val success: Boolean,
-    // Aquí el servidor podría responder distinto, pero mantenemos tu estructura por si acaso
     @SerialName("times_practiced") val timesPracticed: Int = 0,
     @SerialName("times_correct") val timesCorrect: Int = 0,
     val accuracy: Double = 0.0

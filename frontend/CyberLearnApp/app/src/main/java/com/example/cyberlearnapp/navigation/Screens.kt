@@ -8,6 +8,8 @@ sealed class Screens(val route: String) {
     object Glossary : Screens("glossary") // ✅ Añadido
     object Profile : Screens("profile")
 
+    object PreferenceTest : Screens("preference_test")
+
     object CourseDetail {
         const val route = "course/{courseId}"
         fun createRoute(courseId: Int) = "course/$courseId"

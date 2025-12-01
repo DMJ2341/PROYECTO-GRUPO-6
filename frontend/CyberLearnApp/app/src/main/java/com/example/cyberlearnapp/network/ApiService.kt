@@ -1,5 +1,6 @@
 package com.example.cyberlearnapp.network
 
+import com.example.cyberlearnapp.models.* // Importamos tus nuevos modelos (TestQuestionsResponse, etc)
 import com.example.cyberlearnapp.network.models.*
 import com.example.cyberlearnapp.network.models.assessments.*
 import retrofit2.Call
@@ -18,7 +19,6 @@ interface ApiService {
     @POST("api/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
 
-    // ✅ NUEVOS ENDPOINTS
     @POST("api/auth/verify-email")
     suspend fun verifyEmail(@Body request: VerifyEmailRequest): Response<AuthResponse>
 
@@ -36,6 +36,9 @@ interface ApiService {
 
     @GET("api/user/profile")
     suspend fun getUserProfile(@Header("Authorization") token: String): Response<UserProfileResponse>
+
+    @GET("api/user/badges")
+    suspend fun getUserBadges(@Header("Authorization") token: String): Response<UserBadgesResponse>
 
     // ==========================================
     // 📚 CURSOS Y LECCIONES
@@ -72,8 +75,8 @@ interface ApiService {
     suspend fun getAllProgress(@Header("Authorization") token: String): Response<Map<String, Any>>
 
     // ==========================================
-// 📖 GLOSARIO MEJORADO
-// ==========================================
+    // 📖 GLOSARIO
+    // ==========================================
 
     @GET("api/glossary")
     suspend fun getGlossaryTerms(
@@ -121,7 +124,7 @@ interface ApiService {
 
 
     // ==========================================
-    // 🎓 EVALUACIONES
+    // 🎓 EVALUACIONES (EXAMEN FINAL)
     // ==========================================
 
     @GET("api/exam/final")
@@ -133,23 +136,43 @@ interface ApiService {
         @Body body: ExamSubmitRequest
     ): Response<ExamResultResponse>
 
-    @GET("api/preference-test/questions")
-    suspend fun getPreferenceQuestions(@Header("Authorization") token: String): Response<PreferenceTestResponse>
+    // ==========================================
+    // 🎯 TEST DE PREFERENCIAS (NUEVO)
+    // ==========================================
+    // Nota: Agregamos "api/" al inicio porque tus rutas en Flask son /api/test/...
 
-    @POST("api/preference-test/submit")
-    suspend fun submitPreferenceTest(
-        @Header("Authorization") token: String,
-        @Body body: SubmitPreferenceRequest
-    ): Response<SubmitPreferenceResponse>
-
-    @GET("api/preference-test/result")
-    suspend fun getPreferenceResult(@Header("Authorization") token: String): Response<PreferenceResultWrapper>
-
-    @POST("api/preference-test/retake")
-    suspend fun retakePreferenceTest(@Header("Authorization") token: String): Response<Unit>
-
-    @GET("api/user/badges")
-    suspend fun getUserBadges(
+    @GET("api/test/questions")
+    suspend fun getQuestions(
         @Header("Authorization") token: String
-    ): Response<UserBadgesResponse>
+    ): Response<TestQuestionsResponse>
+
+    @POST("api/test/submit")
+    suspend fun submitTest(
+        @Header("Authorization") token: String,
+        @Body submission: TestSubmission
+    ): Response<TestSubmitResponse>
+
+    @GET("api/test/recommendations/{role}")
+    suspend fun getRecommendations(
+        @Header("Authorization") token: String,
+        @Path("role") role: String
+    ): Response<RecommendationsResponse>
+
+    @GET("api/test/result")
+    suspend fun getUserResult(
+        @Header("Authorization") token: String
+    ): Response<UserTestResultResponse>
+
+    @GET("api/test/history")
+    suspend fun getHistory(
+        @Header("Authorization") token: String
+    ): Response<TestHistoryResponse>
+
+    @POST("api/test/retake")
+    suspend fun retakeTest(
+        @Header("Authorization") token: String
+    ): Response<BasicResponse>
 }
+
+// Clase auxiliar simple para respuestas vacías o básicas
+data class BasicResponse(val success: Boolean, val message: String? = null)
