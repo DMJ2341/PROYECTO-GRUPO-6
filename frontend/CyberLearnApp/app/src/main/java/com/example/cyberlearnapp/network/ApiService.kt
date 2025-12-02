@@ -53,11 +53,12 @@ interface ApiService {
         @Path("courseId") courseId: Int
     ): Response<List<Lesson>>
 
+    // ✅ CAMBIO CRÍTICO: LessonResponse → LessonDetailResponse
     @GET("api/lessons/{lessonId}")
     suspend fun getLessonDetail(
         @Header("Authorization") token: String,
         @Path("lessonId") lessonId: String
-    ): Response<LessonResponse>
+    ): Response<LessonDetailResponse>  // ⬅️ CAMBIO AQUÍ
 
     @POST("api/progress/lesson/{lessonId}")
     suspend fun completeLesson(
