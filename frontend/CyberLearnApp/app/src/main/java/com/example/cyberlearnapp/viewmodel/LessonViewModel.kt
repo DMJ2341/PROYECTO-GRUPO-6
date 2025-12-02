@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.models.LessonCompletionData
-import com.example.cyberlearnapp.network.models.LessonResponse
+import com.example.cyberlearnapp.network.models.LessonDetailResponse
 import com.example.cyberlearnapp.repository.LessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,8 +17,9 @@ class LessonViewModel @Inject constructor(
     private val repository: LessonRepository
 ) : ViewModel() {
 
-    private val _lesson = MutableStateFlow<LessonResponse?>(null)
-    val lesson: StateFlow<LessonResponse?> = _lesson
+    // ✅ CAMBIO: Ahora usamos LessonDetailResponse en lugar de LessonResponse
+    private val _lesson = MutableStateFlow<LessonDetailResponse?>(null)
+    val lesson: StateFlow<LessonDetailResponse?> = _lesson
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -34,11 +35,22 @@ class LessonViewModel @Inject constructor(
             _isLoading.value = true
             _error.value = null
             try {
+                Log.d("LessonViewModel", "📖 Cargando lección: $lessonId")
                 val result = repository.getLesson(lessonId)
                 _lesson.value = result
+
+                // ✅ CORRECCIÓN: Usamos ?. (safe call) para acceder a las propiedades
+                // porque 'result' puede ser null.
+                if (result != null) {
+                    Log.d("LessonViewModel", "✅ Lección cargada: ${result.title} (${result.totalScreens} screens)")
+                } else {
+                    Log.w("LessonViewModel", "⚠️ La lección llegó nula")
+                }
+
             } catch (e: Exception) {
                 _error.value = e.message ?: "Error desconocido"
                 _lesson.value = null
+                Log.e("LessonViewModel", "❌ Error cargando lección: ${e.message}", e)
             } finally {
                 _isLoading.value = false
             }
@@ -70,5 +82,9 @@ class LessonViewModel @Inject constructor(
 
     fun resetCompletionResult() {
         _completionResult.value = null
+    }
+
+    fun clearError() {
+        _error.value = null
     }
 }
