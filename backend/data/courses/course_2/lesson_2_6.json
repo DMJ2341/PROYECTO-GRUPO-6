@@ -1,137 +1,330 @@
 {
   "id": "c2_l6",
-  "title": "Monitoreo de Red",
-  "description": "Wireless Security",
+  "title": "Seguridad Wireless",
+  "description": "War Driving, Evil Twins y el peligro del WiFi Gratis",
   "type": "interactive",
-  "duration_minutes": 8,
-  "xp_reward": 20,
+  "duration_minutes": 20,
+  "xp_reward": 60,
   "order_index": 6,
   "course_id": 2,
-  "total_screens": 3,
+  "total_screens": 14,
+  "theme": {
+    "primary_color": "#00E5FF",
+    "secondary_color": "#AA00FF",
+    "accent_color": "#76FF03",
+    "gradient": ["#000022", "#0a0022", "#1a0044"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "Wireless Security",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: Evil Twin",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "wifi",
-              "term": "WEP - Broken",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Wired Equivalent Privacy (1997). RC4 encryption con 40-bit key. COMPLETAMENTE broken. Crack-able en minutos con aircrack-ng.",
-              "example": "IV reuse, weak key scheduling. NUNCA usar WEP en 2024. Legacy only. Wi-Fi Alliance deprecated en 2004.",
-              "color": "#EF5350"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "shield",
-              "term": "WPA2/WPA3 - Modern",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "WPA2: AES-CCMP encryption. WPA3: SAE (Simultaneous Authentication of Equals), forward secrecy. Protección contra offline dictionary attacks.",
-              "example": "WPA2-Personal (PSK): Shared password. WPA2-Enterprise: RADIUS authentication. WPA3: Mandatory en WiFi 6. Use WPA3 cuando disponible.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "public",
-              "term": "Rogue Access Points",
-              "color": "#FF6F00"
-            },
-            "back": {
-              "definition": "Unauthorized AP conectado a network. Employee trae router, crea backdoor. Attacker setup fake AP con SSID legítimo (evil twin).",
-              "example": "Coffee shop: Free WiFi - attacker sniffs traffic. Corporate: Employee AP bypasses firewall. Defense: NAC (Network Access Control), wireless IDS.",
-              "color": "#FFB74D"
-            }
-          }
-        ]
+        "headline": "AIRE INSEGURO",
+        "subheadline": "Tu tráfico viaja por el aire. Cualquiera con una antena puede escucharlo.",
+        "background_image": "wifi_hacking_city",
+        "stats": [
+          { "value": "90%", "label": "Tráfico WiFi interceptable" },
+          { "value": "$100", "label": "Costo de un WiFi Pineapple" },
+          { "value": "WPA3", "label": "Único estándar seguro" }
+        ],
+        "cta_text": "Escanear Frecuencias"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Secure WiFi Deployment",
-      "duration": 180,
+      "type": "story_slide",
+      "title": "El Peligro del Aire",
       "content": {
-        "items": [
+        "icon": "wifi_tethering",
+        "icon_color": "#00E5FF",
+        "headline": "Radiofrecuencia = Broadcast",
+        "body": "A diferencia de un cable, el WiFi se emite en todas direcciones. Un atacante en el estacionamiento puede capturar tu 'handshake' de conexión, llevárselo a casa y crackear tu contraseña con una GPU potente.",
+        "highlight_box": {
+          "type": "warning",
+          "text": "War Driving: La práctica de conducir buscando redes WiFi vulnerables para mapearlas o atacarlas."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "flip_card_full",
+      "title": "Evolución del Cifrado WiFi",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "lock_open",
+            "term": "WEP vs WPA",
+            "subtitle": "Historia de fallos",
+            "color": "#FF1744"
+          },
+          "back": {
+            "definition": "WEP (1997): Roto en minutos. WPA (2003): Parche temporal. WPA2 (2004): Estándar por años, vulnerable a KRACK. WPA3 (2018): Estándar actual.",
+            "wep_fail": "WEP usa IVs cortos y reutilizados. Aircrack-ng puede recuperar la clave en 5 minutos capturando paquetes.",
+            "color": "#D50000"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "swipe_cards",
+      "title": "¿Red Segura o Trampa?",
+      "content": {
+        "instruction": "Analiza la red WiFi. ¿Te conectarías?",
+        "cards": [
           {
-            "id": "wifi1",
-            "task": "Separate Networks",
-            "subtitle": "Guest isolation",
-            "icon": "device_hub",
-            "unlock_content": {
-              "title": "Network Segmentation",
-              "points": [
-                "Guest WiFi: Separate VLAN, no corporate access",
-                "Corporate WiFi: 802.1X authentication, certificate-based",
-                "IoT WiFi: Isolated VLAN para smart devices",
-                "Management: Separate network para AP admin"
-              ],
-              "bonus_fact": "Guest breach no debe = corporate breach. VLANs son free isolation."
+            "id": 1,
+            "scenario": "Red abierta 'Starbucks_Free_WiFi' sin candado",
+            "correct_answer": "left",
+            "labels": { "left": "❌ PELIGRO", "right": "✅ SEGURA" }
+          },
+          {
+            "id": 2,
+            "scenario": "Red 'Oficina_Secure' pidiendo WPA2 Enterprise (Usuario/Pass)",
+            "correct_answer": "right",
+            "labels": { "left": "❌ PELIGRO", "right": "✅ SEGURA" }
+          },
+          {
+            "id": 3,
+            "scenario": "Red WEP en 2024",
+            "correct_answer": "left",
+            "labels": { "left": "❌ OBSOLETA", "right": "✅ SEGURA" }
+          },
+          {
+            "id": 4,
+            "scenario": "Red 'Guest' que te pide instalar un certificado raíz",
+            "correct_answer": "left",
+            "labels": { "left": "❌ MITM ATTACK", "right": "✅ SEGURA" }
+          }
+        ],
+        "xp_per_correct": 10
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "story_slide",
+      "title": "Ataque: Evil Twin",
+      "content": {
+        "icon": "content_copy",
+        "icon_color": "#AA00FF",
+        "headline": "El Gemelo Malvado",
+        "body": "Un atacante configura un punto de acceso (AP) con el MISMO nombre (SSID) que tu red legítima, pero con mejor señal. Tu dispositivo se conecta automáticamente al más fuerte. El atacante ahora controla todo tu tráfico.",
+        "visual_element": {
+          "type": "attack_diagram",
+          "steps": [
+            "AP Legítimo (Señal 40%)",
+            "Evil Twin (Señal 95%)",
+            "Víctima se conecta al Evil Twin",
+            "Atacante roba credenciales"
+          ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "log_hunter",
+      "title": "📡 WiFi Scanner: Detecta el Evil Twin",
+      "content": {
+        "instruction": "Estás en la cafetería 'CyberCoffee'. Escanea las redes. Identifica el Evil Twin sospechoso (Señal inusualmente alta o canal extraño).",
+        "logs": [
+          { "id": 1, "text": "SSID: CyberCoffee_Guest | BSSID: AA:BB:CC:11:22:33 | Ch: 6 | Signal: 45% | Enc: WPA2", "is_suspicious": false },
+          { "id": 2, "text": "SSID: CyberCoffee_Guest | BSSID: 00:11:22:AA:BB:CC | Ch: 11 | Signal: 99% | Enc: OPEN", "is_suspicious": true, "reason": "Mismo nombre, señal sospechosamente fuerte (atacante cerca) y sin cifrado (OPEN)." },
+          { "id": 3, "text": "SSID: Printer_HP_LaserJet | BSSID: 12:34:56:78:90:AB | Ch: 1 | Signal: 20% | Enc: WPA2", "is_suspicious": false },
+          { "id": 4, "text": "SSID: Free_Public_WiFi | BSSID: DE:AD:BE:EF:CA:FE | Ch: 6 | Signal: 80% | Enc: OPEN", "is_suspicious": true, "reason": "Red abierta genérica, trampa común (Honeypot)." },
+          { "id": 5, "text": "SSID: CyberCoffee_Staff | BSSID: AA:BB:CC:11:22:34 | Ch: 6 | Signal: 40% | Enc: WPA3", "is_suspicious": false }
+        ],
+        "hints": [
+          "Los Evil Twins suelen tener señal al 100% porque el atacante está al lado tuyo.",
+          "Si la red original tiene WPA2, el clon a veces es OPEN para facilitar la conexión."
+        ],
+        "success_threshold": 2,
+        "xp_reward": 35
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "WPA3: El Nuevo Estándar",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "verified_user",
+            "term": "WPA3",
+            "subtitle": "Wi-Fi Protected Access 3",
+            "color": "#00E676"
+          },
+          "back": {
+            "definition": "Reemplaza WPA2. Introduce SAE (Simultaneous Authentication of Equals) para evitar ataques de diccionario offline.",
+            "features": [
+              "Protección contra fuerza bruta (SAE)",
+              "Forward Secrecy (Si roban la clave hoy, no descifran tráfico de ayer)",
+              "Cifrado individual en redes abiertas (OWE)",
+              "192-bit security en modo Enterprise"
+            ],
+            "color": "#00C853"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "drag_drop_match",
+      "title": "Ataques WiFi",
+      "content": {
+        "instruction": "Relaciona el ataque con su descripción",
+        "scenarios": [
+          { "id": 1, "text": "Desconectar a un usuario forzándolo a reconectar (para capturar handshake)", "correct_target": "deauth" },
+          { "id": 2, "text": "Crear un AP falso con el mismo nombre", "correct_target": "eviltwin" },
+          { "id": 3, "text": "Buscar redes vulnerables conduciendo un auto", "correct_target": "wardriving" },
+          { "id": 4, "text": "Capturar tráfico y crackear la password offline", "correct_target": "handshake" }
+        ],
+        "targets": [
+          { "id": "deauth", "label": "Deauthentication Attack", "color": "#FF1744" },
+          { "id": "eviltwin", "label": "Evil Twin", "color": "#AA00FF" },
+          { "id": "wardriving", "label": "War Driving", "color": "#FF9100" },
+          { "id": "handshake", "label": "WPA Handshake Crack", "color": "#00E5FF" }
+        ],
+        "xp_per_correct": 10
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "story_slide",
+      "title": "WiFi Pineapple",
+      "content": {
+        "icon": "router",
+        "icon_color": "#FFD600",
+        "headline": "La herramienta del Hacker",
+        "body": "El WiFi Pineapple es un dispositivo barato que automatiza ataques 'Man-in-the-Middle'. Puede responder a cualquier solicitud de red ('¿Estás buscando 'Casa_WiFi'? ¡Sí, soy yo!') (Karma attack) y engañar a tus dispositivos para que se conecten a él.",
+        "highlight_box": {
+          "type": "info",
+          "text": "Defensa: No tener el WiFi encendido si no se usa. Usar 'Olvidar red' en redes públicas."
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "crisis_decision",
+      "title": "🚨 WiFi Corporativo Comprometido",
+      "content": {
+        "scenario": "Detectas un Rogue AP conectado físicamente a un puerto Ethernet en la sala de espera de tu empresa. Está emitiendo una red abierta 'Free_Corp_WiFi'. ¿Qué haces?",
+        "timer_seconds": 30,
+        "options": [
+          {
+            "id": "trace",
+            "text": "Desconectar el dispositivo físicamente y bloquear el puerto MAC en el switch",
+            "icon": "cable",
+            "is_correct": true,
+            "consequence": {
+              "title": "Contención Física",
+              "description": "Eliminas la amenaza inmediatamente. Luego investigas quién lo puso (CCTV) y aseguras que los puertos no usados estén deshabilitados (Port Security).",
+              "impact_score": 100,
+              "xp_bonus": 25
             }
           },
           {
-            "id": "wifi2",
-            "task": "Monitoring",
-            "subtitle": "Detect rogue APs",
-            "icon": "radar",
-            "unlock_content": {
-              "title": "Wireless IDS",
-              "points": [
-                "Scan for unauthorized APs regularly",
-                "Alert on deauth attacks (WiFi jamming)",
-                "Monitor for evil twin APs",
-                "Tools: Kismet, Aircrack-ng suite"
-              ],
-              "bonus_fact": "Rogue AP detection debe ser automated. Manual scanning no escala."
+            "id": "deauth_attack",
+            "text": "Lanzar un contra-ataque Deauth para desconectar a sus usuarios",
+            "icon": "wifi_off",
+            "is_correct": false,
+            "consequence": {
+              "title": "Ilegal y Arriesgado",
+              "description": "Interferir activamente con señales de radio puede ser ilegal (FCC jammer rules). Además, no elimina la fuente física del problema.",
+              "impact_score": -40
+            }
+          },
+          {
+            "id": "monitor",
+            "text": "Conectarse a él para ver qué está haciendo",
+            "icon": "visibility",
+            "is_correct": false,
+            "consequence": {
+              "title": "Peligroso",
+              "description": "Te expones a ti mismo al ataque. Podría explotar tu dispositivo de análisis.",
+              "impact_score": -60
             }
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación - WiFi",
-      "duration": 60,
+      "screen_id": 11,
+      "type": "slider_balance",
+      "title": "⚖️ Comodidad vs Seguridad (Guest WiFi)",
       "content": {
-        "question": "¿Por qué WPA3 es mejor que WPA2?",
+        "scenario": "Configurando WiFi para invitados. ¿Qué nivel de seguridad aplicas?",
+        "left_option": {
+          "label": "Abierta (Sin password)",
+          "icon": "lock_open",
+          "consequences": [
+            "✅ Cero fricción para clientes",
+            "❌ Tráfico expuesto a sniffing",
+            "❌ Responsabilidad legal por actividad ilícita"
+          ]
+        },
+        "right_option": {
+          "label": "Segura (WPA2 + VLAN)",
+          "icon": "security",
+          "consequences": [
+            "✅ Tráfico cifrado y aislado",
+            "✅ Protege la red interna",
+            "❌ Requiere compartir contraseña o portal"
+          ]
+        },
+        "explanation": "Nunca dejes una red abierta. WPA2/3 + VLAN de invitados aislada es el mínimo estándar. Protege a tus clientes de ellos mismos."
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "timed_quiz",
+      "title": "⚡ Reto Wireless",
+      "content": {
+        "timer_seconds": 20,
+        "question": "¿Qué protocolo empresarial usa un servidor RADIUS para autenticar cada usuario individualmente?",
         "options": [
-          {
-            "id": "a",
-            "text": "WPA3 usa passwords más largas",
-            "is_correct": false,
-            "feedback": "Incorrecto. Password length depende de user/policy, no del protocol."
-          },
-          {
-            "id": "b",
-            "text": "WPA3 (SAE) protege contra offline dictionary attacks y añade forward secrecy",
-            "is_correct": true,
-            "feedback": "CORRECTO! WPA2: Attacker captura 4-way handshake, offline dictionary attack. WPA3 (SAE): Each connection different keys, forward secrecy (capture viejo no ayuda). Protection contra KRACK attack. Individual data encryption en open networks."
-          },
-          {
-            "id": "c",
-            "text": "WPA3 es más rápido",
-            "is_correct": false,
-            "feedback": "Incorrecto. Performance es similar. Beneficio es security, no speed."
-          }
-        ]
+          { "id": "a", "text": "WPA2-Personal (PSK)", "is_correct": false },
+          { "id": "b", "text": "WPA2/WPA3-Enterprise (802.1X)", "is_correct": true },
+          { "id": "c", "text": "WEP", "is_correct": false },
+          { "id": "d", "text": "WPS", "is_correct": false }
+        ],
+        "explanation": "WPA-Enterprise (802.1X) usa un servidor de autenticación (RADIUS/AAA). Cada usuario tiene su propia credencial (usuario/pass o certificado), no una password compartida para todos.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "router",
+          "name": "Wireless Hacker",
+          "description": "Detectaste Evil Twins y dominas la seguridad WPA3",
+          "rarity": "rare",
+          "color": "#00E5FF"
+        }
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 60,
+        "key_takeaways": [
+          "WiFi es radiofrecuencia: cualquiera puede escuchar si no hay cifrado.",
+          "Evil Twin: AP falso con señal fuerte para robar datos.",
+          "WPA3 protege contra ataques de diccionario offline.",
+          "WPA2-Enterprise (802.1X) es el estándar corporativo.",
+          "Nunca confíes en redes abiertas; usa VPN."
+        ],
+        "next_lesson": {
+          "id": "c2_l7",
+          "title": "Evaluación Final Curso 2",
+          "preview": "Diseña la arquitectura de red segura definitiva"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }

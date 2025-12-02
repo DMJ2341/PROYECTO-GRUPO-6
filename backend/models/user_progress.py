@@ -25,7 +25,7 @@ class UserLessonProgress(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    lesson_id = Column(String, ForeignKey('lessons.id'), nullable=False)  # ID es String aquí
+    lesson_id = Column(String, ForeignKey('lessons.id'), nullable=False)  
     completed = Column(Boolean, default=False)
     completed_at = Column(DateTime, nullable=True)
     attempts = Column(Integer, default=0)

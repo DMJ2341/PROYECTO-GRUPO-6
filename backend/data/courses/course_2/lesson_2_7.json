@@ -1,210 +1,438 @@
 {
   "id": "c2_l7",
   "title": "Evaluación Final Curso 2",
-  "description": "Evaluación Final: Diseña Network Segura",
+  "description": "Diseña Network Security Architecture",
   "type": "interactive",
-  "duration_minutes": 16,
-  "xp_reward": 20,
+  "duration_minutes": 25,
+  "xp_reward": 80,
   "order_index": 7,
   "course_id": 2,
-  "total_screens": 4,
+  "total_screens": 18,
+  "theme": {
+    "primary_color": "#FFC107",
+    "secondary_color": "#2196F3",
+    "accent_color": "#4CAF50",
+    "gradient": ["#0f2027", "#203a43", "#2c5364"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Evaluación Final: Diseña Network Segura",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Evaluación Final: E-Commerce Security",
       "content": {
-        "story_title": "Scenario: Startup E-Commerce Security",
-        "story_intro": "Eres Network Security Engineer. Diseña arquitectura para startup con 100 empleados, e-commerce site, customer data",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "business",
-            "title": "Requirements",
-            "content": "E-commerce: 10K transactions/day, credit cards (PCI DSS), customer PII. Employees: Remote + office hybrid. Dev team necesita prod access. Budget: $200K/year.",
-            "insight": "Compliance (PCI DSS) drives architecture. Security + performance + cost trade-off."
-          },
-          {
-            "id": "2",
-            "icon": "architecture",
-            "title": "Tu Misión",
-            "content": "Diseñar: 1) Network topology (DMZ, VLANs, segmentation). 2) Firewall rules y policies. 3) Remote access solution. 4) Monitoring strategy. 5) Incident response plan.",
-            "insight": "No existe 'perfect' architecture, solo trade-offs. Defense in depth es key."
-          }
-        ]
+        "headline": "CAPSTONE PROJECT",
+        "subheadline": "Diseña arquitectura de red segura completa",
+        "stats": [
+          { "value": "100", "label": "Empleados" },
+          { "value": "10K", "label": "Transactions/día" },
+          { "value": "$200K", "label": "Budget anual" }
+        ],
+        "cta_text": "Comenzar Diseño"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Architecture Design",
-      "duration": 360,
+      "type": "story_slide",
+      "title": "El Escenario",
       "content": {
-        "items": [
-          {
-            "id": "arch1",
-            "task": "Perimeter Defense",
-            "subtitle": "Internet boundary",
-            "icon": "shield",
-            "unlock_content": {
-              "title": "Design",
-              "points": [
-                "NGFW: Palo Alto o Fortinet ($50K/year)",
-                "WAF: Cloudflare Pro ($2K/year) para e-commerce",
-                "DDoS protection: Cloudflare included",
-                "IDS/IPS: Suricata on firewall"
-              ],
-              "bonus_fact": "WAF es mandatory para PCI DSS. NGFW detecta malware, blocks C2."
-            }
-          },
-          {
-            "id": "arch2",
-            "task": "DMZ + Segmentation",
-            "subtitle": "Separate tiers",
-            "icon": "lan",
-            "unlock_content": {
-              "title": "Design",
-              "points": [
-                "DMZ: Web servers, API gateway",
-                "VLAN 10: Database servers (PCI scope)",
-                "VLAN 20: Employee workstations",
-                "VLAN 30: Dev/test environment",
-                "VLAN 40: Guest WiFi",
-                "Firewalls between VLANs, least privilege rules"
-              ],
-              "bonus_fact": "PCI DSS: Cardholder data must be segmented. Smaller scope = easier compliance."
-            }
-          },
-          {
-            "id": "arch3",
-            "task": "Remote Access",
-            "subtitle": "WFH employees",
-            "icon": "vpn_key",
-            "unlock_content": {
-              "title": "Design",
-              "points": [
-                "ZTNA: Cloudflare Access ($3/user/month = $3.6K/year)",
-                "MFA: Duo Security ($3/user/month = $3.6K/year)",
-                "No traditional VPN (ZTNA replace)",
-                "Split by role: Devs access VLAN 30, regular employees access apps only"
-              ],
-              "bonus_fact": "ZTNA cheaper + more secure than VPN at scale. No VPN bottleneck."
-            }
-          },
-          {
-            "id": "arch4",
-            "task": "Monitoring",
-            "subtitle": "Visibility",
-            "icon": "monitor_heart",
-            "unlock_content": {
-              "title": "Design",
-              "points": [
-                "SIEM: Splunk Cloud ($5K/GB/year, ~$50K/year)",
-                "EDR: CrowdStrike ($50/endpoint/year = $5K)",
-                "Network monitoring: Zeek (free), flow analysis",
-                "Log retention: 1 year (PCI requirement)"
-              ],
-              "bonus_fact": "SIEM is expensive pero mandatory para compliance y IR. Cloud SIEM scales better."
-            }
-          }
+        "icon": "business",
+        "icon_color": "#FFC107",
+        "headline": "Startup E-Commerce",
+        "body": "100 empleados (50 office, 50 remote). E-commerce site: 10K transactions/día, procesa credit cards (PCI DSS mandatory). Customer PII. Dev team necesita prod access. Budget: $200K/año.",
+        "requirements": [
+          "Compliance: PCI DSS Level 2",
+          "Availability: 99.9% uptime",
+          "Remote access: Secure para 50 employees",
+          "Dev access: Segregado pero con prod visibility"
         ]
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Incident Response Plan",
-      "duration": 240,
+      "type": "drag_drop_builder",
+      "title": "🏗️ Design Network Topology",
       "content": {
-        "items": [
+        "instruction": "Arrastra componentes para crear arquitectura completa",
+        "available_components": [
+          { "id": "internet", "name": "Internet", "layer": "external" },
+          { "id": "ngfw", "name": "NGFW (Palo Alto)", "layer": "perimeter" },
+          { "id": "waf", "name": "WAF (Cloudflare)", "layer": "perimeter" },
+          { "id": "dmz_web", "name": "Web Servers (DMZ)", "layer": "dmz" },
+          { "id": "dmz_api", "name": "API Gateway (DMZ)", "layer": "dmz" },
+          { "id": "internal_fw", "name": "Internal Firewall", "layer": "internal_edge" },
+          { "id": "vlan_db", "name": "DB VLAN (PCI)", "layer": "internal" },
+          { "id": "vlan_users", "name": "Employee VLAN", "layer": "internal" },
+          { "id": "vlan_dev", "name": "Dev/Test VLAN", "layer": "internal" },
+          { "id": "vlan_guest", "name": "Guest WiFi VLAN", "layer": "internal" },
+          { "id": "vpn", "name": "VPN Concentrator", "layer": "remote_access" },
+          { "id": "siem", "name": "SIEM (Splunk)", "layer": "monitoring" }
+        ],
+        "success_criteria": "Internet → WAF → NGFW → DMZ → Internal FW → Segmented VLANs + VPN + SIEM monitoring",
+        "xp_reward": 30
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "flip_card_full",
+      "title": "Perimeter Defense",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "shield",
+            "term": "PERIMETER",
+            "subtitle": "First line of defense",
+            "color": "#F44336"
+          },
+          "back": {
+            "components": [
+              "WAF (Cloudflare): $2K/year. Mandatory para PCI DSS. Protege contra SQLi, XSS, DDoS.",
+              "NGFW (Palo Alto PA-220): $50K/year. IPS, malware detection, SSL inspection.",
+              "DDoS protection: Cloudflare included. Rate limiting.",
+              "IDS: Suricata en firewall para additional detection."
+            ],
+            "budget": "$52K/year (26% of budget)",
+            "pci_requirement": "Firewall + WAF = PCI DSS requirement 1.2, 6.6",
+            "color": "#D32F2F"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "DMZ + Segmentation",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "lan",
+            "term": "SEGMENTATION",
+            "subtitle": "Separate zones",
+            "color": "#2196F3"
+          },
+          "back": {
+            "architecture": [
+              "DMZ: Web servers + API gateway (public-facing)",
+              "VLAN 10: Database servers - PCI cardholder data environment (CDE)",
+              "VLAN 20: Employee workstations",
+              "VLAN 30: Dev/test environment (NO prod data)",
+              "VLAN 40: Guest WiFi (isolated)"
+            ],
+            "firewall_rules": "Default deny. Web → API allowed. API → DB allowed. DB NO initiate outbound. Guest WiFi → Internet only.",
+            "pci_benefit": "Segmentación reduce PCI scope. Solo VLAN 10 (DB) en scope = menos audit cost.",
+            "color": "#1976D2"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "drag_drop_match",
+      "title": "Firewall Rules: Permitir o Denegar?",
+      "content": {
+        "instruction": "Arrastra cada rule a ALLOW o DENY",
+        "scenarios": [
+          { "id": 1, "text": "Internet → Web Server:443 (HTTPS)", "correct_target": "allow" },
+          { "id": 2, "text": "Web Server → Database:3306 (MySQL)", "correct_target": "deny" },
+          { "id": 3, "text": "API Gateway → Database:3306", "correct_target": "allow" },
+          { "id": 4, "text": "Employee VLAN → Database VLAN:3306", "correct_target": "deny" },
+          { "id": 5, "text": "Database → Internet:ANY", "correct_target": "deny" },
+          { "id": 6, "text": "Guest WiFi → Internal VLANs", "correct_target": "deny" }
+        ],
+        "targets": [
+          { "id": "allow", "label": "ALLOW", "color": "#4CAF50" },
+          { "id": "deny", "label": "DENY", "color": "#F44336" }
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "crisis_decision",
+      "title": "🚨 Remote Access Solution",
+      "content": {
+        "scenario": "50 remote employees necesitan acceso. Dev team (10) necesita prod access. ¿Qué deployment?",
+        "timer_seconds": 25,
+        "options": [
           {
-            "id": "ir1",
-            "task": "IR Team",
-            "subtitle": "Roles and responsibilities",
-            "icon": "groups",
-            "unlock_content": {
-              "title": "Structure",
-              "points": [
-                "IR Lead: CTO (startup = limited headcount)",
-                "Technical: Sr. Engineers (2)",
-                "Communications: Marketing/PR",
-                "Legal: Outside counsel on retainer",
-                "24/7 on-call rotation"
-              ],
-              "bonus_fact": "Startup IR: Lean team, clear roles. No SOC yet, rely on vendor support (CrowdStrike, Cloudflare)."
+            "id": "vpn_flat",
+            "text": "VPN tradicional con full network access para todos",
+            "icon": "vpn_lock",
+            "is_correct": false,
+            "consequence": {
+              "title": "Over-privileged",
+              "description": "Full network access viola least privilege. Remote compromise = access a todo. PCI DSS violation.",
+              "impact_score": -60
             }
           },
           {
-            "id": "ir2",
-            "task": "Playbooks",
-            "subtitle": "Document procedures",
-            "icon": "menu_book",
-            "unlock_content": {
-              "title": "Key Scenarios",
-              "points": [
-                "Ransomware: Isolate, backup check, negotiate decision tree",
-                "DDoS: Activate Cloudflare, scale infrastructure",
-                "Data breach: Forensics, notification (PCI 72 hours), PR",
-                "Insider threat: Disable access, HR involvement, legal"
-              ],
-              "bonus_fact": "Playbooks save hours in crisis. Update quarterly with lessons learned."
-            }
-          },
-          {
-            "id": "ir3",
-            "task": "Testing",
-            "subtitle": "Practice makes perfect",
-            "icon": "science",
-            "unlock_content": {
-              "title": "Drills",
-              "points": [
-                "Tabletop exercises: Quarterly (4 hours)",
-                "Red team: Annual penetration test ($20K)",
-                "Purple team: Semi-annual (internal + vendor)",
-                "Phishing simulation: Monthly (KnowBe4)"
-              ],
-              "bonus_fact": "Companies que test IR respond 50% faster to real incidents. Budget $30K/year for testing."
+            "id": "ztna",
+            "text": "ZTNA (Zero Trust) con access granular por role",
+            "icon": "security",
+            "is_correct": true,
+            "consequence": {
+              "title": "Best Practice",
+              "description": "ZTNA: Employees acceden SOLO sus apps. Dev team accede prod con MFA + approval workflow. Least privilege.",
+              "impact_score": 100,
+              "xp_bonus": 25
             }
           }
         ]
       }
     },
     {
-      "screen_id": 4,
-      "type": "progress_checklist",
-      "title": "Budget Breakdown",
-      "duration": 120,
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Remote Access Design",
       "content": {
-        "items": [
-          {
-            "id": "budget",
-            "task": "Security Budget Summary",
-            "subtitle": "Total: ~$170K/year",
-            "icon": "attach_money",
-            "unlock_content": {
-              "title": "Cost Analysis",
-              "points": [
-                "NGFW: $50K",
-                "WAF + DDoS: $2K",
-                "ZTNA: $3.6K",
-                "MFA: $3.6K",
-                "SIEM: $50K",
-                "EDR: $5K",
-                "Training: $10K",
-                "Pen testing: $20K",
-                "Compliance audit: $25K",
-                "Total: $169.2K (within $200K budget)"
-              ],
-              "bonus_fact": "15-20% of IT budget should be security. This = 85% of budget, leaving buffer for incidents."
-            }
+        "card": {
+          "front": {
+            "icon": "vpn_key",
+            "term": "REMOTE ACCESS",
+            "subtitle": "Secure + Least Privilege",
+            "color": "#9C27B0"
+          },
+          "back": {
+            "solution": "Cloudflare Access (ZTNA): $7/user/month = $4.2K/year for 50 users.",
+            "architecture": [
+              "Employees: Access solo sus apps (email, Slack, internal tools)",
+              "Dev team: Prod access con MFA + approval workflow + audit logging",
+              "NO full network access. Identity-based policies.",
+              "Device posture check: AV, patch level verified pre-access"
+            ],
+            "vs_vpn": "VPN = full network. ZTNA = granular app access. ZTNA = Zero Trust compliant.",
+            "budget": "$4.2K/year (2% of budget)",
+            "color": "#7B1FA2"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "Monitoring Strategy",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "visibility",
+            "term": "MONITORING",
+            "subtitle": "Detect threats early",
+            "color": "#00BCD4"
+          },
+          "back": {
+            "components": [
+              "SIEM (Splunk Cloud): $30K/year. Aggregate logs from all sources.",
+              "NetFlow: ntopng ($2K/year). Traffic visibility.",
+              "IDS/IPS: Suricata (free, on firewall). Threat detection.",
+              "PCAP: Limited retention (7 days) for DMZ traffic. $5K storage."
+            ],
+            "alerts": "Failed logins, lateral movement, data exfiltration, C2 communication, policy violations",
+            "retention": "Logs: 90 days (PCI requirement 10.7). PCAP: 7 days.",
+            "budget": "$37K/year (18.5% of budget)",
+            "color": "#00ACC1"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "slider_balance",
+      "title": "Estrategia de Presupuesto",
+      "content": {
+        "scenario": "Tienes $200K. ¿Dónde inviertes la mayor parte?",
+        "left_option": {
+          "label": "Perímetro (Firewalls)",
+          "icon": "shield",
+          "consequences": [
+            "✅ Fuerte barrera de entrada",
+            "❌ Una vez dentro, vía libre",
+            "❌ Enfoque obsoleto (años 2000)"
+          ]
+        },
+        "right_option": {
+          "label": "Detección Interna (EDR/SIEM)",
+          "icon": "radar",
+          "consequences": [
+            "✅ Detecta amenazas que cruzan el firewall",
+            "✅ Visibilidad de movimiento lateral",
+            "✅ Enfoque moderno (Assume Breach)"
+          ]
+        },
+        "explanation": "Invierte en detección y respuesta (EDR/SIEM). Los firewalls son necesarios, pero insuficientes. Asume que van a entrar; asegúrate de verlos cuando lo hagan."
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "timed_quiz",
+      "title": "⚡ PCI DSS Requirement",
+      "content": {
+        "timer_seconds": 20,
+        "question": "Para PCI DSS compliance, ¿qué es MANDATORY?",
+        "options": [
+          { "id": "a", "text": "Firewall entre internet y CDE", "is_correct": false },
+          { "id": "b", "text": "Firewall + WAF + Network segmentation + Logging", "is_correct": true },
+          { "id": "c", "text": "Solo antivirus en servers", "is_correct": false }
+        ],
+        "explanation": "PCI DSS Requirements: 1.2 (Firewall), 6.6 (WAF), 1.3 (Segmentation), 10.x (Logging + monitoring). Comprehensive controls necesarios.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "timed_quiz",
+      "title": "⚡ DDoS Response",
+      "content": {
+        "timer_seconds": 20,
+        "question": "Detectas DDoS de 50Gbps contra tu e-commerce. ¿Primera acción?",
+        "options": [
+          { "id": "a", "text": "Aumentar bandwidth del ISP", "is_correct": false },
+          { "id": "b", "text": "Activar Cloudflare DDoS protection (ya deployado)", "is_correct": true },
+          { "id": "c", "text": "Apagar el sitio", "is_correct": false }
+        ],
+        "explanation": "Cloudflare DDoS protection absorbe el ataque. Bandwidth del ISP no ayuda (50Gbps >> tu link). Never apagar - eso es lo que quiere el atacante.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "timed_quiz",
+      "title": "⚡ Incident: Lateral Movement",
+      "content": {
+        "timer_seconds": 25,
+        "question": "SIEM alerta: Workstation → DC:445 (SMB). ¿Qué significa?",
+        "options": [
+          { "id": "a", "text": "Normal file sharing", "is_correct": false },
+          { "id": "b", "text": "Possible lateral movement / compromised workstation", "is_correct": true },
+          { "id": "c", "text": "Printing activity", "is_correct": false }
+        ],
+        "explanation": "Workstation → DC directo = ANÓMALO. Debería ir vía infraestructura. SMB a DC = lateral movement attempt. Investigate immediately.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "summary_stats",
+      "title": "Architecture Summary",
+      "content": {
+        "stats": [
+          { "icon": "shield", "value": "$52K", "label": "Perimeter (NGFW+WAF)" },
+          { "icon": "visibility", "value": "$37K", "label": "Monitoring (SIEM)" },
+          { "icon": "vpn_key", "value": "$4K", "label": "Remote Access (ZTNA)" },
+          { "icon": "computer", "value": "$40K", "label": "Endpoints (EDR)" }
+        ],
+        "total_budget": "$200K allocated",
+        "key_components": [
+          "Perimeter: NGFW + WAF + DDoS protection",
+          "Segmentation: DMZ + 4 VLANs (DB, Users, Dev, Guest)",
+          "Remote Access: ZTNA con least privilege",
+          "Monitoring: SIEM + NetFlow + IDS + PCAP",
+          "Compliance: PCI DSS Level 2 achievable"
+        ],
+        "pci_scope": "Reduced to DB VLAN only = easier audit, lower cost"
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "flip_card_full",
+      "title": "Incident Response Plan",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "emergency",
+            "term": "IR PLAN",
+            "subtitle": "Be prepared",
+            "color": "#FF5722"
+          },
+          "back": {
+            "phases": [
+              "1. Preparation: IR team, tools, retainer with IR firm",
+              "2. Detection: SIEM alerts, user reports",
+              "3. Containment: Isolate affected systems, block IOCs",
+              "4. Eradication: Remove malware, patch vulnerabilities",
+              "5. Recovery: Restore from backups, verify integrity",
+              "6. Lessons Learned: Post-mortem, update defenses"
+            ],
+            "retainer": "$20K/year IR firm retainer. Access to experts 24/7.",
+            "insurance": "$15K/year cyber insurance. Covers breach costs.",
+            "color": "#E64A19"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "flip_card_full",
+      "title": "Continuous Improvement",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "trending_up",
+            "term": "CONTINUOUS",
+            "subtitle": "Security is a journey",
+            "color": "#4CAF50"
+          },
+          "back": {
+            "ongoing": [
+              "Quarterly: Firewall rule review, remove obsoletes",
+              "Monthly: Vulnerability scans (Nessus)",
+              "Weekly: Patch management windows",
+              "Daily: SIEM alert review, threat intel updates",
+              "Annual: Penetration testing, PCI audit, tabletop exercises"
+            ],
+            "metrics": "MTTD (Mean Time To Detect), MTTR (Mean Time To Respond), Patch SLA compliance",
+            "improvement": "Learn from incidents. Update playbooks. Training based on failures.",
+            "color": "#388E3C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "achievement_unlock",
+      "title": "🏆 CURSO 2 COMPLETADO",
+      "content": {
+        "achievement": {
+          "icon": "military_tech",
+          "name": "Network Security Architect",
+          "description": "Diseñaste arquitectura de red completa: perimeter, segmentation, monitoring, remote access",
+          "rarity": "epic",
+          "color": "#FFD700"
+        },
+        "certification": {
+          "title": "Network Security Fundamentals",
+          "topics_mastered": [
+            "TCP/IP protocols y puertos",
+            "Firewalls: Stateless, Stateful, NGFW, WAF",
+            "IDS/IPS y detection methods",
+            "VPN: IPsec, SSL, ZTNA",
+            "Network segmentation: VLANs, DMZ, micro-seg",
+            "Monitoring: NetFlow, SIEM, PCAP",
+            "Zero Trust architecture",
+            "PCI DSS compliance"
+          ]
+        }
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "lesson_complete",
+      "title": "🎓 CURSO 2 COMPLETADO",
+      "content": {
+        "xp_earned": 80,
+        "total_course_xp": 415,
+        "key_takeaways": [
+          "Diseñaste e-commerce network security completa",
+          "Budget allocation: 26% perimeter, 18% monitoring, 20% endpoints",
+          "PCI DSS: Segmentation reduce scope y audit cost",
+          "ZTNA > VPN tradicional para least privilege",
+          "Defense in depth: Múltiples capas de protección"
+        ],
+        "next_course": {
+          "id": "c3",
+          "title": "Curso 3: Criptografía y PKI",
+          "preview": "Encryption, hashing, digital signatures, certificates"
+        },
+        "congratulations": "¡Excelente! Dominas fundamentos de network security. Listo para criptografía."
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "Eres Network Security Engineer. Diseña arquitectura para startup con 100 empleados, e-commerce site, customer data"
-  }
+  ]
 }

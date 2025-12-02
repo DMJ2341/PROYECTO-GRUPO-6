@@ -3,324 +3,688 @@
   "title": "Ingeniería Social",
   "description": "Caso Real: Equifax Data Breach (2017)",
   "type": "interactive",
-  "duration_minutes": 19,
-  "xp_reward": 20,
+  "duration_minutes": 24,
+  "xp_reward": 60,
   "order_index": 5,
   "course_id": 1,
-  "total_screens": 5,
+  "total_screens": 20,
+  "theme": {
+    "primary_color": "#E91E63",
+    "secondary_color": "#9C27B0",
+    "accent_color": "#00BCD4",
+    "gradient": ["#1a1a2e", "#2d1b2e", "#4a1942"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso Real: Equifax Data Breach (2017)",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: Equifax Disaster",
       "content": {
-        "story_title": "Equifax: 147 Millones de Registros Expuestos",
-        "story_intro": "Apache Struts vulnerability + negligencia = uno de los breaches más grandes de la historia",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "security",
-            "title": "Vulnerabilidad Conocida Ignorada",
-            "content": "CVE-2017-5638 en Apache Struts fue publicada el 6 de marzo 2017. Equifax tenía 2 MESES para parchear antes del breach. No lo hicieron. Atacantes explotaron esta vulnerabilidad el 13 de mayo.",
-            "insight": "El patch estaba disponible. CISA emitió alerta. Equifax simplemente no aplicó el parche a tiempo."
-          },
-          {
-            "id": "2",
-            "icon": "bug_report",
-            "title": "Explotación: RCE via Struts",
-            "content": "Apache Struts RCE permitía ejecutar comandos remotamente sin autenticación. Atacantes ganaron acceso a servidores web de Equifax. De ahí pivotaron a databases internas con información de consumidores.",
-            "insight": "Una vulnerabilidad en framework web = acceso a 147M records. Defense in depth hubiera limitado el blast radius."
-          },
-          {
-            "id": "3",
-            "icon": "database",
-            "title": "Exfiltración Masiva",
-            "content": "147 millones de registros robados: SSN, fechas de nacimiento, direcciones, números de licencia. 76 días sin detectar. Datos exfiltrados vía queries a databases. Segmentación de red inexistente.",
-            "insight": "Equifax NO detectó la exfiltración por 76 días. Sus sistemas de monitoreo fallaron completamente. DLP hubiera ayudado."
-          },
-          {
-            "id": "4",
-            "icon": "public",
-            "title": "Disclosure Desastroso",
-            "content": "Equifax descubrió el breach el 29 de julio pero NO lo hizo público hasta el 7 de septiembre (40 días después). Ejecutivos vendieron acciones antes del anuncio (insider trading). Response fue caótica.",
-            "insight": "El retraso en disclosure y insider trading destruyó toda credibilidad. CEO renunció. Multas masivas."
-          },
-          {
-            "id": "5",
-            "icon": "gavel",
-            "title": "Consecuencias Legales",
-            "content": "$700 millones en settlement con FTC. CEO Equifax renunció. CIO y CSO renunciaron. Demandas colectivas. Daño reputacional permanente. Cambios regulatorios en reporting de breaches.",
-            "insight": "El costo de NO parchear una vulnerabilidad conocida: $700M+ en multas y pérdida de confianza irreparable."
-          }
-        ]
+        "headline": "MAYO-JULIO 2017",
+        "subheadline": "147 millones de vidas comprometidas por negligencia",
+        "background_image": "equifax_breach_dark",
+        "stats": [
+          {"value": "147M", "label": "Registros robados"},
+          {"value": "76", "label": "Días sin detectar"},
+          {"value": "$700M", "label": "Multa FTC"}
+        ],
+        "cta_text": "Investigar el Desastre"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "Ingeniería Social: Psicología del Ataque",
-      "duration": 300,
+      "type": "crisis_timeline",
+      "title": "⏱️ CRONOLOGÍA DEL FRACASO",
       "content": {
-        "description": "Principios psicológicos que explotan los atacantes",
-        "cards": [
+        "start_time": "6 Marzo 2017",
+        "events": [
           {
-            "id": "1",
-            "front": {
-              "icon": "psychology",
-              "term": "Autoridad",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Tendencia a obedecer figuras de autoridad sin cuestionar. Atacantes se hacen pasar por: CEO, IT support, gobierno, policía. Impersonation de autoridad reduce pensamiento crítico.",
-              "example": "Email del 'CEO' pidiendo wire transfer urgente (BEC). Llamada de 'Microsoft support' diciendo que tu PC tiene virus. Phishing del 'IRS' amenazando con arresto.",
-              "color": "#EF5350"
-            }
+            "time": "6 Mar",
+            "icon": "bug_report",
+            "title": "CVE-2017-5638 Publicado",
+            "description": "Apache Struts RCE. Patch disponible. CISA emite alerta crítica.",
+            "severity": "high",
+            "visual": "alert_pulse"
           },
           {
-            "id": "2",
-            "front": {
-              "icon": "timer",
-              "term": "Urgencia/Escasez",
-              "color": "#FF6F00"
-            },
-            "back": {
-              "definition": "Crear sensación de urgencia para bypass razonamiento. Deadlines artificiales, threats inmediatos. La presión de tiempo aumenta errores.",
-              "example": "'Tu cuenta será cerrada en 24h si no verificas'. 'Últimas 2 unidades en stock'. 'Acción requerida INMEDIATAMENTE'. WannaCry countdown timer.",
-              "color": "#FFB74D"
-            }
+            "time": "10 Mar",
+            "icon": "update",
+            "title": "Equifax NO Parchea",
+            "description": "A pesar de las alertas, Equifax no aplica el parche a sus sistemas críticos",
+            "severity": "critical",
+            "visual": "warning_blink"
           },
           {
-            "id": "3",
-            "front": {
-              "icon": "favorite",
-              "term": "Confianza/Simpatía",
-              "color": "#E91E63"
-            },
-            "back": {
-              "definition": "Construir rapport para bajar defensas. Atacantes investigan víctima en redes sociales. Mencionan conexiones mutuas, intereses compartidos. Nos gusta ayudar a gente que nos cae bien.",
-              "example": "LinkedIn connection request antes de phishing. 'Vi tu post sobre [hobby], yo también...'. Romance scams. Pretexting con backstory elaborada.",
-              "color": "#F06292"
-            }
+            "time": "13 May",
+            "icon": "warning",
+            "title": "Compromiso Inicial",
+            "description": "Atacantes explotan Struts vulnerability. Acceso a 51 databases",
+            "severity": "critical",
+            "visual": "breach_indicator"
           },
           {
-            "id": "4",
-            "front": {
-              "icon": "help",
-              "term": "Reciprocidad",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Sentimos obligación de devolver favores. Atacante hace 'favor' pequeño primero. Víctima se siente en deuda. Usado en multi-stage attacks.",
-              "example": "Atacante 'ayuda' con problema técnico (que ellos causaron). Luego pide 'pequeño favor'. Gift cards en correo para ganar confianza antes del real scam.",
-              "color": "#66BB6A"
-            }
+            "time": "May-Jul",
+            "icon": "cloud_upload",
+            "title": "Exfiltración Silenciosa",
+            "description": "76 días robando datos. 147M SSNs, fechas de nacimiento, direcciones",
+            "severity": "critical",
+            "visual": "data_leak"
+          },
+          {
+            "time": "29 Jul",
+            "icon": "search",
+            "title": "Descubrimiento",
+            "description": "Equifax FINALMENTE detecta el breach. Pero no lo hacen público...",
+            "severity": "high",
+            "visual": "detection"
+          },
+          {
+            "time": "7 Sep",
+            "icon": "campaign",
+            "title": "Disclosure Público",
+            "description": "40 días después de saberlo, Equifax lo anuncia. El caos comienza.",
+            "severity": "critical",
+            "visual": "explosion"
           }
-        ]
+        ],
+        "user_prompt": "Desliza para ver la secuencia de negligencia"
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Detector de Phishing: Analiza Emails",
-      "duration": 360,
+      "type": "crisis_decision",
+      "title": "🚨 DECISIÓN CRÍTICA",
       "content": {
-        "title": "Identifica Red Flags en Emails Sospechosos",
-        "items": [
+        "scenario": "Eres el CISO de Equifax. Es 7 de marzo 2017. CISA acaba de emitir alerta crítica sobre CVE-2017-5638 en Apache Struts. Tu equipo identifica que 51 aplicaciones usan Struts vulnerable. ¿Qué haces?",
+        "timer_seconds": 30,
+        "alert_type": "critical",
+        "options": [
           {
-            "id": "email_1",
-            "task": "Email 1: 'Su cuenta de PayPal ha sido suspendida'",
-            "subtitle": "Remitente: security@paypa1-verify.com",
-            "icon": "email",
-            "unlock_content": {
-              "title": "🚨 PHISHING DETECTADO",
-              "points": [
-                "❌ Dominio falso: paypa1-verify.com (usa '1' en vez de 'l')",
-                "❌ Urgencia artificial: 'suspendida', 'verificar inmediatamente'",
-                "❌ Link sospechoso: Hover revela domain diferente",
-                "❌ Errores gramaticales sutiles",
-                "✅ PayPal real: @paypal.com solamente",
-                "✅ Verificación: Ir directo a paypal.com, NO click en link"
-              ],
-              "bonus_fact": "Typosquatting (paypai, paypa1) es táctica común. Siempre verificar dominio exacto. PayPal nunca pide password por email."
+            "id": "emergency_patch",
+            "text": "Parche de emergencia en 24-48 horas",
+            "icon": "emergency",
+            "is_correct": true,
+            "consequence": {
+              "title": "Respuesta Correcta",
+              "description": "Para vulnerabilidades CVSS 9.8 con exploit público, el SLA es 24-48h máximo. Esto hubiera prevenido el breach.",
+              "impact_score": 100,
+              "xp_bonus": 25
             }
           },
           {
-            "id": "email_2",
-            "task": "Email 2: 'Factura pendiente de Microsoft'",
-            "subtitle": "Adjunto: invoice_MS_2024.exe",
-            "icon": "attachment",
-            "unlock_content": {
-              "title": "🚨 MALWARE DETECTADO",
-              "points": [
-                "❌ Ejecutable (.exe) como 'invoice': NUNCA legítimo",
-                "❌ Microsoft no envía facturas así",
-                "❌ Nombre genérico sin personalización",
-                "❌ .exe puede ser ransomware, trojan, spyware",
-                "✅ Facturas legítimas: PDF, nunca ejecutables",
-                "✅ Verificar en portal de Microsoft directamente"
-              ],
-              "bonus_fact": "Emotet se distribuía exactamente así: emails de 'facturas' con .exe adjuntos. Infectó millones antes de takedown en 2021."
+            "id": "standard_process",
+            "text": "Seguir proceso normal de testing (2-4 semanas)",
+            "icon": "schedule",
+            "is_correct": false,
+            "consequence": {
+              "title": "Esto fue lo que hizo Equifax",
+              "description": "Equifax siguió proceso normal. 2 meses después, aún no habían parcheado. El breach ocurrió el 13 de mayo.",
+              "impact_score": -100,
+              "damage": "$700M en multas + 147M víctimas"
             }
           },
           {
-            "id": "email_3",
-            "task": "Email 3: LinkedIn connection request",
-            "subtitle": "De reclutador de FAANG, link a 'portafolio'",
-            "icon": "work",
-            "unlock_content": {
-              "title": "⚠️ SOSPECHOSO - Spear Phishing",
-              "points": [
-                "⚠️ Táctica real usada por APTs para reconnaissance",
-                "⚠️ Link puede ser credential harvester disfrazado",
-                "⚠️ Reclutador puede ser fake profile",
-                "✅ Verificar: Profile de LinkedIn tiene actividad histórica?",
-                "✅ Búsqueda: El reclutador aparece en Google/company website?",
-                "✅ Si dudas: Rechazar o verificar por canal alternativo"
-              ],
-              "bonus_fact": "APT28 (Fancy Bear) usaba fake LinkedIn profiles de reclutadores para target diplomáticos y periodistas. Spear phishing sofisticado."
-            }
-          },
-          {
-            "id": "email_4",
-            "task": "Email 4: 'Has ganado tarjeta de regalo Amazon $500'",
-            "subtitle": "Click aquí para reclamar tu premio",
-            "icon": "card_giftcard",
-            "unlock_content": {
-              "title": "🚨 SCAM CLÁSICO",
-              "points": [
-                "❌ No participaste en ningún sorteo",
-                "❌ Amazon no da gift cards aleatorias",
-                "❌ 'Click aquí' = credential harvester",
-                "❌ Pedirá 'verificar identidad' = robar info personal",
-                "✅ Regla de oro: Si suena too good to be true, lo es",
-                "✅ Amazon contacta via cuenta, no email random"
-              ],
-              "bonus_fact": "Estos scams explotan reciprocidad: 'te damos gift card gratis' → víctima baja guardia → roban credit card 'para shipping'."
-            }
-          },
-          {
-            "id": "email_5",
-            "task": "Email 5: Notification de package delivery con tracking",
-            "subtitle": "Remitente: @fedex-delivery-tracking.info",
-            "icon": "local_shipping",
-            "unlock_content": {
-              "title": "🚨 PHISHING - Dominio Falso",
-              "points": [
-                "❌ Dominio: fedex-delivery-tracking.info NO es FedEx",
-                "❌ FedEx real: fedex.com solamente",
-                "❌ Tracking link probablemente descarga malware",
-                "❌ Si no esperas package, 100% phishing",
-                "✅ Verificación: Ir directo a fedex.com y buscar tracking",
-                "✅ FedEx nunca usa dominios third-party"
-              ],
-              "bonus_fact": "Package delivery phishing explota especialmente en Black Friday/Cyber Monday cuando todos esperan paquetes. Timing es clave para éxito."
+            "id": "wait_vendor",
+            "text": "Esperar guidance adicional del vendor",
+            "icon": "support",
+            "is_correct": false,
+            "consequence": {
+              "title": "Parálisis por Análisis",
+              "description": "El parche ya está disponible. CISA ya emitió alerta. No hay más guidance necesaria. Cada día que esperas = más riesgo.",
+              "impact_score": -60
             }
           }
-        ]
+        ],
+        "real_outcome": "Equifax eligió proceso normal. No parchearon a tiempo. El resto es historia."
       }
     },
     {
       "screen_id": 4,
-      "type": "memory_cards",
-      "title": "Defensas Contra Ingeniería Social",
-      "duration": 180,
+      "type": "story_slide",
+      "title": "El Factor Humano",
       "content": {
-        "description": "Controles técnicos y procedimentales para protección",
+        "icon": "psychology",
+        "icon_color": "#E91E63",
+        "headline": "Ingeniería Social: El Arte del Engaño",
+        "body": "Mientras Equifax falló técnicamente, la ingeniería social explota la psicología humana directamente. No necesitas exploits si puedes manipular a la persona.",
+        "highlight_box": {
+          "type": "warning",
+          "text": "El 85% de breaches involucran el elemento humano - Verizon DBIR 2023"
+        },
+        "mood": "educational"
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "Principio #1: Autoridad",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "shield_person",
+            "term": "AUTORIDAD",
+            "subtitle": "Obediencia ciega",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Tendencia a obedecer figuras de autoridad sin cuestionar. Los atacantes se hacen pasar por CEO, IT support, gobierno, policía.",
+            "how_it_works": [
+              "Impersonation de posiciones de poder",
+              "Reducción del pensamiento crítico",
+              "Miedo a desobedecer = acción rápida sin verificar"
+            ],
+            "real_examples": [
+              "BEC: Email del 'CFO' pidiendo wire transfer",
+              "Vishing: Llamada de 'Microsoft support'",
+              "Phishing: Email del 'IRS' amenazando arresto"
+            ],
+            "defense": "SIEMPRE verificar por canal alternativo. CEO real no se ofenderá.",
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "Principio #2: Urgencia/Escasez",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "timer",
+            "term": "URGENCIA",
+            "subtitle": "Presión de tiempo",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "Crear sensación de urgencia para bypass razonamiento. Deadlines artificiales, amenazas inmediatas. La presión de tiempo aumenta errores.",
+            "how_it_works": [
+              "Countdown timers en emails",
+              "Amenazas de cierre de cuenta",
+              "Ofertas que 'expiran hoy'",
+              "Crisis fabricada que requiere acción AHORA"
+            ],
+            "real_examples": [
+              "'Tu cuenta será cerrada en 24h'",
+              "'Últimas 2 unidades en stock'",
+              "WannaCry countdown: paga o pierdes archivos",
+              "'Acción requerida INMEDIATAMENTE o multa'"
+            ],
+            "defense": "Si es urgente, probablemente es scam. Legítimo puede esperar verificación.",
+            "color": "#E65100"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Principio #3: Confianza",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "favorite",
+            "term": "CONFIANZA",
+            "subtitle": "Simpatía & Rapport",
+            "color": "#E91E63"
+          },
+          "back": {
+            "definition": "Construir rapport para bajar defensas. Atacantes investigan víctima en redes sociales, mencionan conexiones mutuas, intereses compartidos.",
+            "how_it_works": [
+              "Investigación previa en LinkedIn, Facebook",
+              "Mencionar conocidos mutuos",
+              "Compartir intereses 'comunes'",
+              "Construir relación antes del ataque"
+            ],
+            "real_examples": [
+              "LinkedIn connection request antes de phishing",
+              "'Vi tu post sobre [hobby], yo también...'",
+              "Romance scams (meses de grooming)",
+              "Pretexting con backstory elaborada"
+            ],
+            "defense": "Verificar identidad. Que te caiga bien ≠ confiable.",
+            "color": "#C2185B"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Principio #4: Reciprocidad",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "volunteer_activism",
+            "term": "RECIPROCIDAD",
+            "subtitle": "Devolver favores",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Sentimos obligación de devolver favores. Atacante hace 'favor' pequeño primero. Víctima se siente en deuda.",
+            "how_it_works": [
+              "Atacante 'ayuda' con problema (que ellos causaron)",
+              "Víctima siente obligación de ayudar de vuelta",
+              "Multi-stage: favor pequeño → pedir favor grande",
+              "Gift cards, regalos pequeños para ganar confianza"
+            ],
+            "real_examples": [
+              "Atacante 'soluciona' problema técnico, luego pide acceso",
+              "'Te ayudé con X, me ayudas con Y?'",
+              "Regalar algo pequeño antes del real scam",
+              "Ofrecer información gratis, luego pedir credenciales"
+            ],
+            "defense": "No aceptes 'ayuda' no solicitada. No hay favores gratis.",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "swipe_cards",
+      "title": "Detector de Phishing",
+      "content": {
+        "instruction": "¿Es phishing o legítimo? Desliza izquierda (phishing) o derecha (legítimo)",
         "cards": [
           {
-            "id": "1",
-            "front": {
-              "icon": "school",
-              "term": "Security Awareness Training",
-              "color": "#1976D2"
+            "id": 1,
+            "scenario": "Email de 'PayPal' desde security@paypa1-verify.com diciendo 'cuenta suspendida, verificar inmediatamente'",
+            "details": {
+              "sender": "security@paypa1-verify.com",
+              "subject": "Cuenta Suspendida - Acción Requerida",
+              "red_flags": ["Dominio falso (usa '1' no 'l')", "Urgencia artificial", "Amenaza de cierre"]
             },
-            "back": {
-              "definition": "Educar usuarios sobre tácticas de ingeniería social. Training obligatorio regular (trimestral/anual). Simulated phishing campaigns para medir efectividad. Reportar suspicious emails debe ser fácil y incentivado.",
-              "example": "KnowBe4, Proofpoint awareness training. Simulated phishing: enviar fake phishing, track quien clicks. Gamification: badges por detectar phishing. Culture de 'see something, say something'.",
-              "color": "#42A5F5"
+            "correct_answer": "left",
+            "labels": {"left": "🐟 PHISHING", "right": "✅ LEGÍTIMO"}
+          },
+          {
+            "id": 2,
+            "scenario": "Email de tu banco desde su dominio verificado, sin urgencia, pide que vayas a la app/sucursal para update",
+            "details": {
+              "sender": "@bankofamerica.com (verificado)",
+              "subject": "Recordatorio: Actualizar información",
+              "green_flags": ["Dominio real", "Sin urgencia", "Pide ir a canal oficial"]
+            },
+            "correct_answer": "right",
+            "labels": {"left": "🐟 PHISHING", "right": "✅ LEGÍTIMO"}
+          },
+          {
+            "id": 3,
+            "scenario": "Email con adjunto 'invoice_MS_2024.exe' de Microsoft",
+            "details": {
+              "sender": "billing@microsoft-invoices.com",
+              "attachment": "invoice_MS_2024.exe",
+              "red_flags": ["Ejecutable como invoice", "Microsoft NO envía .exe", "Dominio sospechoso"]
+            },
+            "correct_answer": "left",
+            "labels": {"left": "🐟 PHISHING", "right": "✅ LEGÍTIMO"}
+          },
+          {
+            "id": 4,
+            "scenario": "Notificación de package delivery de fedex-delivery-tracking.info",
+            "details": {
+              "sender": "@fedex-delivery-tracking.info",
+              "subject": "Package Delivery Attempt Failed",
+              "red_flags": ["Dominio fake (FedEx real: fedex.com)", "Timing sospechoso", "Link a download"]
+            },
+            "correct_answer": "left",
+            "labels": {"left": "🐟 PHISHING", "right": "✅ LEGÍTIMO"}
+          },
+          {
+            "id": 5,
+            "scenario": "Has ganado gift card Amazon $500 - click para reclamar",
+            "details": {
+              "subject": "Congratulations! You won!",
+              "red_flags": ["No participaste en sorteo", "Too good to be true", "Amazon no regala así"]
+            },
+            "correct_answer": "left",
+            "labels": {"left": "🐟 PHISHING", "right": "✅ LEGÍTIMO"}
+          },
+          {
+            "id": 6,
+            "scenario": "LinkedIn connection request de reclutador con profile completo, 500+ connections, historial de posts",
+            "details": {
+              "sender": "LinkedIn verificado",
+              "profile": "Recruiter @ Google, 5 años de historial",
+              "green_flags": ["Profile verificado", "Actividad histórica", "Connections mutuas reales"]
+            },
+            "correct_answer": "right",
+            "labels": {"left": "🐟 PHISHING", "right": "⚠️ VERIFICAR"}
+          }
+        ],
+        "success_message": "¡Excelente olfato para detectar phishing!",
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "log_hunter",
+      "title": "🔍 Threat Hunter: Email Edition",
+      "content": {
+        "instruction": "Revisa la bandeja de entrada. Marca los emails sospechosos (tap para marcar).",
+        "time_limit": 90,
+        "logs": [
+          {
+            "id": 1,
+            "timestamp": "09:15",
+            "text": "From: IT-Support@company.com | Subject: Monthly Security Update",
+            "suspicious": false
+          },
+          {
+            "id": 2,
+            "timestamp": "09:23",
+            "text": "From: ceo@company-ceo.com | Subject: URGENT - Wire Transfer Needed",
+            "suspicious": true
+          },
+          {
+            "id": 3,
+            "timestamp": "10:01",
+            "text": "From: hr@company.com | Subject: Benefits Open Enrollment",
+            "suspicious": false
+          },
+          {
+            "id": 4,
+            "timestamp": "10:45",
+            "text": "From: security@paypa1-alert.com | Subject: Account Locked - Verify Now",
+            "suspicious": true
+          },
+          {
+            "id": 5,
+            "timestamp": "11:30",
+            "text": "From: colleague@company.com | Subject: Q3 Report Draft",
+            "suspicious": false
+          },
+          {
+            "id": 6,
+            "timestamp": "14:22",
+            "text": "From: noreply@dropbox.com | Attachment: shared_doc.exe",
+            "suspicious": true
+          },
+          {
+            "id": 7,
+            "timestamp": "15:00",
+            "text": "From: finance@company.com | Subject: Expense Report Approved",
+            "suspicious": false
+          },
+          {
+            "id": 8,
+            "timestamp": "16:18",
+            "text": "From: support@amaz0n-delivery.net | Subject: Package Delivery Failed",
+            "suspicious": true
+          }
+        ],
+        "hints": [
+          "CEO pidiendo wire transfer por email = BEC clásico",
+          "Dominios con caracteres similares (0 por O, 1 por l) = typosquatting",
+          "Ejecutables de servicios legítimos = malware",
+          "Urgencia + amenaza = táctica de presión"
+        ],
+        "success_threshold": 4,
+        "xp_reward": 30
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "drag_drop_match",
+      "title": "Match: Principio Psicológico",
+      "content": {
+        "instruction": "Arrastra cada táctica al principio psicológico que explota",
+        "scenarios": [
+          {"id": 1, "text": "Email del 'CEO' pidiendo wire transfer urgente", "correct_target": "autoridad"},
+          {"id": 2, "text": "Cuenta será cerrada en 24 horas si no verificas", "correct_target": "urgencia"},
+          {"id": 3, "text": "Construir relación por semanas antes de pedir dinero", "correct_target": "confianza"},
+          {"id": 4, "text": "Atacante 'ayuda' con problema técnico, luego pide acceso", "correct_target": "reciprocidad"},
+          {"id": 5, "text": "Llamada de 'Microsoft support' diciendo PC infectado", "correct_target": "autoridad"},
+          {"id": 6, "text": "Solo 2 unidades quedan - compra ahora", "correct_target": "urgencia"}
+        ],
+        "targets": [
+          {"id": "autoridad", "label": "Autoridad", "color": "#D32F2F", "icon": "shield_person"},
+          {"id": "urgencia", "label": "Urgencia", "color": "#FF6F00", "icon": "timer"},
+          {"id": "confianza", "label": "Confianza", "color": "#E91E63", "icon": "favorite"},
+          {"id": "reciprocidad", "label": "Reciprocidad", "color": "#388E3C", "icon": "volunteer_activism"}
+        ],
+        "xp_per_correct": 6,
+        "success_message": "¡Dominas los principios de ingeniería social!"
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "story_slide",
+      "title": "Business Email Compromise",
+      "content": {
+        "icon": "business",
+        "icon_color": "#FF6F00",
+        "headline": "BEC: El Ataque de $43B",
+        "body": "Business Email Compromise es cuando atacantes se hacen pasar por ejecutivos para robar dinero. $43 billones en pérdidas desde 2016 (FBI).",
+        "visual_element": {
+          "type": "attack_flow",
+          "steps": [
+            {"step": "Reconnaissance", "desc": "Investigan organización, identifican CFO/CEO"},
+            {"step": "Email Spoofing", "desc": "Crean email que parece del ejecutivo"},
+            {"step": "Urgency", "desc": "Piden wire transfer urgente"},
+            {"step": "Wire Fraud", "desc": "$100K+ transferidos a cuenta del atacante"}
+          ]
+        },
+        "tech_note": "BEC no requiere malware. Solo ingeniería social + dominio fake."
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "crisis_decision",
+      "title": "🚨 BEC EN ACCIÓN",
+      "content": {
+        "scenario": "Recibes email urgente del 'CEO' pidiendo comprar $5,000 en gift cards de inmediato para 'cliente importante'. Email viene de CEO@company-ceo.com. Son las 4:50 PM viernes.",
+        "timer_seconds": 25,
+        "alert_type": "warning",
+        "options": [
+          {
+            "id": "buy_cards",
+            "text": "Comprar las gift cards inmediatamente",
+            "icon": "shopping_cart",
+            "is_correct": false,
+            "consequence": {
+              "title": "Fuiste Víctima de BEC",
+              "description": "El dominio company-ceo.com NO es tu empresa. CEO real nunca pide gift cards por email. Perdiste $5K + le confirmaste al atacante que caes en scams.",
+              "impact_score": -100
             }
           },
           {
-            "id": "2",
-            "front": {
-              "icon": "verified_user",
-              "term": "Multi-Factor Authentication (MFA)",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Incluso si atacante obtiene password via phishing, MFA bloquea acceso. Preferir: Push notification, FIDO2 hardware keys, TOTP apps. Evitar: SMS (vulnerable a SIM swapping).",
-              "example": "Microsoft: MFA bloqueó 99.9% de account takeover attempts. Google: Security keys eliminaron phishing al 100%. Duo, Okta Verify, YubiKey. MFA obligatorio para email, VPN, critical apps.",
-              "color": "#66BB6A"
+            "id": "verify_call",
+            "text": "Llamar al CEO al número del directorio para verificar",
+            "icon": "phone",
+            "is_correct": true,
+            "consequence": {
+              "title": "¡Respuesta Correcta!",
+              "description": "SIEMPRE verificar requests financieros por canal alternativo. El CEO real agradecerá tu diligencia. El dominio fake (company-ceo.com) confirma que era phishing.",
+              "impact_score": 100,
+              "xp_bonus": 30
             }
           },
           {
-            "id": "3",
-            "front": {
-              "icon": "policy",
-              "term": "Verification Procedures",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Procedimientos obligatorios para acciones sensibles. Wire transfers: callback verification con número conocido. Password resets: verificación multi-canal. Cambios de banking info: aprobación presencial.",
-              "example": "BEC defense: Toda wire transfer >$X requiere phone call a número en directorio (NO el del email). IT: Password reset requiere verificar 2 factores de identidad. No solo email.",
-              "color": "#FFB74D"
+            "id": "reply_email",
+            "text": "Responder al email pidiendo confirmación",
+            "icon": "reply",
+            "is_correct": false,
+            "consequence": {
+              "title": "Validaste tu Email",
+              "description": "Responder confirma al atacante que tu dirección es activa y monitoreada. Además, el atacante responderá 'confirmando' desde el mismo email fake.",
+              "impact_score": -40
             }
           },
           {
-            "id": "4",
-            "front": {
-              "icon": "filter_alt",
-              "term": "Email Security Gateway",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "Filtrado avanzado de email: anti-phishing, anti-spam, sandbox attachments, link analysis. Quarantine suspicious emails. Banner externo: marcar emails de fuera de organización.",
-              "example": "Proofpoint, Mimecast, Microsoft Defender for O365. Link rewriting: reescribir URLs para scanear destino. Attachment sandboxing: detonar en ambiente aislado antes de entregar.",
-              "color": "#BA68C8"
+            "id": "forward_team",
+            "text": "Forward a todo el equipo preguntando si es legítimo",
+            "icon": "forward",
+            "is_correct": false,
+            "consequence": {
+              "title": "Propagaste el Phishing",
+              "description": "NO forwards suspicious emails. Reporta a IT/Security team usando botón de reporte. Ellos investigan y alertan si necesario sin propagar el email.",
+              "impact_score": -30
             }
           }
         ]
       }
     },
     {
-      "screen_id": 5,
-      "type": "quiz",
-      "title": "Evaluación - Ingeniería Social",
-      "duration": 90,
+      "screen_id": 14,
+      "type": "flip_card_full",
+      "title": "Defensa #1: Security Awareness",
       "content": {
-        "question": "Recibes email urgente del 'CEO' pidiendo comprar $5,000 en gift cards de inmediato para 'cliente importante'. El email viene de CEO@company-ceo.com. ¿Qué haces?",
-        "options": [
-          {
-            "id": "a",
-            "text": "Comprar las gift cards inmediatamente porque es el CEO",
-            "is_correct": false,
-            "feedback": "Incorrecto. NUNCA actuar inmediatamente en requests urgentes sin verificar, especialmente money/gift cards. El dominio company-ceo.com ya es red flag (no es dominio real de company)."
+        "card": {
+          "front": {
+            "icon": "school",
+            "term": "AWARENESS TRAINING",
+            "subtitle": "Educar es defender",
+            "color": "#1976D2"
           },
-          {
-            "id": "b",
-            "text": "Verificar llamando al CEO directamente a número conocido del directorio",
-            "is_correct": true,
-            "feedback": "¡CORRECTO! Esto es un Business Email Compromise (BEC) clásico. Siempre verificar requests financieros por canal alternativo (phone call a número conocido). El dominio falso (company-ceo.com vs company.com) confirma phishing."
-          },
-          {
-            "id": "c",
-            "text": "Responder al email pidiendo confirmación",
-            "is_correct": false,
-            "feedback": "Incorrecto. Responder al email phishing solo confirma al atacante que la dirección es activa. Pueden continuar targeting. Además, el atacante responderá 'confirmando' desde el mismo email comprometido."
-          },
-          {
-            "id": "d",
-            "text": "Forward el email a todo el equipo preguntando si es legítimo",
-            "is_correct": false,
-            "feedback": "Incorrecto. No forward suspicious emails a otros (propaga el phishing). El procedimiento correcto: reportar a IT/Security team usando botón de reporte. Ellos investigan y alertan si necesario."
+          "back": {
+            "definition": "Entrenar usuarios sobre tácticas de ingeniería social. Training obligatorio regular con simulated phishing para medir efectividad.",
+            "best_practices": [
+              "Training trimestral/anual obligatorio",
+              "Simulated phishing campaigns",
+              "Gamification con badges y leaderboards",
+              "Reportar suspicious emails debe ser fácil",
+              "Cultura de 'see something, say something'"
+            ],
+            "real_stats": "Organizaciones con training reducen phishing success de 40% a 8%",
+            "tools": "KnowBe4, Proofpoint Security Awareness, SANS Security Awareness",
+            "color": "#1565C0"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "flip_card_full",
+      "title": "Defensa #2: MFA",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "verified_user",
+            "term": "MULTI-FACTOR AUTH",
+            "subtitle": "Backup cuando phishing funciona",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Incluso si atacante obtiene password via phishing, MFA bloquea acceso. Requiere segundo factor que el atacante no tiene.",
+            "mfa_hierarchy": [
+              "🥇 MEJOR: FIDO2 hardware keys (YubiKey) - phishing resistant",
+              "🥈 BUENO: Push notification (Duo, Okta) - user must approve",
+              "🥉 OK: TOTP apps (Google Authenticator, Authy)",
+              "❌ EVITAR: SMS - vulnerable a SIM swapping"
+            ],
+            "real_stats": "Microsoft: MFA bloqueó 99.9% de account takeover attempts. Google: Security keys eliminaron phishing al 100%",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "flip_card_full",
+      "title": "Defensa #3: Verification Procedures",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "policy",
+            "term": "VERIFICATION",
+            "subtitle": "Trust but verify",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Procedimientos obligatorios para acciones sensibles. Wire transfers requieren callback, password resets verificación multi-canal.",
+            "mandatory_verifications": [
+              "Wire transfer >$X → Phone call a número en directorio",
+              "Banking info changes → Aprobación presencial",
+              "Password reset → Verificar 2+ factores de identidad",
+              "Vendor changes → Verificar con vendor directamente",
+              "Executive requests → Callback siempre"
+            ],
+            "key_principle": "NUNCA confiar solo en email para acciones financieras o de acceso",
+            "color": "#EF6C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "flip_card_full",
+      "title": "Defensa #4: Email Security",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "filter_alt",
+            "term": "EMAIL GATEWAY",
+            "subtitle": "Filtrado avanzado",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Email security gateway con anti-phishing, anti-spam, sandbox attachments, link analysis. Quarantine suspicious antes de llegar a inbox.",
+            "capabilities": [
+              "Link rewriting: escanear destino antes de click",
+              "Attachment sandboxing: detonar en ambiente aislado",
+              "Domain reputation: bloquear dominios maliciosos",
+              "External banner: marcar emails de fuera",
+              "DMARC/SPF/DKIM: validar sender authenticity"
+            ],
+            "tools": "Proofpoint, Mimecast, Microsoft Defender for O365",
+            "effectiveness": "Bloquea 90%+ de phishing antes de llegar a usuario",
+            "color": "#6A1B9A"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "timed_quiz",
+      "title": "⚡ Final Challenge",
+      "content": {
+        "timer_seconds": 20,
+        "question": "Tu mejor defensa contra ingeniería social es:",
+        "options": [
+          {"id": "a", "text": "Firewall más fuerte", "is_correct": false},
+          {"id": "b", "text": "Antivirus enterprise", "is_correct": false},
+          {"id": "c", "text": "Security awareness training + MFA + verification procedures", "is_correct": true},
+          {"id": "d", "text": "Email gateway solamente", "is_correct": false}
+        ],
+        "explanation": "Ingeniería social explota humanos, no tecnología. Necesitas: educar usuarios (awareness), backup con MFA, y procedures que fuercen verificación. Technical controls ayudan pero no son suficientes solos.",
+        "xp_reward": 20,
+        "bonus_xp_fast": 10
+      }
+    },
+    {
+      "screen_id": 19,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "psychology",
+          "name": "Social Engineer Detector",
+          "description": "Dominas los principios psicológicos y defensas contra ingeniería social",
+          "rarity": "rare",
+          "color": "#E91E63"
+        }
+      }
+    },
+    {
+      "screen_id": 20,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 60,
+        "key_takeaways": [
+          "85% de breaches involucran elemento humano (Verizon DBIR)",
+          "4 principios: Autoridad, Urgencia, Confianza, Reciprocidad",
+          "BEC robó $43B desde 2016 - siempre verificar por phone",
+          "Defense: Awareness Training + MFA + Verification Procedures"
+        ],
+        "next_lesson": {
+          "id": "c1_l6",
+          "title": "Controles de Seguridad",
+          "preview": "Sony Pictures: cuando Lazarus Group destruyó 75% de la infraestructura"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "Apache Struts vulnerability + negligencia = uno de los breaches más grandes de la historia"
-  }
+  ]
 }

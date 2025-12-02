@@ -166,10 +166,9 @@ class EmailService:
                         
                         <h3>Lo que encontrarás en CyberLearn:</h3>
                         <div class="feature">🎓 5 cursos completos de ciberseguridad</div>
-                        <div class="feature">📖 Glosario con 254 términos técnicos</div>
+                        <div class="feature">📖 Glosario con 262 términos técnicos</div>
                         <div class="feature">🏆 Sistema de insignias y niveles</div>
-                        <div class="feature">📊 Test vocacional (Red Team vs Blue Team)</div>
-                        <div class="feature">🎯 Examen final con certificado</div>
+                        <div class="feature">📊 Test vocacional (Red Team vs Blue Team vs Purple Team)</div>
                         
                         <p style="margin-top: 30px;">¡Comienza tu viaje en la ciberseguridad hoy mismo!</p>
                     </div>

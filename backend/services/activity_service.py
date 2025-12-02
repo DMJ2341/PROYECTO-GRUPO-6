@@ -1,4 +1,4 @@
-# backend/services/activity_service.py - CORREGIDO PARA EVITAR CONFLICTOS DE SESIÓN
+# backend/services/activity_service.py 
 from database.db import get_session
 from models.activity import Activity
 from datetime import datetime
@@ -26,13 +26,12 @@ class ActivityService:
             )
             session.add(new_activity)
             
-            # Solo hacer commit si es nuestra propia sesión
+            
             if own_session:
                 session.commit()
                 return new_activity.id
             else:
-                # Si usamos sesión externa, solo agregamos el objeto
-                # El commit lo hará quien nos llamó
+                
                 session.flush()  # Para obtener el ID
                 return new_activity.id
         except Exception as e:

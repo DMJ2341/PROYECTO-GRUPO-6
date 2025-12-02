@@ -1,186 +1,322 @@
 {
   "id": "c4_l5",
-  "title": "Gestión de Sesiones",
-  "description": "SIEM Use Cases",
+  "title": "Seguridad API",
+  "description": "Caso Real: T-Mobile API Breach (2021-2023)",
   "type": "interactive",
-  "duration_minutes": 8,
-  "xp_reward": 20,
+  "duration_minutes": 26,
+  "xp_reward": 65,
   "order_index": 5,
   "course_id": 4,
-  "total_screens": 3,
+  "total_screens": 19,
+  "theme": {
+    "primary_color": "#9C27B0",
+    "secondary_color": "#FF4081",
+    "accent_color": "#00BCD4",
+    "gradient": ["#1a001a", "#330033", "#4d004d"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "SIEM Use Cases",
-      "duration": 180,
+      "type": "story_intro",
+      "title": "Operación: API Leaks",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "login",
-              "term": "Failed Login Monitoring",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Detect brute force, credential stuffing. Multiple failed logins followed by success = compromise. Geographic anomalies.",
-              "example": "Alert: 100 failed logins to admin account from IP in Russia, then 1 success. SIEM correlates events. Target: Fazio creds from unusual location.",
-              "color": "#EF5350"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "cloud_upload",
-              "term": "Data Exfiltration",
-              "color": "#FF6F00"
-            },
-            "back": {
-              "definition": "Large outbound transfers to unusual destinations. DNS queries with high entropy (tunneling). Upload to cloud storage anomalies.",
-              "example": "SIEM: User uploaded 10GB to personal Dropbox in 1 hour. Baseline: User averages 10MB/day. Alert triggered. Target: Exfil to Brazil/Russia.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "admin_panel_settings",
-              "term": "Privileged Account Activity",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "Admin accounts used outside business hours, from unusual locations, unusual commands. Service accounts login interactively (abnormal).",
-              "example": "Alert: Domain Admin account login at 3am on Saturday. Investigation: Compromised. Twitter: Internal admin tool abuse detected this way.",
-              "color": "#BA68C8"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "bug_report",
-              "term": "Malware C2 Detection",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Beaconing: Regular intervals to external IP. DNS to known bad domains. TLS to unusual ports. HTTP POST to suspicious URLs.",
-              "example": "SIEM + Threat Intel: DNS query to domain in threat feed = alert. Colonial: DarkSide C2 beaconing could be detected.",
-              "color": "#42A5F5"
-            }
-          }
-        ]
+        "headline": "2021-2023",
+        "subheadline": "T-Mobile sufre 7 breaches vía APIs sin autenticar → 100M+ registros expuestos",
+        "stats": [
+          {"value": "100M+", "label": "Clientes afectados"},
+          {"value": "7", "label": "Breaches distintos"},
+          {"value": "$350M", "label": "Settlement total"}
+        ],
+        "cta_text": "Investigar API Abuse"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Building Detection Rules",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "API sin autenticación = Internet pública",
       "content": {
-        "items": [
+        "icon": "api",
+        "icon_color": "#FF4081",
+        "headline": "T-Mobile API Gateway expuesto",
+        "body": "Attacker descubre API interna sin autenticación (ni API key, ni OAuth, ni rate limit). Endpoint exponía datos completos: IMSI, IMEI, nombre, dirección, SSN, teléfono. Una sola request → 100k registros. Usado durante meses para scraping masivo.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "OWASP API Security Top 10 #1: Broken Object Level Authorization (BOLA) + #2: Broken Authentication"
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "crisis_timeline",
+      "title": "⏱️ MULTIPLES API BREACHES",
+      "content": {
+        "events": [
           {
-            "id": "rules1",
-            "task": "Define Use Case",
-            "subtitle": "What to detect?",
-            "icon": "assignment",
-            "unlock_content": {
-              "title": "Use Case Definition",
-              "points": [
-                "Business driver: Compliance, threat intel, past incident, industry trend",
-                "Example: 'Detect ransomware lateral movement via SMB'",
-                "Success criteria: What alert looks like? Acceptable false positive rate?",
-                "Data sources needed: Which logs required?",
-                "Target example: 'Detect POS malware memory access'"
-              ],
-              "bonus_fact": "Good use case: Specific, actionable, measurable. Bad: Too broad ('detect all attacks')."
+            "time": "Ago 2021",
+            "icon": "leak_add",
+            "title": "Primer breach: 54M clientes",
+            "description": "API sin auth expone datos completos. Vendido en foro por $270k.",
+            "severity": "critical"
+          },
+          {
+            "time": "2022",
+            "icon": "bug_report",
+            "title": "Segundo breach: 37M más",
+            "description": "Otra API olvidada (legacy) sin autenticación ni rate limit.",
+            "severity": "critical"
+          },
+          {
+            "time": "Ene 2023",
+            "icon": "security",
+            "title": "T-Mobile implementa API Gateway + OAuth2",
+            "description": "Después de 5 breaches, finalmente centralizan y securizan APIs.",
+            "severity": "warning"
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "crisis_decision",
+      "title": "🚨 Nueva API interna",
+      "content": {
+        "scenario": "Dev crea nueva API para app interna. Quiere rapidez. Propone: 1) Sin auth (solo IP interna), 2) API Key, 3) OAuth2/mTLS. ¿Qué exiges?",
+        "timer_seconds": 35,
+        "options": [
+          {
+            "id": "no_auth",
+            "text": "Sin auth (solo firewall IP)",
+            "icon": "cloud_off",
+            "is_correct": false,
+            "consequence": {
+              "title": "Esto fue T-Mobile",
+              "description": "IPs se spoofean, VPNs se comprometen, servicios se mueven a cloud. 'Solo interno' = mito. 7 breaches reales.",
+              "impact_score": -100
             }
           },
           {
-            "id": "rules2",
-            "task": "Write Detection Logic",
-            "subtitle": "Translate to query",
-            "icon": "code",
-            "unlock_content": {
-              "title": "Rule Development",
-              "points": [
-                "SIEM query language: SPL (Splunk), KQL (Sentinel), etc",
-                "Logic: IF (condition1 AND condition2) THEN alert",
-                "Example: IF (process='powershell.exe' AND cmdline contains 'Invoke-Mimikatz') THEN High Severity Alert",
-                "Thresholds: 5+ failed logins in 10 min from single IP",
-                "Exclusions: Whitelist known good (scanner IPs, maintenance accounts)"
-              ],
-              "bonus_fact": "Start strict, tune over time. Better initial false positives than miss true threats."
+            "id": "api_key",
+            "text": "API Key por servicio",
+            "icon": "vpn_key",
+            "is_correct": false,
+            "consequence": {
+              "title": "Mejor, pero insuficiente",
+              "description": "Keys se filtran en logs, código, GitHub. No revocación automática. T-Mobile usaba keys débiles.",
+              "impact_score": 60
             }
           },
           {
-            "id": "rules3",
-            "task": "Test & Validate",
-            "subtitle": "Does it work?",
-            "icon": "science",
-            "unlock_content": {
-              "title": "Rule Testing",
-              "points": [
-                "Simulate attack: Use purple team to generate events",
-                "Historical data: Replay past logs. Does rule catch known incident?",
-                "False positive check: Run against baseline. Too noisy?",
-                "Severity tuning: Critical vs High vs Medium",
-                "Target test: Replay BlackPOS logs. Does rule trigger?"
-              ],
-              "bonus_fact": "Never deploy rule to production without testing. One bad rule = alert storm = SOC down."
-            }
-          },
-          {
-            "id": "rules4",
-            "task": "Deploy & Maintain",
-            "subtitle": "Continuous improvement",
-            "icon": "update",
-            "unlock_content": {
-              "title": "Rule Lifecycle",
-              "points": [
-                "Deploy: Enable in production SIEM",
-                "Monitor: Track alert volume, false positive rate",
-                "Tune: Adjust thresholds, add exceptions, refine logic",
-                "Sunset: Disable outdated rules (threat no longer relevant)",
-                "Document: Maintain rule library with descriptions, owners"
-              ],
-              "bonus_fact": "Rule maintenance = 30-40% of detection engineering time. Old rules accumulate like code debt."
+            "id": "oauth_mtls",
+            "text": "OAuth2 + mTLS + API Gateway centralizado",
+            "icon": "shield",
+            "is_correct": true,
+            "consequence": {
+              "title": "Defensa correcta",
+              "description": "Token corto-lived, rotación automática, certificado cliente obligatorio. Centralizado = visibilidad y control total.",
+              "impact_score": 100,
+              "xp_bonus": 30
             }
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación",
-      "duration": 60,
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "OWASP API Security Top 10",
       "content": {
-        "question": "SIEM rule tuning: ¿Por qué importante?",
-        "options": [
-          {
-            "id": "a",
-            "text": "No es importante, rules son set-and-forget",
-            "is_correct": false,
-            "feedback": "Incorrecto. Opposite. Rules need constant tuning."
-          },
-          {
-            "id": "b",
-            "text": "Reduce false positives, improve detection accuracy, adapt to environment changes",
-            "is_correct": true,
-            "feedback": "CORRECTO! 1) Reduce FPs: Initial rule = noisy. Tuning adds exceptions, adjusts thresholds. 2) Improve accuracy: Attackers evolve. Rules must adapt. 3) Environment changes: New apps, new users = new baselines. 4) Alert fatigue prevention: Untuned rules = alert storm = analysts numb. Target lesson: FireEye alerts ignored partly due to alert fatigue from noisy rules. Well-tuned rules = SOC can focus on real threats."
-          },
-          {
-            "id": "c",
-            "text": "Solo para compliance",
-            "is_correct": false,
-            "feedback": "Incorrecto. Compliance es benefit pero primary goal es effective detection."
+        "card": {
+          "front": {"icon": "api", "term": "OWASP API TOP 10", "subtitle": "2023 Edition", "color": "#9C27B0"},
+          "back": {
+            "top_10": [
+              "1. Broken Object Level Authorization (BOLA/IDOR)",
+              "2. Broken Authentication",
+              "3. Broken Object Property Level Authorization",
+              "4. Unrestricted Resource Consumption",
+              "5. Broken Function Level Authorization",
+              "6. Unrestricted Access to Sensitive Business Flows",
+              "7. Server Side Request Forgery (SSRF)",
+              "8. Security Misconfiguration",
+              "9. Improper Inventory of APIs",
+              "10. Unsafe Consumption of APIs"
+            ],
+            "color": "#7B1FA2"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "BOLA - Broken Object Level Auth",
+      "content": {
+        "card": {
+          "front": {"icon": "person_off", "term": "BOLA / IDOR", "subtitle": "#1 API Top 10", "color": "#E91E63"},
+          "back": {
+            "definition": "Attacker manipula ID de objeto (user_id=123 → 124) y accede a datos de otro usuario. API no valida ownership.",
+            "example": "GET /api/v1/customers/45678 → devuelve datos de otro cliente",
+            "defense": "Server-side: validar que user_id pertenece al usuario autenticado. UUIDs > secuenciales.",
+            "color": "#C2185B"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Rate Limiting & Abuse",
+      "content": {
+        "card": {
+          "front": {"icon": "speed", "term": "RATE LIMITING", "subtitle": "Prevent scraping & DoS", "color": "#00BCD4"},
+          "back": {
+            "defense": [
+              "Por IP + por API key + por usuario",
+              "Leaky bucket o token bucket",
+              "Bloqueo temporal tras X requests",
+              "CAPTCHA tras umbral"
+            ],
+            "t_mobile_fail": "Sin rate limit → attacker descargó 100M registros en días",
+            "color": "#0097A7"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "API Gateway + mTLS",
+      "content": {
+        "card": {
+          "front": {"icon": "security", "term": "API GATEWAY + mTLS", "subtitle": "Zero Trust para APIs", "color": "#388E3C"},
+          "back": {
+            "benefits": "Centralizado, logging, auth, rate limit, schema validation, threat protection",
+            "mtls": "Mutual TLS: cliente presenta certificado. IP spoofing ya no sirve.",
+            "tools": "Kong, Apigee, AWS API Gateway, Azure API Management, Istio/Envoy",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "drag_drop_match",
+      "title": "OWASP API Top 10 Mapping",
+      "content": {
+        "instruction": "Relaciona el caso con el riesgo API Top 10:",
+        "scenarios": [
+          {"id": 1, "text": "Cambiar user_id=123 → 456 y ver datos ajenos", "correct_target": "bola"},
+          {"id": 2, "text": "API sin auth ni API key", "correct_target": "auth"},
+          {"id": 3, "text": "100k requests/segundo → scraping masivo", "correct_target": "rate"},
+          {"id": 4, "text": "API antigua olvidada en producción", "correct_target": "inventory"},
+          {"id": 5, "text": "GraphQL query muy profunda → DoS", "correct_target": "consumption"}
+        ],
+        "targets": [
+          {"id": "bola", "label": "BOLA", "color": "#E91E63"},
+          {"id": "auth", "label": "Broken Auth", "color": "#F44336"},
+          {"id": "rate", "label": "Unrestricted Consumption", "color": "#FF9800"},
+          {"id": "inventory", "label": "Improper Inventory", "color": "#9C27B0"},
+          {"id": "consumption", "label": "Resource Consumption", "color": "#00BCD4"}
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "swipe_cards",
+      "title": "API Security: ¿Buena práctica?",
+      "content": {
+        "instruction": "¿Es segura esta práctica API?",
+        "cards": [
+          {"id": 1, "scenario": "API pública sin autenticación", "correct_answer": "left"},
+          {"id": 2, "scenario": "OAuth2 + short-lived tokens + refresh rotation", "correct_answer": "right"},
+          {"id": 3, "scenario": "Rate limit solo por IP", "correct_answer": "left"},
+          {"id": 4, "scenario": "mTLS obligatorio + API Gateway", "correct_answer": "right"},
+          {"id": 5, "scenario": "API keys en query params (?key=123)", "correct_answer": "left"}
+        ],
+        "labels": {"left": "❌ PELIGROSA", "right": "✅ SEGURA"},
+        "xp_per_correct": 9
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: API Abuse",
+      "content": {
+        "scenario": "Logs API Gateway. Encuentra las 2 líneas sospechosas de scraping masivo.",
+        "log_lines": [
+          {"id": 1, "text": "2023-08-10 09:12:11 GET /api/customers/12345 200 user=app_mobile", "is_suspicious": false},
+          {"id": 2, "text": "2023-08-10 14:23:58 GET /api/customers 200 ip=185.220.101.45 requests_last_hour=48732", "is_suspicious": true, "reason": "48k requests/hora desde IP externa = scraping masivo"},
+          {"id": 3, "text": "2023-08-10 14:24:01 GET /api/customers 200 ip=185.220.101.45 requests_last_hour=49218", "is_suspicious": true, "reason": "Escalada de rate → abuso claro"},
+          {"id": 4, "text": "2023-08-10 15:01:33 POST /api/login 200 user=john.doe", "is_suspicious": false},
+          {"id": 5, "text": "2023-08-10 16:30:22 GET /api/customers/789 200 user=app_backend", "is_suspicious": false}
+        ],
+        "xp_reward": 30
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "timed_quiz",
+      "title": "⚡ T-Mobile Root Cause",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Root cause principal de los breaches T-Mobile?",
+        "options": [
+          {"id": "a", "text": "Los atacantes eran muy avanzados", "is_correct": false},
+          {"id": "b", "text": "APIs sin autenticación + sin rate limit + shadow APIs", "is_correct": true},
+          {"id": "c", "text": "Empleados filtraron datos", "is_correct": false}
+        ],
+        "explanation": "7 breaches distintas por APIs olvidadas, sin auth, sin rate limit. Problema de gobernanza y arquitectura, no de sofisticación atacante.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "timed_quiz",
+      "title": "⚡ BOLA Defense",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Mejor defensa contra BOLA/IDOR?",
+        "options": [
+          {"id": "a", "text": "Usar UUIDs en vez de IDs secuenciales", "is_correct": false},
+          {"id": "b", "text": "Validar server-side que el usuario es dueño del recurso", "is_correct": true}
+        ],
+        "explanation": "UUIDs ayudan, pero no son suficientes. Siempre validar ownership en backend.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "api",
+          "name": "API Fortress",
+          "description": "Dominas OWASP API Security Top 10 y defensa moderna",
+          "rarity": "rare",
+          "color": "#9C27B0"
+        }
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 65,
+        "key_takeaways": [
+          "T-Mobile: 7 breaches por APIs sin auth, sin rate limit, shadow APIs",
+          "OWASP API Top 10: BOLA #1, Broken Auth #2",
+          "Defensas: OAuth2/mTLS, API Gateway centralizado, rate limiting, inventory",
+          "Nunca confíes en 'solo interno'. Zero Trust para APIs",
+          "Rate limit por token + IP + usuario. Bloquea scraping"
+        ],
+        "next_lesson": {
+          "id": "c4_l6",
+          "title": "Container Security",
+          "preview": "Tesla Kubernetes breach + mejores prácticas"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }

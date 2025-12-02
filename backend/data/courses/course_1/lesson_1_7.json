@@ -1,400 +1,547 @@
 {
   "id": "c1_l7",
-  "title": "Evaluación Final Curso 1",
-  "description": "Evaluación Final: MedTech Corp",
+  "title": "Evaluación Final: Curso 1",
+  "description": "Caso Práctico: MedTech Corp Breach",
   "type": "interactive",
-  "duration_minutes": 28,
-  "xp_reward": 20,
+  "duration_minutes": 30,
+  "xp_reward": 100,
   "order_index": 7,
   "course_id": 1,
-  "total_screens": 7,
+  "total_screens": 22,
+  "theme": {
+    "primary_color": "#00BCD4",
+    "secondary_color": "#F44336",
+    "accent_color": "#FFC107",
+    "gradient": ["#0f2027", "#203a43", "#2c5364"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
+      "type": "story_intro",
       "title": "Evaluación Final: MedTech Corp",
-      "duration": 180,
       "content": {
-        "story_title": "Escenario: MedTech Corp Comprometida",
-        "story_intro": "Eres el nuevo CISO. Tu primer día descubres evidencia de breach en progreso.",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "local_hospital",
-            "title": "La Organización",
-            "content": "MedTech Corp: 500 empleados, provee software de patient records a 50 hospitales. Datos ALTAMENTE sensibles (PHI). Subject a HIPAA.",
-            "insight": "Healthcare es target principal. Ransomware groups love hospitals porque pagan. HIPAA violations = multas masivas."
-          },
-          {
-            "id": "2",
-            "icon": "warning",
-            "title": "El Incidente",
-            "content": "SOC detecta: 1) Exfiltración de 2TB a IP en Rusia, 2) Logins desde IPs anómalas, 3) Lateral movement vía SMB, 4) Scheduled task en DC.",
-            "insight": "Múltiples IoCs = ataque coordinado. No es opportunistic, es targeted APT o ransomware gang."
-          },
-          {
-            "id": "3",
-            "icon": "detective",
-            "title": "Tu Misión",
-            "content": "Analizar el ataque, identificar controles NIST faltantes, diseñar arquitectura Defense in Depth, responder preguntas teóricas.",
-            "insight": "Examen evalúa: análisis técnico, conocimiento de frameworks, diseño de arquitectura."
-          }
-        ]
+        "headline": "TU PRIMER DÍA COMO CISO",
+        "subheadline": "Descubres evidencia de un breach en progreso",
+        "background_image": "hospital_cybersecurity",
+        "stats": [
+          {"value": "500", "label": "Empleados"},
+          {"value": "50", "label": "Hospitales clientes"},
+          {"value": "HIPAA", "label": "Compliance requerido"}
+        ],
+        "cta_text": "Comenzar Evaluación"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Timeline del Incidente",
-      "duration": 120,
+      "type": "story_slide",
+      "title": "La Organización",
       "content": {
-        "title": "Reconstruye la Secuencia",
-        "items": [
-          {
-            "id": "t1",
-            "task": "Día -30: Phishing Email",
-            "subtitle": "CFO recibió email malicioso",
-            "icon": "email",
-            "unlock_content": {
-              "title": "Initial Access",
-              "points": [
-                "Spear phishing a CFO (high-value target)",
-                "Attachment: invoice.docx con macro",
-                "Macro descargó Cobalt Strike beacon",
-                "MITRE: T1566.001 Spearphishing Attachment"
-              ],
-              "bonus_fact": "CFO es target común porque tiene acceso financiero y menos security training."
-            }
-          },
-          {
-            "id": "t2",
-            "task": "Día -25: Persistence",
-            "subtitle": "Backdoor instalado",
-            "icon": "download",
-            "unlock_content": {
-              "title": "Persistence Establecida",
-              "points": [
-                "Cobalt Strike beacon con C2 a Rusia",
-                "Registry run key para auto-start",
-                "MITRE: T1547.001 Registry Run Keys"
-              ],
-              "bonus_fact": "Cobalt Strike es legit red team tool pero abusado por criminals."
-            }
-          },
-          {
-            "id": "t3",
-            "task": "Día -20: Credential Dumping",
-            "subtitle": "Passwords robados con Mimikatz",
-            "icon": "key",
-            "unlock_content": {
-              "title": "Credential Access",
-              "points": [
-                "Mimikatz extrajo passwords de lsass.exe",
-                "Obtuvieron creds de Domain Admin",
-                "MITRE: T1003.001 LSASS Memory"
-              ],
-              "bonus_fact": "Una vez tienes Domain Admin, game over. Acceso a TODO."
-            }
-          },
-          {
-            "id": "t4",
-            "task": "Día -15: Lateral Movement",
-            "subtitle": "Compromiso de Domain Controller",
-            "icon": "sync_alt",
-            "unlock_content": {
-              "title": "Lateral Movement",
-              "points": [
-                "Pass-the-hash con Domain Admin creds",
-                "Acceso a DC vía SMB",
-                "MITRE: T1021.002 SMB/Windows Admin Shares"
-              ],
-              "bonus_fact": "DC = keys to kingdom. Controla toda la Active Directory."
-            }
-          },
-          {
-            "id": "t5",
-            "task": "Día -5 a Hoy: Exfiltración",
-            "subtitle": "2TB de patient data exfiltrado",
-            "icon": "cloud_upload",
-            "unlock_content": {
-              "title": "Exfiltration",
-              "points": [
-                "Data zipped y cifrado",
-                "Exfiltrado vía HTTPS a IP rusa",
-                "MITRE: T1048.003 Exfiltration HTTPS"
-              ],
-              "bonus_fact": "HTTPS exfiltration parece tráfico normal. DLP con SSL inspection necesario."
-            }
-          }
-        ]
+        "icon": "local_hospital",
+        "icon_color": "#00BCD4",
+        "headline": "MedTech Corp",
+        "body": "Empresa de software médico con 500 empleados. Provee sistema de patient records a 50 hospitales en EE.UU. Maneja datos PHI (Protected Health Information) sujetos a HIPAA.",
+        "highlight_box": {
+          "type": "info",
+          "text": "Healthcare es target #1 para ransomware. Hospitales pagan porque vidas están en riesgo. HIPAA violations = hasta $50K por record expuesto."
+        },
+        "context": {
+          "industry": "Healthcare SaaS",
+          "compliance": "HIPAA, SOC 2",
+          "data_sensitivity": "PHI - máximo nivel",
+          "threat_profile": "Alta - target de ransomware gangs y APTs"
+        }
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Análisis del Ataque",
-      "duration": 300,
+      "type": "story_slide",
+      "title": "El Descubrimiento",
       "content": {
-        "title": "Identifica Técnicas MITRE ATT&CK",
-        "items": [
-          {
-            "id": "q1",
-            "task": "Táctica Inicial",
-            "subtitle": "Cómo entraron?",
-            "icon": "login",
-            "unlock_content": {
-              "title": "Respuesta",
-              "points": [
-                "Táctica: Initial Access",
-                "Técnica: T1566.001 - Phishing Spearphishing Attachment",
-                "Justificación: CFO recibió email con invoice.docx malicioso",
-                "Spear phishing es targeted, no mass phishing"
-              ],
-              "bonus_fact": "Spear phishing a executives es técnica principal de APTs."
-            }
-          },
-          {
-            "id": "q2",
-            "task": "Persistence Mechanism",
-            "subtitle": "Cómo permanecieron?",
-            "icon": "autorenew",
-            "unlock_content": {
-              "title": "Respuesta",
-              "points": [
-                "Técnica: T1547.001 - Registry Run Keys",
-                "Location: HKCU Software Microsoft Windows CurrentVersion Run",
-                "Beacon: Cobalt Strike ejecuta on login"
-              ],
-              "bonus_fact": "Registry run keys son persistence 101. Fácil implementar, difícil detectar."
-            }
-          },
-          {
-            "id": "q3",
-            "task": "Credential Dumping",
-            "subtitle": "Qué herramienta?",
-            "icon": "key",
-            "unlock_content": {
-              "title": "Respuesta",
-              "points": [
-                "Herramienta: Mimikatz",
-                "Target: lsass.exe process",
-                "Técnica: T1003.001 - LSASS Memory",
-                "Credential Guard hubiera prevenido"
-              ],
-              "bonus_fact": "Mimikatz tan efectivo que Microsoft creó Credential Guard para proteger lsass."
-            }
-          }
-        ]
+        "icon": "warning",
+        "icon_color": "#F44336",
+        "headline": "SOC Detecta Anomalías",
+        "body": "Tu primer día como CISO, el SOC team reporta múltiples alertas críticas que fueron ignoradas por el CISO anterior:",
+        "alert_list": [
+          {"severity": "critical", "text": "Exfiltración de 2TB a IP en Rusia en últimos 5 días"},
+          {"severity": "critical", "text": "Logins desde IPs anómalas en Ucrania y China"},
+          {"severity": "high", "text": "Lateral movement vía SMB desde workstation a servers"},
+          {"severity": "high", "text": "Scheduled task creado en Domain Controller"}
+        ],
+        "your_mission": "Analizar el ataque, identificar gaps en controles, diseñar remediación, y responder preguntas sobre frameworks."
       }
     },
     {
       "screen_id": 4,
-      "type": "progress_checklist",
-      "title": "Controles NIST Faltantes",
-      "duration": 300,
+      "type": "crisis_timeline",
+      "title": "⏱️ RECONSTRUYE EL ATAQUE",
       "content": {
-        "title": "Identifica Gaps en Controles",
-        "items": [
+        "start_time": "Día -30",
+        "events": [
           {
-            "id": "c1",
-            "task": "Email Security",
-            "subtitle": "Phishing no fue bloqueado",
+            "time": "Día -30",
             "icon": "email",
-            "unlock_content": {
-              "title": "Gap Identificado",
-              "points": [
-                "Control: SI-3 - Malicious Code Protection",
-                "Solución: Email security gateway",
-                "Sandbox attachments antes de entregar",
-                "User training + simulated phishing"
-              ],
-              "bonus_fact": "90% de phishing bloqueado por email gateway con sandboxing."
-            }
+            "title": "Spear Phishing a CFO",
+            "description": "CFO recibió email con invoice.docx conteniendo macro maliciosa. Macro descargó Cobalt Strike beacon.",
+            "severity": "high",
+            "mitre": "T1566.001 - Spearphishing Attachment",
+            "visual": "phishing"
           },
           {
-            "id": "c2",
-            "task": "Endpoint Detection",
-            "subtitle": "Mimikatz no detectado",
-            "icon": "computer",
-            "unlock_content": {
-              "title": "Gap Identificado",
-              "points": [
-                "Control: SI-4 - System Monitoring",
-                "Solución: EDR (CrowdStrike, SentinelOne)",
-                "Behavioral analysis hubiera detectado credential dumping",
-                "Antivirus legacy no detecta"
-              ],
-              "bonus_fact": "EDR con behavioral analysis detecta 95% de credential dumping."
-            }
+            "time": "Día -25",
+            "icon": "autorenew",
+            "title": "Persistence Establecida",
+            "description": "Registry run key para auto-start del beacon. C2 a servidor en Rusia establecido.",
+            "severity": "high",
+            "mitre": "T1547.001 - Registry Run Keys",
+            "visual": "persistence"
           },
           {
-            "id": "c3",
-            "task": "Network Segmentation",
-            "subtitle": "Lateral movement sin restricción",
-            "icon": "lan",
-            "unlock_content": {
-              "title": "Gap Identificado",
-              "points": [
-                "Control: SC-7 - Boundary Protection",
-                "Solución: Micro-segmentation",
-                "DC no debería ser accesible desde workstations",
-                "Zero Trust network"
-              ],
-              "bonus_fact": "Proper segmentation hubiera detenido lateral movement."
-            }
+            "time": "Día -20",
+            "icon": "key",
+            "title": "Credential Dumping",
+            "description": "Mimikatz ejecutado en workstation del CFO. Passwords de lsass.exe extraídos, incluyendo Domain Admin.",
+            "severity": "critical",
+            "mitre": "T1003.001 - LSASS Memory",
+            "visual": "credential_theft"
+          },
+          {
+            "time": "Día -15",
+            "icon": "sync_alt",
+            "title": "Lateral Movement",
+            "description": "Pass-the-hash con creds de Domain Admin. Acceso a DC vía SMB. Control total de Active Directory.",
+            "severity": "critical",
+            "mitre": "T1021.002 - SMB/Windows Admin Shares",
+            "visual": "lateral_movement"
+          },
+          {
+            "time": "Día -5 a Hoy",
+            "icon": "cloud_upload",
+            "title": "Exfiltración Masiva",
+            "description": "2TB de patient data (nombres, SSNs, diagnósticos) zipped, cifrado y exfiltrado vía HTTPS a IP en Rusia.",
+            "severity": "critical",
+            "mitre": "T1048.003 - Exfiltration Over HTTPS",
+            "visual": "exfiltration"
           }
-        ]
+        ],
+        "user_prompt": "Analiza cada fase del ataque"
       }
     },
     {
       "screen_id": 5,
-      "type": "progress_checklist",
-      "title": "Arquitectura Defense in Depth",
-      "duration": 300,
+      "type": "drag_drop_match",
+      "title": "MITRE ATT&CK Mapping",
       "content": {
-        "title": "Diseña Nueva Arquitectura",
-        "items": [
-          {
-            "id": "arch1",
-            "task": "Perimeter + Email Security",
-            "subtitle": "First line of defense",
-            "icon": "shield",
-            "unlock_content": {
-              "title": "Diseño Recomendado",
-              "points": [
-                "Firewall next-gen con IDS/IPS",
-                "Email security gateway con sandboxing",
-                "DDoS protection (Cloudflare)",
-                "WAF para web apps"
-              ],
-              "bonus_fact": "Perimeter solo bloquea 40-50% de ataques. Otras capas son críticas."
-            }
-          },
-          {
-            "id": "arch2",
-            "task": "Network Segmentation",
-            "subtitle": "Limit lateral movement",
-            "icon": "hub",
-            "unlock_content": {
-              "title": "Diseño Recomendado",
-              "points": [
-                "VLANs: Separate workstations, servers, critical systems",
-                "DC en VLAN isolated",
-                "Micro-segmentation",
-                "No direct SMB between workstations"
-              ],
-              "bonus_fact": "DC isolation es CRÍTICO. Compromiso de workstation no debe = compromiso de DC."
-            }
-          },
-          {
-            "id": "arch3",
-            "task": "Endpoint + Identity",
-            "subtitle": "Protect devices and accounts",
-            "icon": "verified_user",
-            "unlock_content": {
-              "title": "Diseño Recomendado",
-              "points": [
-                "EDR en all endpoints",
-                "MFA obligatorio (FIDO2 para admins)",
-                "Credential Guard enabled",
-                "JIT access para privileged accounts"
-              ],
-              "bonus_fact": "Credential Guard previene Mimikatz. MFA previene use de stolen creds."
-            }
-          }
-        ]
+        "instruction": "Arrastra cada técnica observada a la táctica MITRE correcta",
+        "scenarios": [
+          {"id": 1, "text": "Spear phishing con invoice.docx malicioso", "correct_target": "initial_access"},
+          {"id": 2, "text": "Registry run key para auto-start beacon", "correct_target": "persistence"},
+          {"id": 3, "text": "Mimikatz extrae passwords de lsass", "correct_target": "credential_access"},
+          {"id": 4, "text": "Pass-the-hash para acceder a DC", "correct_target": "lateral_movement"},
+          {"id": 5, "text": "Exfiltración vía HTTPS a Rusia", "correct_target": "exfiltration"}
+        ],
+        "targets": [
+          {"id": "initial_access", "label": "Initial Access", "color": "#F44336", "icon": "login"},
+          {"id": "persistence", "label": "Persistence", "color": "#FF9800", "icon": "autorenew"},
+          {"id": "credential_access", "label": "Credential Access", "color": "#FFC107", "icon": "key"},
+          {"id": "lateral_movement", "label": "Lateral Movement", "color": "#2196F3", "icon": "sync_alt"},
+          {"id": "exfiltration", "label": "Exfiltration", "color": "#9C27B0", "icon": "cloud_upload"}
+        ],
+        "xp_per_correct": 10,
+        "success_message": "¡Dominas MITRE ATT&CK mapping!"
       }
     },
     {
       "screen_id": 6,
-      "type": "progress_checklist",
-      "title": "Conocimientos Teóricos",
-      "duration": 180,
+      "type": "timed_quiz",
+      "title": "❓ Táctica Inicial",
       "content": {
-        "title": "Preguntas Conceptuales",
-        "items": [
-          {
-            "id": "theory1",
-            "task": "Defense in Depth",
-            "subtitle": "Explica el concepto",
-            "icon": "layers",
-            "unlock_content": {
-              "title": "Respuesta Modelo",
-              "points": [
-                "Múltiples capas de seguridad",
-                "Si una falla, otras capas protegen",
-                "Perimeter → Network → Endpoint → Application → Data",
-                "Ejemplo: Firewall + IDS + EDR + Encryption"
-              ],
-              "bonus_fact": "Roman castles: múltiples walls. Si breach outer wall, inner walls protegen."
-            }
-          },
-          {
-            "id": "theory2",
-            "task": "CIA Triad",
-            "subtitle": "Qué se violó?",
-            "icon": "security",
-            "unlock_content": {
-              "title": "Respuesta Modelo",
-              "points": [
-                "Confidencialidad: VIOLADA (2TB patient data exfiltrado)",
-                "Integridad: Posiblemente comprometida",
-                "Disponibilidad: NO violada",
-                "Primary violation: Confidencialidad (HIPAA breach)"
-              ],
-              "bonus_fact": "HIPAA violations = $50K por record. Billions en multas potenciales."
-            }
-          }
-        ]
+        "timer_seconds": 20,
+        "question": "¿Cuál fue el vector de Initial Access?",
+        "options": [
+          {"id": "a", "text": "Exploit de vulnerabilidad web", "is_correct": false},
+          {"id": "b", "text": "Spear phishing con attachment malicioso", "is_correct": true},
+          {"id": "c", "text": "Credenciales robadas en dark web", "is_correct": false},
+          {"id": "d", "text": "Insider threat", "is_correct": false}
+        ],
+        "explanation": "T1566.001 - Spearphishing Attachment. CFO abrió invoice.docx con macro que descargó Cobalt Strike. Este es el vector #1 para APTs y ransomware gangs.",
+        "xp_reward": 15
       }
     },
     {
       "screen_id": 7,
-      "type": "progress_checklist",
-      "title": "Informe Ejecutivo",
-      "duration": 300,
+      "type": "timed_quiz",
+      "title": "❓ Credential Dumping",
       "content": {
-        "title": "Entregable Final",
-        "items": [
-          {
-            "id": "exec_summary",
-            "task": "Executive Summary",
-            "subtitle": "Qué pasó?",
-            "icon": "article",
-            "unlock_content": {
-              "title": "Template",
-              "points": [
-                "MedTech Corp sufrió targeted attack vía spear phishing",
-                "Atacantes exfiltraron 2TB patient data (HIPAA violation)",
-                "Root cause: falta de email security, EDR, segmentation",
-                "Costo estimado: $50M+ (multas + remediation)"
-              ],
-              "bonus_fact": "Executive summary debe ser menos de 1 página."
-            }
+        "timer_seconds": 20,
+        "question": "¿Qué herramienta usaron para credential dumping?",
+        "options": [
+          {"id": "a", "text": "Cobalt Strike", "is_correct": false},
+          {"id": "b", "text": "Mimikatz", "is_correct": true},
+          {"id": "c", "text": "Metasploit", "is_correct": false},
+          {"id": "d", "text": "PowerShell Empire", "is_correct": false}
+        ],
+        "explanation": "Mimikatz es LA herramienta para extraer credentials de lsass.exe memory. Técnica T1003.001. Credential Guard hubiera prevenido esto.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "timed_quiz",
+      "title": "❓ CIA Triad Violation",
+      "content": {
+        "timer_seconds": 20,
+        "question": "¿Qué principio de la CIA Triad fue PRINCIPALMENTE violado?",
+        "options": [
+          {"id": "a", "text": "Confidencialidad", "is_correct": true},
+          {"id": "b", "text": "Integridad", "is_correct": false},
+          {"id": "c", "text": "Disponibilidad", "is_correct": false},
+          {"id": "d", "text": "Todos por igual", "is_correct": false}
+        ],
+        "explanation": "Confidencialidad = VIOLADA (2TB PHI exfiltrado). Integridad = posiblemente comprometida pero no confirmado. Disponibilidad = NO violada (sistemas siguen funcionando). Este es un HIPAA breach masivo.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "story_slide",
+      "title": "Análisis de Gaps",
+      "content": {
+        "icon": "error",
+        "icon_color": "#F44336",
+        "headline": "Controles NIST Faltantes",
+        "body": "Ahora identifica qué controles de seguridad faltaban que hubieran prevenido o detectado este ataque.",
+        "mood": "analytical"
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "drag_drop_match",
+      "title": "Map: Gap → Control NIST",
+      "content": {
+        "instruction": "Arrastra cada gap observado al control NIST que lo hubiera prevenido",
+        "scenarios": [
+          {"id": 1, "text": "Phishing attachment no fue bloqueado", "correct_target": "si3"},
+          {"id": 2, "text": "Mimikatz no fue detectado", "correct_target": "si4"},
+          {"id": 3, "text": "Lateral movement sin restricción de workstation a DC", "correct_target": "sc7"},
+          {"id": 4, "text": "CFO no tenía MFA", "correct_target": "ia2"},
+          {"id": 5, "text": "Exfiltración de 2TB no detectada", "correct_target": "si4"}
+        ],
+        "targets": [
+          {"id": "si3", "label": "SI-3: Malicious Code Protection", "color": "#F57C00", "icon": "security"},
+          {"id": "si4", "label": "SI-4: System Monitoring", "color": "#FF9800", "icon": "monitor"},
+          {"id": "sc7", "label": "SC-7: Boundary Protection (Segmentation)", "color": "#2196F3", "icon": "lan"},
+          {"id": "ia2", "label": "IA-2: MFA Required", "color": "#388E3C", "icon": "verified_user"}
+        ],
+        "xp_per_correct": 10,
+        "success_message": "¡Identificaste todos los gaps!"
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "Remediación: Email Security",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "email",
+            "term": "GAP 1",
+            "subtitle": "Phishing no bloqueado",
+            "color": "#F44336"
           },
-          {
-            "id": "recommendations",
-            "task": "Recomendaciones Top 5",
-            "subtitle": "Prioridades",
-            "icon": "checklist",
-            "unlock_content": {
-              "title": "Actions",
-              "points": [
-                "1. Deploy EDR en all endpoints (30 días)",
-                "2. Email security gateway con sandboxing (30 días)",
-                "3. Network segmentation, isolate critical systems (60 días)",
-                "4. MFA obligatorio para all users (30 días)",
-                "5. Hire 24/7 SOC o outsource a MSSP (60 días)"
-              ],
-              "bonus_fact": "Quick wins primero (MFA, email) para show progress rápido."
-            }
+          "back": {
+            "control": "SI-3: Malicious Code Protection",
+            "solution": "Email security gateway con sandboxing",
+            "implementation": [
+              "Deploy Proofpoint o Mimecast",
+              "Sandbox todos los attachments",
+              "Link rewriting para scan destinos",
+              "External email banner",
+              "DMARC/SPF/DKIM validation"
+            ],
+            "timeline": "30 días para deployment",
+            "cost": "$50K-100K/año para 500 users",
+            "effectiveness": "Bloquea 90%+ de phishing",
+            "color": "#D32F2F"
           }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "flip_card_full",
+      "title": "Remediación: EDR",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "computer",
+            "term": "GAP 2",
+            "subtitle": "Mimikatz no detectado",
+            "color": "#FF9800"
+          },
+          "back": {
+            "control": "SI-4: System Monitoring",
+            "solution": "EDR (Endpoint Detection & Response)",
+            "implementation": [
+              "Deploy CrowdStrike, SentinelOne o Microsoft Defender",
+              "EDR en ALL endpoints (workstations, servers)",
+              "Behavioral analysis enabled",
+              "Automatic containment para high-severity",
+              "Integration con SIEM"
+            ],
+            "timeline": "30 días para rollout",
+            "cost": "$30-50 per endpoint/año",
+            "effectiveness": "95%+ detection de credential dumping, lateral movement",
+            "color": "#F57C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "flip_card_full",
+      "title": "Remediación: Segmentación",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "lan",
+            "term": "GAP 3",
+            "subtitle": "Lateral movement sin restricción",
+            "color": "#2196F3"
+          },
+          "back": {
+            "control": "SC-7: Boundary Protection",
+            "solution": "Network segmentation + micro-segmentation",
+            "implementation": [
+              "VLANs: separate workstations, servers, critical",
+              "DC en VLAN isolated - NO direct access from workstations",
+              "Firewall rules entre VLANs",
+              "Port 445 (SMB) bloqueado entre workstations",
+              "Zero Trust network access (ZTNA)"
+            ],
+            "timeline": "60 días para implementation",
+            "cost": "$100K-200K (network re-architecture)",
+            "effectiveness": "Limits blast radius - compromiso de workstation ≠ compromiso de DC",
+            "color": "#1976D2"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "flip_card_full",
+      "title": "Remediación: MFA",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "verified_user",
+            "term": "GAP 4",
+            "subtitle": "Sin MFA en executive accounts",
+            "color": "#388E3C"
+          },
+          "back": {
+            "control": "IA-2: Multi-Factor Authentication",
+            "solution": "MFA obligatorio para TODOS",
+            "implementation": [
+              "MFA para email (O365/Gmail)",
+              "MFA para VPN",
+              "MFA para todas las apps críticas",
+              "FIDO2 hardware keys para executives y admins",
+              "Conditional access policies"
+            ],
+            "timeline": "30 días - quick win",
+            "cost": "$5-10 per user/año",
+            "effectiveness": "99.9% reduction en account takeover (Microsoft stats)",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "slider_balance",
+      "title": "Priorización de Remediaciones",
+      "content": {
+        "scenario": "Tras el incidente, tienes recursos limitados. ¿Qué estrategia de remediación priorizas primero?",
+        "left_option": {
+          "label": "Quick Wins (MFA + EDR)",
+          "icon": "speed",
+          "consequences": [
+            "✅ Implementación rápida (<30 días)",
+            "✅ Bloquea robo de credenciales y malware",
+            "❌ No arregla la arquitectura de red plana"
+          ]
+        },
+        "right_option": {
+          "label": "Arquitectura (Segmentación)",
+          "icon": "lan",
+          "consequences": [
+            "✅ Contiene movimiento lateral eficazmente",
+            "❌ Proyecto complejo (6-12 meses)",
+            "❌ Deja los endpoints vulnerables hoy"
+          ]
+        },
+        "explanation": "En recuperación, la velocidad es clave. MFA y EDR ofrecen la mayor reducción de riesgo inmediato. La segmentación es vital, pero es un proyecto a largo plazo, no una cura rápida."
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "story_slide",
+      "title": "Arquitectura Defense in Depth",
+      "content": {
+        "icon": "architecture",
+        "icon_color": "#00BCD4",
+        "headline": "Diseña la Nueva Arquitectura",
+        "body": "Ahora que identificaste gaps, diseña una arquitectura completa de Defense in Depth para MedTech Corp.",
+        "requirements": [
+          "Perimeter + Email security",
+          "Network segmentation",
+          "Endpoint protection",
+          "Identity & access controls",
+          "Monitoring & detection",
+          "Backup & recovery"
         ]
       }
+    },
+    {
+      "screen_id": 17,
+      "type": "drag_drop_builder",
+      "title": "🏗️ Build Defense in Depth",
+      "content": {
+        "instruction": "Arrastra componentes a cada capa de defensa",
+        "available_components": [
+          {"id": "firewall", "name": "Next-Gen Firewall", "icon": "shield", "layer": "perimeter"},
+          {"id": "ids", "name": "IDS/IPS", "icon": "warning", "layer": "perimeter"},
+          {"id": "email_gw", "name": "Email Gateway", "icon": "email", "layer": "perimeter"},
+          {"id": "vlan", "name": "VLANs", "icon": "lan", "layer": "network"},
+          {"id": "microseg", "name": "Micro-segmentation", "icon": "grid_view", "layer": "network"},
+          {"id": "edr", "name": "EDR", "icon": "computer", "layer": "endpoint"},
+          {"id": "dlp", "name": "DLP", "icon": "lock", "layer": "endpoint"},
+          {"id": "mfa", "name": "MFA", "icon": "verified_user", "layer": "identity"},
+          {"id": "pam", "name": "PAM (Priv Access)", "icon": "vpn_key", "layer": "identity"},
+          {"id": "siem", "name": "SIEM", "icon": "monitor", "layer": "monitoring"},
+          {"id": "soc", "name": "24/7 SOC", "icon": "visibility", "layer": "monitoring"}
+        ],
+        "layers": [
+          {"id": "perimeter", "label": "Perimeter", "required": 2},
+          {"id": "network", "label": "Network", "required": 2},
+          {"id": "endpoint", "label": "Endpoint", "required": 2},
+          {"id": "identity", "label": "Identity", "required": 2},
+          {"id": "monitoring", "label": "Monitoring", "required": 2}
+        ],
+        "success_criteria": "Mínimo 2 controles por capa",
+        "xp_reward": 30
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "timed_quiz",
+      "title": "❓ Conceptual: Defense in Depth",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Por qué Defense in Depth es crítico?",
+        "options": [
+          {"id": "a", "text": "Porque un solo control siempre falla eventualmente", "is_correct": true},
+          {"id": "b", "text": "Porque así lo requiere compliance", "is_correct": false},
+          {"id": "c", "text": "Porque es más barato que un control fuerte", "is_correct": false},
+          {"id": "d", "text": "Porque se ve bien en presentaciones", "is_correct": false}
+        ],
+        "explanation": "Correcto. NINGÚN control es 100% efectivo. Phishing bypasses firewall. EDR puede tener blind spots. Si una capa falla, las otras siguen protegiendo. Como castillo medieval: múltiples muros.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 19,
+      "type": "timed_quiz",
+      "title": "❓ Conceptual: Zero Trust",
+      "content": {
+        "timer_seconds": 25,
+        "question": "Zero Trust significa:",
+        "options": [
+          {"id": "a", "text": "No confiar en nadie, ni empleados ni partners", "is_correct": false},
+          {"id": "b", "text": "No asumir trust basado en ubicación - verificar siempre", "is_correct": true},
+          {"id": "c", "text": "Bloquear todo el tráfico por default", "is_correct": false},
+          {"id": "d", "text": "No usar VPN", "is_correct": false}
+        ],
+        "explanation": "Correcto. Zero Trust = 'Never trust, always verify'. Estar en la oficina NO significa trusted. Cada request necesita autenticación y autorización. Location ≠ trust.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 20,
+      "type": "summary_stats",
+      "title": "Executive Summary: MedTech",
+      "content": {
+        "stats": [
+          {"icon": "bug_report", "value": "30 días", "label": "Dwell time antes de detección"},
+          {"icon": "storage", "value": "2TB", "label": "PHI exfiltrado"},
+          {"icon": "attach_money", "value": "$50M+", "label": "Multas HIPAA potenciales"},
+          {"icon": "schedule", "value": "5", "label": "Fases del ataque (Cyber Kill Chain)"}
+        ],
+        "root_causes": [
+          "Sin email security gateway - phishing no bloqueado",
+          "Sin EDR - Mimikatz y lateral movement no detectados",
+          "Sin segmentación - workstation → DC sin restricción",
+          "Sin MFA en executives - credentials suficientes para access"
+        ],
+        "recommended_actions": [
+          "1. MFA obligatorio en 30 días (quick win)",
+          "2. EDR deployment en 30 días (detection crítica)",
+          "3. Email gateway en 30 días (bloquear phishing)",
+          "4. Network segmentation en 60 días (limit lateral movement)",
+          "5. Hire/outsource 24/7 SOC en 60 días (monitoring continuo)"
+        ],
+        "estimated_cost": "$500K-1M primer año (vs $50M+ en multas si no se remedia)"
+      }
+    },
+    {
+      "screen_id": 21,
+      "type": "achievement_unlock",
+      "title": "🏆 EVALUACIÓN APROBADA",
+      "content": {
+        "achievement": {
+          "icon": "military_tech",
+          "name": "Cyber Incident Responder",
+          "description": "Completaste la evaluación final del Curso 1. Analizaste un breach completo, identificaste gaps, y diseñaste remediación.",
+          "rarity": "epic",
+          "color": "#FFD700"
+        },
+        "certification": {
+          "title": "Fundamentos de Ciberseguridad",
+          "topics_mastered": [
+            "CIA Triad",
+            "Threat actors & taxonomía",
+            "CVE & vulnerabilidades",
+            "Malware analysis",
+            "Ingeniería social",
+            "NIST SP 800-53 controls",
+            "Defense in Depth",
+            "Zero Trust",
+            "MITRE ATT&CK",
+            "Incident response"
+          ]
+        }
+      }
+    },
+    {
+      "screen_id": 22,
+      "type": "lesson_complete",
+      "title": "🎓 CURSO 1 COMPLETADO",
+      "content": {
+        "xp_earned": 100,
+        "total_course_xp": 450,
+        "key_takeaways": [
+          "Analizaste breach completo usando MITRE ATT&CK framework",
+          "Identificaste gaps en controles NIST SP 800-53",
+          "Diseñaste arquitectura Defense in Depth completa",
+          "Priorizaste remediaciones basado en impacto y costo"
+        ],
+        "next_course": {
+          "id": "c2",
+          "title": "Curso 2: Redes y Protocolos",
+          "preview": "OSI model, TCP/IP, DNS, firewalls, VPNs, y network attacks"
+        },
+        "congratulations": "¡Felicitaciones! Has dominado los fundamentos de ciberseguridad. Estás listo para profundizar en temas más técnicos."
+      }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "Eres el nuevo CISO. Tu primer día descubres evidencia de breach en progreso."
-  }
+  ]
 }

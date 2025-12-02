@@ -76,8 +76,8 @@ class AuthService:
                 email=email,
                 password_hash=password_hash.decode('utf-8'),
                 name=name,
-                email_verified=False,  # ✅ No verificado inicialmente
-                terms_accepted_at=datetime.utcnow()  # ✅ Acepta términos al registrarse
+                email_verified=False,  #No verificado inicialmente
+                terms_accepted_at=datetime.utcnow()  # Acepta términos al registrarse
             )
             session.add(user)
             session.commit()
@@ -97,8 +97,6 @@ class AuthService:
                 self.email_service.send_verification_email(email, code, name)
             except Exception as e:
                 print(f"⚠️ Error enviando email: {e}")
-                # No fallar el registro si el email falla
-                # En producción, podrías reenviar después
 
             # 7. NO generar tokens todavía (usuario debe verificar primero)
             return {
@@ -162,7 +160,7 @@ class AuthService:
             try:
                 self.email_service.send_welcome_email(user.email, user.name)
             except:
-                pass  # No es crítico
+                pass  
             
             return {
                 "success": True,
@@ -229,7 +227,7 @@ class AuthService:
             if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
                 raise ValueError("Credenciales inválidas")
             
-            # ✅ VERIFICAR QUE EL EMAIL ESTÉ CONFIRMADO
+            # VERIFICAR QUE EL EMAIL ESTÉ CONFIRMADO
             if not user.email_verified:
                 raise ValueError("Debes verificar tu email antes de iniciar sesión")
 

@@ -1,186 +1,289 @@
 {
   "id": "c5_l5",
-  "title": "Forensics Digital",
-  "description": "Business Continuity & Disaster Recovery",
+  "title": "Continuidad del Negocio",
+  "description": "Caso Real: Maersk / NotPetya 2017",
   "type": "interactive",
-  "duration_minutes": 8,
-  "xp_reward": 20,
+  "duration_minutes": 32,
+  "xp_reward": 85,
   "order_index": 5,
   "course_id": 5,
-  "total_screens": 3,
+  "total_screens": 25,
+  "theme": {
+    "primary_color": "#E65100",
+    "secondary_color": "#00897B",
+    "accent_color": "#D32F2F",
+    "gradient": ["#331100", "#662200", "#993300"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "Business Continuity & Disaster Recovery",
-      "duration": 180,
+      "type": "story_intro",
+      "title": "Operación: Global Chaos",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "emergency",
-              "term": "BCP - Business Continuity Plan",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "How to maintain critical operations durante disruption. Identifies critical processes, dependencies, workarounds. Goal: Keep business running.",
-              "example": "Colonial Pipeline: BCP includes manual fuel delivery, communication plan. Tested? Probably not well. BCP needs quarterly testing.",
-              "color": "#EF5350"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "restore",
-              "term": "DRP - Disaster Recovery Plan",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "How to restore IT systems post-disaster. Backup/restore procedures, failover, rebuild steps. Subset of BCP focused on IT.",
-              "example": "RTO (Recovery Time Objective): Max downtime tolerable. RPO (Recovery Point Objective): Max data loss tolerable. Colonial: RTO 6 days too long.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "backup",
-              "term": "Backup Strategy: 3-2-1 Rule",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "3 copies of data, 2 different media types, 1 offsite/offline. Protects against ransomware (air-gapped backup).",
-              "example": "3 copies: Production + Daily backup + Weekly archive. 2 media: Disk + Tape. 1 offsite: Cloud or physical vault. Test restores monthly.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "science",
-              "term": "DR Testing",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Test disaster recovery annually MINIMUM. Tabletop (discussion), Walkthrough (step-by-step), Full (actual failover). Identify gaps.",
-              "example": "Colonial lesson: Restore from backups was slow. Indicates: backups not tested, restore procedures unclear. Testing reveals this.",
-              "color": "#FFB74D"
-            }
-          }
-        ]
+        "headline": "27 JUNIO 2017",
+        "subheadline": "NotPetya: el ciberataque más caro de la historia",
+        "stats": [
+          {"value": "$10B+", "label": "Daños globales"},
+          {"value": "$300M", "label": "Solo Maersk"},
+          {"value": "1,800+", "label": "Servidores destruidos"},
+          {"value": "45K", "label": "PCs afectados"},
+          {"value": "10 días", "label": "Operaciones paralizadas"}
+        ],
+        "cta_text": "Iniciar Plan de Continuidad"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "DR Planning",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "El Día que Maersk se Paró",
       "content": {
-        "items": [
+        "icon": "directions_boat",
+        "icon_color": "#E65100",
+        "headline": "La mayor naviera del mundo se quedó sin barcos",
+        "body": "27 de junio, 11:00 UTC. Todos los sistemas Windows de Maersk caen simultáneamente. Terminales portuarias, sistemas de carga, email, Active Directory... todo. 76 puertos parados. Camiones haciendo cola de kilómetros. NotPetya disfrazado de ransomware (pero su objetivo real era destrucción).",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Un único dominio controlador en Ghana (sin conexión) salvó a Maersk de la bancarrota."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "crisis_timeline",
+      "title": "27 JUNIO 2017 - DÍA 0",
+      "content": {
+        "events": [
           {
-            "id": "dr1",
-            "task": "Business Impact Analysis (BIA)",
-            "subtitle": "What's critical?",
-            "icon": "business",
-            "unlock_content": {
-              "title": "Identify Priorities",
-              "points": [
-                "Tier 1: Mission-critical (< 4 hour RTO). Ex: Payment processing, 911.",
-                "Tier 2: Important (< 24 hour RTO). Ex: Email, HR systems.",
-                "Tier 3: Standard (< 1 week RTO). Ex: Reporting, archives.",
-                "Dependencies: Database → App → Web. Must restore in order.",
-                "Colonial: Pipeline control = Tier 1. But took 6 days."
-              ],
-              "bonus_fact": "BIA answers: If this system down, how long before business impact? That's your RTO."
+            "time": "11:00 UTC",
+            "icon": "public_off",
+            "title": "Detonación global",
+            "description": "NotPetya se propaga vía M.E.Doc (software ucraniano). Maersk infectado en segundos."
+          },
+          {
+            "time": "11:30 UTC",
+            "icon": "domain_disabled",
+            "title": "Active Directory destruido",
+            "description": "Todos los DCs wipeados. Sin autenticación posible."
+          },
+          {
+            "time": "14:00 UTC",
+            "icon": "directions_boat",
+            "title": "Puertos paralizados",
+            "description": "Los 76 puertos de Maersk no pueden cargar/descargar barcos."
+          },
+          {
+            "time": "Día +10",
+            "icon": "restore",
+            "title": "Recuperación completa",
+            "description": "Gracias al DC de Ghana + backups offline."
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "flip_card_full",
+      "title": "BCP vs DRP",
+      "content": {
+        "card": {
+          "front": {"icon": "business_center", "term": "BCP / DRP", "color": "#00897B"},
+          "back": {
+            "bcp": "Business Continuity Plan: mantener operaciones críticas durante crisis",
+            "drp": "Disaster Recovery Plan: recuperar sistemas tras incidente",
+            "maersk": "BCP falló (sin segmentación), DRP funcionó (backups offline + DC aislado)",
+            "color": "#00695C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "RTO y RPO",
+      "content": {
+        "card": {
+          "front": {"icon": "timer", "term": "RTO / RPO", "color": "#E65100"},
+          "back": {
+            "rto": "Recovery Time Objective: tiempo máximo aceptable de downtime",
+            "rpo": "Recovery Point Objective: pérdida máxima aceptable de datos",
+            "maersk_example": "RTO: 10 días (real), RPO: 1 día (gracias al DC Ghana)",
+            "color": "#EF6C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "El DC de Ghana",
+      "content": {
+        "card": {
+          "front": {"icon": "location_on", "term": "EL HÉROE", "color": "#388E3C"},
+          "back": {
+            "story": "Un único Domain Controller en Ghana estaba apagado por corte de luz. No se infectó. Contenía imagen completa de AD.",
+            "impact": "Permitió reconstruir todo el dominio global en 10 días.",
+            "lesson": "Air-gap real + backups offline = salvavidas",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "NotPetya vs Petya",
+      "content": {
+        "card": {
+          "front": {"icon": "coronavirus", "term": "NOTPETYA", "color": "#D32F2F"},
+          "back": {
+            "differences": [
+              "Petya: ransomware real (recuperable)",
+              "NotPetya: wiper disfrazado (imposible recuperar)",
+              "Objetivo: destrucción (atribuido a Rusia contra Ucrania)",
+              "Vector: M.E.Doc + EternalBlue/EternalRomance"
+            ],
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Regla 3-2-1 Backup",
+      "content": {
+        "card": {
+          "front": {"icon": "backup", "term": "3-2-1 RULE", "color": "#1976D2"},
+          "back": {
+            "rule": "3 copias, 2 medios diferentes, 1 offsite/air-gapped",
+            "maersk": "Cumplían 3-2-1 → sobrevivieron",
+            "wannacry": "Muchos no lo cumplían → pagaron o murieron",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "drag_drop_match",
+      "title": "BCP/DRP Conceptos",
+      "content": {
+        "instruction": "Relaciona el término con su definición",
+        "scenarios": [
+          {"id": 1, "text": "Tiempo máximo aceptable de downtime", "correct_target": "rto"},
+          {"id": 2, "text": "Pérdida máxima aceptable de datos", "correct_target": "rpo"},
+          {"id": 3, "text": "Plan para mantener operaciones", "correct_target": "bcp"},
+          {"id": 4, "text": "Plan para recuperar sistemas", "correct_target": "drp"}
+        ],
+        "targets": [
+          {"id": "rto", "label": "RTO", "color": "#E65100"},
+          {"id": "rpo", "label": "RPO", "color": "#FF9800"},
+          {"id": "bcp", "label": "BCP", "color": "#00897B"},
+          {"id": "drp", "label": "DRP", "color": "#1976D2"}
+        ],
+        "xp_per_correct": 10
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "swipe_cards",
+      "title": "Business Continuity Best Practice?",
+      "content": {
+        "instruction": "¿Es buena práctica de continuidad?",
+        "cards": [
+          {"id": 1, "scenario": "Todos los backups en la misma red", "correct_answer": "left"},
+          {"id": 2, "scenario": "Backups offline/air-gapped", "correct_answer": "right"},
+          {"id": 3, "scenario": "Testear restore mensualmente", "correct_answer": "right"},
+          {"id": 4, "scenario": "Un único Domain Controller global", "correct_answer": "left"},
+          {"id": 5, "scenario": "Regla 3-2-1 estricta", "correct_answer": "right"}
+        ],
+        "labels": {"left": "NO", "right": "SÍ"},
+        "xp_per_correct": 12
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "crisis_decision",
+      "title": "Tu empresa sufre NotPetya",
+      "content": {
+        "scenario": "Todos los sistemas Windows están cifrados. ¿Qué haces PRIMERO?",
+        "timer_seconds": 35,
+        "options": [
+          {
+            "id": "pay",
+            "text": "Pagar el rescate ($300 en Bitcoin)",
+            "icon": "money_off",
+            "is_correct": false,
+            "consequence": {
+              "title": "Inútil",
+              "description": "NotPetya es wiper. No hay clave de descifrado. Dinero perdido.",
+              "impact_score": -100
             }
           },
           {
-            "id": "dr2",
-            "task": "Define RTOs & RPOs",
-            "subtitle": "Recovery objectives",
-            "icon": "timer",
-            "unlock_content": {
-              "title": "Set Targets",
-              "points": [
-                "RTO: Max downtime. Ex: 4 hours.",
-                "RPO: Max data loss. Ex: 1 hour (last backup).",
-                "Cost trade-off: Lower RTO/RPO = more expensive (real-time replication).",
-                "Document: Every critical system needs defined RTO/RPO.",
-                "Colonial: Actual recovery 6 days >> desired RTO."
-              ],
-              "bonus_fact": "RTO=0, RPO=0 (zero downtime, zero data loss) = $$$$$. Active-active clusters, sync replication."
-            }
-          },
-          {
-            "id": "dr3",
-            "task": "Backup & Replication",
-            "subtitle": "Data protection",
-            "icon": "backup",
-            "unlock_content": {
-              "title": "Implementation",
-              "points": [
-                "Backup frequency: Matches RPO. RPO=1 hour = hourly backups.",
-                "Backup testing: Monthly restore tests. Verify integrity.",
-                "Air-gapped: Offline/immutable backups. Ransomware protection.",
-                "Cloud replication: AWS to Azure. Multi-cloud DR.",
-                "Veeam, Commvault, AWS Backup popular solutions."
-              ],
-              "bonus_fact": "Ransomware targets backups. Immutable backups (write-once) = can't be encrypted."
-            }
-          },
-          {
-            "id": "dr4",
-            "task": "DR Testing & Training",
-            "subtitle": "Practice makes perfect",
-            "icon": "school",
-            "unlock_content": {
-              "title": "Validation",
-              "points": [
-                "Tabletop: Annual. Discuss scenario, walk through plan.",
-                "Simulation: Semi-annual. Partial failover, non-prod.",
-                "Full DR test: Annual. Actual failover to DR site. Production cutover.",
-                "Document gaps: Update plan based on test results.",
-                "Train staff: Everyone knows their role in DR."
-              ],
-              "bonus_fact": "Untested DR plan = useless. Colonial learned hard way. Test, test, test."
+            "id": "restore",
+            "text": "Aislar red + iniciar restore desde backups offline",
+            "icon": "restore_page",
+            "is_correct": true,
+            "consequence": {
+              "title": "Única opción real",
+              "description": "Maersk tardó 10 días pero sobrevivió. Sin backups offline = bancarrota.",
+              "impact_score": 100,
+              "xp_bonus": 30
             }
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación",
-      "duration": 60,
+      "screen_id": 12,
+      "type": "timed_quiz",
+      "title": "Lección Maersk",
       "content": {
-        "question": "RTO vs RPO difference?",
+        "timer_seconds": 30,
+        "question": "¿Qué salvó realmente a Maersk?",
         "options": [
-          {
-            "id": "a",
-            "text": "Son lo mismo",
-            "is_correct": false,
-            "feedback": "Incorrecto. Conceptos diferentes."
-          },
-          {
-            "id": "b",
-            "text": "RTO = max downtime tolerable. RPO = max data loss tolerable.",
-            "is_correct": true,
-            "feedback": "CORRECTO! RTO (Recovery Time Objective): How long can system be down? Ex: Payment system RTO=1 hour. Must restore within 1 hour. RPO (Recovery Point Objective): How much data loss acceptable? Ex: RPO=15 min means last 15 min of transactions might be lost. Need: Backup every 15 min. Trade-off: Lower RTO/RPO = more expensive (hot standby, real-time replication). Colonial: RTO should have been <1 day. Actual: 6 days."
-          },
-          {
-            "id": "c",
-            "text": "RTO = tiempo de backup. RPO = frecuencia",
-            "is_correct": false,
-            "feedback": "Incorrecto. Confusión. RPO drives backup frequency pero RPO ≠ backup time."
-          }
-        ]
+          {"id": "a", "text": "Pagaron el rescate", "is_correct": false},
+          {"id": "b", "text": "Un DC aislado en Ghana + backups offline", "is_correct": true},
+          {"id": "c", "text": "Tenían ciberseguro", "is_correct": false}
+        ],
+        "explanation": "El DC de Ghana estaba offline por un corte de luz. Fue el único sistema limpio del planeta Maersk.",
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "health_and_safety",
+          "name": "Business Resilience Master",
+          "description": "Dominas BCP/DRP, RTO/RPO y la regla 3-2-1",
+          "rarity": "legendary",
+          "color": "#FFD700"
+        }
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 85,
+        "key_takeaways": [
+          "NotPetya 2017: wiper disfrazado de ransomware ($10B+ daños)",
+          "Maersk sobrevivió gracias a un DC aislado y backups offline",
+          "Regla 3-2-1: 3 copias, 2 medios, 1 offsite",
+          "RTO = tiempo máximo de downtime, RPO = pérdida máxima de datos",
+          "Nunca pagues a un wiper"
+        ],
+        "next_lesson": {
+          "id": "c5_l6",
+          "title": "Evaluación Final IR",
+          "preview": "Examen práctico completo de Respuesta a Incidentes"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }

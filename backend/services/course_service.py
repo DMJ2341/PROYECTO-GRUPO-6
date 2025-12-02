@@ -1,4 +1,4 @@
-# backend/services/course_service.py - LÓGICA PARA CURSOS (CORRECTO)
+# backend/services/course_service.py 
 from database.db import get_session
 from models.course import Course
 from models.lesson import Lesson

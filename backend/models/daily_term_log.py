@@ -9,7 +9,7 @@ class DailyTermLog(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     glossary_id = Column(Integer, ForeignKey('glossary.id'), nullable=False)
-    viewed_date = Column(Date, nullable=False)  # Solo la fecha (sin hora)
+    viewed_date = Column(Date, nullable=False)  
     viewed_at = Column(DateTime, default=datetime.utcnow)
 
     # Asegura que solo se registre 1 término diario por usuario en la base de datos

@@ -1,7 +1,7 @@
 from database.db import get_session
 from models.test_preference import (
     TestQuestion, Certification, Lab, LearningPath,
-    RoleSkill, AcademicReference, TestResult, TestAnswer # ✅ NOMBRES CORREGIDOS
+    RoleSkill, AcademicReference, TestResult, TestAnswer 
 )
 from datetime import datetime
 from sqlalchemy import desc
@@ -17,7 +17,7 @@ class TestPreferenceService:
         session = get_session()
         try:
             questions = session.query(TestQuestion).order_by(TestQuestion.order).all()
-            # Usamos el método to_dict() del modelo para más limpieza
+            
             return [q.to_dict() for q in questions]
         finally:
             session.close()
@@ -38,7 +38,7 @@ class TestPreferenceService:
             # 3. Determinar rol recomendado usando algoritmo Holland Code
             recommended_role, confidence = self._determine_role(scores)
             
-            # 4. Guardar resultado en BD usando TestResult (nombre correcto)
+            # 4. Guardar resultado en BD 
             test_result = TestResult(
                 user_id=user_id,
                 recommended_role=recommended_role,
@@ -54,7 +54,7 @@ class TestPreferenceService:
             session.add(test_result)
             session.flush()
             
-            # 5. Guardar respuestas individuales usando TestAnswer (nombre correcto)
+            # 5. Guardar respuestas individuales 
             for question_id, rating in answers.items():
                 answer = TestAnswer(
                     test_result_id=test_result.id,
@@ -91,8 +91,7 @@ class TestPreferenceService:
             'CONVENTIONAL': 0, 'ENTERPRISING': 0, 'ARTISTIC': 0
         }
         
-        # Optimización: Traer todas las preguntas en una consulta para no hacer 28 queries
-        # (Aunque el método actual funciona, es mejor cargar el mapa de categorías una vez)
+       
         questions = session.query(TestQuestion).all()
         question_map = {q.id: q.category for q in questions}
 
@@ -156,7 +155,7 @@ class TestPreferenceService:
             
             return {
                 'role': role,
-                # Usamos to_dict() que definiste en los modelos para ser más limpios
+            
                 'certifications': [c.to_dict() for c in certifications],
                 'labs': [l.to_dict() for l in labs],
                 'learning_paths': [lp.to_dict() for lp in learning_paths],
@@ -170,7 +169,7 @@ class TestPreferenceService:
         """Obtiene el último resultado del test del usuario"""
         session = get_session()
         try:
-            # Usamos TestResult (nombre correcto)
+            
             result = session.query(TestResult)\
                 .filter_by(user_id=user_id)\
                 .order_by(TestResult.created_at.desc())\

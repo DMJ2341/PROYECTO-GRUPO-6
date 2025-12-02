@@ -1,247 +1,290 @@
 {
   "id": "c5_l2",
-  "title": "Detección y Análisis",
-  "description": "Caso: NIST Risk Management Framework (RMF)",
+  "title": "Forense Digital",
+  "description": "Caso Real: Sony Pictures 2014 - Guardians of Peace",
   "type": "interactive",
-  "duration_minutes": 13,
-  "xp_reward": 20,
+  "duration_minutes": 30,
+  "xp_reward": 75,
   "order_index": 2,
   "course_id": 5,
-  "total_screens": 4,
+  "total_screens": 23,
+  "theme": {
+    "primary_color": "#8E24AA",
+    "secondary_color": "#E53935",
+    "accent_color": "#00ACC1",
+    "gradient": ["#1c0023", "#33003d", "#4d0057"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso: NIST Risk Management Framework (RMF)",
-      "duration": 200,
+      "type": "story_intro",
+      "title": "Operación: #GOP",
       "content": {
-        "story_title": "RMF: Federal Standard para Risk Management",
-        "story_intro": "NIST SP 800-37. Mandatory para federal agencies. Adoptado por private sector.",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "category",
-            "title": "Step 1: Categorize",
-            "content": "Categorize information system y data según impact (Low, Moderate, High). FIPS 199 criteria: Confidentiality, Integrity, Availability. Determines baseline controls.",
-            "insight": "Healthcare data = High. Email system = Moderate. Public website = Low. Categorization drives everything."
-          },
-          {
-            "id": "2",
-            "icon": "checklist",
-            "title": "Step 2: Select",
-            "content": "Select security controls from NIST SP 800-53. Baselines: Low (100+ controls), Moderate (200+), High (300+). Tailor to org needs. Cost-benefit analysis.",
-            "insight": "Don't implement all controls blindly. Tailor to threats, resources, mission. Document rationale."
-          },
-          {
-            "id": "3",
-            "icon": "build",
-            "title": "Step 3: Implement",
-            "content": "Implement selected controls. Document HOW implemented. Configuration, procedures, training. Evidence collection for assessment.",
-            "insight": "Implementation ≠ checking box. Must be effective, documented, maintainable. Equifax: Had controls on paper pero no enforced."
-          },
-          {
-            "id": "4",
-            "icon": "fact_check",
-            "title": "Step 4: Assess",
-            "content": "Independent assessor evaluates control effectiveness. Testing: Interviews, documentation review, technical testing. Identify deficiencies. Risk assessment report.",
-            "insight": "Independent assessment critical. Self-assessment = bias. Third party finds gaps you miss."
-          },
-          {
-            "id": "5",
-            "icon": "verified",
-            "title": "Step 5: Authorize",
-            "content": "Authorizing Official (AO) reviews assessment. Accept residual risk? Sign Authority to Operate (ATO). Valid 3 years typically. Conditions may apply.",
-            "insight": "AO accountable for risk. Can reject if too high. ATO = permission to operate with known risks."
-          },
-          {
-            "id": "6",
-            "icon": "autorenew",
-            "title": "Step 6: Monitor",
-            "content": "Continuous monitoring. Vulnerability scans, log review, config checks. Annual assessment. Report changes. Maintain ATO.",
-            "insight": "Security is NOT one-time. Continuous monitoring = maintain ATO. Equifax: Monitoring failed (expired cert)."
-          }
-        ]
+        "headline": "24 NOVIEMBRE 2014",
+        "subheadline": "Wiper malware destruye 75% de los servidores de Sony Pictures",
+        "stats": [
+          {"value": "3,000+", "label": "PCs destruidos"},
+          {"value": "75%", "label": "Servidores wipeados"},
+          {"value": "100TB+", "label": "Datos filtrados"},
+          {"value": "$100M+", "label": "Costos totales"}
+        ],
+        "cta_text": "Iniciar Análisis Forense"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "NIST SP 800-53 Control Families",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "El Día del Juicio",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "security",
-              "term": "AC - Access Control",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Limit system access to authorized users. Least privilege, separation of duties, account management, access enforcement, remote access controls.",
-              "example": "AC-2: Account Management. AC-3: Access Enforcement. AC-6: Least Privilege. Equifax: Over-privileged accounts may have contributed.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "update",
-              "term": "SI - System & Information Integrity",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Detect, report, correct flaws. Malware protection, monitoring, vulnerability management. SI-2: Flaw Remediation (patching).",
-              "example": "SI-2: Equifax FAILED. Patch available, not applied. SI-4: System Monitoring. Expired cert = monitoring failure.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "domain_verification",
-              "term": "RA - Risk Assessment",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Periodic risk assessment. Vulnerability scanning, threat modeling, impact analysis. RA-3: Risk Assessment, RA-5: Vulnerability Monitoring.",
-              "example": "RA-5: Vulnerability scans. Equifax had scans pero no remediation. Assessment without action = useless.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "play_arrow",
-              "term": "IR - Incident Response",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Incident handling capability. Preparation, detection, analysis, containment, eradication, recovery. IR-4: Incident Handling.",
-              "example": "IR-6: Incident Reporting. Equifax delayed public disclosure = violation de timely reporting best practice.",
-              "color": "#EF5350"
-            }
-          }
-        ]
+        "icon": "mood_bad",
+        "icon_color": "#E53935",
+        "headline": "Pantalla roja con calavera y mensaje: 'Hacked by #GOP'",
+        "body": "Empleados llegan a la oficina y sus PCs muestran una calavera roja. Todos los datos borrados. Emails, películas inéditas, guiones, salarios, SSNs de actores... todo filtrado en torrents días después. Atribuido a Corea del Norte por la película 'The Interview'.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Primer wiper attack a gran escala en occidente. Objetivo: destrucción + humillación pública."
+        }
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Risk Assessment Process",
-      "duration": 300,
+      "type": "crisis_timeline",
+      "title": "⏱️ CRONOLOGÍA DESTRUCCIÓN",
       "content": {
-        "items": [
+        "events": [
           {
-            "id": "ra1",
-            "task": "Identify Assets & Threats",
-            "subtitle": "What to protect?",
-            "icon": "inventory",
-            "unlock_content": {
-              "title": "Asset & Threat Identification",
-              "points": [
-                "Assets: Hardware, software, data, people, facilities",
-                "Criticality: Mission-critical, important, routine",
-                "Threats: Natural (flood), human (hacker), environmental (fire)",
-                "Threat actors: Nation-state, criminals, insiders, hacktivists",
-                "Equifax: Crown jewels = 147M records. Threat = financially motivated attackers"
-              ],
-              "bonus_fact": "Asset valuation: Replacement cost + data value + business impact. Crown jewels deserve most protection."
-            }
+            "time": "21 Nov 2014",
+            "icon": "phishing",
+            "title": "Spear-phishing inicial",
+            "description": "Emails falsos de Apple ID a empleados IT. Malware Destover implantado.",
+            "severity": "warning"
           },
           {
-            "id": "ra2",
-            "task": "Identify Vulnerabilities",
-            "subtitle": "Where are gaps?",
-            "icon": "bug_report",
-            "unlock_content": {
-              "title": "Vulnerability Assessment",
-              "points": [
-                "Technical: Unpatched software, misconfigurations, weak passwords",
-                "Physical: Unlocked doors, lack of cameras",
-                "Administrative: Poor policies, lack of training",
-                "Discovery: Vulnerability scans, penetration testing, audits",
-                "Equifax vulnerabilities: Unpatched Struts, no segmentation, monitoring gaps"
-              ],
-              "bonus_fact": "Vulnerability ≠ risk. Risk = Vulnerability × Threat × Impact. All three factors matter."
-            }
+            "time": "24 Nov 08:00",
+            "icon": "skull",
+            "title": "Wiper detonado",
+            "description": "3,000+ PCs y 75% servidores borrados. MBR sobrescrito. Sistemas unbootable.",
+            "severity": "critical"
           },
           {
-            "id": "ra3",
-            "task": "Analyze Risk",
-            "subtitle": "Likelihood × Impact",
-            "icon": "calculate",
-            "unlock_content": {
-              "title": "Risk Analysis",
-              "points": [
-                "Qualitative: High/Medium/Low. Faster, subjective.",
-                "Quantitative: ALE (Annual Loss Expectancy) = SLE × ARO. Slower, objective.",
-                "Risk matrix: Plot likelihood vs impact",
-                "Inherent risk: Before controls. Residual risk: After controls.",
-                "Equifax: Inherent risk HIGH (CVSS 10.0). Residual risk STILL HIGH (no patch)."
-              ],
-              "bonus_fact": "Quantitative example: SLE=$10M (breach cost), ARO=0.2 (20% chance/year) = ALE=$2M. Worth spending $500K on controls?"
-            }
+            "time": "24 Nov → Dic",
+            "icon": "cloud_upload",
+            "title": "Mega-leak",
+            "description": "100TB filtrados: películas, emails, salarios, SSNs, pasaportes de actores.",
+            "severity": "critical"
           },
           {
-            "id": "ra4",
-            "task": "Document & Report",
-            "subtitle": "Communicate findings",
-            "icon": "article",
-            "unlock_content": {
-              "title": "Risk Register",
-              "points": [
-                "Risk register: Centralized log of all identified risks",
-                "For each risk: Description, likelihood, impact, mitigation, owner, status",
-                "Heat map: Visual representation for executives",
-                "Update frequency: Quarterly or when significant changes",
-                "Escalation: Board-level risks reported to board",
-                "Equifax: Risk register should have flagged Struts as critical"
-              ],
-              "bonus_fact": "Good risk register is LIVING document. Not create once and forget. Regular reviews mandatory."
-            }
+            "time": "Dic 2014",
+            "icon": "report",
+            "title": "FBI atribuye a Norcorea",
+            "description": "Lazarus Group (APT38). Herramientas y TTPs coinciden con ataques previos.",
+            "severity": "critical"
           }
         ]
       }
     },
     {
       "screen_id": 4,
-      "type": "quiz",
-      "title": "Evaluación - RMF",
-      "duration": 60,
+      "type": "flip_card_full",
+      "title": "Digital Forensics: Definición",
       "content": {
-        "question": "NIST RMF Step que Equifax falló primarily?",
-        "options": [
-          {
-            "id": "a",
-            "text": "Categorize (Step 1)",
-            "is_correct": false,
-            "feedback": "Incorrecto. Equifax likely categorizó data correctamente (High). Problem no fue categorization."
-          },
-          {
-            "id": "b",
-            "text": "Implement & Monitor (Steps 3 & 6): Controls documented pero no enforced/monitored",
-            "is_correct": true,
-            "feedback": "CORRECTO! Step 3 (Implement): SI-2 (Flaw Remediation) existía on paper pero patch process BROKE. Implementation inefectiva. Step 6 (Monitor): Continuous monitoring falló. SSL cert expiró = couldn't monitor traffic. Vulnerability scans no triggered action. Monitor controls (SI-4) failed. Lesson: Having control ≠ control working. Must verify effectiveness continuously. Authorization (Step 5) should have been revoked when monitoring failed."
-          },
-          {
-            "id": "c",
-            "text": "Select (Step 2)",
-            "is_correct": false,
-            "feedback": "Incorrecto. Equifax likely selected appropriate controls (SI-2, SI-4). Selection wasn't problem - execution was."
-          },
-          {
-            "id": "d",
-            "text": "Assess (Step 4)",
-            "is_correct": false,
-            "feedback": "Partially. Independent assessment might have caught gaps pero primary failure: Implementation & Monitoring."
+        "card": {
+          "front": {"icon": "fingerprint", "term": "FORENSICS", "color": "#8E24AA"},
+          "back": {
+            "definition": "Ciencia de recolectar, preservar, analizar y presentar evidencia digital de forma legalmente admisible.",
+            "principios": [
+              "No modificar evidencia original",
+              "Cadena de custodia documentada",
+              "Imágenes bit-a-bit (hash verificable)",
+              "Write-blockers obligatorios"
+            ],
+            "color": "#6A1B9A"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "Orden de Volatilidad (RFC3227)",
+      "content": {
+        "card": {
+          "front": {"icon": "speed", "term": "ORDER OF VOLATILITY", "color": "#00ACC1"},
+          "back": {
+            "order": [
+              "1. Registros en CPU / caché",
+              "2. RAM (memoria volátil)",
+              "3. Procesos en ejecución",
+              "4. Conexiones de red",
+              "5. Disco (swap, archivos temporales)",
+              "6. Disco persistente",
+              "7. Backups offline"
+            ],
+            "sony_application": "Capturar memoria RAM antes de apagar sistemas era crítico para recuperar el wiper y claves.",
+            "color": "#00838F"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "Wiper Malware: Destover",
+      "content": {
+        "card": {
+          "front": {"icon": "delete_forever", "term": "DESTOVER", "color": "#E53935"},
+          "back": {
+            "capabilities": [
+              "Sobrescribe MBR con ceros",
+              "Borra archivos aleatoriamente",
+              "Sobrescribe datos con junk",
+              "Elimina shadow copies",
+              "Apaga el sistema"
+            ],
+            "sony_impact": "75% de servidores quedaron irrecuperables. Muchos sin backups recientes.",
+            "color": "#C62828"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Live Response vs Dead Box",
+      "content": {
+        "card": {
+          "front": {"icon": "power_settings_new", "term": "LIVE vs DEAD", "color": "#388E3C"},
+          "back": {
+            "live": "Capturar memoria, procesos, conexiones con sistema encendido (Volatility, Rekall)",
+            "dead": "Apagar → imagen bit-a-bit del disco (FTK Imager, dd)",
+            "sony_case": "Live response crítica para capturar Destover en RAM antes del wipe final.",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Herramientas Forenses",
+      "content": {
+        "card": {
+          "front": {"icon": "construction", "term": "TOOLKIT", "color": "#1976D2"},
+          "back": {
+            "memory": "Volatility, Rekall, WinPMEM",
+            "disk": "FTK Imager, EnCase, Autopsy, X-Ways",
+            "network": "Wireshark, NetworkMiner",
+            "windows": "Autoruns, Prefetch, Shimcache, Amcache",
+            "sony_used": "Mandiant, FBI y CrowdStrike usaron Volatility para recuperar Destover de memoria.",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "drag_drop_match",
+      "title": "Artefacto → Ubicación",
+      "content": {
+        "instruction": "Relaciona el artefacto forense con su ubicación típica",
+        "scenarios": [
+          {"id": 1, "text": "Procesos en ejecución", "correct_target": "ram"},
+          {"id": 2, "text": "Archivos eliminados", "correct_target": "disk"},
+          {"id": 3, "text": "Historial USB", "correct_target": "registry"},
+          {"id": 4, "text": "Malware en memoria", "correct_target": "ram"},
+          {"id": 5, "text": "Prefetch / Shimcache", "correct_target": "disk"}
+        ],
+        "targets": [
+          {"id": "ram", "label": "Memoria Volátil", "color": "#00ACC1"},
+          {"id": "disk", "label": "Disco Persistente", "color": "#388E3C"},
+          {"id": "registry", "label": "Windows Registry", "color": "#1976D2"}
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "swipe_cards",
+      "title": "Forensics Best Practice?",
+      "content": {
+        "instruction": "¿Es correcta esta práctica forense?",
+        "cards": [
+          {"id": 1, "scenario": "Apagar el sistema inmediatamente", "correct_answer": "left"},
+          {"id": 2, "scenario": "Capturar memoria RAM primero", "correct_answer": "right"},
+          {"id": 3, "scenario": "Usar write-blocker para imaging", "correct_answer": "right"},
+          {"id": 4, "scenario": "Analizar el disco original", "correct_answer": "left"},
+          {"id": 5, "scenario": "Documentar cadena de custodia", "correct_answer": "right"}
+        ],
+        "labels": {"left": "MAL", "right": "CORRECTO"},
+        "xp_per_correct": 10
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "log_hunter",
+      "title": "Memory Forensics: Encuentra Destover",
+      "content": {
+        "scenario": "Dump de memoria de un equipo Sony. Identifica procesos maliciosos",
+        "log_lines": [
+          {"id": 1, "text": "explorer.exe     PID: 1234", "is_suspicious": false},
+          {"id": 2, "text": "svchost.exe      PID: 856", "is_suspicious": false},
+          {"id": 3, "text": "wipe_exec.exe    PID: 4096  Path: C:\\Windows\\Temp\\", "is_suspicious": true},
+          {"id": 4, "text": "lsass.exe        PID: 678", "is_suspicious": false},
+          {"id": 5, "text": "gop_helper.dll   Injected in explorer.exe", "is_suspicious": true},
+          {"id": 6, "text": "notepad.exe      PID: 3456", "is_suspicious": false}
+        ],
+        "xp_reward": 35
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "timed_quiz",
+      "title": "Sony Root Cause",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Qué permitió la destrucción masiva en Sony Pictures?",
+        "options": [
+          {"id": "a", "text": "Falta de backups offline", "is_correct": false},
+          {"id": "b", "text": "Wiper malware con privilegios de admin + falta de live response", "is_correct": true},
+          {"id": "c", "text": "Empleados abrieron el wiper manualmente", "is_correct": false}
+        ],
+        "explanation": "El wiper se ejecutó con privilegios altos y la respuesta fue 'apagar todo' sin capturar memoria. Backups existían pero muchos fueron destruidos también.",
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "fingerprint",
+          "name": "Digital Forensics Expert",
+          "description": "Dominas live response, orden de volatilidad y análisis de wipers",
+          "rarity": "rare",
+          "color": "#8E24AA"
+        }
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 75,
+        "key_takeaways": [
+          "Sony 2014: Primer gran ataque wiper occidental (Destover)",
+          "Orden de volatilidad: RAM antes que disco",
+          "Live response crítica en wipers (capturar memoria)",
+          "Write-blockers y cadena de custodia obligatorios",
+          "Herramientas: Volatility, FTK, Autopsy"
+        ],
+        "next_lesson": {
+          "id": "c5_l3",
+          "title": "Malware Analysis",
+          "preview": "Caso WannaCry 2017 - El ransomware que paralizó el mundo"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "NIST SP 800-37. Mandatory para federal agencies. Adoptado por private sector."
-  }
+  ]
 }

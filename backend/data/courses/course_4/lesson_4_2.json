@@ -1,222 +1,489 @@
 {
   "id": "c4_l2",
-  "title": "Inyección SQL",
-  "description": "Caso: Target Point-of-Sale Breach (2013)",
+  "title": "SQL Injection",
+  "description": "Caso Real: Target POS Breach (2013)",
   "type": "interactive",
-  "duration_minutes": 14,
-  "xp_reward": 20,
+  "duration_minutes": 24,
+  "xp_reward": 55,
   "order_index": 2,
   "course_id": 4,
-  "total_screens": 4,
+  "total_screens": 18,
+  "theme": {
+    "primary_color": "#CC0000",
+    "secondary_color": "#FFFFFF",
+    "accent_color": "#FFB74D",
+    "gradient": ["#1a0505", "#330a0a", "#4d0f0f"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso: Target Point-of-Sale Breach (2013)",
-      "duration": 220,
+      "type": "story_intro",
+      "title": "Operación: Holiday Breach",
       "content": {
-        "story_title": "Target: 40M Credit Cards via HVAC Vendor",
-        "story_intro": "Supply chain + POS malware = massive breach during holiday shopping",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "hvac",
-            "title": "Supply Chain Entry: Fazio Mechanical",
-            "content": "Attackers phished Fazio Mechanical (HVAC vendor). Small vendor tenía VPN access a Target network para billing. Compromised Fazio credentials → Target network access.",
-            "insight": "Supply chain is weakest link. Vendors with network access = attack vector. Trust pero verify."
-          },
-          {
-            "id": "2",
-            "icon": "bug_report",
-            "title": "Malware: BlackPOS RAM Scraper",
-            "content": "Deployed BlackPOS malware en POS terminals. Memory scraping: captura credit card data ANTES de encryption. Track 1&2 data (full card info including CVV).",
-            "insight": "POS malware scrapes RAM donde cards están en plaintext momentarily. P2PE (Point-to-Point Encryption) mitiga."
-          },
-          {
-            "id": "3",
-            "icon": "warning",
-            "title": "Detection Failure: FireEye Alerted, Ignored",
-            "content": "Target tenía FireEye (top-tier security). FireEye detectó malware, alertó security team. PERO: Alert ignored/dismissed as false positive. Breach continuó 2+ weeks.",
-            "insight": "Having tools ≠ being secure. Alert fatigue, lack of trained analysts = detection failures."
-          },
-          {
-            "id": "4",
-            "icon": "credit_card",
-            "title": "Exfiltration: 40M Cards Stolen",
-            "content": "Nov-Dec 2013 (holiday shopping season). 40M credit/debit cards, 70M customer records total. Data exfiltrated to servers en Brazil y Russia. Sold on dark web.",
-            "insight": "Timing: holiday season = max transactions = max value. Attackers pick timing strategically."
-          },
-          {
-            "id": "5",
-            "icon": "gavel",
-            "title": "Aftermath: $292M Cost",
-            "content": "$292M total cost: settlements, legal fees, remediation, brand damage. CEO/CIO resigned. New CISO hired. PCI compliance questioned. Class action lawsuits.",
-            "insight": "Breach costs go beyond immediate response. Brand damage, executive turnover, years of lawsuits."
-          }
-        ]
+        "headline": "NOVIEMBRE 2013",
+        "subheadline": "Supply chain + POS malware = 40M credit cards stolen",
+        "stats": [
+          {"value": "40M", "label": "Credit cards stolen"},
+          {"value": "70M", "label": "Customer records total"},
+          {"value": "$18.5M", "label": "Settlement banks"}
+        ],
+        "cta_text": "Investigar Supply Chain Attack"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "Detection Technologies",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "Supply Chain: Weakest Link",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "analytics",
-              "term": "SIEM - Security Information & Event Management",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Centralized log aggregation y correlation. Collect logs from all sources (firewalls, servers, endpoints). Rules y ML para detect anomalies. Alerting.",
-              "example": "Splunk, QRadar, Sentinel. Target tenía FireEye (SIEM-like) pero ignored alerts. SIEM only as good as SOC analyzing it. Alert fatigue real.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "computer",
-              "term": "EDR - Endpoint Detection & Response",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Agent en endpoints. Behavioral analysis, process monitoring, network connections, file integrity. Detect malware, lateral movement. Response: isolate, kill processes.",
-              "example": "CrowdStrike, SentinelOne, Microsoft Defender ATP. Target needed EDR en POS terminals. Would detect BlackPOS memory scraping.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "network_check",
-              "term": "NDR - Network Detection & Response",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Network traffic analysis. Detect lateral movement, C2 beaconing, data exfiltration. East-west traffic monitoring (not just north-south perimeter).",
-              "example": "Darktrace, ExtraHop, Corelight (Zeek). Target: NDR hubiera detectado exfiltration a Brazil/Russia. Unusual destinations.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "cloud",
-              "term": "UEBA - User & Entity Behavior Analytics",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "Baseline normal behavior. Detect anomalies: logins from unusual locations, access unusual files, off-hours activity. ML-driven.",
-              "example": "Exabeam, Securonix. Target: UEBA hubiera detectado Fazio credentials used from unusual location to access unusual systems (POS).",
-              "color": "#BA68C8"
-            }
-          }
-        ]
+        "icon": "hvac",
+        "icon_color": "#CC0000",
+        "headline": "Fazio Mechanical: HVAC Vendor → Attack Vector",
+        "body": "Target breach started con phishing a Fazio Mechanical (small HVAC vendor, 3 employees). Fazio tenía VPN access a Target network para billing/monitoring. Stolen credentials → Target network access. No segmentation: Vendor VPN accedía corporate network directly. BlackPOS malware deployed en 1,800 POS terminals.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Lesson: Third-party risk = your risk. Vendor access must be: scoped, monitored, time-limited. FireEye alertó pero fue ignored (alert fatigue)."
+        }
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "SOC (Security Operations Center)",
-      "duration": 300,
+      "type": "crisis_timeline",
+      "title": "⏱️ SUPPLY CHAIN → DATA EXFILTRATION",
       "content": {
-        "items": [
+        "events": [
           {
-            "id": "soc1",
-            "task": "SOC Tiers",
-            "subtitle": "Escalation model",
-            "icon": "layers",
-            "unlock_content": {
-              "title": "SOC Structure",
-              "points": [
-                "Tier 1 (Analysts): Triage alerts. Initial investigation. Known playbooks. Escalate unknowns.",
-                "Tier 2 (Incident Responders): Deep dive investigations. Threat hunting. Complex incidents.",
-                "Tier 3 (Threat Hunters/Engineers): Proactive hunting. Tool tuning. Advanced threats.",
-                "SOC Manager: Metrics, staffing, process improvement.",
-                "Target issue: Analysts dismissed FireEye alert. Training gap."
-              ],
-              "bonus_fact": "Good SOC: 24/7 coverage, clear escalation paths, continuous training, low analyst burnout."
-            }
+            "time": "Sep 2013",
+            "icon": "phishing",
+            "title": "Phishing: Fazio Mechanical",
+            "description": "Attackers phish Fazio (HVAC vendor). Malware en workstation. Steal VPN credentials para Target network.",
+            "severity": "warning"
           },
           {
-            "id": "soc2",
-            "task": "Alert Fatigue Problem",
-            "subtitle": "Too many false positives",
-            "icon": "notifications_off",
-            "unlock_content": {
-              "title": "The Challenge",
-              "points": [
-                "Average SOC: 10K+ alerts/day. Analysts can review ~100/day.",
-                "99% are false positives (benign). Finding 1% true positives = needle in haystack.",
-                "Result: Alert fatigue. Analysts become numb. Miss critical alerts (Target).",
-                "Solutions: SOAR automation, ML for prioritization, tuning rules, alert suppression.",
-                "Measurement: MTTD (Mean Time To Detect), MTTR (Mean Time To Respond)"
-              ],
-              "bonus_fact": "Ponemon study: Average data breach discovered after 207 days. Detection is hard."
-            }
+            "time": "Nov 12",
+            "icon": "vpn_key",
+            "title": "Target Network Access",
+            "description": "Login via Fazio VPN credentials. Access corporate network. No segmentation - vendor network = corporate network.",
+            "severity": "critical"
           },
           {
-            "id": "soc3",
-            "task": "Threat Intelligence Integration",
-            "subtitle": "Context for decisions",
-            "icon": "info",
-            "unlock_content": {
-              "title": "Intelligence-Driven",
-              "points": [
-                "Tactical: IoCs (IPs, domains, hashes). Block known bad.",
-                "Operational: TTPs (Tactics, Techniques, Procedures). Detect behavior.",
-                "Strategic: Adversary motivations, trends. Inform strategy.",
-                "Feeds: MISP, Threat Connect, commercial (Recorded Future, Mandiant).",
-                "Target: Threat intel on BlackPOS existed. Should have hunted for it."
-              ],
-              "bonus_fact": "MITRE ATT&CK framework maps TTPs. SOC uses to detect techniques, not just IoCs."
-            }
+            "time": "Nov 15",
+            "icon": "bug_report",
+            "title": "BlackPOS Malware Deployment",
+            "description": "Deploy BlackPOS (RAM scraper) en 1,800 POS terminals. Malware scrapes credit card Track 1&2 data ANTES de encryption.",
+            "severity": "critical"
+          },
+          {
+            "time": "Nov 30 - Dec 15",
+            "icon": "credit_card",
+            "title": "Data Exfiltration (Black Friday)",
+            "description": "Holiday shopping season. 40M credit/debit cards, 70M customer records stolen. Exfiltrated a servers en Brazil/Russia.",
+            "severity": "critical"
+          },
+          {
+            "time": "Dec 2",
+            "icon": "warning",
+            "title": "FireEye Alert IGNORED",
+            "description": "FireEye (Target's security tool) detecta malware, alerta team. Alert dismissed as false positive. Breach continúa 2 weeks+.",
+            "severity": "critical"
+          },
+          {
+            "time": "Dec 18",
+            "icon": "report",
+            "title": "Breach Discovered",
+            "description": "US DOJ notifica Target después de que banks detectan fraudulent cards. Public disclosure Dec 19. Stock drop 46%.",
+            "severity": "critical"
           }
         ]
       }
     },
     {
       "screen_id": 4,
-      "type": "quiz",
-      "title": "Evaluación - Detection",
-      "duration": 90,
+      "type": "crisis_decision",
+      "title": "🚨 Third-Party Vendor Access",
       "content": {
-        "question": "Target breach: ¿Por qué FireEye detection failed?",
+        "scenario": "Eres CISO. HVAC vendor necesita network access para monitoring. Options: 1) Full corporate VPN, 2) Scoped access (billing systems only), 3) No remote access (onsite only). Engineering wants 'easy' option.",
+        "timer_seconds": 35,
         "options": [
           {
-            "id": "a",
-            "text": "FireEye no detectó el malware",
+            "id": "full_vpn",
+            "text": "Full corporate network VPN access (easy deployment)",
+            "icon": "all_inclusive",
             "is_correct": false,
-            "feedback": "Incorrecto. FireEye SÍ detectó BlackPOS malware y alertó security team. Technology funcionó."
+            "consequence": {
+              "title": "Esto fue Target",
+              "description": "Fazio VPN → full network access → attackers lateral movement → POS terminals → 40M cards. Vendor compromise = your compromise. No segmentation = no containment.",
+              "impact_score": -100
+            }
           },
           {
-            "id": "b",
-            "text": "Security team dismissed alerts como false positives. Alert fatigue + lack of training.",
+            "id": "scoped_access",
+            "text": "Scoped VPN: Access ONLY billing/monitoring systems. Firewall rules. MFA required.",
+            "icon": "security",
             "is_correct": true,
-            "feedback": "CORRECTO! FireEye detected malware y alertó multiple times. Security analysts dismissed alerts creyendo eran false positives. Causas: 1) Alert fatigue (too many alerts daily). 2) Lack of training to recognize true positives. 3) No escalation cuando uncertain. 4) Culture que no empowered analysts to act. Having best tools ≠ security. Need trained SOC + proper processes. Target paid for FireEye pero no aprovechó."
+            "consequence": {
+              "title": "Least Privilege Applied",
+              "description": "Vendor accede solo necessary systems. Firewall blocks lateral movement a POS/corporate network. Even si vendor compromised, blast radius limited. MFA + monitoring = defense in depth.",
+              "impact_score": 100,
+              "xp_bonus": 30
+            }
           },
           {
-            "id": "c",
-            "text": "BlackPOS era zero-day sin signatures",
+            "id": "no_remote",
+            "text": "No remote access - onsite visits only",
+            "icon": "location_off",
             "is_correct": false,
-            "feedback": "Incorrecto. BlackPOS no era zero-day. Variants conocidos. FireEye lo detectó, lo cual prueba tenía signatures/behavior patterns."
-          },
-          {
-            "id": "d",
-            "text": "Target no tenía SIEM",
-            "is_correct": false,
-            "feedback": "Incorrecto. Target tenía FireEye (enterprise-grade). Problem no fue lack of tools sino people/process."
+            "consequence": {
+              "title": "Operational Overhead",
+              "description": "Secure pero impractical. HVAC monitoring requires remote access. Onsite = delays + cost. Balance needed between security y business needs.",
+              "impact_score": 40
+            }
           }
         ]
       }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "SQL Injection Basics",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "data_object",
+            "term": "SQL INJECTION",
+            "subtitle": "OWASP A03: Injection",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Attacker inserta malicious SQL code en input fields. App concatena user input en SQL query sin validation. Result: Unauthorized database access, data theft, authentication bypass.",
+            "classic_example": "Login form: username=' OR '1'='1 password=anything. Query: SELECT * FROM users WHERE user='' OR '1'='1' AND pass='x'. '1'='1' always true = bypass login.",
+            "impact": [
+              "Data breach: SELECT * FROM credit_cards",
+              "Authentication bypass: ' OR '1'='1",
+              "Data modification: '; DROP TABLE users;--",
+              "OS command execution (via xp_cmdshell en SQL Server)"
+            ],
+            "color": "#C62828"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "SQL Injection: Prepared Statements",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "shield",
+            "term": "PREPARED STATEMENTS",
+            "subtitle": "Parameterized queries",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Prepared statements (parameterized queries): SQL structure definida separately de data. Database treats user input as DATA, never as SQL code.",
+            "vulnerable_code": "query = \"SELECT * FROM users WHERE user='\" + username + \"'\"; // BAD: String concatenation",
+            "secure_code": "query = \"SELECT * FROM users WHERE user=?\"; stmt.setString(1, username); // GOOD: Parameterized",
+            "how_it_works": "Database compiles query ANTES de insertar user data. User input = literal string, cannot alter SQL structure.",
+            "language_support": "Java (PreparedStatement), Python (parameterized queries), PHP (PDO), .NET (SqlCommand with parameters). ALL modern languages support.",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "POS Malware: RAM Scraping",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "memory",
+            "term": "RAM SCRAPING",
+            "subtitle": "Memory-resident malware",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "POS (Point-of-Sale) malware scrapes credit card data from RAM. Cards están en plaintext momentarily (milliseconds) ANTES de encryption.",
+            "how_it_works": "Card swiped → POS reads Track 1&2 data → Momentarily en RAM (plaintext) → App encrypts para transmission. Malware scans RAM, extracts plaintext card data antes de encryption.",
+            "blackpos_target": "BlackPOS: Deployed en 1,800 Target POS terminals. Memory scraping cada transaction. Exfiltrated via FTP a external servers (Brazil, Russia).",
+            "defense": [
+              "P2PE (Point-to-Point Encryption): Encrypt desde card reader hardware",
+              "Memory protection: Encrypt sensitive data in RAM",
+              "Network segmentation: POS network isolated",
+              "Endpoint detection: Detect RAM scraping behavior"
+            ],
+            "color": "#E65100"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Third-Party Risk Management",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "business",
+            "term": "TPRM",
+            "subtitle": "Vendor security assessment",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Third-Party Risk Management (TPRM): Process para assess y manage security risks de vendors/suppliers. Your security = weakest vendor's security.",
+            "tprm_process": [
+              "1. Inventory: List all vendors con network access",
+              "2. Risk assessment: Criticality, data access, controls",
+              "3. Security requirements: Contracts require MFA, patching, audits",
+              "4. Access control: Scoped permissions, least privilege, monitoring",
+              "5. Continuous monitoring: Periodic audits, breach notifications",
+              "6. Incident response: Vendor breach = your incident"
+            ],
+            "target_failure": "Target: No segmentation para Fazio VPN. No monitoring. Vendor access = trusted network.",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "code_practice",
+      "title": "💻 Identify SQL Injection",
+      "content": {
+        "instruction": "¿Cuál código es vulnerable a SQL injection?",
+        "code_snippets": [
+          {
+            "id": 1,
+            "language": "python",
+            "code": "query = \"SELECT * FROM products WHERE id=\" + product_id\ncursor.execute(query)",
+            "is_vulnerable": true,
+            "explanation": "String concatenation. Si product_id=' OR 1=1--, query becomes: SELECT * FROM products WHERE id='' OR 1=1-- (returns ALL products)."
+          },
+          {
+            "id": 2,
+            "language": "python",
+            "code": "query = \"SELECT * FROM products WHERE id=?\"\ncursor.execute(query, (product_id,))",
+            "is_vulnerable": false,
+            "explanation": "Parameterized query. product_id treated as DATA, not SQL code. Safe."
+          },
+          {
+            "id": 3,
+            "language": "java",
+            "code": "String query = \"SELECT * FROM users WHERE email='\" + email + \"'\";\nStatement stmt = conn.createStatement();\nstmt.executeQuery(query);",
+            "is_vulnerable": true,
+            "explanation": "String concatenation + Statement (not PreparedStatement). Vulnerable."
+          },
+          {
+            "id": 4,
+            "language": "java",
+            "code": "String query = \"SELECT * FROM users WHERE email=?\";\nPreparedStatement pstmt = conn.prepareStatement(query);\npstmt.setString(1, email);\npstmt.executeQuery();",
+            "is_vulnerable": false,
+            "explanation": "PreparedStatement con parameter binding. Safe."
+          }
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "drag_drop_match",
+      "title": "SQL Injection Attack Types",
+      "content": {
+        "instruction": "Match el SQL injection type con su descripción:",
+        "scenarios": [
+          {"id": 1, "text": "Error-based: Database errors reveal structure", "correct_target": "error"},
+          {"id": 2, "text": "Union-based: UNION SELECT para extract data de otras tablas", "correct_target": "union"},
+          {"id": 3, "text": "Blind: No visible output, use true/false logic", "correct_target": "blind"},
+          {"id": 4, "text": "Time-based: Use SLEEP() para infer true/false", "correct_target": "time"},
+          {"id": 5, "text": "Out-of-band: Exfiltrate via DNS/HTTP requests", "correct_target": "oob"}
+        ],
+        "targets": [
+          {"id": "error", "label": "Error-based SQLi", "color": "#D32F2F"},
+          {"id": "union", "label": "Union-based SQLi", "color": "#7B1FA2"},
+          {"id": "blind", "label": "Blind SQLi", "color": "#1976D2"},
+          {"id": "time", "label": "Time-based Blind SQLi", "color": "#FF6F00"},
+          {"id": "oob", "label": "Out-of-Band SQLi", "color": "#388E3C"}
+        ],
+        "xp_per_correct": 7
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "swipe_cards",
+      "title": "SQL Injection Defense: Effective?",
+      "content": {
+        "instruction": "¿Es esta defensa efectiva contra SQL injection?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "Input validation: Block ' (single quote) en all fields",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          },
+          {
+            "id": 2,
+            "scenario": "Prepared statements (parameterized queries) everywhere",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          },
+          {
+            "id": 3,
+            "scenario": "Escape special characters antes de SQL query",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          },
+          {
+            "id": 4,
+            "scenario": "ORM (Object-Relational Mapping) con parameterized queries",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          },
+          {
+            "id": 5,
+            "scenario": "Least privilege database user (SELECT only, no DROP)",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          }
+        ],
+        "xp_per_correct": 9
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "flip_card_full",
+      "title": "Alert Fatigue",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "notifications_off",
+            "term": "ALERT FATIGUE",
+            "subtitle": "Too many false positives",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Alert fatigue: Security tools generate SO MANY alerts (90%+ false positives) que analysts ignore/dismiss real threats.",
+            "target_failure": "Target tenía FireEye (top-tier EDR). FireEye DETECTED BlackPOS malware, alertó team. Alert dismissed as false positive. Breach continuó 2+ weeks.",
+            "causes": [
+              "Poor tuning: Default rules generate noise",
+              "No prioritization: All alerts treated equal",
+              "Lack of context: Alert sin actionable info",
+              "Understaffed SOC: Too many alerts, too few analysts"
+            ],
+            "solutions": "Tune alerts (reduce FPs). SOAR (automation). Threat intelligence (prioritize). Hire/train analysts. Accept some risk (not ALL alerts need investigation).",
+            "color": "#EF6C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: SQL Injection Attempt",
+      "content": {
+        "scenario": "Web app logs. Find las 2 lines que indican SQL injection attack.",
+        "log_lines": [
+          {"id": 1, "text": "2024-12-01 14:23:11 GET /products?id=123 200 OK user=customer@example.com", "is_suspicious": false},
+          {"id": 2, "text": "2024-12-01 14:45:33 GET /products?id=' OR '1'='1 500 ERROR SQL_SYNTAX_ERROR user=unknown", "is_suspicious": true, "reason": "Classic SQL injection payload: ' OR '1'='1. 500 error indica SQL syntax error."},
+          {"id": 3, "text": "2024-12-01 14:46:12 GET /products?id=1 UNION SELECT user,password FROM admin-- 200 OK user=unknown", "is_suspicious": true, "reason": "UNION-based SQL injection: Attempting to extract admin credentials."},
+          {"id": 4, "text": "2024-12-01 15:02:15 GET /products?id=456 200 OK user=customer2@example.com", "is_suspicious": false},
+          {"id": 5, "text": "2024-12-01 15:15:42 POST /login username=admin password=correct 200 OK session_created", "is_suspicious": false}
+        ],
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "slider_balance",
+      "title": "⚖️ Acceso de Proveedores",
+      "content": {
+        "scenario": "Un proveedor necesita acceso para mantenimiento. ¿Cómo se lo das?",
+        "left_option": {
+          "label": "VPN Permanente",
+          "icon": "vpn_key",
+          "consequences": [
+            "✅ Fácil para el proveedor",
+            "❌ Puerta trasera abierta 24/7",
+            "❌ Si hackean al proveedor, te hackean a ti"
+          ]
+        },
+        "right_option": {
+          "label": "Acceso Just-In-Time (JIT)",
+          "icon": "timer",
+          "consequences": [
+            "✅ Ventana de acceso limitada",
+            "✅ Monitoreado y grabado",
+            "✅ Riesgo mínimo"
+          ]
+        },
+        "explanation": "El acceso de terceros debe ser efímero y vigilado. Target fue hackeado por una VPN permanente de un proveedor de aire acondicionado."
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "timed_quiz",
+      "title": "⚡ Target Root Cause",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Qué fue el root cause del Target breach?",
+        "options": [
+          {"id": "a", "text": "SQL injection en web app", "is_correct": false},
+          {"id": "b", "text": "Supply chain: Vendor VPN sin segmentation + POS malware + alert fatigue", "is_correct": true},
+          {"id": "c", "text": "Insiders robaron credit cards", "is_correct": false}
+        ],
+        "explanation": "Root causes: 1) Fazio (vendor) VPN con full network access (no segmentation), 2) BlackPOS malware en POS terminals (RAM scraping), 3) FireEye alerts ignored (alert fatigue). Multi-factor failure.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "timed_quiz",
+      "title": "⚡ SQL Injection Prevention",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Cuál es la defensa MÁS efectiva contra SQL injection?",
+        "options": [
+          {"id": "a", "text": "Input validation (block special characters)", "is_correct": false},
+          {"id": "b", "text": "Prepared statements (parameterized queries)", "is_correct": true},
+          {"id": "c", "text": "Firewall (WAF) con SQL injection rules", "is_correct": false}
+        ],
+        "explanation": "Prepared statements = gold standard. Database treats user input as DATA, never SQL code. Input validation puede ser bypassed. WAF es defense in depth pero not primary defense. ALWAYS use parameterized queries.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "code",
+          "name": "SQL Injection Master",
+          "description": "Dominas SQL injection attacks & defense + supply chain security",
+          "rarity": "rare",
+          "color": "#CC0000"
+        }
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 55,
+        "key_takeaways": [
+          "Target: 40M cards stolen. Fazio vendor VPN → no segmentation → BlackPOS malware.",
+          "SQL Injection (OWASP A03): Malicious SQL en input. Bypass auth, steal data.",
+          "Defense: Prepared statements (parameterized queries). NEVER string concatenation.",
+          "POS malware: RAM scraping (plaintext cards). P2PE defense (Point-to-Point Encryption).",
+          "Third-Party Risk: Vendor security = your security. Scoped access, monitoring, MFA.",
+          "Alert Fatigue: FireEye detected pero ignored. Tune alerts, reduce false positives."
+        ],
+        "next_lesson": {
+          "id": "c4_l3",
+          "title": "Cross-Site Scripting (XSS)",
+          "preview": "Stored XSS, Reflected XSS, DOM-based XSS defense"
+        }
+      }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "Supply chain + POS malware = massive breach during holiday shopping"
-  }
+  ]
 }

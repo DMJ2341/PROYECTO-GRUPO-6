@@ -1,169 +1,493 @@
 {
   "id": "c3_l5",
-  "title": "Certificados Digitales",
-  "description": "Cloud IAM",
+  "title": "Cloud IAM",
+  "description": "AWS, Azure AD, GCP Identity Management",
   "type": "interactive",
-  "duration_minutes": 9,
-  "xp_reward": 20,
+  "duration_minutes": 25,
+  "xp_reward": 60,
   "order_index": 5,
   "course_id": 3,
-  "total_screens": 3,
+  "total_screens": 19,
+  "theme": {
+    "primary_color": "#FF9900",
+    "secondary_color": "#0078D4",
+    "accent_color": "#4285F4",
+    "gradient": ["#0f1419", "#1a2332", "#232f3e"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "Cloud IAM",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: Cloud Credential Leak",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "cloud",
-              "term": "AWS IAM",
-              "color": "#FF9900"
-            },
-            "back": {
-              "definition": "Users, Groups, Roles, Policies. Policies en JSON. Least privilege. Service accounts via roles (no long-term keys). Federated access (SSO).",
-              "example": "Policy: Allow S3:GetObject on specific bucket. Role: Lambda execution role. Root account: Never use for daily ops. MFA on root.",
-              "color": "#FFB366"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "cloud",
-              "term": "Azure AD / Entra ID",
-              "color": "#0078D4"
-            },
-            "back": {
-              "definition": "Identity platform. Users, Groups, Service Principals, Managed Identities. RBAC. Conditional Access (Zero Trust). Integration con O365.",
-              "example": "Conditional Access: Allow login IF (MFA passed AND compliant device AND trusted location). Service Principal = app identity.",
-              "color": "#4DA6FF"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "cloud",
-              "term": "GCP IAM",
-              "color": "#4285F4"
-            },
-            "back": {
-              "definition": "Members (users, groups, service accounts). Roles (primitive, predefined, custom). Policies. Organization > Folder > Project hierarchy. Least privilege.",
-              "example": "Predefined roles: roles/storage.objectViewer. Custom roles para granular control. Service account keys: Rotate o mejor use Workload Identity.",
-              "color": "#669DF6"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "api",
-              "term": "Cross-Account Access",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "Assume roles across AWS accounts. Azure service principals cross-tenant. Federation. Avoid long-term keys. Use temporary credentials (STS).",
-              "example": "AWS STS AssumeRole: Dev account → Prod account read-only access for troubleshooting. Time-limited credentials. Audit trail.",
-              "color": "#BA68C8"
-            }
-          }
-        ]
+        "headline": "GITHUB SECRETS EPIDEMIC",
+        "subheadline": "AWS keys, Azure tokens leaked públicamente daily",
+        "stats": [
+          {"value": "6M+", "label": "Secrets en GitHub"},
+          {"value": "$62K", "label": "Avg cost de leaked key"},
+          {"value": "Uber", "label": "57M records stolen"}
+        ],
+        "cta_text": "Investigar Cloud IAM"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Cloud IAM Best Practices",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "Cloud IAM: Root of Trust",
       "content": {
-        "items": [
+        "icon": "cloud_sync",
+        "icon_color": "#FF9900",
+        "headline": "IAM = Cloud Security Foundation",
+        "body": "Cloud IAM (Identity and Access Management) controla QUIÉN puede hacer QUÉ en tu cloud. AWS IAM, Azure AD (Entra ID), GCP IAM. Mal configurado = game over. Uber breach: GitHub credential leak → S3 access → 57M records. Capital One: Misconfigured WAF + over-privileged role → 100M records.",
+        "highlight_box": {
+          "type": "warning",
+          "text": "Cloud security first rule: IAM hygiene. Eliminate root usage. Least privilege roles. No long-term keys. MFA everywhere. Monitor access patterns."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "crisis_timeline",
+      "title": "⏱️ CAPITAL ONE BREACH 2019",
+      "content": {
+        "events": [
           {
-            "id": "cloud1",
-            "task": "Eliminate Root/Admin Daily Use",
-            "subtitle": "Break glass only",
-            "icon": "warning",
-            "unlock_content": {
-              "title": "Privileged Account Management",
-              "points": [
-                "AWS root: MFA obligatorio. Store credentials in vault. Use ONLY for billing/account closure.",
-                "Azure Global Admin: Similar. Daily ops use lower-privileged roles.",
-                "Create admin users con MFA. Use for day-to-day.",
-                "Capital One: Over-privileged roles caused SSRF impact. Least privilege.",
-                "Audit: CloudTrail/Azure Activity Log. Alert on root/admin usage."
-              ],
-              "bonus_fact": "AWS best practice: Root access maybe once a year. Everything else via IAM users/roles."
+            "time": "Mar 2019",
+            "icon": "cloud",
+            "title": "Misconfigured WAF",
+            "description": "Capital One WAF (Web Application Firewall) en AWS misconfigured. Over-privileged EC2 role attached.",
+            "severity": "warning"
+          },
+          {
+            "time": "Mar 2019",
+            "icon": "vpn_key",
+            "title": "SSRF Exploit",
+            "description": "Paige Thompson (ex-AWS engineer) usa SSRF (Server-Side Request Forgery) para query AWS metadata endpoint. Obtiene IAM role credentials.",
+            "severity": "critical"
+          },
+          {
+            "time": "Mar-Jul 2019",
+            "icon": "storage",
+            "title": "S3 Data Exfiltration",
+            "description": "Stolen IAM role credentials dan access a S3 buckets. 100M credit applications, 140K SSNs stolen. Exfiltrada over 4 months.",
+            "severity": "critical"
+          },
+          {
+            "time": "Jul 2019",
+            "icon": "report",
+            "title": "Breach Discovery",
+            "description": "Security researcher notifica Capital One después de ver Paige post en GitHub sobre data. Capital One investiga, confirma breach.",
+            "severity": "critical"
+          },
+          {
+            "time": "2020-2022",
+            "icon": "gavel",
+            "title": "Consequences",
+            "description": "Capital One: $80M fine (OCC), $190M settlement (customers). Paige Thompson: Convicted, 5 years prison.",
+            "severity": "critical"
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "crisis_decision",
+      "title": "🚨 EC2 IAM Role: ¿Qué Permissions?",
+      "content": {
+        "scenario": "Diseñas web app en AWS. App necesita leer de S3 bucket con user profiles. Engineering quiere dar EC2 instance 'full S3 access' para simplicity. Security dice 'read-only, single bucket'. ¿Qué decides?",
+        "timer_seconds": 30,
+        "options": [
+          {
+            "id": "full_s3",
+            "text": "s3:* (full S3 access) - 'Works everywhere, easy development'",
+            "icon": "all_inclusive",
+            "is_correct": false,
+            "consequence": {
+              "title": "Esto fue Capital One",
+              "description": "Over-privileged role. SSRF exploit → stolen credentials → access a ALL S3 buckets including sensitive data. 100M records stolen. Least privilege violated.",
+              "impact_score": -100
             }
           },
           {
-            "id": "cloud2",
-            "task": "Service Account Hygiene",
-            "subtitle": "Eliminate long-term keys",
-            "icon": "key",
-            "unlock_content": {
-              "title": "Workload Identity",
-              "points": [
-                "AWS: Use IAM roles for EC2/Lambda. No access keys in code.",
-                "Azure: Managed Identities. App gets token from metadata service.",
-                "GCP: Workload Identity. No service account key files.",
-                "Rotate keys: If must use keys, rotate every 90 days.",
-                "Uber breach: AWS keys in GitHub. Eliminate keys = eliminate this vector."
-              ],
-              "bonus_fact": "GitHub scans for leaked keys. 10K+ repos removed monthly for exposed credentials."
-            }
-          },
-          {
-            "id": "cloud3",
-            "task": "Implement SCPs/Azure Policy",
-            "subtitle": "Guardrails",
-            "icon": "policy",
-            "unlock_content": {
-              "title": "Organization-level Controls",
-              "points": [
-                "AWS SCPs: Organization-wide deny rules. Ex: Deny region outside US.",
-                "Azure Policy: Enforce tagging, allowed VM sizes, require encryption.",
-                "GCP Organization Policies: Similar. Centralized governance.",
-                "Prevent: Developers spinning up expensive resources, data in wrong regions.",
-                "Compliance: GDPR data residency enforced via policy."
-              ],
-              "bonus_fact": "SCPs override ALL IAM permissions. Ultimate guardrail for multi-account environments."
+            "id": "scoped_s3",
+            "text": "s3:GetObject en single bucket only - Least privilege",
+            "icon": "security",
+            "is_correct": true,
+            "consequence": {
+              "title": "Defense in Depth",
+              "description": "Even si role compromised, attacker puede SOLO read ese bucket. No write, no other buckets. Blast radius limitado. Proper IAM hygiene.",
+              "impact_score": 100,
+              "xp_bonus": 30
             }
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación - Cloud IAM",
-      "duration": 60,
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "AWS IAM Basics",
       "content": {
-        "question": "¿Cómo prevenir Uber-style leak (AWS keys en GitHub)?",
-        "options": [
-          {
-            "id": "a",
-            "text": "Educar developers sobre no commitear keys",
-            "is_correct": false,
-            "feedback": "Incorrecto. Training ayuda pero humans make mistakes. Need technical control."
+        "card": {
+          "front": {
+            "icon": "account_tree",
+            "term": "AWS IAM",
+            "subtitle": "Identity & Access Management",
+            "color": "#FF9900"
           },
-          {
-            "id": "b",
-            "text": "IAM roles con temporary credentials. No long-term keys. GitHub scanning.",
-            "is_correct": true,
-            "feedback": "CORRECTO! 1) Use IAM roles (EC2 instance profile, Lambda execution role) = temporary credentials, auto-rotate. 2) Eliminate service account keys donde posible (AWS roles, Azure Managed Identity, GCP Workload Identity). 3) GitHub secret scanning + pre-commit hooks (detect-secrets). 4) Rotate keys if must use (90 days). 5) AWS CloudTrail alert on key creation. Defense in depth."
-          },
-          {
-            "id": "c",
-            "text": "Private repos en vez de public",
-            "is_correct": false,
-            "feedback": "Incorrecto. Uber keys estaban en private repo. Attacker gained access. Keys no deben existir in code period."
+          "back": {
+            "definition": "AWS IAM controla autenticación (who you are) y autorización (what you can do) en AWS. Free service, foundational para security.",
+            "key_entities": [
+              "Users: Individual people (avoid, use SSO instead)",
+              "Groups: Collections de users (permissions via groups)",
+              "Roles: Assumable by AWS services (EC2, Lambda) o external identities",
+              "Policies: JSON documents defining permissions (Allow/Deny)"
+            ],
+            "policy_types": "Identity-based (attached to user/group/role). Resource-based (attached to resource like S3 bucket).",
+            "evaluation": "Explicit Deny > Explicit Allow > Implicit Deny (default).",
+            "color": "#FF6F00"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "AWS Root Account: Never Use",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "dangerous",
+            "term": "ROOT ACCOUNT",
+            "subtitle": "God mode - lock it away",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "AWS root account = email usado para crear AWS account. Has UNRESTRICTED access a todo. Cannot limit permissions. Single point of failure.",
+            "why_dangerous": [
+              "Cannot apply SCPs (Service Control Policies)",
+              "Cannot restrict with IAM policies",
+              "If compromised: Total control, close account, delete everything",
+              "No audit trail granularity (hard to separate root actions)"
+            ],
+            "best_practices": [
+              "Enable MFA (hardware key preferred)",
+              "Lock credentials en vault (physical safe)",
+              "Create admin IAM user para daily tasks",
+              "Use root ONLY para billing, account closure (once/year tasks)"
+            ],
+            "color": "#C62828"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "IAM Roles vs Access Keys",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "compare_arrows",
+            "term": "ROLES > KEYS",
+            "subtitle": "Temporary vs permanent credentials",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "IAM Roles: Temporary credentials (auto-rotate). No storage. Assume via STS (Security Token Service). Keys: Permanent credentials. Must rotate manually. Leakable.",
+            "roles_advantages": [
+              "✅ Auto-expire (1h default, max 12h)",
+              "✅ No credential storage (EC2 instance metadata)",
+              "✅ Cannot be leaked long-term",
+              "✅ Audit trail (who assumed role, when)"
+            ],
+            "keys_problems": "❌ Permanent (until rotated). ❌ Stored en code/config. ❌ GitHub leaks common. ❌ Hard to rotate (breaks apps).",
+            "golden_rule": "ALWAYS use IAM roles para AWS services (EC2, Lambda, ECS). Keys ONLY for legacy/external systems, rotate 90 days.",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Service Control Policies (SCPs)",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "policy",
+            "term": "SCPs",
+            "subtitle": "Organization-wide guardrails",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "SCPs (AWS Organizations feature): Policies aplicadas a entire AWS accounts/OUs (Organizational Units). Set maximum permissions - even root cannot bypass.",
+            "use_cases": [
+              "Prevent region usage: Deny all actions en non-approved regions (data residency)",
+              "Prevent service usage: Deny cryptocurrency mining services",
+              "Require encryption: Deny S3 PutObject sin encryption",
+              "Prevent root usage: Deny all actions except MFA setup"
+            ],
+            "inheritance": "Applied at OU level, inherited by child accounts. Cumulative (multiple SCPs AND together).",
+            "limit": "SCPs set ceiling. IAM policies grant permissions (up to SCP ceiling).",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "drag_drop_match",
+      "title": "AWS IAM Entities",
+      "content": {
+        "instruction": "Match el AWS IAM entity con su mejor use case:",
+        "scenarios": [
+          {"id": 1, "text": "EC2 instance necesita access a S3", "correct_target": "role"},
+          {"id": 2, "text": "Prevent all accounts en org de usar eu-north-1 region", "correct_target": "scp"},
+          {"id": 3, "text": "20 developers necesitan same permissions", "correct_target": "group"},
+          {"id": 4, "text": "External CI/CD system (GitHub Actions) deploys a AWS", "correct_target": "oidc"},
+          {"id": 5, "text": "S3 bucket debe ser read-only para specific IAM role", "correct_target": "policy"}
+        ],
+        "targets": [
+          {"id": "role", "label": "IAM Role", "color": "#388E3C"},
+          {"id": "scp", "label": "SCP", "color": "#1976D2"},
+          {"id": "group", "label": "IAM Group", "color": "#7B1FA2"},
+          {"id": "oidc", "label": "OIDC (federated)", "color": "#FF9800"},
+          {"id": "policy", "label": "Resource Policy", "color": "#F57C00"}
+        ],
+        "xp_per_correct": 7
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "flip_card_full",
+      "title": "Azure AD / Entra ID",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "cloud",
+            "term": "AZURE AD (ENTRA ID)",
+            "subtitle": "Microsoft cloud identity",
+            "color": "#0078D4"
+          },
+          "back": {
+            "definition": "Azure AD (renamed Entra ID 2023): Cloud-based identity service. SSO, MFA, Conditional Access. Different de on-prem Active Directory (pero puede sync).",
+            "key_features": [
+              "SSO: Single sign-on a 1000s SaaS apps (Office 365, Salesforce, etc)",
+              "Conditional Access: Context-based policies (location, device, risk)",
+              "B2B/B2C: External user access (partners, customers)",
+              "PIM (Privileged Identity Management): JIT admin access"
+            ],
+            "authentication": "OAuth 2.0, OpenID Connect, SAML. Modern protocols.",
+            "rbac": "Azure RBAC (separate): Permissions en Azure resources. Azure AD = identity, RBAC = authorization.",
+            "color": "#005A9E"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "Azure Conditional Access",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "rule",
+            "term": "CONDITIONAL ACCESS",
+            "subtitle": "Context-aware policies",
+            "color": "#00BCF2"
+          },
+          "back": {
+            "definition": "Conditional Access: If-then policies. IF (user, location, device, app, risk) THEN (allow, deny, require MFA).",
+            "example_policies": [
+              "IF location = outside corporate network THEN require MFA",
+              "IF device = unmanaged THEN block access a sensitive apps",
+              "IF sign-in risk = high (leaked credentials) THEN require password change",
+              "IF accessing admin portal THEN require compliant device + MFA"
+            ],
+            "zero_trust": "Core de Zero Trust model. Never trust, always verify. Context matters.",
+            "risk_signals": "Azure AD Identity Protection: ML-based risk detection (leaked creds, atypical travel, malware-infected device).",
+            "color": "#0099CC"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "flip_card_full",
+      "title": "GCP IAM",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "layers",
+            "term": "GCP IAM",
+            "subtitle": "Google Cloud IAM",
+            "color": "#4285F4"
+          },
+          "back": {
+            "definition": "GCP IAM: Google Cloud's identity and access. Similar concepts a AWS pero different terminology. Emphasis on hierarchy (Org → Folder → Project → Resource).",
+            "key_concepts": [
+              "Members: Who (users, groups, service accounts)",
+              "Roles: What permissions (Primitive, Predefined, Custom)",
+              "Policies: Binding de members a roles en resources"
+            ],
+            "role_types": "Primitive (Owner, Editor, Viewer - avoid). Predefined (Google-managed, specific). Custom (user-defined).",
+            "service_accounts": "Similar a AWS IAM roles. For apps, not humans. Keys o Workload Identity Federation (preferred).",
+            "hierarchy_inheritance": "Permissions inherited down hierarchy. Org policy → Project inherits.",
+            "color": "#1A73E8"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "swipe_cards",
+      "title": "Cloud IAM Best Practice?",
+      "content": {
+        "instruction": "¿Es esta práctica de Cloud IAM segura?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "Use root account con MFA para daily admin tasks",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 2,
+            "scenario": "EC2 instance usa IAM role (no access keys) para S3 access",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 3,
+            "scenario": "AWS access keys committed a GitHub repo público",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 4,
+            "scenario": "SCP niega all actions en non-approved regions",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 5,
+            "scenario": "Single IAM user con s3:* para convenience",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          }
+        ],
+        "xp_per_correct": 9
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: Compromised IAM Credentials",
+      "content": {
+        "scenario": "Investigas suspicious AWS activity. CloudTrail logs muestran API calls. Find las 2 lines que indican compromised credentials.",
+        "log_lines": [
+          {"id": 1, "text": "2024-03-15 14:23:11 AssumeRole caller=jenkins@company.com role=DeploymentRole region=us-east-1", "is_suspicious": false},
+          {"id": 2, "text": "2024-03-15 18:45:33 ListBuckets caller=AKIAIOSFODNN7EXAMPLE region=ap-southeast-1 source_ip=185.220.101.14", "is_suspicious": true, "reason": "Access key usage desde unusual region (Asia) y suspicious IP (Tor exit node)"},
+          {"id": 3, "text": "2024-03-15 18:46:12 GetObject bucket=company-financials key=ssn_data.csv caller=AKIAIOSFODNN7EXAMPLE source_ip=185.220.101.14", "is_suspicious": true, "reason": "Exfiltrating sensitive financial data desde suspicious IP"},
+          {"id": 4, "text": "2024-03-15 19:02:15 PutObject bucket=company-public key=website/index.html caller=admin@company.com region=us-east-1", "is_suspicious": false},
+          {"id": 5, "text": "2024-03-15 20:15:42 DescribeInstances caller=monitoring-role@company.com region=us-west-2", "is_suspicious": false}
+        ],
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "slider_balance",
+      "title": "⚖️ Granularidad de Permisos",
+      "content": {
+        "scenario": "Configurando permisos para desarrolladores. ¿Qué enfoque tomas?",
+        "left_option": {
+          "label": "Permisivo (Admin Access)",
+          "icon": "lock_open",
+          "consequences": [
+            "✅ Desarrollo rápido sin bloqueos",
+            "❌ Un error borra toda la producción",
+            "❌ Si roban una credencial, game over"
+          ]
+        },
+        "right_option": {
+          "label": "Restrictivo (Least Privilege)",
+          "icon": "lock",
+          "consequences": [
+            "✅ Daño contenido si hay compromiso",
+            "✅ Cumplimiento de auditoría",
+            "❌ Requiere gestión constante de permisos"
+          ]
+        },
+        "explanation": "Least Privilege es innegociable en Cloud. Usa roles temporales y permisos just-in-time. La comodidad de hoy es el breach de mañana."
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "timed_quiz",
+      "title": "⚡ Capital One Root Cause",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Qué IAM mistake fue crítico en Capital One breach?",
+        "options": [
+          {"id": "a", "text": "No usaron MFA en root account", "is_correct": false},
+          {"id": "b", "text": "Over-privileged IAM role (full S3 access) en EC2 instance", "is_correct": true},
+          {"id": "c", "text": "Access keys committed a GitHub", "is_correct": false}
+        ],
+        "explanation": "Capital One: EC2 IAM role tenía s3:* (full S3 access). SSRF exploit → stolen role credentials → access a ALL S3 buckets. Debió ser scoped: s3:GetObject en specific buckets only. Least privilege violation.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "timed_quiz",
+      "title": "⚡ IAM Roles vs Keys",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Por qué IAM roles son mejores que access keys para EC2?",
+        "options": [
+          {"id": "a", "text": "Roles son más rápidos que keys", "is_correct": false},
+          {"id": "b", "text": "Roles auto-rotate (temporary), keys son permanent y leakable", "is_correct": true},
+          {"id": "c", "text": "Roles tienen más permissions que keys", "is_correct": false}
+        ],
+        "explanation": "Roles: Temporary credentials (auto-rotate cada 1-12h), no storage, cannot be leaked long-term. Keys: Permanent, stored en code/config, GitHub leaks common. Golden rule: Roles para AWS services, keys ONLY para external.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "cloud_done",
+          "name": "Cloud IAM Architect",
+          "description": "Master AWS, Azure, GCP identity management",
+          "rarity": "epic",
+          "color": "#FF9900"
+        }
+      }
+    },
+    {
+      "screen_id": 19,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 60,
+        "key_takeaways": [
+          "AWS: Root account never use. IAM roles > access keys. SCPs para guardrails.",
+          "Azure AD: SSO, Conditional Access (context-aware). PIM para JIT admin access.",
+          "GCP: Hierarchy (Org→Project→Resource). Predefined roles > Primitive roles.",
+          "Least privilege: Scope permissions a minimum necessary (s3:GetObject en bucket X, not s3:*)",
+          "Capital One: Over-privileged role + SSRF = 100M records. IAM hygiene is critical."
+        ],
+        "next_lesson": {
+          "id": "c3_l6",
+          "title": "Evaluación Final Curso 3",
+          "preview": "Healthcare IAM: Design complete access control system"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }

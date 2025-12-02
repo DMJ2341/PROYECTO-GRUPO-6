@@ -1,128 +1,416 @@
 {
   "id": "c2_l4",
   "title": "VPN y Túneles Seguros",
-  "description": "Caso: NotPetya (2017)",
+  "description": "Caso Real: NotPetya (2017)",
   "type": "interactive",
-  "duration_minutes": 8,
-  "xp_reward": 20,
+  "duration_minutes": 20,
+  "xp_reward": 55,
   "order_index": 4,
   "course_id": 2,
-  "total_screens": 3,
+  "total_screens": 16,
+  "theme": {
+    "primary_color": "#9C27B0",
+    "secondary_color": "#F44336",
+    "accent_color": "#00BCD4",
+    "gradient": ["#1a1a2e", "#2d132c", "#801336"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso: NotPetya (2017)",
-      "duration": 200,
+      "type": "story_intro",
+      "title": "Operación: NotPetya",
       "content": {
-        "story_title": "NotPetya: $10B Wiper Disguised as Ransomware",
-        "story_intro": "Nation-state attack (Russia) targeting Ukraine que se propagó globally",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "precision_manufacturing",
-            "title": "Vector: Supply Chain",
-            "content": "NotPetya entró vía M.E.Doc (Ukrainian tax software). Attackers comprometieron update server, pushed malicious update. 80% de Ukrainian companies usaban M.E.Doc.",
-            "insight": "Supply chain attack bypassa todas las defensas. Trust en vendor = single point of failure."
-          },
-          {
-            "id": "2",
-            "icon": "bolt",
-            "title": "Propagation: EternalBlue + More",
-            "content": "NotPetya usó EternalBlue (SMB) + Mimikatz (credential theft) + PsExec + WMI. Multi-vector propagation. Lateral movement rapidísimo.",
-            "insight": "Worm moderno usa TODAS las técnicas. No solo un exploit, sino full arsenal."
-          },
-          {
-            "id": "3",
-            "icon": "delete_forever",
-            "title": "Payload: Wiper, Not Ransom",
-            "content": "Disfrazado como ransomware, pero MBR overwrite = unrecoverable. No decryption key real. Goal: destruction, not money. Maersk, Merck, FedEx devastados. $10B+ damages.",
-            "insight": "Geopolitical cyber warfare tiene collateral damage global. NotPetya: aimed at Ukraine, hit world."
-          }
-        ]
+        "headline": "27 JUNIO 2017",
+        "subheadline": "Wiper disfrazado de ransomware destruye empresas globales",
+        "stats": [
+          {"value": "$10B", "label": "Daños totales"},
+          {"value": "65", "label": "Países afectados"},
+          {"value": "Maersk", "label": "76K PCs destruidos"}
+        ],
+        "cta_text": "Investigar Cyber Weapon"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "Network Attacks Types",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "Geopolitical Cyber Warfare",
       "content": {
-        "cards": [
+        "icon": "public",
+        "icon_color": "#F44336",
+        "headline": "Rusia vs Ucrania: Collateral Damage Mundial",
+        "body": "NotPetya fue nation-state attack (Russia GRU) targeting Ukraine. Entró vía M.E.Doc (software de impuestos ucraniano). Objetivo: devastar economía ucraniana. Resultado: $10B en daños GLOBALES.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Cyber warfare no respeta fronteras. Aimed at Ukraine, hit Maersk (shipping), Merck (pharma), FedEx, WPP (advertising), bancos europeos."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "crisis_timeline",
+      "title": "⏱️ PROPAGACIÓN GLOBAL",
+      "content": {
+        "events": [
           {
-            "id": "1",
-            "front": {
-              "icon": "person_search",
-              "term": "Man-in-the-Middle (MITM)",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Attacker intercepts communication entre dos parties. Read, modify, inject traffic. Requiere position en network path.",
-              "example": "ARP spoofing en LAN. Rogue WiFi AP. DNS hijacking. Defensa: TLS/HTTPS end-to-end, certificate pinning, DNSSEC.",
-              "color": "#EF5350"
+            "time": "27 Jun 10:30",
+            "icon": "update",
+            "title": "Supply Chain Compromise",
+            "description": "M.E.Doc push malicious update. 80% de Ukrainian companies infectadas instantáneamente.",
+            "severity": "critical"
+          },
+          {
+            "time": "27 Jun 11:00",
+            "icon": "bolt",
+            "title": "Lateral Movement: EternalBlue",
+            "description": "NotPetya usa EternalBlue (SMB) para propagarse en LANs. Flat networks = propagación sin fricción.",
+            "severity": "critical"
+          },
+          {
+            "time": "27 Jun 12:00",
+            "icon": "vpn_key",
+            "title": "Credential Theft: Mimikatz",
+            "description": "Mimikatz extrae credentials. PsExec + WMI para lateral movement con creds robadas.",
+            "severity": "critical"
+          },
+          {
+            "time": "27 Jun 14:00",
+            "icon": "public",
+            "title": "Global Spread via VPN",
+            "description": "Maersk: Odessa office infectada → VPN sin segmentación → GLOBAL. 76,000 PCs destruidos worldwide.",
+            "severity": "critical"
+          },
+          {
+            "time": "27 Jun 18:00",
+            "icon": "delete_forever",
+            "title": "MBR Wipe",
+            "description": "NotPetya overwrite MBR. Disfrazado como ransomware pero NO decryption possible. Wiper puro.",
+            "severity": "critical"
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "crisis_decision",
+      "title": "🚨 VPN Sin Segmentación",
+      "content": {
+        "scenario": "Eres network architect en Maersk. Branch office en Odessa conectada vía VPN a HQ y otras 600 offices. Sin segmentación. NotPetya infecta Odessa. ¿Qué pasa?",
+        "timer_seconds": 25,
+        "options": [
+          {
+            "id": "flat_vpn",
+            "text": "VPN flat: Odessa puede acceder cualquier office directamente",
+            "icon": "warning",
+            "is_correct": false,
+            "consequence": {
+              "title": "Esto fue Maersk",
+              "description": "NotPetya se propagó de Odessa a TODOS los offices vía VPN en minutos. 76,000 PCs destruidos. $300M pérdidas. VPN sin segmentación = autopista para malware.",
+              "impact_score": -100
             }
           },
           {
-            "id": "2",
-            "front": {
-              "icon": "repeat",
-              "term": "Replay Attack",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Capturar legit network traffic y re-enviar later para gain unauthorized access. Old pero efectivo contra weak protocols.",
-              "example": "Capture authentication packet, replay para login. Defensa: Nonces, timestamps, session tokens, TLS with forward secrecy.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "api",
-              "term": "API Abuse",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "Exploit APIs sin proper authentication, rate limiting, input validation. Scraping, credential stuffing, business logic bypass.",
-              "example": "Enumerate users, brute force tokens, bypass payment. Defensa: API gateway, rate limiting, OAuth, input validation.",
-              "color": "#BA68C8"
+            "id": "segmented_vpn",
+            "text": "VPN segmentada: Branches → HQ only, no branch-to-branch directo",
+            "icon": "security",
+            "is_correct": true,
+            "consequence": {
+              "title": "Contención Correcta",
+              "description": "Odessa infectada pero NO puede alcanzar otros branches directamente. HQ firewall puede contener. Blast radius limitado.",
+              "impact_score": 100,
+              "xp_bonus": 25
             }
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación",
-      "duration": 60,
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "VPN: Virtual Private Network",
       "content": {
-        "question": "NotPetya propagation fue efectiva porque:",
-        "options": [
-          {
-            "id": "a",
-            "text": "Usó zero-day vulnerability",
-            "is_correct": false,
-            "feedback": "Incorrecto. NotPetya usó EternalBlue que ya era conocido (MS17-010 patch existía). No era zero-day."
+        "card": {
+          "front": {
+            "icon": "vpn_lock",
+            "term": "VPN",
+            "subtitle": "Encrypted tunnel over internet",
+            "color": "#1976D2"
           },
-          {
-            "id": "b",
-            "text": "Multi-vector: Supply chain + EternalBlue + Mimikatz + lateral movement tools",
-            "is_correct": true,
-            "feedback": "CORRECTO! NotPetya combinó: 1) Supply chain (M.E.Doc trojanized update), 2) EternalBlue (SMB exploit), 3) Mimikatz (credentials), 4) PsExec/WMI (lateral movement). Single defense no era suficiente. Defense in depth necesario."
-          },
-          {
-            "id": "c",
-            "text": "Ransomware es imparable",
-            "is_correct": false,
-            "feedback": "Incorrecto. NotPetya ni siquiera era ransomware real, era wiper. Y sí es prevenible con: patching, segmentation, backups."
+          "back": {
+            "definition": "Crea túnel cifrado sobre internet público. Permite acceso remoto seguro a corporate network. Encrypts data en tránsito.",
+            "use_cases": [
+              "Remote workers → corporate LAN",
+              "Site-to-site: conectar offices",
+              "Bypass geo-restrictions",
+              "Privacy en WiFi público"
+            ],
+            "key_benefit": "Confidentiality + Integrity en untrusted networks (internet, public WiFi)",
+            "security_note": "VPN NO es seguridad completa. Necesita: MFA, endpoint security, network segmentation.",
+            "color": "#1565C0"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "VPN Type: Site-to-Site",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "lan",
+            "term": "SITE-TO-SITE VPN",
+            "subtitle": "Office to Office",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Conecta networks enteras. Router/firewall en cada site crea túnel. Transparent para users. Always-on.",
+            "architecture": "Office A router ↔ Internet ↔ Office B router. LANs de ambos offices se ven como una red.",
+            "protocols": "IPsec (most common). MPLS (enterprise). WireGuard (modern).",
+            "maersk_lesson": "Maersk: 600+ offices con site-to-site VPN SIN segmentación = NotPetya highway global.",
+            "best_practice": "Segmentar: Branches → HQ only. Hub-and-spoke topology. Firewall en HQ filtra branch-to-branch.",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "VPN Type: Remote Access",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "person",
+            "term": "REMOTE ACCESS VPN",
+            "subtitle": "User to Network",
+            "color": "#FF9800"
+          },
+          "back": {
+            "definition": "User individual conecta a corporate network. VPN client en laptop. On-demand (connect cuando necesario).",
+            "use_cases": "Work from home, traveling employees, contractors",
+            "protocols": [
+              "IPsec: Traditional, client software required",
+              "SSL VPN: Browser-based, no client install",
+              "OpenVPN: Open source, cross-platform"
+            ],
+            "security_requirements": "MFA obligatorio. Endpoint compliance check (AV, patch level). Split tunneling caution (direct internet + VPN).",
+            "color": "#F57C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "IPsec VPN",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "shield",
+            "term": "IPsec",
+            "subtitle": "IP Security Protocol Suite",
+            "color": "#2196F3"
+          },
+          "back": {
+            "definition": "Protocol suite para secure IP communications. Opera en network layer (Layer 3). Encrypts todo el IP packet.",
+            "components": [
+              "AH (Authentication Header): Integrity + authentication",
+              "ESP (Encapsulating Security Payload): Encryption + integrity",
+              "IKE (Internet Key Exchange): Key negotiation"
+            ],
+            "modes": "Transport mode (encrypt payload only). Tunnel mode (encrypt entire packet).",
+            "pros": "Strong encryption. Native OS support. Good for site-to-site.",
+            "cons": "Complex configuration. NAT traversal issues. Requires client software.",
+            "color": "#1976D2"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "SSL/TLS VPN",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "language",
+            "term": "SSL VPN",
+            "subtitle": "Browser-based VPN",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "VPN usando SSL/TLS (same protocol como HTTPS). Browser-based, no client install necesario.",
+            "how_it_works": "User accede portal web via HTTPS. Portal proxy connections a internal resources. All traffic cifrado via TLS.",
+            "pros": [
+              "No client install (browser-based)",
+              "Easy deployment",
+              "Works through firewalls (port 443)",
+              "Granular access control"
+            ],
+            "cons": "Limited to web apps. Not full network access. Performance overhead.",
+            "use_case": "Contractors, BYOD, quick access sin install.",
+            "color": "#6A1B9A"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "drag_drop_match",
+      "title": "IPsec vs SSL VPN",
+      "content": {
+        "instruction": "¿Qué tipo de VPN es mejor para cada escenario?",
+        "scenarios": [
+          {"id": 1, "text": "Conectar 2 offices permanentemente", "correct_target": "ipsec"},
+          {"id": 2, "text": "Contractor necesita acceso quick a web app", "correct_target": "ssl"},
+          {"id": 3, "text": "Employee full network access desde home", "correct_target": "ipsec"},
+          {"id": 4, "text": "BYOD device sin instalar software", "correct_target": "ssl"},
+          {"id": 5, "text": "Roaming laptop con VPN always-on", "correct_target": "ipsec"}
+        ],
+        "targets": [
+          {"id": "ipsec", "label": "IPsec VPN", "color": "#2196F3"},
+          {"id": "ssl", "label": "SSL VPN", "color": "#7B1FA2"}
+        ],
+        "xp_per_correct": 6
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "VPN Security: Split Tunneling",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "call_split",
+            "term": "SPLIT TUNNELING",
+            "subtitle": "Risk vs Performance",
+            "color": "#FF5722"
+          },
+          "back": {
+            "definition": "Permitir que tráfico vaya directamente a internet (no por VPN) mientras VPN activo. Ejemplo: Netflix directo, corporate via VPN.",
+            "pros": "Reduce VPN bandwidth. Better performance para streaming/gaming.",
+            "cons": "RIESGO: Malware desde internet puede pivotear a corporate network. No visibility de security team en direct traffic.",
+            "recommendation": "Disable split tunneling para corporate VPN. Todo tráfico por VPN para inspection. O usar Zero Trust Network Access (ZTNA) en vez de VPN.",
+            "color": "#E64A19"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "swipe_cards",
+      "title": "VPN Best Practice?",
+      "content": {
+        "instruction": "¿Es esta configuración VPN segura?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "VPN sin MFA - solo username/password",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 2,
+            "scenario": "VPN con MFA + device compliance check",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 3,
+            "scenario": "Split tunneling enabled para all users",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 4,
+            "scenario": "Site-to-site VPN sin network segmentation",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          }
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "flip_card_full",
+      "title": "Man-in-the-Middle (MITM)",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "person_search",
+            "term": "MITM ATTACK",
+            "subtitle": "Intercepting communication",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Attacker se posiciona entre dos parties, intercepta y puede modificar communication. Read passwords, inject malware, redirect traffic.",
+            "attack_vectors": [
+              "ARP spoofing en LAN",
+              "Rogue WiFi access point (evil twin)",
+              "DNS hijacking",
+              "BGP hijacking (ISP level)"
+            ],
+            "defense": [
+              "TLS/HTTPS end-to-end (verify certificates)",
+              "VPN en untrusted networks",
+              "DNSSEC",
+              "Certificate pinning en apps"
+            ],
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "timed_quiz",
+      "title": "⚡ NotPetya Propagation",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Por qué NotPetya fue TAN efectivo en propagación global?",
+        "options": [
+          {"id": "a", "text": "Usó zero-day vulnerability", "is_correct": false},
+          {"id": "b", "text": "Multi-vector: Supply chain + EternalBlue + Mimikatz + VPN sin segmentación", "is_correct": true},
+          {"id": "c", "text": "Ransomware es imparable", "is_correct": false}
+        ],
+        "explanation": "NotPetya combinó: 1) Supply chain (M.E.Doc), 2) EternalBlue (SMB), 3) Mimikatz (credentials), 4) PsExec/WMI (lateral movement), 5) VPN sin segmentación (Maersk: Odessa → global). Single defense NO suficiente.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "vpn_lock",
+          "name": "VPN Security Architect",
+          "description": "Dominas VPN types, IPsec vs SSL, y segmentación",
+          "rarity": "rare",
+          "color": "#9C27B0"
+        }
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 55,
+        "key_takeaways": [
+          "VPN types: Site-to-Site (offices) vs Remote Access (users)",
+          "IPsec: Full network access. SSL VPN: Browser-based",
+          "VPN SIN segmentación = malware highway (Maersk lesson)",
+          "MFA obligatorio. Split tunneling = riesgo",
+          "NotPetya: Multi-vector + VPN flat = $10B daños"
+        ],
+        "next_lesson": {
+          "id": "c2_l5",
+          "title": "Segmentación de Redes",
+          "preview": "Micro-segmentation y Zero Trust Network Architecture"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "Nation-state attack (Russia) targeting Ukraine que se propagó globally"
-  }
+  ]
 }

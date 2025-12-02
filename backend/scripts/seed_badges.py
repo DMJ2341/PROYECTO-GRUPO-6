@@ -10,7 +10,7 @@ def seed_badges():
     print("🏅 Creando Badges...")
 
     badges_data = [
-        # ✅ MEDALLA INICIAL
+        # MEDALLA INICIAL
         {
             "name": "Primer Paso", 
             "desc": "Completaste tu primera lección", 
@@ -19,7 +19,7 @@ def seed_badges():
             "val": "1"
         },
         
-        # ✅ MEDALLAS POR CURSO COMPLETO (100%)
+        # MEDALLAS POR CURSO COMPLETO (100%)
         {
             "name": "Guardián de la Información", 
             "desc": "Completaste 'Fundamentos de Seguridad de la Información'", 
@@ -56,7 +56,7 @@ def seed_badges():
             "val": "5"
         },
         
-        # ✅ MEDALLA MAESTRA (Todos los cursos)
+        # MEDALLA MAESTRA (Todos los cursos)
         {
             "name": "Hacker Ético Certificado", 
             "desc": "Completaste los 5 cursos de CyberLearn", 
@@ -65,7 +65,7 @@ def seed_badges():
             "val": "5"
         },
         
-        # ✅ MEDALLAS DE XP (Hitos de experiencia)
+        # MEDALLAS DE XP (Hitos de experiencia)
         {
             "name": "Novato Cibernético", 
             "desc": "Alcanzaste 100 XP", 
@@ -88,7 +88,7 @@ def seed_badges():
             "val": "1000"
         },
         
-        # ✅ MEDALLAS DE RACHA (Constancia)
+        # MEDALLAS DE RACHA (Constancia)
         {
             "name": "Racha Inicial", 
             "desc": "Estudiaste 3 días seguidos", 
@@ -125,7 +125,7 @@ def seed_badges():
             session.add(new_badge)
             print(f"   ✅ Badge creado: {b['name']}")
         else:
-            # ✅ Actualizar si ya existe para mantener coherencia
+            # Actualizar si ya existe para mantener coherencia
             exists.description = b["desc"]
             exists.icon = b["icon"]
             exists.trigger_type = b["type"]

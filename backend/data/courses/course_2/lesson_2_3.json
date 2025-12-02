@@ -1,115 +1,379 @@
 {
   "id": "c2_l3",
-  "title": "Firewalls y IDS/IPS",
-  "description": "Caso: Heartbleed (2014)",
+  "title": "IDS/IPS",
+  "description": "Caso Real: Heartbleed (2014)",
   "type": "interactive",
-  "duration_minutes": 8,
-  "xp_reward": 20,
+  "duration_minutes": 18,
+  "xp_reward": 50,
   "order_index": 3,
   "course_id": 2,
-  "total_screens": 3,
+  "total_screens": 15,
+  "theme": {
+    "primary_color": "#E91E63",
+    "secondary_color": "#9C27B0",
+    "accent_color": "#00BCD4",
+    "gradient": ["#1a1a2e", "#2d1b2e", "#4a1942"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso: Heartbleed (2014)",
-      "duration": 180,
+      "type": "story_intro",
+      "title": "Operación: Heartbleed",
       "content": {
-        "story_title": "Heartbleed: OpenSSL Buffer Over-read",
-        "story_intro": "CVE-2014-0160, CVSS 7.5. Bug en OpenSSL por 2 años afectó 17% de internet",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "favorite_border",
-            "title": "El Bug",
-            "content": "Heartbleed: buffer over-read en TLS heartbeat extension. Permite leer 64KB de memory del server por request. Passwords, private keys, session tokens leakeados.",
-            "insight": "Una línea de código missing bounds check = 500K sites vulnerables."
-          },
-          {
-            "id": "2",
-            "icon": "cloud",
-            "title": "Scope Masivo",
-            "content": "Afectó: Yahoo, Google, Amazon AWS, muchos banks. OpenSSL estaba en 66% de web servers. Bug existió desde 2012, discovered en 2014.",
-            "insight": "Open source critical infrastructure con solo 2 full-time developers. Underfunded = insecure."
-          },
-          {
-            "id": "3",
-            "icon": "build",
-            "title": "Remediation",
-            "content": "Patch: OpenSSL 1.0.1g released. PERO: private keys comprometidas = re-issue ALL certificates. Certificate revocation lists explotaron. Effort masivo.",
-            "insight": "Patching no es suficiente cuando keys están leaked. Certificate rotation es pain."
-          }
-        ]
+        "headline": "7 ABRIL 2014",
+        "subheadline": "Buffer over-read en OpenSSL expone 17% de internet",
+        "stats": [
+          {"value": "CVE-2014-0160", "label": "Vulnerability ID"},
+          {"value": "500K", "label": "Sites vulnerables"},
+          {"value": "2 años", "label": "Bug existió sin detectar"}
+        ],
+        "cta_text": "Investigar el Bug"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "TLS/SSL Fundamentals",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "El Bug Más Peligroso",
       "content": {
-        "cards": [
+        "icon": "favorite_border",
+        "icon_color": "#E91E63",
+        "headline": "Buffer Over-Read en TLS Heartbeat",
+        "body": "OpenSSL implementó TLS heartbeat (keep-alive) sin bounds checking. Atacante podía pedir 1 byte, server devolvía 64KB de memoria. Passwords, private keys, session tokens... todo leakeado.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Una línea de código faltante (bounds check) = 500,000 sites vulnerables. Yahoo, Google, AWS afectados."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "flip_card_full",
+      "title": "TLS/SSL: Encryption Basics",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "lock",
+            "term": "TLS/SSL",
+            "subtitle": "Transport Layer Security",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Protocolo de encryption para comunicaciones seguras. HTTPS = HTTP + TLS. Encripta data en tránsito.",
+            "how_it_works": [
+              "1. Handshake: Client y server acuerdan cipher suite",
+              "2. Certificate exchange: Server prueba identidad",
+              "3. Key exchange: Establecen session keys",
+              "4. Encrypted communication: Data cifrada con session keys"
+            ],
+            "heartbleed_impact": "Heartbeat bug permitía leer memoria server = leak de session keys, private keys, passwords.",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "crisis_decision",
+      "title": "🚨 Heartbleed Detectado",
+      "content": {
+        "scenario": "7 de abril 2014, Heartbleed es public. Eres CISO. Tu infra usa OpenSSL vulnerable en TODOS los web servers. ¿Qué haces PRIMERO?",
+        "timer_seconds": 25,
+        "options": [
           {
-            "id": "1",
-            "front": {
-              "icon": "lock",
-              "term": "TLS Handshake",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Establece encrypted connection. 1) ClientHello. 2) ServerHello + Certificate. 3) Key exchange. 4) Finished. Negotiates cipher suite, exchanges keys.",
-              "example": "TLS 1.3: Faster handshake (1-RTT vs 2-RTT). Removes weak ciphers. Mandatory forward secrecy. Heartbleed: TLS 1.0/1.1 affected.",
-              "color": "#42A5F5"
+            "id": "patch_and_rekey",
+            "text": "Patch OpenSSL + re-issue TODOS los certificates + revoke old",
+            "icon": "security",
+            "is_correct": true,
+            "consequence": {
+              "title": "Respuesta Correcta",
+              "description": "Patching solo no es suficiente. Private keys estuvieron exposed. DEBES re-issue certificates. Doloroso pero necesario.",
+              "impact_score": 100,
+              "xp_bonus": 20
             }
           },
           {
-            "id": "2",
-            "front": {
-              "icon": "verified",
-              "term": "Certificates & CAs",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "X.509 certificates. CA (Certificate Authority) firma certificate. Browser trust CA root certificates. Chain of trust.",
-              "example": "Let's Encrypt: Free automated certificates. DigiCert, Sectigo: Commercial CAs. Heartbleed: Had to revoke/reissue millions of certs.",
-              "color": "#66BB6A"
+            "id": "just_patch",
+            "text": "Solo patchear OpenSSL - keys probablemente no fueron robadas",
+            "icon": "update",
+            "is_correct": false,
+            "consequence": {
+              "title": "Insuficiente",
+              "description": "No sabes SI keys fueron robadas. Asumir lo peor. Muchas companies solo parchearon = siguieron vulnerables con old keys.",
+              "impact_score": -60
             }
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación - Encryption",
-      "duration": 60,
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "IDS: Intrusion Detection System",
       "content": {
-        "question": "¿Por qué Heartbleed requirió revocar certificates?",
-        "options": [
-          {
-            "id": "a",
-            "text": "Bug estaba en certificates mismos",
-            "is_correct": false,
-            "feedback": "Incorrecto. Certificates estaban bien. Heartbleed permitía leak PRIVATE KEYS from server memory."
+        "card": {
+          "front": {
+            "icon": "visibility",
+            "term": "IDS",
+            "subtitle": "Detection Only",
+            "color": "#FF9800"
           },
-          {
-            "id": "b",
-            "text": "Private keys podían ser leakeadas desde server memory",
-            "is_correct": true,
-            "feedback": "CORRECTO! Heartbleed permitía read server memory. Si private key estaba en memory, atacante podía extraerla. Con private key, puede impersonate server, decrypt traffic. Por eso ALL certificates tuvieron que ser revoked y reissued con new keys."
-          },
-          {
-            "id": "c",
-            "text": "CAs fueron comprometidas",
-            "is_correct": false,
-            "feedback": "Incorrecto. CAs no fueron comprometidas. Cada server individual con Heartbleed era vulnerable a key extraction."
+          "back": {
+            "definition": "Sistema que DETECTA ataques pero NO los bloquea. Genera alertas para que humanos investiguen.",
+            "types": [
+              "NIDS (Network): Analiza tráfico de red",
+              "HIDS (Host): Analiza logs y files de un host"
+            ],
+            "detection_methods": [
+              "Signature-based: Busca patterns conocidos (como antivirus)",
+              "Anomaly-based: Detecta desviaciones de baseline"
+            ],
+            "pros": "No bloquea tráfico legítimo por error. Puede analizar todo.",
+            "cons": "No previene. Reacción lenta. Falsos positivos.",
+            "tools": "Snort (NIDS), OSSEC (HIDS)",
+            "color": "#F57C00"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "IPS: Intrusion Prevention System",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "shield",
+            "term": "IPS",
+            "subtitle": "Detection + Prevention",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "IDS + capacidad de BLOQUEAR tráfico malicioso en tiempo real. Inline con el tráfico.",
+            "how_it_works": "Tráfico pasa POR el IPS. Si detecta ataque, DROP packet inmediatamente.",
+            "detection_methods": [
+              "Signature-based: Block exploits conocidos",
+              "Protocol analysis: Detecta violations de RFC",
+              "Rate limiting: Previene floods"
+            ],
+            "pros": "Prevención automática. Sin intervención humana.",
+            "cons": "False positive = block tráfico legítimo. Latency adicional.",
+            "heartbleed_use": "IPS con signature de Heartbleed hubiera bloqueado exploitation attempts.",
+            "tools": "Suricata, Snort (modo IPS), Palo Alto IPS",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "drag_drop_match",
+      "title": "IDS vs IPS: Use Cases",
+      "content": {
+        "instruction": "¿Cuándo usar IDS o IPS?",
+        "scenarios": [
+          {"id": 1, "text": "Production crítico donde false positive = downtime", "correct_target": "ids"},
+          {"id": 2, "text": "Bloquear exploits conocidos automáticamente", "correct_target": "ips"},
+          {"id": 3, "text": "Análisis forense posterior a incidente", "correct_target": "ids"},
+          {"id": 4, "text": "Prevenir DDoS floods en tiempo real", "correct_target": "ips"},
+          {"id": 5, "text": "Monitoring sin riesgo de bloquear tráfico", "correct_target": "ids"}
+        ],
+        "targets": [
+          {"id": "ids", "label": "IDS (Detection)", "color": "#FF9800"},
+          {"id": "ips", "label": "IPS (Prevention)", "color": "#388E3C"}
+        ],
+        "xp_per_correct": 6
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Signature-Based Detection",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "fingerprint",
+            "term": "SIGNATURES",
+            "subtitle": "Pattern Matching",
+            "color": "#2196F3"
+          },
+          "back": {
+            "definition": "Busca patterns específicos de ataques conocidos. Como antivirus para red.",
+            "how_it_works": "Database de signatures (e.g. SQLi patterns, exploit payloads). Traffic matching signature = alert/block.",
+            "pros": [
+              "Alta accuracy para ataques conocidos",
+              "Bajos false positives",
+              "Rápido (pattern matching)"
+            ],
+            "cons": [
+              "Zero-days NO detectados",
+              "Necesita constant updates",
+              "Evasion con obfuscation"
+            ],
+            "heartbleed_example": "Signature: detectar TLS heartbeat request con length field > actual data.",
+            "color": "#1976D2"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "Anomaly-Based Detection",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "analytics",
+            "term": "ANOMALY",
+            "subtitle": "Behavioral Analysis",
+            "color": "#9C27B0"
+          },
+          "back": {
+            "definition": "Establece baseline de comportamiento normal. Detecta desviaciones significativas.",
+            "how_it_works": [
+              "1. Training period: Learn normal traffic patterns",
+              "2. Threshold setting: Cuánta desviación = alert",
+              "3. Detection: Flag anomalies en real-time"
+            ],
+            "pros": "Detecta zero-days. No necesita signatures. Adapta a cambios.",
+            "cons": "MUCHOS false positives. Legítimos spikes = alertas. Training period necesario.",
+            "use_case": "Detectar exfiltración de data inusual. Lateral movement anómalo.",
+            "color": "#7B1FA2"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "swipe_cards",
+      "title": "Signature o Anomaly?",
+      "content": {
+        "instruction": "¿Este ataque se detecta mejor con signatures o anomaly?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "SQLi conocido: ' OR 1=1--",
+            "correct_answer": "left",
+            "labels": {"left": "Signature", "right": "Anomaly"}
+          },
+          {
+            "id": 2,
+            "scenario": "Usuario descarga 10GB de data (normal: 10MB/día)",
+            "correct_answer": "right",
+            "labels": {"left": "Signature", "right": "Anomaly"}
+          },
+          {
+            "id": 3,
+            "scenario": "Heartbleed exploit con pattern específico",
+            "correct_answer": "left",
+            "labels": {"left": "Signature", "right": "Anomaly"}
+          },
+          {
+            "id": 4,
+            "scenario": "Zero-day exploit nunca visto",
+            "correct_answer": "right",
+            "labels": {"left": "Signature", "right": "Anomaly"}
+          }
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "log_hunter",
+      "title": "🔍 Detect Heartbleed Exploit",
+      "content": {
+        "instruction": "Analiza IDS logs. Identifica intentos de Heartbleed exploitation.",
+        "logs": [
+          {"id": 1, "text": "TLS Handshake: ClientHello from 192.168.1.100", "suspicious": false},
+          {"id": 2, "text": "TLS Heartbeat Request: length=65535 actual_data=1 from 185.x.x.x", "suspicious": true},
+          {"id": 3, "text": "HTTP GET /index.html from 192.168.1.200", "suspicious": false},
+          {"id": 4, "text": "TLS Heartbeat Request: length=16384 actual_data=16 from 185.x.x.x", "suspicious": true},
+          {"id": 5, "text": "TLS Heartbeat Response: 64KB sent to 185.x.x.x", "suspicious": true},
+          {"id": 6, "text": "HTTPS POST /login from 192.168.1.150", "suspicious": false}
+        ],
+        "hints": [
+          "Heartbleed: length field >> actual data",
+          "Mismo atacante (185.x.x.x) multiple requests",
+          "Server enviando 64KB = leaking memory"
+        ],
+        "success_threshold": 3,
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "flip_card_full",
+      "title": "False Positives vs False Negatives",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "balance",
+            "term": "TUNING",
+            "subtitle": "El balance crítico",
+            "color": "#FF5722"
+          },
+          "back": {
+            "definition": "False Positive: Alerta de ataque cuando es tráfico legítimo. False Negative: NO detectar ataque real.",
+            "trade_off": {
+              "high_sensitivity": "Muchos FP. Alert fatigue. Analistas ignoran.",
+              "low_sensitivity": "Muchos FN. Ataques reales pasan sin detectar."
+            },
+            "tuning_needed": "Ajustar thresholds basado en: Baseline de tráfico, Criticidad de assets, Tolerance a false positives",
+            "best_practice": "Start conservative (high sensitivity), tune down basado en FP rate. Revisar FN en incident reviews.",
+            "color": "#E64A19"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "timed_quiz",
+      "title": "⚡ IDS/IPS Decision",
+      "content": {
+        "timer_seconds": 20,
+        "question": "Tienes production crítico donde 1 minuto de downtime = $100K pérdidas. ¿Qué deployment?",
+        "options": [
+          {"id": "a", "text": "IPS inline con auto-blocking", "is_correct": false},
+          {"id": "b", "text": "IDS en monitoring mode + manual response", "is_correct": true},
+          {"id": "c", "text": "No usar IDS/IPS - muy riesgoso", "is_correct": false}
+        ],
+        "explanation": "IPS inline puede causar downtime con false positive. Para production crítico, usar IDS (monitoring) con SOC 24/7 para manual response. Balance entre security y availability.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "visibility",
+          "name": "Threat Detection Master",
+          "description": "Dominas IDS/IPS, signatures, y anomaly detection",
+          "rarity": "rare",
+          "color": "#E91E63"
+        }
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 50,
+        "key_takeaways": [
+          "IDS = Detection only. IPS = Detection + Prevention",
+          "Signature-based: Ataques conocidos. Anomaly-based: Zero-days",
+          "Heartbleed: Buffer over-read en OpenSSL por 2 años",
+          "False Positives vs False Negatives: Tuning es crítico",
+          "Production crítico → IDS. Auto-prevention → IPS"
+        ],
+        "next_lesson": {
+          "id": "c2_l4",
+          "title": "VPN y Túneles Seguros",
+          "preview": "NotPetya: cuando VPN sin segmentación destruye empresas"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "CVE-2014-0160, CVSS 7.5. Bug en OpenSSL por 2 años afectó 17% de internet"
-  }
+  ]
 }

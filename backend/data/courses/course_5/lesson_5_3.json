@@ -1,188 +1,308 @@
 {
   "id": "c5_l3",
-  "title": "Contención y Erradicación",
-  "description": "Security Metrics & KPIs",
+  "title": "Análisis de malware",
+  "description": "Caso Real: WannaCry 2017",
   "type": "interactive",
-  "duration_minutes": 10,
-  "xp_reward": 20,
+  "duration_minutes": 32,
+  "xp_reward": 80,
   "order_index": 3,
   "course_id": 5,
-  "total_screens": 3,
+  "total_screens": 25,
+  "theme": {
+    "primary_color": "#D50000",
+    "secondary_color": "#00BFA5",
+    "accent_color": "#FFD600",
+    "gradient": ["#1a0000", "#330000", "#4d0000"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "Security Metrics & KPIs",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: WannaCry",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "speed",
-              "term": "Mean Time To Patch (MTTP)",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Average time from vulnerability disclosure to patch deployment. Goal: <30 days standard, <7 days critical, <24 hours emergency (CVSS 10.0).",
-              "example": "Equifax MTTP: 60+ days for CVSS 10.0. Industry standard: <7 days. Order of magnitude failure. Track by severity: Critical, High, Medium, Low.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "security",
-              "term": "Security Posture Score",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Aggregate metric. Factors: Vuln count weighted by severity, patch compliance, security control coverage, incident count. Trend over time.",
-              "example": "Score 0-100. Target: >80. Components: Critical vulns (-10 each), patch SLA compliance (+20), security tool coverage (+20). Executive dashboard.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "shield",
-              "term": "Control Effectiveness",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "% of security controls functioning as intended. Annual assessment. Identify control gaps. Drives remediation priorities.",
-              "example": "NIST 800-53: 300 controls for High systems. Assessment: 285 effective (95%), 10 partially (3%), 5 ineffective (2%). Fix the 15 gaps.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "verified_user",
-              "term": "Compliance Rate",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "% compliant with policies/regulations. Examples: Patch policy compliance, training completion, access review completion. Audit readiness.",
-              "example": "Patch policy: 95% systems patched within 30 days. Training: 100% annual security awareness. Equifax: Low compliance = breach.",
-              "color": "#BA68C8"
-            }
-          }
-        ]
+        "headline": "12 MAYO 2017",
+        "subheadline": "El ransomware que paralizó el mundo en 12 horas",
+        "stats": [
+          {"value": "200K+", "label": "Equipos infectados"},
+          {"value": "150", "label": "Países afectados"},
+          {"value": "$4B+", "label": "Daños globales"},
+          {"value": "12h", "label": "Tiempo hasta killswitch"}
+        ],
+        "cta_text": "Iniciar Análisis de Malware"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Building Security Metrics Program",
-      "duration": 300,
+      "type": "story_slide",
+      "title": "Viernes 12 de Mayo",
       "content": {
-        "items": [
+        "icon": "coronavirus",
+        "icon_color": "#D50000",
+        "headline": "EternalBlue + DoublePulsar + WannaCryptor",
+        "body": "Un wormable ransomware aprovecha EternalBlue (NSA exploit filtrado por Shadow Brokers). Se propaga sin interacción humana vía puerto 445 (SMBv1). NHS Inglaterra colapsa, Renault detiene fábricas, Deutsche Bahn paralizada, Telefónica España offline.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Primer ransomware wormable de la historia. 12 horas después, Marcus Hutchins (@malwaretech) registra el dominio killswitch y detiene la propagación."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "crisis_timeline",
+      "title": "PROPAGACIÓN EN 12 HORAS",
+      "content": {
+        "events": [
           {
-            "id": "metrics1",
-            "task": "Define Objectives",
-            "subtitle": "What to measure?",
-            "icon": "flag",
-            "unlock_content": {
-              "title": "Metrics Strategy",
-              "points": [
-                "Align with business goals: Reduce risk, ensure compliance, enable business",
-                "SMART metrics: Specific, Measurable, Achievable, Relevant, Time-bound",
-                "Leading indicators: Predictive (vuln count). Lagging: Historical (breach count).",
-                "Balance: Don't just measure easy things. Measure important things.",
-                "Equifax need: MTTP, vulnerability debt, monitoring uptime"
-              ],
-              "bonus_fact": "Bad metric: Total firewall rules. Good metric: % critical assets protected by firewall."
-            }
+            "time": "12 May 07:00 UTC",
+            "icon": "bug_report",
+            "title": "Primeros casos (Asia)",
+            "description": "Telefónica España, hospitales NHS.",
+            "severity": "critical"
           },
           {
-            "id": "metrics2",
-            "task": "Collect Data",
-            "subtitle": "Automation critical",
-            "icon": "data_usage",
-            "unlock_content": {
-              "title": "Data Collection",
-              "points": [
-                "Automate: Manual collection = stale data. APIs from tools.",
-                "Sources: SIEM, vulnerability scanner, ticketing system, asset inventory",
-                "Frequency: Real-time dashboards, weekly reports, monthly trends",
-                "Data quality: Garbage in, garbage out. Validate accuracy.",
-                "Equifax: Had scanner data pero not aggregated/analyzed"
-              ],
-              "bonus_fact": "SOAR can aggregate metrics from disparate tools into single dashboard."
-            }
+            "time": "12 May 12:00 UTC",
+            "icon": "public",
+            "title": "Explosión global",
+            "description": "150 países, 200K+ equipos.",
+            "severity": "critical"
           },
           {
-            "id": "metrics3",
-            "task": "Analyze & Report",
-            "subtitle": "Insights for action",
-            "icon": "analytics",
-            "unlock_content": {
-              "title": "Analysis & Reporting",
-              "points": [
-                "Executive dashboard: High-level trends, red/yellow/green status",
-                "Technical reports: Detailed findings for security team",
-                "Trend analysis: Month-over-month, year-over-year",
-                "Benchmarking: Compare to industry peers, best practices",
-                "Actionable: Every metric should drive decision",
-                "Equifax: Metrics existed pero no accountability for poor performance"
-              ],
-              "bonus_fact": "Good metrics answer: Are we getting better or worse? Where to invest?"
-            }
+            "time": "12 May 15:24 UTC",
+            "icon": "security",
+            "title": "Killswitch activado",
+            "description": "Marcus Hutchins registra iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com → worm se detiene.",
+            "severity": "warning"
           },
           {
-            "id": "metrics4",
-            "task": "Continuous Improvement",
-            "subtitle": "Iterate",
-            "icon": "trending_up",
-            "unlock_content": {
-              "title": "Metrics Maturity",
-              "points": [
-                "Review quarterly: Are metrics still relevant?",
-                "Add new metrics as program matures",
-                "Retire metrics that don't drive action",
-                "Adjust targets: Initial target 70%, mature target 95%",
-                "Culture: Data-driven security decisions",
-                "Equifax lesson: Metrics without consequences = useless"
-              ],
-              "bonus_fact": "Mature orgs: Security metrics integrated into executive scorecards. C-suite accountability."
-            }
+            "time": "15 May",
+            "icon": "update",
+            "title": "Microsoft patch de emergencia",
+            "description": "MS17-010 para Windows XP/2003 (EOL).",
+            "severity": "warning"
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación - Metrics",
-      "duration": 60,
+      "screen_id": 4,
+      "type": "flip_card_full",
+      "title": "Tipos de Análisis",
       "content": {
-        "question": "¿Por qué security metrics importantes?",
-        "options": [
+        "card": {
+          "front": {"icon": "analytics", "term": "ANÁLISIS DE MALWARE", "color": "#00BFA5"},
+          "back": {
+            "types": [
+              "Estático: sin ejecución (strings, PEiD, hash)",
+              "Dinámico: ejecución controlada (Cuckoo, REMnux)",
+              "Híbrido: ambos",
+              "Memoria: dump de RAM (Volatility)"
+            ],
+            "wannacry": "Estático reveló el killswitch domain. Dinámico mostró EternalBlue exploit.",
+            "color": "#009688"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "Estático: Strings & Hash",
+      "content": {
+        "card": {
+          "front": {"icon": "text_fields", "term": "STRINGS", "color": "#FFD600"},
+          "back": {
+            "wannacry_strings": [
+              "iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com",
+              "WannaCryptor",
+              "Bitcoin addresses",
+              "Mensaje de rescate",
+              "@WanaDecryptor@.exe"
+            ],
+            "hash": "DB349B97C37D22F5EA1D1841E3C89EB3 (WannaCry main)",
+            "color": "#FFC400"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "EternalBlue Exploit",
+      "content": {
+        "card": {
+          "front": {"icon": "warning", "term": "ETERNALBLUE", "color": "#D50000"},
+          "back": {
+            "cve": "CVE-2017-0144",
+            "component": "SMBv1 (Microsoft Windows)",
+            "type": "Buffer overflow → RCE + wormable",
+            "patch": "MS17-010 (14 Mar 2017)",
+            "wannacry": "DoublePulsar backdoor + WannaCry payload",
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Killswitch Domain",
+      "content": {
+        "card": {
+          "front": {"icon": "power_settings_new", "term": "KILLSWITCH", "color": "#00BFA5"},
+          "back": {
+            "domain": "iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com",
+            "logic": "if (domain reachable) → exit(); else → encrypt",
+            "hero": "Marcus Hutchins (@malwaretech) lo registró por $10.69",
+            "color": "#009688"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Cuckoo Sandbox",
+      "content": {
+        "card": {
+          "front": {"icon": "science", "term": "CUCKOO", "color": "#1976D2"},
+          "back": {
+            "features": [
+              "Ejecución automática",
+              "Captura network, files, registry",
+              "Screenshots, memory dumps",
+              "YARA + Sigma rules"
+            ],
+            "wannacry_report": "Reveló C2, bitcoin wallets, propagación SMB",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "YARA Rules",
+      "content": {
+        "card": {
+          "front": {"icon": "rule", "term": "YARA", "color": "#FFD600"},
+          "back": {
+            "wannacry_yara": "rule WannaCry { strings: $killswitch = \"iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com\" condition: $killswitch }",
+            "use": "Búsqueda de patrones en binarios o memoria",
+            "color": "#FFC400"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "drag_drop_match",
+      "title": "Técnica → Herramienta",
+      "content": {
+        "instruction": "Relaciona la técnica de análisis con la herramienta",
+        "scenarios": [
+          {"id": 1, "text": "Extraer strings y killswitch", "correct_target": "static"},
+          {"id": 2, "text": "Ver comportamiento en red", "correct_target": "cuckoo"},
+          {"id": 3, "text": "Analizar memoria RAM", "correct_target": "volatility"},
+          {"id": 4, "text": "Detectar WannaCry en disco", "correct_target": "yara"}
+        ],
+        "targets": [
+          {"id": "static", "label": "Strings / PEiD", "color": "#FFD600"},
+          {"id": "cuckoo", "label": "Cuckoo Sandbox", "color": "#1976D2"},
+          {"id": "volatility", "label": "Volatility", "color": "#00BFA5"},
+          {"id": "yara", "label": "YARA Rules", "color": "#D50000"}
+        ],
+        "xp_per_correct": 10
+      }
+    },
+   {
+      "screen_id": 11,
+      "type": "code_practice",
+      "title": "YARA Challenge",
+      "content": {
+        "instruction": "Identifica cuál de estas reglas YARA detectaría el Killswitch de WannaCry correctamente.",
+        "code_snippets": [
           {
-            "id": "a",
-            "text": "Solo para compliance checkbox",
-            "is_correct": false,
-            "feedback": "Incorrecto. Compliance es benefit pero not primary purpose."
+            "id": 1,
+            "language": "yara",
+            "code": "rule WannaCry_Killswitch {\n    strings:\n        $domain = \"iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com\"\n    condition:\n        $domain\n}",
+            "is_vulnerable": false,
+            "explanation": "CORRECTA. Define el string del dominio exacto y la condición requiere que ese string esté presente en el binario."
           },
           {
-            "id": "b",
-            "text": "Drive accountability, measure improvement, justify budget, identify gaps",
-            "is_correct": true,
-            "feedback": "CORRECTO! Metrics purposes: 1) Accountability: MTTP metric = patch team responsible. 2) Improvement: Trending shows if getting better/worse. 3) Budget justification: 'Need $X to reduce MTTP from 30→7 days'. 4) Gap identification: Control effectiveness 60% = need investment. 5) Executive communication: Translate security to business language. Equifax: Had metrics pero no accountability. MTTP 60+ days pero no consequences. Metrics without action = theater."
-          },
-          {
-            "id": "c",
-            "text": "Para hacer security team look busy",
-            "is_correct": false,
-            "feedback": "Incorrecto. Vanity metrics (ex: total scans run) don't matter. Outcome metrics (ex: vulns remediated) matter."
+            "id": 2,
+            "language": "yara",
+            "code": "rule Broken_Rule {\n    strings:\n        $a = \"microsoft.com\"\n    condition:\n        $a at 0\n}",
+            "is_vulnerable": true,
+            "explanation": "INCORRECTA. Esta regla buscaría 'microsoft.com' al inicio del archivo, lo cual no tiene relación con el killswitch de WannaCry."
           }
         ]
       }
+    },
+    {
+      "screen_id": 12,
+      "type": "log_hunter",
+      "title": "WannaCry Network IOCs",
+      "content": {
+        "scenario": "Firewall logs durante el brote. Encuentra intentos de EternalBlue",
+        "log_lines": [
+          {"id": 1, "text": "10.0.0.50 → 8.8.8.8:53 DNS query", "is_suspicious": false},
+          {"id": 2, "text": "10.0.0.123 → 10.0.0.124:445 SMB exploit attempt (EternalBlue)", "is_suspicious": true},
+          {"id": 3, "text": "10.0.0.123 → 10.0.0.125:445 SMB exploit attempt", "is_suspicious": true},
+          {"id": 4, "text": "10.0.0.123 → 10.0.0.126:445 SMB exploit attempt", "is_suspicious": true},
+          {"id": 5, "text": "10.0.0.200 → google.com:443 HTTPS", "is_suspicious": false}
+        ],
+        "xp_reward": 35
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "timed_quiz",
+      "title": "Killswitch Hero",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Quién detuvo WannaCry registrando el dominio killswitch?",
+        "options": [
+          {"id": "a", "text": "Kevin Mitnick", "is_correct": false},
+          {"id": "b", "text": "Marcus Hutchins (@malwaretech)", "is_correct": true},
+          {"id": "c", "text": "NSA", "is_correct": false}
+        ],
+        "explanation": "Marcus Hutchins, 22 años, investigador británico. Más tarde arrestado por otro caso (Kronos banker).",
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "biotech",
+          "name": "Malware Reverse Engineer",
+          "description": "Dominas análisis estático, dinámico y detección de ransomware wormable",
+          "rarity": "epic",
+          "color": "#FFD700"
+        }
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 80,
+        "key_takeaways": [
+          "WannaCry 2017: primer ransomware wormable (EternalBlue)",
+          "Análisis estático: strings → killswitch domain",
+          "Dinámico: Cuckoo Sandbox para comportamiento",
+          "YARA + Volatility esenciales",
+          "Marcus Hutchins salvó el mundo por $10.69"
+        ],
+        "next_lesson": {
+          "id": "c5_l4",
+          "title": "Threat Intelligence",
+          "preview": "Caso APT29 / Cozy Bear - SolarWinds y más"
+        }
+      }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }

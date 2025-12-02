@@ -1,152 +1,433 @@
 {
   "id": "c3_l4",
-  "title": "Funciones Hash",
-  "description": "Password Management",
+  "title": "Gestión de Contraseñas",
+  "description": "NIST Guidelines & Credential Stuffing",
   "type": "interactive",
-  "duration_minutes": 8,
-  "xp_reward": 20,
+  "duration_minutes": 22,
+  "xp_reward": 55,
   "order_index": 4,
   "course_id": 3,
-  "total_screens": 3,
+  "total_screens": 17,
+  "theme": {
+    "primary_color": "#4A148C",
+    "secondary_color": "#FF6F00",
+    "accent_color": "#00E676",
+    "gradient": ["#1a0033", "#2d004d", "#4a0080"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "Password Management",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: Credential Stuffing",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "key",
-              "term": "Password Policies",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Length > complexity. NIST: 8+ chars minimum, 64+ max. No forced rotation (causes weak patterns). Allow spaces, special chars. Check against breach lists.",
-              "example": "Correct: 'my dog has fleas 2024'. Incorrect: 'P@ssw0rd1' (predictable). Use password managers. Diceware passphrases.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "inventory_2",
-              "term": "Password Managers",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Store passwords encrypted. Generate random passwords. Autofill. Master password + MFA protection. Enterprise: 1Password, LastPass, Bitwarden.",
-              "example": "User memorizes 1 strong master password. Manager generates unique 20-char random per site. Prevents credential stuffing.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "block",
-              "term": "Credential Stuffing",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Attacker usa leaked credentials from site A para try en site B. Password reuse = vulnerability. Automated at scale.",
-              "example": "LinkedIn breach → attackers try same email/password en banks. Defense: Unique passwords per site, MFA, CAPTCHA, rate limiting.",
-              "color": "#EF5350"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "psychology",
-              "term": "Passwordless Future",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Eliminate passwords entirely. FIDO2/passkeys, biometrics, magic links. Microsoft: 200M users passwordless. Reduces phishing, improves UX.",
-              "example": "Passkeys (Apple/Google): Device generates key pair. Private key never leaves device. Phishing-resistant. WebAuthn standard.",
-              "color": "#FFB74D"
-            }
-          }
-        ]
+        "headline": "PASSWORD REUSE EPIDEMIC",
+        "subheadline": "Billions de passwords leaked, credential stuffing plaga internet",
+        "stats": [
+          {"value": "15B", "label": "Passwords en dark web"},
+          {"value": "65%", "label": "Users reuse passwords"},
+          {"value": "80%", "label": "Breaches involve weak passwords"}
+        ],
+        "cta_text": "Investigar Password Crisis"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Password Hygiene Assessment",
-      "duration": 180,
+      "type": "story_slide",
+      "title": "Password Policies del Pasado = Disaster",
       "content": {
-        "items": [
+        "icon": "lock_clock",
+        "icon_color": "#FF6F00",
+        "headline": "Old Policies Hicieron Passwords PEOR",
+        "body": "Por años, 'security best practices': passwords complejos (Abc123!@#), cambiar cada 90 días, no reusar últimos 10. Result: Users crean passwords tipo 'Summer2024!', luego 'Fall2024!'. Escriben en post-it. Reuse across sites. NIST 2017 guidance revolucionó todo.",
+        "highlight_box": {
+          "type": "info",
+          "text": "NIST SP 800-63B: Length > Complexity. No forced rotation. Check against breach databases. Permitir paste (password managers). Use MFA."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "flip_card_full",
+      "title": "NIST Password Guidelines",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "policy",
+            "term": "NIST SP 800-63B",
+            "subtitle": "Modern password guidance",
+            "color": "#4A148C"
+          },
+          "back": {
+            "definition": "NIST (National Institute of Standards and Technology) 2017 guidelines revolucionaron password policies. Evidence-based, user-friendly.",
+            "key_changes": [
+              "✅ Minimum 8 chars, recommend 12+. NO max limit (allow passphrases)",
+              "✅ Check against breach databases (Have I Been Pwned API)",
+              "✅ NO forced periodic rotation (change solo si compromised)",
+              "✅ Allow ALL characters (unicode, spaces, emojis)",
+              "✅ NO complexity requirements (no 'must have uppercase, number, symbol')",
+              "❌ Remove password hints, knowledge-based authentication"
+            ],
+            "rationale": "Length > Complexity. 'correcthorsebatterystaple' (25 chars) >> 'Abc123!' (7 chars complex).",
+            "color": "#6A1B9A"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "crisis_decision",
+      "title": "🚨 Password Policy Design",
+      "content": {
+        "scenario": "Eres CISO diseñando nueva password policy. Security team propone: Min 12 chars, complexity required (upper, lower, number, symbol), rotate every 90 days. NIST guidelines dicen: Length over complexity, no forced rotation. Board quiere 'strong security'. ¿Qué policy?",
+        "timer_seconds": 30,
+        "options": [
           {
-            "id": "pw1",
-            "task": "Check Password Strength",
-            "subtitle": "Entropy matters",
-            "icon": "security",
-            "unlock_content": {
-              "title": "Strength Metrics",
-              "points": [
-                "Length: 12+ chars recommended. 16+ for critical accounts.",
-                "Entropy: Random > Dictionary words. 'correct horse battery staple' = 44 bits entropy.",
-                "Avoid: Personal info, keyboard patterns (qwerty), common substitutions (@ for a).",
-                "Test: HaveIBeenPwned, zxcvbn library for strength estimation.",
-                "Gold standard: Password manager generated 20+ random chars."
-              ],
-              "bonus_fact": "8-char all-lowercase: 2 seconds to crack. 12-char mixed: 300+ years at current GPU speeds."
+            "id": "old_policy",
+            "text": "Complex passwords + 90-day rotation (traditional 'best practice')",
+            "icon": "update",
+            "is_correct": false,
+            "consequence": {
+              "title": "Users Rebel",
+              "description": "Users crean 'Summer2024!', 'Fall2024!', 'Winter2024!'. Escriben passwords en post-it. Help desk flooded con password resets. Security teatro, no real security.",
+              "impact_score": -80
             }
           },
           {
-            "id": "pw2",
-            "task": "Enable MFA Everywhere",
-            "subtitle": "Defense in depth",
+            "id": "nist_policy",
+            "text": "NIST: Min 12 chars, no complexity rules, no rotation, check breach databases, MFA",
             "icon": "verified_user",
-            "unlock_content": {
-              "title": "MFA Deployment",
-              "points": [
-                "Priority 1: Email, banking, cloud providers (AWS/Azure/GCP)",
-                "Priority 2: Social media (prevent account takeover)",
-                "Priority 3: Internal enterprise apps",
-                "Method: FIDO2 > TOTP > SMS (better than nothing)",
-                "Recovery codes: Store securely. Needed if device lost."
-              ],
-              "bonus_fact": "Microsoft: MFA blocks 99.9% of automated attacks. 0.1% is sophisticated phishing/MFA bypass."
+            "is_correct": true,
+            "consequence": {
+              "title": "Evidence-Based Security",
+              "description": "Users crean longer, memorable passphrases. No rotation = no 'Winter2024!' patterns. Breach check blocks compromised passwords. MFA = defense in depth. Better UX + better security.",
+              "impact_score": 100,
+              "xp_bonus": 25
             }
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación",
-      "duration": 60,
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "Password Length vs Complexity",
       "content": {
-        "question": "Mejor práctica para passwords según NIST guidelines?",
-        "options": [
-          {
-            "id": "a",
-            "text": "Rotar password cada 90 días",
-            "is_correct": false,
-            "feedback": "Incorrecto. NIST eliminó forced rotation requirement. Causa: Users crean weak patterns (Password1 → Password2)."
+        "card": {
+          "front": {
+            "icon": "straighten",
+            "term": "LENGTH > COMPLEXITY",
+            "subtitle": "Entropy math",
+            "color": "#00897B"
           },
-          {
-            "id": "b",
-            "text": "Length > complexity. Check breach lists. No forced rotation. MFA obligatorio.",
-            "is_correct": true,
-            "feedback": "CORRECTO! NIST SP 800-63B: 1) 8+ chars minimum (length). 2) No complexity requirements que causan weak patterns. 3) Check against breach databases (HaveIBeenPwned). 4) No forced periodic rotation. 5) Allow paste (para password managers). 6) MFA mandatory. Focus: User behavior > arbitrary rules."
-          },
-          {
-            "id": "c",
-            "text": "Passwords deben tener mayúsculas, números, símbolos",
-            "is_correct": false,
-            "feedback": "Incorrecto. Complexity rules causan predictable patterns: 'Password1!'. Length es más importante. 'my dog has fleas' > 'P@ssw0rd'."
+          "back": {
+            "definition": "Password strength = entropy (bits). Measured by character space (options) ^ length. Length aumenta entropy exponentially.",
+            "math_example": [
+              "'Abc123!' (7 chars, complex): 95^7 = 70 trillion combos = 46 bits entropy",
+              "'correct horse battery staple' (28 chars, simple): 26^28 = 2.8×10^39 = 93 bits entropy"
+            ],
+            "cracking_time": "46 bits: Hours con GPU. 93 bits: Trillions de años. Length wins.",
+            "user_friendly": "Passphrases son: Easier to remember, harder to crack, less typos. Win-win.",
+            "nist_recommendation": "Minimum 8, recommend 12-15+. Allow spaces, unicode.",
+            "color": "#00796B"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "Password Rotation: Bad Idea",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "sync_disabled",
+            "term": "NO FORCED ROTATION",
+            "subtitle": "NIST recommendation",
+            "color": "#C62828"
+          },
+          "back": {
+            "definition": "Old 'best practice': Change password every 60-90 days. NIST dice: STOP. Forced rotation hace passwords PEOR.",
+            "why_bad": [
+              "Users make incremental changes: 'Summer2024!' → 'Fall2024!'",
+              "Write passwords down (can't remember 4 new ones/year)",
+              "Reuse across sites (one memorable password)",
+              "Help desk overload (forgotten passwords)"
+            ],
+            "nist_guidance": "Change password ONLY if: 1) Evidence of compromise, 2) User forgot password.",
+            "exception": "Shared/service accounts: Rotate regularly (automated, not human-remembered).",
+            "result": "Users create stronger initial password si no worry about changing it.",
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Breach Database Checking",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "search_check",
+            "term": "PWNED CHECK",
+            "subtitle": "Block compromised passwords",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Check user's password contra database de known breached passwords. Have I Been Pwned (HIBP) tiene 15+ billion passwords.",
+            "how_it_works": "User sets password → Hash it → Check first 5 chars del hash contra HIBP API → If match, block. Privacy-preserving (k-anonymity).",
+            "integration": [
+              "Azure AD: Built-in HIBP check",
+              "Okta: Custom password policy con HIBP",
+              "Custom: HIBP API (free for reasonable use)"
+            ],
+            "why_critical": "'Password123' está en breach databases. Blocking it previene credential stuffing success.",
+            "nist_mandate": "NIST require checking contra breach databases. Not optional.",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "swipe_cards",
+      "title": "Password Policy: NIST Compliant?",
+      "content": {
+        "instruction": "¿Sigue esta policy las NIST guidelines?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "Min 8 chars, no complexity requirements, check breach database",
+            "correct_answer": "right",
+            "labels": {"left": "❌ NO COMPLIANT", "right": "✅ COMPLIANT"}
+          },
+          {
+            "id": 2,
+            "scenario": "Min 12 chars, must have uppercase + lowercase + number + symbol",
+            "correct_answer": "left",
+            "labels": {"left": "❌ NO COMPLIANT", "right": "✅ COMPLIANT"}
+          },
+          {
+            "id": 3,
+            "scenario": "No max length limit, allow unicode/spaces/emojis",
+            "correct_answer": "right",
+            "labels": {"left": "❌ NO COMPLIANT", "right": "✅ COMPLIANT"}
+          },
+          {
+            "id": 4,
+            "scenario": "Force password change every 90 days",
+            "correct_answer": "left",
+            "labels": {"left": "❌ NO COMPLIANT", "right": "✅ COMPLIANT"}
+          },
+          {
+            "id": 5,
+            "scenario": "Block paste en password field (prevent password managers)",
+            "correct_answer": "left",
+            "labels": {"left": "❌ NO COMPLIANT", "right": "✅ COMPLIANT"}
+          }
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "Credential Stuffing Attack",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "login",
+            "term": "CREDENTIAL STUFFING",
+            "subtitle": "Automated login attempts",
+            "color": "#E65100"
+          },
+          "back": {
+            "definition": "Attacker toma breached username/password pairs (billions available dark web) y los prueba en otros sites. Automatizado via bots.",
+            "why_works": "65% users reuse passwords. Breach en Site A → Attacker prueba same credentials en Site B, C, D...",
+            "scale": "Bots intentan millions de login attempts. Success rate: 0.1-2% (pero 0.1% de 1M = 1,000 accounts).",
+            "defense": [
+              "MFA: Even si password correct, need 2nd factor",
+              "Rate limiting: Block IP después de N failed attempts",
+              "CAPTCHA: Slow down bots",
+              "Unique passwords: Password manager genera diferentes passwords per site"
+            ],
+            "real_examples": "Spotify (2016), Dunkin' Donuts (2018), Fortnite (2019) - millions accounts compromised.",
+            "color": "#D84315"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "flip_card_full",
+      "title": "Password Managers",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "key",
+            "term": "PASSWORD MANAGER",
+            "subtitle": "One master password",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Software genera, almacena, auto-fills unique, strong passwords para every site. User memoriza solo 1 master password.",
+            "how_secure": "Encrypted vault. Master password deriva encryption key (PBKDF2/Argon2). Even si vault stolen, useless sin master password.",
+            "features": [
+              "Generate random 20+ char passwords",
+              "Auto-fill (no typing, no phishing risk)",
+              "Sync across devices (encrypted)",
+              "Breach alerts (if site compromised)"
+            ],
+            "popular": "1Password, Bitwarden, LastPass, Dashlane, KeePass (open source)",
+            "nist_endorsement": "NIST encourage password managers. Allow paste (don't block it).",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "drag_drop_match",
+      "title": "Password Attack Types",
+      "content": {
+        "instruction": "Match el attack type con su descripción:",
+        "scenarios": [
+          {"id": 1, "text": "Probar todas las combinaciones posibles (brute force)", "correct_target": "brute"},
+          {"id": 2, "text": "Probar common passwords ('password123', '12345678')", "correct_target": "dictionary"},
+          {"id": 3, "text": "Usar breached passwords de Site A en Site B", "correct_target": "stuffing"},
+          {"id": 4, "text": "Fake login page para steal credentials", "correct_target": "phishing"},
+          {"id": 5, "text": "Compromise database, steal password hashes", "correct_target": "database"}
+        ],
+        "targets": [
+          {"id": "brute", "label": "Brute Force", "color": "#D32F2F"},
+          {"id": "dictionary", "label": "Dictionary Attack", "color": "#7B1FA2"},
+          {"id": "stuffing", "label": "Credential Stuffing", "color": "#E65100"},
+          {"id": "phishing", "label": "Phishing", "color": "#1976D2"},
+          {"id": "database", "label": "Database Breach", "color": "#388E3C"}
+        ],
+        "xp_per_correct": 7
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "flip_card_full",
+      "title": "Passwordless Authentication",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "fingerprint",
+            "term": "PASSWORDLESS",
+            "subtitle": "Future of auth",
+            "color": "#00ACC1"
+          },
+          "back": {
+            "definition": "Authentication sin passwords. Uses: Biometrics (fingerprint, face), hardware keys (YubiKey), magic links, passkeys (FIDO2).",
+            "why_better": [
+              "No password reuse (nothing to reuse)",
+              "No phishing (private key never leaves device)",
+              "Better UX (tap fingerprint vs type 20 chars)",
+              "No credential stuffing (no shared secret)"
+            ],
+            "passkeys": "FIDO2 standard. Public key crypto. Private key en device (secure enclave). Public key en server. Phishing-resistant.",
+            "adoption": "Apple (2022), Google (2022), Microsoft (2023) pushing passkeys. Web Authentication API (WebAuthn).",
+            "challenge": "User education, backup/recovery, not universally supported yet.",
+            "color": "#00838F"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "slider_balance",
+      "title": "⚖️ Política de Contraseñas",
+      "content": {
+        "scenario": "Diseñas la política de contraseñas corporativa. ¿Qué priorizas?",
+        "left_option": {
+          "label": "Complejidad (Cortas y Raras)",
+          "icon": "password",
+          "consequences": [
+            "✅ Difícil de adivinar humanamente",
+            "❌ Fácil de crackear por GPU (poca entropía)",
+            "❌ Usuarios las anotan en post-its"
+          ]
+        },
+        "right_option": {
+          "label": "Longitud (Frases Largas)",
+          "icon": "text_fields",
+          "consequences": [
+            "✅ Matemáticamente imposible de crackear",
+            "✅ Fácil de recordar (memorable)",
+            "✅ Recomendado por NIST"
+          ]
+        },
+        "explanation": "Longitud vence a complejidad. 'CaballoCorrectoBateriaGrapa' es infinitamente más seguro que 'P@ssw0rd1' y más fácil de recordar."
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "timed_quiz",
+      "title": "⚡ NIST Password Philosophy",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Cuál es la principal filosofía behind NIST password guidelines?",
+        "options": [
+          {"id": "a", "text": "Make passwords tan complex que nadie pueda recordarlas", "is_correct": false},
+          {"id": "b", "text": "Evidence-based: Length over complexity, user-friendly, check breach databases", "is_correct": true},
+          {"id": "c", "text": "Rotate passwords frequently para prevent breaches", "is_correct": false}
+        ],
+        "explanation": "NIST philosophy: Evidence-based (research shows forced rotation hace passwords peor), user-friendly (passphrases), defense in depth (breach checks + MFA). Goal: Strong security SIN user rebellion.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "timed_quiz",
+      "title": "⚡ Credential Stuffing Defense",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Defensa MÁS efectiva contra credential stuffing?",
+        "options": [
+          {"id": "a", "text": "Complex password requirements", "is_correct": false},
+          {"id": "b", "text": "MFA (Multi-Factor Authentication)", "is_correct": true},
+          {"id": "c", "text": "Cambiar passwords cada 60 días", "is_correct": false}
+        ],
+        "explanation": "MFA es king. Even si attacker tiene correct password (from breach), need 2nd factor. Credential stuffing assumes password reuse - MFA breaks this. Rate limiting + CAPTCHA help, pero MFA es critical layer.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "password",
+          "name": "Password Policy Expert",
+          "description": "Master NIST guidelines & modern authentication",
+          "rarity": "rare",
+          "color": "#4A148C"
+        }
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 55,
+        "key_takeaways": [
+          "NIST: Length > Complexity. Min 8, recommend 12+. No forced rotation.",
+          "Check passwords contra breach databases (Have I Been Pwned)",
+          "Credential stuffing: Breached credentials probados en otros sites. MFA es defense.",
+          "Password managers: Unique, strong passwords per site. One master password.",
+          "Passwordless future: Passkeys (FIDO2), biometrics, hardware keys"
+        ],
+        "next_lesson": {
+          "id": "c3_l5",
+          "title": "Cloud IAM",
+          "preview": "AWS IAM, Azure AD, GCP IAM - Cloud identity management"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }

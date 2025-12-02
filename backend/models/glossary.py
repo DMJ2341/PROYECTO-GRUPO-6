@@ -23,7 +23,7 @@ class Glossary(Base):
     example_en = Column(Text, nullable=True)
     example_es = Column(Text, nullable=True)
     
-    # ✅ ESTA ES LA COLUMNA DE VALIDACIÓN IMPORTANTE
+    # ESTA ES LA COLUMNA DE VALIDACIÓN IMPORTANTE
     where_you_hear_it = Column(String(255), nullable=True)
     
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -33,16 +33,15 @@ class Glossary(Base):
             'id': self.id,
             'term_en': self.term_en,
             'term_es': self.term_es,
-            'term': self.term_es, # Compatibilidad
+            'term': self.term_es, 
             'definition_en': self.definition_en,
             'definition_es': self.definition_es,
-            'definition': self.definition_es, # Compatibilidad
+            'definition': self.definition_es, 
             'acronym': self.acronym,
             'category': self.category,
             'difficulty': self.difficulty,
             'example_en': self.example_en,
             'example_es': self.example_es,
-            'example': self.example_es, # Compatibilidad
-            # Enviamos el dato al frontend
+            'example': self.example_es, 
             'reference': self.where_you_hear_it 
         }

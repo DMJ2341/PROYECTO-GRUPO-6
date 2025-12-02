@@ -1,215 +1,452 @@
 {
   "id": "c3_l2",
-  "title": "Cifrado Simétrico",
-  "description": "Caso: Twitter Hack 2020",
+  "title": "Modelos de Autorización",
+  "description": "Caso Real: Twitter Hack 2020",
   "type": "interactive",
-  "duration_minutes": 13,
-  "xp_reward": 20,
+  "duration_minutes": 25,
+  "xp_reward": 60,
   "order_index": 2,
   "course_id": 3,
-  "total_screens": 4,
+  "total_screens": 18,
+  "theme": {
+    "primary_color": "#1DA1F2",
+    "secondary_color": "#F45D22",
+    "accent_color": "#794BC4",
+    "gradient": ["#0d1117", "#1a1d29", "#14171a"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso: Twitter Hack 2020",
-      "duration": 200,
+      "type": "story_intro",
+      "title": "Operación: Twitter Takeover",
       "content": {
-        "story_title": "Twitter: Internal Tools + Social Engineering",
-        "story_intro": "Teenagers compromised high-profile accounts: Obama, Biden, Musk, Gates",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "phone_android",
-            "title": "Vector: Spear Phishing Employees",
-            "content": "Atacantes (teenagers incluyendo Graham Clark, 17) hicieron spear phishing a Twitter employees. Se hicieron pasar por IT support. Robaron credentials de admin panel.",
-            "insight": "Insiders con privileged access son high-value targets. Social engineering sigue funcionando."
-          },
-          {
-            "id": "2",
-            "icon": "admin_panel_settings",
-            "title": "Internal Tools Abuse",
-            "content": "Con creds robadas, accedieron internal admin panel. Herramienta permitía: 1) Change email de cualquier account. 2) Disable MFA. 3) Reset password. Control TOTAL.",
-            "insight": "Internal tools sin proper access controls = skeleton key. Least privilege ausente."
-          },
-          {
-            "id": "3",
-            "icon": "currency_bitcoin",
-            "title": "Bitcoin Scam",
-            "content": "Comprometieron 130 accounts high-profile. Tweeted: 'Send Bitcoin, I'll double it'. Classic scam. $120K en Bitcoin robados. Damage reputacional masivo.",
-            "insight": "Objetivo: dinero rápido. Podrían haber hecho más damage (manipular mercados, esparcir desinformación)."
-          },
-          {
-            "id": "4",
-            "icon": "policy",
-            "title": "Aftermath: Access Controls",
-            "content": "Twitter implementó: 1) MFA obligatorio para internal tools. 2) Reduced privileged access. 3) Enhanced monitoring. 4) Security training. Attackers arrested (Florida, UK, California).",
-            "insight": "Post-mortem revealed: demasiados employees tenían god-mode access. Privilege creep."
-          }
-        ]
+        "headline": "15 JULIO 2020",
+        "subheadline": "Teenagers hack Twitter, compromise Obama, Biden, Musk",
+        "stats": [
+          {"value": "130", "label": "Cuentas comprometidas"},
+          {"value": "3", "label": "Hackers (17, 19, 22 años)"},
+          {"value": "$120K", "label": "Robados en Bitcoin"}
+        ],
+        "cta_text": "Investigar Social Engineering"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "Authorization Models",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "El Poder de God-Mode Admins",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "person",
-              "term": "DAC - Discretionary",
-              "color": "#757575"
-            },
-            "back": {
-              "definition": "Owner del recurso controla access. File permissions en Unix/Windows. User puede grant/revoke access a otros. Flexible pero no centralizado.",
-              "example": "Linux: chmod, chown. Windows: NTFS permissions. Owner de archivo decide who can read/write. Problema: Permission sprawl, difícil auditar.",
-              "color": "#9E9E9E"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "shield",
-              "term": "MAC - Mandatory",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Sistema operativo enforce access basado en security labels. Users NO pueden override. Military/government. SELinux, Trusted Solaris.",
-              "example": "Top Secret, Secret, Confidential labels. User con Secret clearance NO puede acceder Top Secret, sin importar file ownership. Rigid pero secure.",
-              "color": "#EF5350"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "work",
-              "term": "RBAC - Role-Based",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Permissions asignadas a roles, no a usuarios individuales. Users assigned a roles. Scalable para organizations grandes. Reduce admin overhead.",
-              "example": "Roles: Admin, Editor, Viewer. User Juan tiene role 'Editor' = puede edit pero no delete. Healthcare: Doctor, Nurse, Admin roles con diferentes permissions a patient records.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "rule",
-              "term": "ABAC - Attribute-Based",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Access basado en attributes (user, resource, environment). Policies con conditional logic. Más granular que RBAC. Zero Trust friendly.",
-              "example": "Policy: 'Allow IF (user.department='Finance' AND resource.type='budget' AND time=business_hours AND location=corporate_network)'. Dynamic, context-aware.",
-              "color": "#66BB6A"
-            }
-          }
-        ]
+        "icon": "admin_panel_settings",
+        "icon_color": "#F45D22",
+        "headline": "Demasiados Administradores = Attack Surface Gigante",
+        "body": "Twitter tenía 1,000+ employees con acceso a internal admin tools. Graham Ivan Clark (17 años) usa social engineering vía Slack/phone para robar credentials. Una vez dentro: god-mode access a CUALQUIER cuenta.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Root cause: No MFA en internal tools. Too many privileged accounts. No segregation of duties. Single compromised admin = game over."
+        }
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Least Privilege Implementation",
-      "duration": 300,
+      "type": "crisis_timeline",
+      "title": "⏱️ SOCIAL ENGINEERING → BITCOIN SCAM",
       "content": {
-        "items": [
+        "events": [
           {
-            "id": "lp1",
-            "task": "Principle of Least Privilege (PoLP)",
-            "subtitle": "Minimum necessary access",
-            "icon": "minimize",
-            "unlock_content": {
-              "title": "Core Security Principle",
-              "points": [
-                "Definition: User/process tiene SOLO permissions necesarias para su función.",
-                "Objetivo: Limit blast radius de compromise. Twitter hack: Too many god-mode admins.",
-                "Implementation: Default deny. Explicitly grant. Regular review/revoke.",
-                "Just-in-Time (JIT): Elevar privileges solo cuando needed, time-bound.",
-                "Zero Standing Privileges: No permanent admin. Todo JIT approval-based."
-              ],
-              "bonus_fact": "Verizon DBIR: 80% of breaches involve privileged credential abuse. PoLP reduces risk."
-            }
+            "time": "15 Jul 14:00",
+            "icon": "phone",
+            "title": "Phone Spear Phishing",
+            "description": "Clark llama a Twitter IT support pretending ser empleado. Social engineering para obtener VPN credentials.",
+            "severity": "warning"
           },
           {
-            "id": "lp2",
-            "task": "Privileged Access Management (PAM)",
-            "subtitle": "Control admin accounts",
+            "time": "15 Jul 15:00",
             "icon": "vpn_key",
-            "unlock_content": {
-              "title": "PAM Solutions",
-              "points": [
-                "Password vaulting: CyberArk, BeyondTrust. Store/rotate privileged passwords.",
-                "Session recording: Audit admin actions. Forensics post-incident.",
-                "JIT elevation: Request → Approval → Time-limited access → Auto-revoke.",
-                "Break-glass: Emergency access con heavy auditing.",
-                "Twitter needed PAM: Internal tools sin access controls = disaster."
-              ],
-              "bonus_fact": "PAM market $2B+/year. Required for compliance (PCI DSS, SOX, HIPAA)."
-            }
+            "title": "Internal Tool Access",
+            "description": "Credentials robadas → acceso a admin panel SIN MFA. Tool puede cambiar email de CUALQUIER cuenta.",
+            "severity": "critical"
           },
           {
-            "id": "lp3",
-            "task": "Access Review Cadence",
-            "subtitle": "Continuous validation",
-            "icon": "fact_check",
-            "unlock_content": {
-              "title": "Governance Process",
-              "points": [
-                "Quarterly access reviews: Managers certify subordinates' access still needed.",
-                "Detect privilege creep: User cambia role pero mantiene old permissions.",
-                "Automated de-provisioning: User leaves → auto-revoke ALL access.",
-                "Orphaned accounts: Detect accounts sin owner/activity. High risk.",
-                "Audit logs: Compliance requirement. Who accessed what when."
-              ],
-              "bonus_fact": "Average employee accumulates 3.5x necessary permissions over 3 years. Regular reviews critical."
-            }
+            "time": "15 Jul 15:30",
+            "icon": "account_circle",
+            "title": "Account Takeover Wave",
+            "description": "Compromise 130 cuentas: @BarackObama, @JoeBiden, @elonmusk, @BillGates, @Uber, @Apple. Change emails, reset passwords.",
+            "severity": "critical"
+          },
+          {
+            "time": "15 Jul 16:00",
+            "icon": "currency_bitcoin",
+            "title": "Bitcoin Scam Tweets",
+            "description": "Post desde cuentas: 'Send Bitcoin to X address, I'll double it!'. 400+ víctimas send $120K total.",
+            "severity": "critical"
+          },
+          {
+            "time": "15 Jul 18:00",
+            "icon": "lock",
+            "title": "Twitter Lockdown",
+            "description": "Twitter deshabilita tweeting para ALL verified accounts mientras investigan. Platform-wide disruption.",
+            "severity": "critical"
           }
         ]
       }
     },
     {
       "screen_id": 4,
-      "type": "quiz",
-      "title": "Evaluación - Authorization",
-      "duration": 90,
+      "type": "crisis_decision",
+      "title": "🚨 Demasiados God-Mode Admins",
       "content": {
-        "question": "Twitter 2020: ¿Cuál fue el root cause?",
+        "scenario": "Eres CISO de Twitter pre-hack. Auditoría revela 1,000+ employees con admin tool access. Engineering pide mantener access 'para productivity'. Security quiere reducir a 50. Board pregunta: ¿Cuál es el riesgo real?",
+        "timer_seconds": 30,
         "options": [
           {
-            "id": "a",
-            "text": "Zero-day vulnerability en Twitter platform",
+            "id": "keep_access",
+            "text": "Mantener 1,000 admins - 'We trust our employees'",
+            "icon": "group",
             "is_correct": false,
-            "feedback": "Incorrecto. NO fue technical vulnerability. Fue social engineering + over-privileged internal tools."
+            "consequence": {
+              "title": "Esto fue Twitter",
+              "description": "1,000 privileged accounts = 1,000 attack vectors. Un teenager con social engineering comprometió UNO y obtuvo god-mode. Result: $120K Bitcoin scam, reputational damage incalculable.",
+              "impact_score": -100
+            }
           },
           {
-            "id": "b",
-            "text": "Too many employees con admin access + weak access controls en internal tools",
+            "id": "least_privilege",
+            "text": "Least Privilege: Reducir a 50 admins + MFA + Approval workflow",
+            "icon": "security",
             "is_correct": true,
-            "feedback": "CORRECTO! Root cause: 1) Demasiados employees tenían access a god-mode admin panel. 2) Panel permitía disable MFA, change email sin additional verification. 3) No MFA on internal tools. 4) Insufficient monitoring. PoLP violado masivamente. Si solo 10 people (no 100s) tuvieran access, surface attack 10x menor."
-          },
-          {
-            "id": "c",
-            "text": "MFA no implementado",
-            "is_correct": false,
-            "feedback": "Parcialmente correcto. MFA no era obligatorio en internal tools (error), pero el issue más grande: over-privileged access. Incluso con MFA, too many people tenían god-mode."
-          },
-          {
-            "id": "d",
-            "text": "SQL injection",
-            "is_correct": false,
-            "feedback": "Incorrecto. NO fue technical exploit. Fue social engineering para robar credentials legítimas."
+            "consequence": {
+              "title": "Defense in Depth",
+              "description": "Reduce attack surface 95%. MFA blocks credential theft. Approval workflow crea audit trail. Even si 1 admin compromised, damage limitado por scope restrictions.",
+              "impact_score": 100,
+              "xp_bonus": 30
+            }
           }
         ]
       }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "Least Privilege Principle",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "lock_person",
+            "term": "LEAST PRIVILEGE",
+            "subtitle": "Minimum access necessary",
+            "color": "#43A047"
+          },
+          "back": {
+            "definition": "User/system debe tener ONLY el mínimo acceso requerido para su función. No más. Reduce blast radius si compromised.",
+            "implementation": [
+              "Default deny: Start con zero access, grant explicitly",
+              "Time-bound: Admin access solo cuando needed, auto-revoke",
+              "Scope-limited: Read-only donde posible, write solo si necesario",
+              "Audit: Log every privileged action con approval trail"
+            ],
+            "twitter_lesson": "Twitter: 1,000 admins con god-mode. Debió ser: 50 admins con scoped permissions + JIT (Just-In-Time) access.",
+            "color": "#388E3C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "DAC: Discretionary Access Control",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "person_add",
+            "term": "DAC",
+            "subtitle": "Owner decides permissions",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Resource owner controla quién tiene acceso. Ejemplo: File creator puede hacer 'chmod 777' o dar read/write a otros users.",
+            "pros": "Flexible. User autonomy. Easy administration (users manage own files).",
+            "cons": "RIESGO: Users pueden sobre-compartir accidentalmente. No centralized policy enforcement. Hard to audit.",
+            "examples": [
+              "Unix file permissions (chmod)",
+              "Windows file sharing",
+              "Google Drive 'Anyone with link'"
+            ],
+            "when_to_use": "Small teams, low-risk data. NOT para sensitive/regulated data.",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "MAC: Mandatory Access Control",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "policy",
+            "term": "MAC",
+            "subtitle": "System enforces policy",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Operating system/admin enforce access rules. Users NO pueden override. Security labels (Top Secret, Secret, Unclassified) determina access.",
+            "how_it_works": "Each resource tiene label. Each user tiene clearance. System permite access solo si clearance >= label.",
+            "pros": "Strong security. Centralized control. Good para classified/regulated environments.",
+            "cons": "Inflexible. Complex administration. User frustration (can't share even cuando legítimo).",
+            "examples": [
+              "SELinux (Security-Enhanced Linux)",
+              "Military/government systems",
+              "Bell-LaPadula model (confidentiality)",
+              "Biba model (integrity)"
+            ],
+            "color": "#C62828"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "RBAC: Role-Based Access Control",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "badge",
+            "term": "RBAC",
+            "subtitle": "Permissions via roles",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Access basado en job role. Define roles (Admin, Editor, Viewer), assign permissions a roles, assign users a roles. User hereda permissions del role.",
+            "example": "Twitter: 'Customer Support Agent' role tiene: view user profiles, send DMs, NO delete accounts. Agent hereda estas permissions.",
+            "pros": "Scalable. Easy to manage (modify role, afecta todos users). Aligns con org structure.",
+            "cons": "Role explosion (muchos roles edge-case). No considera context (time, location, risk).",
+            "best_practices": [
+              "Keep roles coarse-grained (5-10 roles, not 500)",
+              "Regular access reviews",
+              "Separation of duties (no single role puede complete sensitive transaction)"
+            ],
+            "color": "#6A1B9A"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "ABAC: Attribute-Based Access Control",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "tune",
+            "term": "ABAC",
+            "subtitle": "Context-aware access",
+            "color": "#00897B"
+          },
+          "back": {
+            "definition": "Access decisions basadas en attributes: user attributes (dept, clearance), resource attributes (classification), environment attributes (time, location, device).",
+            "example": "Policy: 'Allow if: user.dept=Finance AND resource.type=Financial_Report AND time=business_hours AND location=office_IP'.",
+            "pros": "Granular. Context-aware. Scales better que RBAC (no role explosion). Dynamic (adapts to runtime conditions).",
+            "cons": "Complex to design. Requires attribute infrastructure. Harder to audit (no simple 'user has X role').",
+            "use_cases": "Cloud environments. Zero Trust architectures. High-security scenarios donde context matters.",
+            "color": "#00796B"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "drag_drop_match",
+      "title": "Escenarios de Access Control",
+      "content": {
+        "instruction": "¿Qué modelo de autorización es mejor para cada caso?",
+        "scenarios": [
+          {"id": 1, "text": "Small startup, 10 people sharing Google Drive docs", "correct_target": "dac"},
+          {"id": 2, "text": "Military base: Top Secret, Secret, Unclassified files", "correct_target": "mac"},
+          {"id": 3, "text": "Enterprise con 5,000 employees, 10 departamentos", "correct_target": "rbac"},
+          {"id": 4, "text": "Cloud app: Allow access solo desde corporate IPs durante business hours", "correct_target": "abac"},
+          {"id": 5, "text": "Banco: Prevent single user from initiating AND approving wire transfer", "correct_target": "rbac"}
+        ],
+        "targets": [
+          {"id": "dac", "label": "DAC", "color": "#1976D2"},
+          {"id": "mac", "label": "MAC", "color": "#D32F2F"},
+          {"id": "rbac", "label": "RBAC", "color": "#7B1FA2"},
+          {"id": "abac", "label": "ABAC", "color": "#00897B"}
+        ],
+        "xp_per_correct": 7
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "PAM: Privileged Access Management",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "admin_panel_settings",
+            "term": "PAM",
+            "subtitle": "Manage admin accounts",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "Tools y procesos para manage/monitor privileged accounts (admins, root, service accounts). Twitter's missing piece.",
+            "features": [
+              "Password vaulting: Store admin passwords centrally, rotate automatically",
+              "Session recording: Record todo lo que admin hace (audit trail)",
+              "JIT access: Grant admin privileges solo cuando needed, auto-revoke",
+              "MFA for privileged: Require MFA para any privileged action"
+            ],
+            "tools": "CyberArk, BeyondTrust, HashiCorp Vault, AWS Secrets Manager",
+            "twitter_fix": "PAM hubiera requerido MFA para internal tools. Session recording hubiera detectado anomalous behavior.",
+            "color": "#E65100"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "swipe_cards",
+      "title": "PAM Best Practice?",
+      "content": {
+        "instruction": "¿Es esta práctica de PAM segura?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "Shared 'root' password almacenado en Slack channel",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 2,
+            "scenario": "Admin access granted permanently a 50 users",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 3,
+            "scenario": "JIT access: Admin privileges por 4 horas, auto-revoke, MFA required",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 4,
+            "scenario": "All privileged sessions recorded y stored 1 year",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INSEGURA", "right": "✅ SEGURA"}
+          }
+        ],
+        "xp_per_correct": 9
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "flip_card_full",
+      "title": "Access Reviews",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "fact_check",
+            "term": "ACCESS REVIEWS",
+            "subtitle": "Periodic recertification",
+            "color": "#5E35B1"
+          },
+          "back": {
+            "definition": "Periodic audit de quién tiene qué acceso. Manager review y approve/revoke. Prevent 'permission creep' (accumulation over time).",
+            "why_needed": "People change roles, leave company. Permissions granted 'temporarily' permanecen. Orphaned accounts. Over time: everyone tiene too much access.",
+            "frequency": [
+              "Privileged accounts: Quarterly",
+              "Regular accounts: Semi-annually",
+              "Service accounts: Annually",
+              "Automated: Revoke unused access after 90 days"
+            ],
+            "tools": "SailPoint, Okta, Azure AD Access Reviews",
+            "twitter_impact": "1,000 admin accounts. ¿Cuántos realmente needed? Access review hubiera identificado 950 unnecessary.",
+            "color": "#512DA8"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: Twitter Admin Tool Abuse",
+      "content": {
+        "scenario": "Estás investigando Twitter hack. Log lines muestran uso de internal admin tool. Encuentra las 2 lines sospechosas que indican account takeover.",
+        "log_lines": [
+          {"id": 1, "text": "2020-07-15 15:23:11 admin_tool user=support_agent_1432 action=view_profile target=@twitter_user_12345", "is_suspicious": false},
+          {"id": 2, "text": "2020-07-15 15:45:33 admin_tool user=support_agent_1432 action=change_email target=@BarackObama new_email=hacker@temp.com", "is_suspicious": true, "reason": "Changing email de cuenta high-profile = takeover vector"},
+          {"id": 3, "text": "2020-07-15 15:46:01 admin_tool user=support_agent_1432 action=reset_password target=@BarackObama", "is_suspicious": true, "reason": "Password reset después de email change = full account takeover"},
+          {"id": 4, "text": "2020-07-15 16:02:15 admin_tool user=support_agent_5678 action=disable_2fa target=user_98765", "is_suspicious": false},
+          {"id": 5, "text": "2020-07-15 16:15:42 admin_tool user=support_agent_1432 action=view_profile target=@elonmusk", "is_suspicious": false}
+        ],
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "timed_quiz",
+      "title": "⚡ Separation of Duties",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Por qué Separation of Duties es crítico en sistemas financieros?",
+        "options": [
+          {"id": "a", "text": "Para distribuir workload entre teams", "is_correct": false},
+          {"id": "b", "text": "Prevent single person de complete fraud: initiate Y approve transaction requiere 2 personas", "is_correct": true},
+          {"id": "c", "text": "Compliance checkbox para auditors", "is_correct": false}
+        ],
+        "explanation": "Separation of Duties (SoD): Split sensitive actions entre multiple people. Wire transfer: Person A initiate, Person B approve. Prevent insider fraud. Twitter: Single admin podía change email Y reset password = no SoD.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "timed_quiz",
+      "title": "⚡ Twitter Hack Root Cause",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Cuál fue el root cause más crítico del Twitter hack 2020?",
+        "options": [
+          {"id": "a", "text": "Social engineering fue muy sophisticated", "is_correct": false},
+          {"id": "b", "text": "Internal admin tools sin MFA + too many privileged accounts", "is_correct": true},
+          {"id": "c", "text": "Bitcoin es untraceable", "is_correct": false}
+        ],
+        "explanation": "Root cause: 1) No MFA en internal tools (credential theft functional), 2) 1,000+ god-mode admins (huge attack surface). Social engineering trabaja porque defenses were absent. Fix: MFA + Least Privilege + PAM.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "shield_person",
+          "name": "Access Control Architect",
+          "description": "Dominas DAC, MAC, RBAC, ABAC y Least Privilege",
+          "rarity": "rare",
+          "color": "#1DA1F2"
+        }
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 60,
+        "key_takeaways": [
+          "Least Privilege: Minimum access necessary. Twitter: 1,000 admins → 50.",
+          "DAC: Owner control. MAC: System enforces. RBAC: Role-based. ABAC: Attribute/context.",
+          "PAM: Privileged Access Management - MFA, JIT access, session recording",
+          "Access Reviews: Quarterly para privileged, semi-annual regular",
+          "Twitter hack: Social engineering + no MFA + god-mode = $120K Bitcoin scam"
+        ],
+        "next_lesson": {
+          "id": "c3_l3",
+          "title": "Identity Governance & Compliance",
+          "preview": "Caso Uber CISO Charged - Breach Response Legal Obligations"
+        }
+      }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "Teenagers compromised high-profile accounts: Obama, Biden, Musk, Gates"
-  }
+  ]
 }

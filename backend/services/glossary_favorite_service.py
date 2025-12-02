@@ -32,7 +32,7 @@ def toggle_favorite(user_id: int, glossary_id: int):
 def get_user_favorites(user_id: int):
     session = get_session()
     try:
-        # Join para obtener los datos completos del término
+        
         favorites = session.query(Glossary).join(
             UserGlossaryFavorite,
             Glossary.id == UserGlossaryFavorite.glossary_id

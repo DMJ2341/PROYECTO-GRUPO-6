@@ -1,258 +1,119 @@
 {
   "id": "c1_l2",
   "title": "Taxonomía de Amenazas Cibernéticas",
-  "description": "Caso Real: WannaCry Ransomware (Mayo 2017)",
+  "description": "Caso Real: WannaCry Ransomware (2017)",
   "type": "interactive",
-  "duration_minutes": 25,
-  "xp_reward": 20,
+  "duration_minutes": 22,
+  "xp_reward": 55,
   "order_index": 2,
   "course_id": 1,
-  "total_screens": 6,
+  "total_screens": 20,
+  "theme": {
+    "primary_color": "#9C27B0",
+    "secondary_color": "#F44336",
+    "accent_color": "#00BCD4",
+    "gradient": ["#1a1a2e", "#2d132c", "#801336"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso Real: WannaCry Ransomware (Mayo 2017)",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: WannaCry",
       "content": {
-        "story_title": "WannaCry: 48 Horas que Paralizaron al Mundo",
-        "story_intro": "12 de Mayo, 2017. Un ransomware se propaga a velocidad récord. 200,000 sistemas en 150 países infectados. NHS del Reino Unido colapsa. Todo por un patch ignorado.",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "calendar_today",
-            "title": "Viernes 12 Mayo, 7:00 AM GMT - Comienza el Caos",
-            "content": "El NHS (National Health Service) del Reino Unido reporta sistemas caídos. Pantallas rojas exigen $300 USD en Bitcoin. Médicos no pueden acceder a historiales. 16 hospitales desvían ambulancias. Cirugías canceladas. Pánico total.",
-            "insight": "WannaCry atacó el NHS porque muchos hospitales seguían usando Windows XP (end-of-life desde 2014). Microsoft había dejado de dar soporte, pero tuvo que lanzar un parche de emergencia para XP días después del ataque."
-          },
-          {
-            "id": "2",
-            "icon": "public",
-            "title": "12:00 PM GMT - Propagación Global Exponencial",
-            "content": "España: Telefónica completamente infectada. Rusia: Ministerio del Interior. FedEx, Renault, Deutsche Bahn caen. Universidades, gobiernos, empresas... 10,000 nuevos sistemas infectados POR HORA. Velocidad sin precedentes.",
-            "insight": "WannaCry no requería click del usuario. Era un WORM auto-propagable. Escaneaba internet buscando puertos SMB (445) abiertos y explotaba automáticamente. Una sola máquina infectada podía comprometer una red entera en minutos."
-          },
-          {
-            "id": "3",
-            "icon": "bug_report",
-            "title": "El Arma: EternalBlue (NSA Exploit)",
-            "content": "WannaCry usaba EternalBlue, un exploit desarrollado por la NSA y filtrado por Shadow Brokers en abril 2017. Explotaba MS17-010, vulnerabilidad en SMBv1 de Windows. Microsoft había parcheado en MARZO 2017... pero millones no actualizaron.",
-            "insight": "Microsoft lanzó el parche MS17-010 el 14 de marzo, 58 días ANTES de WannaCry. Organizaciones que aplicaron patches a tiempo no fueron afectadas. Patch management salvó vidas literalmente."
-          },
-          {
-            "id": "4",
-            "icon": "hero",
-            "title": "3:00 PM GMT - El Kill Switch Accidental",
-            "content": "Marcus Hutchins (MalwareTech), 22 años, analiza el malware. Descubre que intenta conectarse a: iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com (dominio inexistente). Por $10.69 USD, registra el dominio. BOOM. Propagación se detiene instantáneamente.",
-            "insight": "El kill switch era probablemente anti-sandbox. Los autores querían que el malware no ejecutara en ambientes de análisis. Marcus lo activó accidentalmente. Salvó millones de sistemas, pero WannaCry 2.0 vendría sin kill switch."
-          },
-          {
-            "id": "5",
-            "icon": "attach_money",
-            "title": "El Daño: $4 Mil Millones",
-            "content": "200,000+ sistemas infectados. 150 países afectados. NHS: 19,000 citas canceladas. Pérdidas: $4 mil millones USD. Los atacantes solo recibieron ~$140,000 en Bitcoin (infraestructura de pago deficiente, pocos pagaron). FBI atribuyó ataque a Lazarus Group (Corea del Norte).",
-            "insight": "WannaCry fue técnicamente UN FRACASO como ransomware. Su infraestructura C2 era horrible. Muchos que pagaron nunca recuperaron archivos. El verdadero impacto fue el caos operacional, no las ganancias financieras."
-          },
-          {
-            "id": "6",
-            "icon": "school",
-            "title": "Lecciones Aprendidas: Hygiene Básica",
-            "content": "1) PATCH MANAGEMENT es crítico. 2) End-of-life systems son bombas de tiempo. 3) Backups offline salvan vidas. 4) SMB no debe estar expuesto a internet. 5) Segmentación de red limita propagación. 6) Incident Response Plans son obligatorios. WannaCry ganó por mala higiene, no sofisticación técnica.",
-            "insight": "Las básicas de seguridad hubieran prevenido el 90% del daño. No fue un ataque de APT súper sofisticado. Fue aprovechar negligencia sistemática en patch management y configuraciones inseguras."
-          }
-        ]
+        "headline": "12 MAYO 2017",
+        "subheadline": "48 horas que paralizaron al mundo",
+        "background_image": "hospital_dark",
+        "stats": [
+          {"value": "200K", "label": "Sistemas infectados"},
+          {"value": "150", "label": "Países afectados"},
+          {"value": "$4B", "label": "Daños globales"}
+        ],
+        "cta_text": "Revivir el Ataque"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "Threat Actors: Conoce a tus Adversarios",
-      "duration": 300,
+      "type": "crisis_timeline",
+      "title": "⏱️ CRISIS EN TIEMPO REAL",
       "content": {
-        "description": "Diferentes atacantes, diferentes motivaciones, diferentes capacidades. Voltea para conocer a cada tipo.",
-        "cards": [
+        "start_time": "07:00 GMT",
+        "events": [
           {
-            "id": "1",
-            "front": {
-              "icon": "military_tech",
-              "term": "APT (Advanced Persistent Threat)",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Grupos sofisticados respaldados por estados-nación. Objetivos de largo plazo: espionaje, sabotaje, robo de propiedad intelectual. Recursos ilimitados, pacientes, altamente entrenados.",
-              "example": "APT28 (Fancy Bear, Rusia): Atacó DNC en 2016. APT29 (Cozy Bear, Rusia): SolarWinds 2020. Lazarus Group (Corea del Norte): WannaCry, Sony Pictures. Recursos: años dentro de redes, zero-days customizados.",
-              "color": "#EF5350"
-            }
+            "time": "07:00",
+            "icon": "local_hospital",
+            "title": "NHS UK reporta sistemas caídos",
+            "description": "Pantallas rojas exigen $300 en Bitcoin",
+            "severity": "critical",
+            "visual": "alert_pulse"
           },
           {
-            "id": "2",
-            "front": {
-              "icon": "child_care",
-              "term": "Script Kiddies",
-              "color": "#9C27B0"
-            },
-            "back": {
-              "definition": "Principiantes sin habilidades técnicas profundas. Usan herramientas existentes (Metasploit, scripts públicos) sin entender cómo funcionan. Motivación: diversión, ego, experimentación.",
-              "example": "Usan exploits de ExploitDB sin modificar. Lanzan scans masivos con nmap. Defacement de sitios web con SQLi automatizado. Peligrosos en masa: DDoS con botnets rentadas. Fáciles de detectar pero numerosos.",
-              "color": "#BA68C8"
-            }
+            "time": "08:30",
+            "icon": "public",
+            "title": "España: Telefónica infectada",
+            "description": "Empleados enviados a casa",
+            "severity": "high",
+            "visual": "map_spread"
           },
           {
-            "id": "3",
-            "front": {
-              "icon": "person_off",
-              "term": "Insiders (Amenazas Internas)",
-              "color": "#FF6F00"
-            },
-            "back": {
-              "definition": "Empleados, contratistas o socios con acceso legítimo. Pueden ser maliciosos (descontentos, sobornados) o negligentes (errores honestos, phishing). El 34% de breaches involucran insiders (Verizon DBIR).",
-              "example": "Tesla 2018: Empleado descontento saboteó sistemas y exfiltró gigabytes de datos. Snowden 2013: NSA contractor filtró documentos clasificados. Capital One 2019: Ex-empleada de AWS explotó misconfiguration.",
-              "color": "#FFB74D"
-            }
+            "time": "10:00",
+            "icon": "speed",
+            "title": "10,000 sistemas/hora",
+            "description": "Propagación exponencial sin precedentes",
+            "severity": "critical",
+            "visual": "counter_fast"
           },
           {
-            "id": "4",
-            "front": {
-              "icon": "campaign",
-              "term": "Hacktivistas",
-              "color": "#00796B"
-            },
-            "back": {
-              "definition": "Motivados por ideología política o social. Objetivos: hacer declaraciones públicas, exposing injustice, disruption de organizaciones que consideran malvadas. Ética hacker.",
-              "example": "Anonymous: Ataques DDoS contra Scientology, gobiernos autoritarios. LulzSec: Breaches de Sony, FBI. OpIcarus: Atacó bancos centrales. Técnicas: DDoS, defacement, doxing, leaks masivos.",
-              "color": "#26A69A"
-            }
-          },
-          {
-            "id": "5",
-            "front": {
-              "icon": "attach_money",
-              "term": "Cibercriminales (Organized Crime)",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Motivación puramente financiera. Operan como empresas: RaaS (Ransomware-as-a-Service), MaaS (Malware-as-a-Service), marketplaces en dark web. Profesionales, organizados, sofisticados.",
-              "example": "REvil: $200M+ en ransomware. Conti: Atacó 1000+ organizaciones. Carbanak: $1B robado de bancos. FIN7: Breaches masivos de retail. Modelo de negocio: cifrar datos, doble extorsión, pago en crypto.",
-              "color": "#42A5F5"
-            }
+            "time": "12:00",
+            "icon": "factory",
+            "title": "Renault detiene producción",
+            "description": "Fábricas en Francia paralizadas",
+            "severity": "high",
+            "visual": "factory_shutdown"
           }
-        ]
+        ],
+        "user_prompt": "Desliza para ver cómo avanzó el ataque"
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "MITRE ATT&CK®: Framework de Tácticas del Adversario",
-      "duration": 360,
+      "type": "crisis_decision",
+      "title": "🚨 SITUACIÓN CRÍTICA",
       "content": {
-        "title": "Domina las Fases de un Ataque según MITRE ATT&CK®",
-        "items": [
+        "scenario": "Eres el director de IT del NHS. Hospitales reportan pantallas bloqueadas. Cirugías programadas. Ambulancias en camino. ¿Qué haces PRIMERO?",
+        "timer_seconds": 25,
+        "alert_type": "emergency",
+        "options": [
           {
-            "id": "recon",
-            "task": "Reconnaissance (Reconocimiento)",
-            "subtitle": "Recopilar información sobre el target",
+            "id": "isolate",
+            "text": "Desconectar red inmediatamente",
+            "icon": "wifi_off",
+            "is_correct": true,
+            "consequence": {
+              "title": "Contención Correcta",
+              "description": "Aislar la red detiene la propagación. Algunos hospitales que actuaron rápido salvaron sus sistemas.",
+              "impact_score": 100
+            }
+          },
+          {
+            "id": "pay",
+            "text": "Pagar el rescate rápido",
+            "icon": "payments",
+            "is_correct": false,
+            "consequence": {
+              "title": "Error Crítico",
+              "description": "WannaCry tenía infraestructura de pago deficiente. Muchos que pagaron NUNCA recuperaron sus archivos.",
+              "impact_score": -80
+            }
+          },
+          {
+            "id": "investigate",
+            "text": "Investigar qué está pasando",
             "icon": "search",
-            "unlock_content": {
-              "title": "Primera Fase: Conocer al Enemigo",
-              "points": [
-                "Objetivo: Recopilar inteligencia sobre target antes del ataque",
-                "Técnicas: OSINT (Google dorking, redes sociales), DNS enumeration, subdomain discovery",
-                "Herramientas: Maltego, theHarvester, Shodan, LinkedIn para org charts",
-                "Caso WannaCry: No hubo reconocimiento. Era un worm ciego que escaneaba IPs al azar",
-                "Defensas: Minimizar footprint público, security awareness, OPSEC",
-                "Códigos MITRE: T1592 (Gather Victim Host Information), T1589 (Gather Victim Identity)"
-              ],
-              "bonus_fact": "El 90% de ataques APT comienza con reconnaissance en LinkedIn. Los atacantes mapean org charts para identificar targets de phishing y relaciones internas."
-            }
-          },
-          {
-            "id": "initial_access",
-            "task": "Initial Access (Acceso Inicial)",
-            "subtitle": "Primer pie en la puerta",
-            "icon": "login",
-            "unlock_content": {
-              "title": "La Brecha Inicial",
-              "points": [
-                "Objetivo: Ganar primer foothold en la red target",
-                "Técnicas: Phishing, exploit de vulnerabilidad pública, credenciales robadas, supply chain",
-                "Caso WannaCry: Exploit público EternalBlue (T1210) en puerto SMB 445",
-                "Vectores comunes: Email (90%), Vulnerable web app, RDP expuesto, VPN sin MFA",
-                "Defensas: Patch management, phishing training, MFA obligatorio, reducir superficie de ataque",
-                "Códigos MITRE: T1566 (Phishing), T1190 (Exploit Public-Facing App), T1133 (External Remote Services)"
-              ],
-              "bonus_fact": "El 70% de Initial Access en 2023 fue via phishing. Es el método más efectivo porque explota humanos, no solo tecnología. MFA bloqueó el 99.9% de ataques automatizados (Microsoft)."
-            }
-          },
-          {
-            "id": "execution",
-            "task": "Execution (Ejecución)",
-            "subtitle": "Ejecutar código malicioso",
-            "icon": "play_arrow",
-            "unlock_content": {
-              "title": "Código en Acción",
-              "points": [
-                "Objetivo: Ejecutar código del atacante en sistema víctima",
-                "Técnicas: Scripts (PowerShell, bash), binarios maliciosos, macros de Office, scheduled tasks",
-                "Caso WannaCry: DoublePulsar backdoor (T1059) permitía ejecución remota de código",
-                "Común: Living-off-the-land (LoL) - usar herramientas legítimas (cmd.exe, wmic.exe)",
-                "Defensas: Application whitelisting, disable macros, EDR, PowerShell logging",
-                "Códigos MITRE: T1059 (Command/Scripting Interpreter), T1204 (User Execution)"
-              ],
-              "bonus_fact": "PowerShell es usado en 95% de ataques porque es legítimo, preinstalado y extremadamente poderoso. Los atacantes lo adoran porque puede hacer TODO y es difícil de bloquear sin romper sistemas."
-            }
-          },
-          {
-            "id": "persistence",
-            "task": "Persistence (Persistencia)",
-            "subtitle": "Mantener acceso a largo plazo",
-            "icon": "autorenew",
-            "unlock_content": {
-              "title": "Quedarse en la Red",
-              "points": [
-                "Objetivo: Sobrevivir reinicios, mantener acceso si descubren initial foothold",
-                "Técnicas: Registry run keys, scheduled tasks, backdoors, create accounts, bootkit",
-                "Caso WannaCry: No tenía persistencia sofisticada. Si reiniciabas antes del cifrado, te salvabas",
-                "APTs avanzados: Usan múltiples métodos de persistencia redundantes",
-                "Defensas: Monitoreo de registry, análisis de scheduled tasks, behavioral analysis, re-imaging",
-                "Códigos MITRE: T1547 (Boot/Logon Autostart), T1053 (Scheduled Task), T1136 (Create Account)"
-              ],
-              "bonus_fact": "APT29 (Cozy Bear) mantuvo acceso no detectado en redes del gobierno de EE.UU. por 18 MESES usando persistencia multinivel: bootkit + WMI + registry + DLL sideloading. Redundancia extrema."
-            }
-          },
-          {
-            "id": "lateral_movement",
-            "task": "Lateral Movement (Movimiento Lateral)",
-            "subtitle": "Expandirse dentro de la red",
-            "icon": "sync_alt",
-            "unlock_content": {
-              "title": "De Máquina en Máquina",
-              "points": [
-                "Objetivo: Moverse de sistema comprometido inicial a otros sistemas en la red",
-                "Técnicas: Pass-the-hash, RDP, SMB/Admin shares, stolen credentials, pivoting",
-                "Caso WannaCry: Usaba EternalBlue para movimiento lateral automático vía SMB",
-                "Objetivo final: Llegar a Domain Controllers, servidores críticos, databases",
-                "Defensas: Segmentación de red, least privilege, disable SMBv1, credential guard, MFA interno",
-                "Códigos MITRE: T1021 (Remote Services), T1550 (Use Alternate Auth Material)"
-              ],
-              "bonus_fact": "El tiempo promedio de lateral movement de patient zero a Domain Controller es 1-4 DÍAS para attackers sofisticados. La segmentación de red puede extender esto a semanas o hacerlo imposible."
-            }
-          },
-          {
-            "id": "impact",
-            "task": "Impact (Impacto)",
-            "subtitle": "Ejecutar el objetivo final",
-            "icon": "warning",
-            "unlock_content": {
-              "title": "El Golpe Final",
-              "points": [
-                "Objetivo: Cumplir misión del atacante (cifrar, destruir, exfiltrar, sabotear)",
-                "Técnicas: Data encryption (ransomware), data destruction, defacement, DDoS",
-                "Caso WannaCry: Cifrado masivo de archivos (T1486) + mensaje de rescate",
-                "Ransomware moderno: Doble extorsión (cifrar + amenazar con publicar datos robados)",
-                "Defensas: Backups offline, immutable storage, network segmentation, DLP",
-                "Códigos MITRE: T1486 (Data Encrypted for Impact), T1485 (Data Destruction)"
-              ],
-              "bonus_fact": "Colonial Pipeline pagó $4.4M en Bitcoin a DarkSide. El FBI recuperó $2.3M (las claves privadas estaban en servidor sin protección). Ironía: los atacantes eran incompetentes en OpSec pero devastadores en impacto."
+            "is_correct": false,
+            "consequence": {
+              "title": "Muy Lento",
+              "description": "Mientras investigas, el worm infecta 100 sistemas más por minuto. La contención es prioridad #1.",
+              "impact_score": -40
             }
           }
         ]
@@ -260,206 +121,390 @@
     },
     {
       "screen_id": 4,
-      "type": "memory_cards",
-      "title": "Attack Vectors: Cómo Entran los Atacantes",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "El Arma Secreta: EternalBlue",
       "content": {
-        "description": "Los caminos más comunes que usan los atacantes para comprometer sistemas",
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "phishing",
-              "term": "Phishing / Social Engineering",
-              "color": "#E91E63"
-            },
-            "back": {
-              "definition": "Engañar a humanos para robar credenciales, instalar malware o transferir dinero. El 90% de ataques exitosos comienzan con phishing. Explota psicología humana: urgencia, autoridad, miedo, curiosidad.",
-              "example": "Target 2013: Phishing a Fazio Mechanical. Equifax 2017: Phishing interno permitió escalación. BEC (Business Email Compromise): $43B perdidos globalmente (FBI IC3). Tipos: spear phishing, whaling, smishing, vishing.",
-              "color": "#F06292"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "bug_report",
-              "term": "Vulnerabilidades de Software",
-              "color": "#FF6F00"
-            },
-            "back": {
-              "definition": "Explotar bugs en aplicaciones, sistemas operativos, firmware. CVEs críticas son explotadas en promedio 7 días después de publicación. Zero-days son explotados antes de que exista patch.",
-              "example": "EternalBlue (MS17-010): WannaCry, NotPetya. Log4Shell (CVE-2021-44228): Log4j RCE, CVSS 10.0, afectó millones. Heartbleed (CVE-2014-0160): OpenSSL, filtró memoria. Patch rápido = supervivencia.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "key",
-              "term": "Credenciales Comprometidas",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Usar passwords robadas, débiles o reutilizadas. Credential stuffing: probar credenciales filtradas en múltiples servicios. Password spraying: probar passwords comunes contra muchas cuentas.",
-              "example": "Collection #1: 772M emails + passwords filtrados. RockYou2021: 8.4B passwords. Colonial Pipeline: VPN sin MFA, password filtrado en dark web. Defensa: MFA obligatorio, password managers, breach monitoring.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "link",
-              "term": "Supply Chain Attacks",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Comprometer proveedores, software de terceros o actualizaciones para acceder al target real. Altamente efectivo porque el target confía en el proveedor comprometido.",
-              "example": "SolarWinds 2020: Backdoor en actualizaciones de Orion. 18,000 organizaciones descargaron malware firmado legítimamente. Target 2013: Vía Fazio Mechanical (HVAC). CCleaner 2017: 2.3M users descargaron versión troyanizada.",
-              "color": "#66BB6A"
-            }
-          }
-        ]
+        "icon": "military_tech",
+        "icon_color": "#F44336",
+        "headline": "Exploit de la NSA",
+        "body": "WannaCry usaba EternalBlue, un exploit desarrollado por la NSA y filtrado por Shadow Brokers en abril 2017.",
+        "highlight_box": {
+          "type": "warning",
+          "text": "Microsoft publicó el parche MS17-010 el 14 de marzo. 58 DÍAS antes del ataque. Millones no actualizaron."
+        },
+        "mood": "revelation"
       }
     },
     {
       "screen_id": 5,
-      "type": "quiz",
-      "title": "Identifica el Threat Actor",
-      "duration": 90,
+      "type": "swipe_cards",
+      "title": "¿Quién está detrás?",
       "content": {
-        "question": "Un grupo hackea la red de un hospital y cifra todos los sistemas con ransomware. Exigen $5 millones en Bitcoin. No tienen afiliación política ni estatal. Su único objetivo es dinero. ¿Qué tipo de threat actor es más probable?",
+        "instruction": "Clasifica cada perfil de atacante (Izquierda=Crimen, Derecha=APT)",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "Grupo Lazarus: Respaldado por Corea del Norte. Objetivos políticos y financieros.",
+            "correct_answer": "right"
+          },
+          {
+            "id": 2,
+            "scenario": "REvil: Motivación dinero. Ransomware-as-a-Service. Sin agenda política.",
+            "correct_answer": "left"
+          },
+          {
+            "id": 3,
+            "scenario": "APT29 (Cozy Bear): Inteligencia rusa. Espionaje a largo plazo.",
+            "correct_answer": "right"
+          }
+        ],
+        "labels": {
+          "left": "Cibercriminal",
+          "right": "APT (Estado-Nación)"
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "Threat Actor: APT",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "military_tech",
+            "term": "APT",
+            "subtitle": "Advanced Persistent Threat",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Grupos sofisticados respaldados por estados-nación",
+            "characteristics": [
+              "Recursos ilimitados",
+              "Objetivos a largo plazo",
+              "Espionaje y sabotaje",
+              "Zero-days customizados"
+            ],
+            "examples": "APT28 (Rusia), Lazarus (Corea del Norte), APT41 (China)",
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Threat Actor: Cibercriminales",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "attach_money",
+            "term": "CIBERCRIMINALES",
+            "subtitle": "Organized Cybercrime",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "Motivación puramente financiera. Operan como empresas.",
+            "characteristics": [
+              "Ransomware-as-a-Service",
+              "Marketplaces en dark web",
+              "Doble extorsión",
+              "Pago en crypto"
+            ],
+            "examples": "REvil, Conti, LockBit, BlackCat",
+            "color": "#0D47A1"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Threat Actor: Hacktivistas",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "campaign",
+            "term": "HACKTIVISTAS",
+            "subtitle": "Ideología sobre dinero",
+            "color": "#00796B"
+          },
+          "back": {
+            "definition": "Motivados por ideología política o social",
+            "characteristics": [
+              "Hacer declaraciones públicas",
+              "DDoS y defacement",
+              "Leaks masivos",
+              "No buscan dinero"
+            ],
+            "examples": "Anonymous, LulzSec",
+            "color": "#004D40"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "Threat Actor: Script Kiddies",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "child_care",
+            "term": "SCRIPT KIDDIES",
+            "subtitle": "Bajo skill, alto ruido",
+            "color": "#9C27B0"
+          },
+          "back": {
+            "definition": "Principiantes que usan herramientas existentes sin entenderlas",
+            "characteristics": [
+              "Motivación: ego, diversión",
+              "Usan exploits públicos",
+              "Fáciles de detectar",
+              "Peligrosos en masa"
+            ],
+            "examples": "Ataques DDoS con herramientas rentadas, SQLi automatizado",
+            "color": "#6A1B9A"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "flip_card_full",
+      "title": "Threat Actor: Insiders",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "person_off",
+            "term": "INSIDERS",
+            "subtitle": "La amenaza interna",
+            "color": "#FF6F00"
+          },
+          "back": {
+            "definition": "Empleados con acceso legítimo que causan daño",
+            "characteristics": [
+              "Acceso privilegiado",
+              "Difíciles de detectar",
+              "Maliciosos o negligentes",
+              "34% de breaches (Verizon)"
+            ],
+            "examples": "Snowden (NSA), Tesla sabotage 2018",
+            "color": "#E65100"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "drag_drop_match",
+      "title": "Identifica al Atacante",
+      "content": {
+        "instruction": "Arrastra cada escenario al tipo de threat actor",
+        "scenarios": [
+          {"id": 1, "text": "Ataque a infraestructura de otro país para desestabilizar", "correct_target": "apt"},
+          {"id": 2, "text": "Ransomware que pide $5M en Bitcoin", "correct_target": "criminal"},
+          {"id": 3, "text": "Defacement de sitio web con mensaje político", "correct_target": "hacktivista"},
+          {"id": 4, "text": "Empleado descarga base de datos antes de renunciar", "correct_target": "insider"},
+          {"id": 5, "text": "DDoS usando herramienta descargada de internet", "correct_target": "scriptkiddie"}
+        ],
+        "targets": [
+          {"id": "apt", "label": "APT", "color": "#D32F2F", "icon": "military_tech"},
+          {"id": "criminal", "label": "Cibercriminal", "color": "#1976D2", "icon": "attach_money"},
+          {"id": "hacktivista", "label": "Hacktivista", "color": "#00796B", "icon": "campaign"},
+          {"id": "insider", "label": "Insider", "color": "#FF6F00", "icon": "person_off"},
+          {"id": "scriptkiddie", "label": "Script Kiddie", "color": "#9C27B0", "icon": "child_care"}
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "story_slide",
+      "title": "El Héroe Accidental",
+      "content": {
+        "icon": "person",
+        "icon_color": "#4CAF50",
+        "headline": "Marcus Hutchins, 22 años",
+        "body": "Analista de malware. Descubre que WannaCry intenta conectarse a un dominio inexistente. Por $10.69, registra el dominio. El ataque se detiene INSTANTÁNEAMENTE.",
+        "highlight_box": {
+          "type": "success",
+          "text": "El 'kill switch' era anti-sandbox. Marcus lo activó por accidente y salvó millones de sistemas."
+        },
+        "mood": "triumph"
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "crisis_decision",
+      "title": "🧩 DECISIÓN TÉCNICA",
+      "content": {
+        "scenario": "Encuentras un dominio hardcoded en el malware: iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com (no existe). ¿Qué haces?",
+        "timer_seconds": 30,
         "options": [
           {
-            "id": "a",
-            "text": "APT (Advanced Persistent Threat)",
-            "is_correct": false,
-            "feedback": "Incorrecto. APTs son respaldados por estados-nación y tienen objetivos de espionaje/sabotaje a largo plazo, no dinero rápido. WannaCry fue atribuido a APT (Lazarus), pero fue atípico porque los APTs raramente usan ransomware."
-          },
-          {
-            "id": "b",
-            "text": "Cibercriminales (Organized Cybercrime)",
+            "id": "register",
+            "text": "Registrar el dominio ($10.69)",
+            "icon": "shopping_cart",
             "is_correct": true,
-            "feedback": "¡CORRECTO! Motivación puramente financiera + ransomware + exigencia en crypto = cibercriminales organizados. Grupos como REvil, Conti, LockBit operan ransomware-as-a-service (RaaS) por ganancias. Sin agenda política o estatal."
+            "consequence": {
+              "title": "¡Esto hizo Marcus!",
+              "description": "Al registrar el dominio, el malware pensó que estaba en un sandbox y dejó de ejecutarse. Kill switch activado.",
+              "impact_score": 100,
+              "xp_bonus": 30
+            }
           },
           {
-            "id": "c",
-            "text": "Hacktivistas",
+            "id": "ignore",
+            "text": "Ignorar, es solo un string random",
+            "icon": "cancel",
             "is_correct": false,
-            "feedback": "Incorrecto. Hacktivistas tienen motivación ideológica/política. Buscan hacer declaraciones públicas, no dinero. Usarían defacement, DDoS o leaks, no ransomware por rescate. Anonymous nunca pide Bitcoin."
+            "consequence": {
+              "title": "Oportunidad Perdida",
+              "description": "Sin el kill switch, WannaCry hubiera infectado millones de sistemas más.",
+              "impact_score": -50
+            }
           },
           {
-            "id": "d",
-            "text": "Script Kiddies",
+            "id": "report",
+            "text": "Reportar a las autoridades primero",
+            "icon": "flag",
             "is_correct": false,
-            "feedback": "Incorrecto. Aunque script kiddies pueden lanzar ransomware usando herramientas públicas, la escala (hospital completo) y demanda profesional ($5M) sugiere organización criminal sofisticada con infraestructura establecida."
+            "consequence": {
+              "title": "Burocracia = Tiempo Perdido",
+              "description": "Mientras esperas aprobación, el malware infecta 10,000 sistemas por hora.",
+              "impact_score": -30
+            }
           }
         ]
       }
     },
     {
-      "screen_id": 6,
-      "type": "progress_checklist",
-      "title": "Mapea WannaCry al Framework MITRE ATT&CK®",
-      "duration": 300,
+      "screen_id": 14,
+      "type": "story_slide",
+      "title": "MITRE ATT&CK",
       "content": {
-        "title": "Identifica las Técnicas MITRE Usadas por WannaCry",
-        "items": [
-          {
-            "id": "t1210",
-            "task": "T1210: Exploitation of Remote Services",
-            "subtitle": "EternalBlue (MS17-010) vía SMBv1",
-            "icon": "router",
-            "unlock_content": {
-              "title": "Initial Access + Lateral Movement",
-              "points": [
-                "Técnica: Explotación de SMBv1 en puerto 445",
-                "Vulnerabilidad: MS17-010 (CVE-2017-0144)",
-                "Exploit: EternalBlue (desarrollado por NSA, filtrado por Shadow Brokers)",
-                "Efecto: Remote Code Execution (RCE) sin autenticación",
-                "Propagación: Worm auto-replicante, no requiere interacción humana",
-                "Mitigación: Patch MS17-010, deshabilitar SMBv1, firewall en puerto 445"
-              ],
-              "bonus_fact": "EternalBlue fue tan devastador que Microsoft tomó la decisión sin precedentes de lanzar patches para Windows XP, 8 y Server 2003 a pesar de estar oficialmente sin soporte (end-of-life)."
-            }
-          },
-          {
-            "id": "t1059",
-            "task": "T1059: Command and Scripting Interpreter",
-            "subtitle": "DoublePulsar backdoor para ejecución",
-            "icon": "terminal",
-            "unlock_content": {
-              "title": "Execution Phase",
-              "points": [
-                "Técnica: Instalar DoublePulsar backdoor después de EternalBlue",
-                "Función: Permitir ejecución remota de código arbitrario",
-                "Payload: Dropper de ransomware WannaCry",
-                "Proceso: Inyección en procesos legítimos de Windows",
-                "Detección difícil: Se oculta en memoria, no en disco",
-                "Defensa: EDR con behavioral analysis, memory scanning, process monitoring"
-              ],
-              "bonus_fact": "DoublePulsar fue otro exploit de NSA filtrado. Permitía backdoor persistente. Se estima que 200,000+ sistemas quedaron con DoublePulsar instalado incluso después de que WannaCry fuera detenido."
-            }
-          },
-          {
-            "id": "t1486",
-            "task": "T1486: Data Encrypted for Impact",
-            "subtitle": "Cifrado masivo con RSA + AES",
-            "icon": "lock",
-            "unlock_content": {
-              "title": "Impact Phase - Ransomware",
-              "points": [
-                "Cifrado híbrido: AES-128 para archivos (rápido) + RSA-2048 para proteger keys AES",
-                "Extensión agregada: .WNCRY a archivos cifrados",
-                "Nota de rescate: @Please_Read_Me@.txt + pantalla roja",
-                "Demanda: $300 USD en Bitcoin (aumentaba a $600 después de 3 días)",
-                "Billeteras: 3 direcciones Bitcoin hardcoded en malware",
-                "Pago inútil: Infraestructura deficiente, muchos que pagaron no recuperaron archivos"
-              ],
-              "bonus_fact": "WannaCry solo recibió ~$140,000 USD total de víctimas que pagaron. Comparado con $4B en daños económicos, fue un fracaso financiero. Los creadores eran devastadores en propagación pero incompetentes en monetización."
-            }
-          },
-          {
-            "id": "t1082",
-            "task": "T1082: System Information Discovery",
-            "subtitle": "Escaneo de red para targets",
-            "icon": "search",
-            "unlock_content": {
-              "title": "Discovery Phase",
-              "points": [
-                "Escaneo: Buscar sistemas en LAN con puerto 445 abierto",
-                "Fingerprinting: Identificar versión de Windows vulnerable",
-                "Target selection: Priorizar sistemas sin patch MS17-010",
-                "Velocidad: Escaneo rápido de rangos de IP completos",
-                "Auto-propagación: Sin intervención manual, completamente automatizado",
-                "Defensa: Network segmentation, IDS/IPS, microsegmentation"
-              ],
-              "bonus_fact": "WannaCry escaneaba ranges de IP completamente al azar, no solo la red local. Esto permitió propagación global pero también facilitó detección porque el tráfico era obviamente malicioso."
-            }
-          },
-          {
-            "id": "killswitch",
-            "task": "Kill Switch Domain Check",
-            "subtitle": "Anti-sandbox mechanism",
-            "icon": "power_settings_new",
-            "unlock_content": {
-              "title": "Mecanismo de Evasión (No MITRE Oficial)",
-              "points": [
-                "Check previo: Intentar resolver dominio iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com",
-                "Si resuelve: Asumir sandbox/análisis, NO ejecutar payload",
-                "Si NO resuelve: Proceder con cifrado",
-                "Fallo crítico: Dominio no estaba registrado en internet real",
-                "Marcus Hutchins: Registró dominio por $10.69, activó kill switch accidentalmente",
-                "Resultado: Propagación detenida globalmente en horas"
-              ],
-              "bonus_fact": "Marcus Hutchins fue arrestado en Black Hat 2017 por cargos no relacionados (crear malware bancario años antes). La comunidad de seguridad salió en su defensa. Eventualmente recibió sentencia suspended. Héroe controvertido."
-            }
-          }
+        "icon": "grid_view",
+        "icon_color": "#2196F3",
+        "headline": "El Framework de los Defensores",
+        "body": "MITRE ATT&CK cataloga todas las técnicas conocidas de los atacantes. Cada ataque puede mapearse a este framework.",
+        "visual_element": {
+          "type": "framework_preview",
+          "categories": ["Initial Access", "Execution", "Persistence", "Privilege Escalation", "Defense Evasion", "Discovery", "Lateral Movement", "Collection", "Exfiltration", "Impact"]
+        }
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "log_hunter",
+      "title": "🔍 Mapea a MITRE ATT&CK",
+      "content": {
+        "instruction": "WannaCry usó estas técnicas. Identifica cuáles son maliciosas.",
+        "logs": [
+          {"id": 1, "timestamp": "T1210", "text": "Exploitation of Remote Services (EternalBlue via SMB)", "suspicious": true},
+          {"id": 2, "timestamp": "T1059", "text": "Command and Scripting: PowerShell normal admin", "suspicious": false},
+          {"id": 3, "timestamp": "T1486", "text": "Data Encrypted for Impact (Ransomware)", "suspicious": true},
+          {"id": 4, "timestamp": "T1082", "text": "System Discovery: hostname command", "suspicious": false},
+          {"id": 5, "timestamp": "T1071", "text": "Application Layer Protocol: DNS to kill switch domain", "suspicious": true},
+          {"id": 6, "timestamp": "T1018", "text": "Remote System Discovery: Scanning port 445", "suspicious": true}
+        ],
+        "success_threshold": 4,
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "timed_quiz",
+      "title": "⚡ Speed Round",
+      "content": {
+        "timer_seconds": 15,
+        "question": "Un hospital es atacado con ransomware que pide $5M en crypto. ¿Qué tipo de threat actor es MÁS probable?",
+        "options": [
+          {"id": "a", "text": "APT (Estado-nación)", "is_correct": false},
+          {"id": "b", "text": "Cibercriminales organizados", "is_correct": true},
+          {"id": "c", "text": "Hacktivistas", "is_correct": false},
+          {"id": "d", "text": "Script Kiddies", "is_correct": false}
+        ],
+        "explanation": "Motivación financiera + ransomware profesional + alta demanda = crimen organizado. APTs raramente usan ransomware (excepto Lazarus). Hacktivistas no piden rescate.",
+        "xp_reward": 15
+      }
+    },
+     {
+      "screen_id": 17,
+      "type": "slider_balance",
+      "title": "Patch Management",
+      "content": {
+        "scenario": "Microsoft lanza el parche crítico MS17-010. ¿En cuántos días lo aplicas?",
+        "left_option": {
+          "label": "Rápido (<7 días)",
+          "icon": "flash_on",
+          "consequences": [
+            "✅ Protegido antes de WannaCry",
+            "❌ Riesgo de bugs (pantalla azul)"
+          ]
+        },
+        "right_option": {
+          "label": "Lento (>60 días)",
+          "icon": "hourglass_empty",
+          "consequences": [
+            "✅ Testing exhaustivo",
+            "❌ Vulnerable a exploits (WannaCry)",
+            "❌ Infección masiva garantizada"
+          ]
+        },
+        "explanation": "58 días pasaron entre el parche y el ataque. Si tardas más de 30 días en parches críticos, estás en zona de peligro."
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "summary_stats",
+      "title": "WannaCry: El Balance Final",
+      "content": {
+        "stats": [
+          {"icon": "computer", "value": "200,000+", "label": "Sistemas infectados"},
+          {"icon": "public", "value": "150", "label": "Países afectados"},
+          {"icon": "attach_money", "value": "$140K", "label": "Rescates pagados"},
+          {"icon": "trending_down", "value": "$4B", "label": "Daños totales"}
+        ],
+        "key_insight": "WannaCry fue un FRACASO financiero ($140K vs $4B en daños). El impacto fue el caos operacional, no las ganancias.",
+        "lessons": [
+          "Patch management salva organizaciones",
+          "Kill switches pueden detener pandemias",
+          "Attribution: FBI señaló a Corea del Norte"
         ]
       }
+    },
+    {
+      "screen_id": 19,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "psychology",
+          "name": "Perfilador de Amenazas",
+          "description": "Dominas la taxonomía de threat actors",
+          "rarity": "uncommon",
+          "color": "#9C27B0"
+        }
+      }
+    },
+    {
+      "screen_id": 20,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 55,
+        "key_takeaways": [
+          "Los APTs son respaldados por estados con recursos ilimitados",
+          "Los cibercriminales buscan dinero con ransomware",
+          "MITRE ATT&CK mapea todas las técnicas de ataque conocidas",
+          "Patch management en menos de 30 días es crítico"
+        ],
+        "next_lesson": {
+          "id": "c1_l3",
+          "title": "Vulnerabilidades y CVE",
+          "preview": "Log4Shell: La vulnerabilidad que afectó a medio internet"
+        }
+      }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "12 de Mayo, 2017. Un ransomware se propaga a velocidad récord. 200,000 sistemas en 150 países infectados. NHS del Reino Unido colapsa. Todo por un patch ignorado."
-  }
+  ]
 }

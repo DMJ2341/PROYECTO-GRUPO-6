@@ -1,313 +1,141 @@
 {
   "id": "c4_l1",
-  "title": "OWASP Top 10",
-  "description": "Caso: Colonial Pipeline Ransomware (2021)",
+  "title": "OWASP Top 10 & Ransomware",
+  "description": "Caso Real: Colonial Pipeline (2021)",
   "type": "interactive",
-  "duration_minutes": 18,
-  "xp_reward": 20,
+  "duration_minutes": 25,
+  "xp_reward": 60,
   "order_index": 1,
   "course_id": 4,
-  "total_screens": 5,
+  "total_screens": 18,
+  "theme": {
+    "primary_color": "#D32F2F",
+    "secondary_color": "#FF6F00",
+    "accent_color": "#388E3C",
+    "gradient": ["#1a0000", "#330000", "#4d0000"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso: Colonial Pipeline Ransomware (2021)",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: Pipeline Down",
       "content": {
-        "story_title": "Colonial Pipeline: $4.4M Ransom Paid",
-        "story_intro": "DarkSide ransomware, 5,500 miles pipeline offline, East Coast fuel crisis",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "local_gas_station",
-            "title": "Critical Infrastructure Target",
-            "content": "Colonial Pipeline: 45% de combustible de East Coast US (gasolina, diesel, jet fuel). 5,500 miles desde Texas hasta NY. Single point of failure para East Coast.",
-            "insight": "Critical infrastructure = high-value target. Ransomware gangs know orgs will pay to restore service."
-          },
-          {
-            "id": "2",
-            "icon": "vpn_key",
-            "title": "Vector: VPN Password Leaked",
-            "content": "Mayo 2021. Attackers usaron leaked VPN password (dark web, credential dump anterior). No MFA en VPN. Acceso remoto → deploy DarkSide ransomware. IT systems cifrados.",
-            "insight": "Password reuse + no MFA = disaster. VPN sin MFA es puerta abierta."
-          },
-          {
-            "id": "3",
-            "icon": "power_off",
-            "title": "Shutdown Decision: 6 Days",
-            "content": "CEO decidió shutdown preventivo de pipeline completo. Temor: ransomware spread a OT systems (SCADA, control systems). Better safe than catastrophic failure. 6 días offline.",
-            "insight": "Containment > continuity cuando OT está en riesgo. Pipeline explosion sería peor que 6-day outage."
-          },
-          {
-            "id": "4",
-            "icon": "payments",
-            "title": "Ransom: $4.4M Pagado",
-            "content": "Colonial pagó 75 Bitcoin ($4.4M) en horas. DarkSide entregó decryption key (lento, barely usable). FBI recuperó $2.3M después (seized DarkSide Bitcoin wallet).",
-            "insight": "Pagar ransom NO garantiza recovery rápido. Backups son mejor que decryption key."
-          },
-          {
-            "id": "5",
-            "icon": "local_shipping",
-            "title": "Impact: Fuel Panic",
-            "content": "East Coast panic buying. Gas stations sin combustible. Airlines cancelaron flights. Precios subieron 20%. $4.4M ransom < $100M+ en economic impact.",
-            "insight": "Ransomware en critical infrastructure tiene cascading effects. National security issue."
-          },
-          {
-            "id": "6",
-            "icon": "gavel",
-            "title": "Aftermath: Regulation",
-            "content": "TSA mandó cybersecurity requirements para pipelines. CISA guidance. DarkSide gang shutdown (pressure from Russia). Colonial CEO testified ante Congreso.",
-            "insight": "Major incidents drive regulation. OT security ahora mandatory, no optional."
-          }
-        ]
+        "headline": "MAYO 2021",
+        "subheadline": "DarkSide ransomware paraliza 45% del combustible East Coast US",
+        "stats": [
+          {"value": "$4.4M", "label": "Ransom pagado"},
+          {"value": "6 días", "label": "Pipeline offline"},
+          {"value": "5,500", "label": "Miles de pipeline"}
+        ],
+        "cta_text": "Investigar Breach"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "Incident Response Phases",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "Critical Infrastructure Target",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "shield",
-              "term": "1. Preparation",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Antes del incident. IR plan, playbooks, tools, training. CSIRT team formado. Contact lists actualizadas. Backups tested. Incident categories defined.",
-              "example": "Colonial faltó: VPN MFA, network segmentation (IT/OT), tested backups. Preparation gaps = longer recovery.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "search",
-              "term": "2. Detection & Analysis",
-              "color": "#FF6F00"
-            },
-            "back": {
-              "definition": "Detectar incident. SIEM alerts, user reports, anomaly detection. Triage: severity, scope, type. Initial containment decisions.",
-              "example": "Colonial: Detectó ransomware cuando systems started encrypting. Mean time to detect (MTTD): minutes to hours ideal. Faster detection = less damage.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "block",
-              "term": "3. Containment",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Stop spread. Short-term: isolate compromised systems. Long-term: patch, harden, monitor. Balance: containment vs business continuity.",
-              "example": "Colonial: Shutdown entire pipeline (aggressive containment). Prevented OT compromise pero 6 days outage. Trade-off.",
-              "color": "#EF5350"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "delete_sweep",
-              "term": "4. Eradication",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "Remove threat completely. Delete malware, close backdoors, patch vulnerabilities, rotate compromised credentials. Verify no persistence.",
-              "example": "Colonial: Needed to ensure DarkSide removed from ALL systems antes de restart. Forensics to find all infected systems.",
-              "color": "#BA68C8"
-            }
-          },
-          {
-            "id": "5",
-            "front": {
-              "icon": "restore",
-              "term": "5. Recovery",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Restore to normal operations. Rebuild systems, restore from backups, validation, gradual bring-up. Monitor closely for reinfection.",
-              "example": "Colonial: Restore from backups + decryption key (slow). Gradual restart pipeline. 6 days total recovery time.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "6",
-            "front": {
-              "icon": "assignment",
-              "term": "6. Lessons Learned",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Post-mortem. What went wrong? What went right? Update IR plan, implement fixes, train staff. Blameless culture.",
-              "example": "Colonial post-mortem: Implement MFA on VPN, segment IT/OT, improve backups, test DR plan quarterly. Share lessons.",
-              "color": "#FFB74D"
-            }
-          }
-        ]
+        "icon": "local_gas_station",
+        "icon_color": "#FF6F00",
+        "headline": "Colonial Pipeline: Single Point of Failure",
+        "body": "Colonial Pipeline suministra 45% del combustible East Coast (gasolina, diesel, jet fuel). 5,500 miles desde Texas a New York. DarkSide (ransomware-as-a-service gang) targeted critical infrastructure sabiendo que Colonial MUST pay para restore service. $4.4M ransom < impact económico.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Root cause: Leaked VPN password (no MFA) + segmentation faltante entre IT y OT (Operational Technology). Attack vector: A01:2021 Broken Access Control."
+        }
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Ransomware Response Playbook",
-      "duration": 360,
+      "type": "crisis_timeline",
+      "title": "⏱️ RANSOMWARE DEPLOYMENT",
       "content": {
-        "items": [
+        "events": [
           {
-            "id": "ransom1",
-            "task": "Immediate Actions (First Hour)",
-            "subtitle": "Stop the bleeding",
-            "icon": "emergency",
-            "unlock_content": {
-              "title": "Hour 0-1",
-              "points": [
-                "Isolate infected systems: Disconnect from network (unplug ethernet, disable WiFi)",
-                "DO NOT power off: RAM forensics needed. Disk encryption happens on shutdown.",
-                "Alert CSIRT: Activate incident response team",
-                "Notify management: C-suite needs to know ASAP",
-                "Preserve evidence: Take photos of ransom note, don't delete anything",
-                "Check backups: Are they accessible? Encrypted too?"
-              ],
-              "bonus_fact": "First hour is critical. Ransomware spreads via network. Isolation prevents lateral movement."
-            }
+            "time": "Apr 2021",
+            "icon": "vpn_key",
+            "title": "VPN Credential Leak",
+            "description": "Colonial employee password leaked en dark web (credential dump anterior). Password reused across systems. VPN account SIN MFA.",
+            "severity": "warning"
           },
           {
-            "id": "ransom2",
-            "task": "Investigation (Hours 1-6)",
-            "subtitle": "Understand scope",
-            "icon": "search",
-            "unlock_content": {
-              "title": "Hours 1-6",
-              "points": [
-                "Identify ransomware variant: Check ransom note for indicators. ID Ransomware tool.",
-                "Determine patient zero: Which system infected first? How did it enter?",
-                "Map spread: Network traffic analysis. Which systems touched?",
-                "Check for exfiltration: Did attackers steal data? (Double extortion)",
-                "Legal counsel: Notify lawyers. Determine disclosure obligations.",
-                "Law enforcement: FBI, local cyber crime unit. IC3 complaint."
-              ],
-              "bonus_fact": "Modern ransomware = double extortion. Encrypt + threaten to leak stolen data. Check for exfil."
-            }
+            "time": "May 7 00:00",
+            "icon": "login",
+            "title": "Lateral Movement",
+            "description": "Attackers login VPN con stolen credentials. Lateral movement en IT network. No network segmentation detecta anomalous access.",
+            "severity": "critical"
           },
           {
-            "id": "ransom3",
-            "task": "Containment & Eradication (Hours 6-24)",
-            "subtitle": "Remove threat",
-            "icon": "delete_forever",
-            "unlock_content": {
-              "title": "Hours 6-24",
-              "points": [
-                "Segment network: Block ransomware C2 domains. Contain affected VLANs.",
-                "Credential rotation: Change ALL passwords, especially admin accounts.",
-                "Patch vulnerabilities: Close entry point (e.g., VPN without MFA).",
-                "Remove malware: EDR tools, format infected systems if needed.",
-                "Verify clean: Scan entire network. Hunt for persistence mechanisms.",
-                "Decision point: Pay ransom or restore from backup?"
-              ],
-              "bonus_fact": "Colonial paid but also restored from backups. Decryption keys are often buggy/slow."
-            }
+            "time": "May 7 05:00",
+            "icon": "bug_report",
+            "title": "DarkSide Deployment",
+            "description": "DarkSide ransomware deployed. IT systems (billing, email, corporate) encrypted. Ransom note left: 75 Bitcoin ($4.4M) demanded.",
+            "severity": "critical"
           },
           {
-            "id": "ransom4",
-            "task": "Recovery & Validation (Days 1-7)",
-            "subtitle": "Restore operations",
+            "time": "May 7 06:00",
+            "icon": "power_off",
+            "title": "Shutdown Decision",
+            "description": "CEO decide shutdown preventivo de ENTIRE pipeline. Fear: ransomware spread a OT systems (SCADA). Explosion risk > economic loss.",
+            "severity": "critical"
+          },
+          {
+            "time": "May 7 12:00",
+            "icon": "payments",
+            "title": "Ransom Payment",
+            "description": "Colonial paga 75 BTC ($4.4M) en horas. DarkSide entrega decryption key (lento, barely usable). Backups hubieran sido más rápidos.",
+            "severity": "critical"
+          },
+          {
+            "time": "May 13",
             "icon": "restore",
-            "unlock_content": {
-              "title": "Days 1-7",
-              "points": [
-                "Restore priority systems: Critical first, then tier 2, then tier 3.",
-                "Test thoroughly: Validate integrity. Ensure no reinfection.",
-                "Monitor closely: Enhanced logging. Watch for C2 beaconing.",
-                "Communication: Update stakeholders regularly. Transparency.",
-                "Document everything: Timeline, decisions made, costs incurred.",
-                "Business continuity: Manual workarounds while systems recover."
-              ],
-              "bonus_fact": "Colonial took 6 days full recovery. Some orgs take weeks. Tested backups = faster recovery."
-            }
-          },
-          {
-            "id": "ransom5",
-            "task": "Post-Incident (Week 2+)",
-            "subtitle": "Improve defenses",
-            "icon": "shield",
-            "unlock_content": {
-              "title": "Week 2+",
-              "points": [
-                "Post-mortem: Blameless review. What can improve?",
-                "Implement fixes: MFA, segmentation, backup improvements, EDR deployment.",
-                "Threat hunting: Look for other compromises we missed.",
-                "Update IR playbook: Incorporate lessons learned.",
-                "Training: Security awareness. Phishing simulation.",
-                "Insurance claim: Cyber insurance may cover ransom/recovery costs."
-              ],
-              "bonus_fact": "Post-incident improvements prevent next attack. Colonial now has MFA, better segmentation, tested DR."
-            }
+            "title": "Restoration",
+            "description": "Pipeline gradual restart. 6 días offline. East Coast fuel panic, gas stations empty, airlines canceladas. FBI recupera $2.3M (seized DarkSide wallet).",
+            "severity": "warning"
           }
         ]
       }
     },
     {
       "screen_id": 4,
-      "type": "memory_cards",
-      "title": "Ransomware Economics",
-      "duration": 180,
+      "type": "crisis_decision",
+      "title": "🚨 VPN Security Design",
       "content": {
-        "cards": [
+        "scenario": "Eres CISO pre-Colonial. Engineering wants VPN access para 3rd-party vendors (HVAC, contractors). Security team propone: 1) Password-only (easy), 2) MFA required, 3) Zero Trust (certificate-based). ¿Qué decides?",
+        "timer_seconds": 35,
+        "options": [
           {
-            "id": "1",
-            "front": {
-              "icon": "attach_money",
-              "term": "Pay or Don't Pay?",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Debate eterno. Pagar financia crime, no garantiza recovery, keys pueden fallar. No pagar = prolonged downtime, data loss. Decision business, no técnica.",
-              "example": "Colonial pagó ($4.4M). Garmin pagó ($10M). Cities NO pagan (policy). FBI: Don't pay, pero entiende business reality. Average ransom 2024: $200K-$2M.",
-              "color": "#EF5350"
+            "id": "password_only",
+            "text": "Password-only VPN (NIST-compliant 12+ chars)",
+            "icon": "password",
+            "is_correct": false,
+            "consequence": {
+              "title": "Esto fue Colonial",
+              "description": "Password leaked → VPN access → ransomware → $4.4M ransom + 6 days offline + national emergency. MFA blocks 99.9% credential attacks.",
+              "impact_score": -100
             }
           },
           {
-            "id": "2",
-            "front": {
-              "icon": "group",
-              "term": "RaaS - Ransomware as a Service",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "Business model. Developers create ransomware, affiliates deploy it. Revenue split 70/30. Lowered barrier to entry. DarkSide, REvil, LockBit = RaaS.",
-              "example": "Affiliate (low skill) buys access from initial access broker, deploys ransomware. Developer gets 30%, affiliate 70%. Professionalized cybercrime.",
-              "color": "#BA68C8"
+            "id": "mfa_vpn",
+            "text": "MFA mandatory (TOTP/hardware key) + time-based access",
+            "icon": "verified_user",
+            "is_correct": true,
+            "consequence": {
+              "title": "Defense in Depth",
+              "description": "Even si password leaked, MFA blocks access. Time-based: VPN expires after work hours. Least privilege: Vendors access ONLY necessary systems. Colonial breach prevented.",
+              "impact_score": 100,
+              "xp_bonus": 30
             }
           },
           {
-            "id": "3",
-            "front": {
-              "icon": "cloud_upload",
-              "term": "Double Extortion",
-              "color": "#FF6F00"
-            },
-            "back": {
-              "definition": "Tactic 1: Encrypt data (traditional). Tactic 2: Exfiltrate data + threaten to publish. Pay or data leaks. Increases pressure to pay.",
-              "example": "Ransomware gangs run 'leak sites'. Post stolen data if not paid. GDPR fines + reputation damage. 80%+ of ransomware now double extortion.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "savings",
-              "term": "Cyber Insurance",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Coverage para ransom payments, recovery costs, legal fees, notification costs, business interruption. Premiums rising 50%+ due to claims.",
-              "example": "Colonial likely had insurance (paid $4.4M without flinching). Coverage $1M-$100M depending on size. Requires security controls (MFA, backups, EDR).",
-              "color": "#66BB6A"
+            "id": "zero_trust",
+            "text": "Zero Trust: mTLS certificates + device posture check + micro-segmentation",
+            "icon": "security",
+            "is_correct": false,
+            "consequence": {
+              "title": "Over-Engineering",
+              "description": "Zero Trust es ideal PERO expensive y complex. mTLS + posture checks = $200K+ implementation. MFA sufficient para most orgs. ZT para large enterprises.",
+              "impact_score": 70
             }
           }
         ]
@@ -315,42 +143,334 @@
     },
     {
       "screen_id": 5,
-      "type": "quiz",
-      "title": "Evaluación - Ransomware Response",
-      "duration": 90,
+      "type": "flip_card_full",
+      "title": "OWASP Top 10: 2021 Edition",
       "content": {
-        "question": "Colonial Pipeline: ¿Decision correcta shutdown entire pipeline?",
-        "options": [
-          {
-            "id": "a",
-            "text": "No, overreaction. Debieron mantener operando.",
-            "is_correct": false,
-            "feedback": "Incorrecto. Ransomware en IT systems con potential spread a OT = catastrophic risk. Pipeline explosion > 6-day outage."
+        "card": {
+          "front": {
+            "icon": "security",
+            "term": "OWASP TOP 10",
+            "subtitle": "Web app security risks",
+            "color": "#D32F2F"
           },
-          {
-            "id": "b",
-            "text": "Sí, containment aggressive previno potential OT compromise y disaster físico",
-            "is_correct": true,
-            "feedback": "CORRECTO! IT systems infectados. Riesgo: ransomware spread a SCADA/OT systems que controlan pipeline físico. OT compromise = potential explosion, spills, safety hazards. 6-day shutdown (aggressive containment) < physical disaster. Better safe than sorry cuando vidas están en riesgo. Criticism: Debieron tener IT/OT segmentation para evitar esta decision."
-          },
-          {
-            "id": "c",
-            "text": "No debieron pagar ransom",
-            "is_correct": false,
-            "feedback": "Separate issue. Shutdown decision fue sobre containment. Ransom payment fue business decision. Ambos pueden ser justificados dado las circunstancias."
-          },
-          {
-            "id": "d",
-            "text": "Debieron consultar con FBI primero",
-            "is_correct": false,
-            "feedback": "Incorrecto. Emergency containment no espera. CEO tiene authority para shutdown. FBI notificado después para investigation."
+          "back": {
+            "definition": "OWASP (Open Web Application Security Project): Non-profit, industry standard para web security. Top 10 = most critical web app risks, updated every 3-4 years.",
+            "top_10_2021": [
+              "A01: Broken Access Control (Colonial: no MFA VPN)",
+              "A02: Cryptographic Failures (sensitive data exposure)",
+              "A03: Injection (SQL, XSS, command injection)",
+              "A04: Insecure Design (lack of security requirements)",
+              "A05: Security Misconfiguration",
+              "A06: Vulnerable Components (outdated libraries)",
+              "A07: Identification & Authentication Failures",
+              "A08: Software & Data Integrity Failures",
+              "A09: Security Logging & Monitoring Failures",
+              "A10: Server-Side Request Forgery (SSRF)"
+            ],
+            "usage": "Use OWASP Top 10 como checklist en SDLC. Code reviews, pentests, security requirements.",
+            "color": "#C62828"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "A01: Broken Access Control",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "lock_open",
+            "term": "BROKEN ACCESS CONTROL",
+            "subtitle": "Users do things they shouldn't",
+            "color": "#E65100"
+          },
+          "back": {
+            "definition": "Users pueden access resources o perform actions beyond intended permissions. Bypassing access checks, privilege escalation, IDOR (Insecure Direct Object Reference).",
+            "examples": [
+              "Colonial: VPN sin MFA = broken access (leaked creds functional)",
+              "URL manipulation: /user/123 → /user/124 (see other user data)",
+              "Missing authorization: API checks authentication pero NOT authorization",
+              "Privilege escalation: Regular user → admin via parameter tampering"
+            ],
+            "mitigation": "Deny by default. Enforce access control server-side (never client). MFA para sensitive actions. Log access attempts.",
+            "colonial_lesson": "MFA hubiera prevented VPN access even con leaked password. Access control = authentication + authorization.",
+            "color": "#D84315"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Ransomware-as-a-Service (RaaS)",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "store",
+            "term": "RaaS",
+            "subtitle": "Ransomware business model",
+            "color": "#6A1B9A"
+          },
+          "back": {
+            "definition": "Ransomware-as-a-Service: Developers create ransomware, affiliates deploy it. Revenue split (70-80% affiliate, 20-30% developer). Lowers barrier to entry.",
+            "darkside_model": "DarkSide: Professional operation. Avoided hospitals, schools (PR). Targeted high-value (Colonial). Customer support (decryption help). 24/7 negotiation.",
+            "ecosystem": [
+              "Access brokers: Sell compromised credentials (VPNs, RDP)",
+              "Ransomware operators: Deploy malware",
+              "Data leak sites: Pressure victims (double extortion)",
+              "Cryptocurrency mixers: Launder Bitcoin payments"
+            ],
+            "defense": "Prevent initial access (MFA, patching). Segment networks. Offline backups. IR plan.",
+            "color": "#4A148C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "IT/OT Segmentation",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "lan",
+            "term": "IT/OT SEGMENTATION",
+            "subtitle": "Isolate operational tech",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "IT (Information Tech): Corporate systems (email, billing, HR). OT (Operational Tech): SCADA, ICS, control systems (pipelines, manufacturing, power grids).",
+            "why_critical": "OT compromise = physical danger. Pipeline explosion, power outage, chemical spill. OT debe estar air-gapped o heavily segmented de IT.",
+            "colonial_gap": "Colonial: IT y OT en same network. CEO shutdowns pipeline por fear de OT spread. Proper segmentation hubiera isolated ransomware a IT only.",
+            "implementation": [
+              "Firewall between IT/OT zones",
+              "No direct internet access desde OT",
+              "Jump boxes para OT access (MFA required)",
+              "Monitor all IT→OT traffic"
+            ],
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "drag_drop_match",
+      "title": "OWASP Top 10 Mapping",
+      "content": {
+        "instruction": "Match el OWASP category con el vulnerability example:",
+        "scenarios": [
+          {"id": 1, "text": "VPN sin MFA, leaked password functional", "correct_target": "a01"},
+          {"id": 2, "text": "SQL injection: ' OR '1'='1 bypasses login", "correct_target": "a03"},
+          {"id": 3, "text": "Password stored en plaintext en database", "correct_target": "a02"},
+          {"id": 4, "text": "Using Log4j 2.14 (CVE-2021-44228 Log4Shell)", "correct_target": "a06"},
+          {"id": 5, "text": "No logging de failed login attempts", "correct_target": "a09"}
+        ],
+        "targets": [
+          {"id": "a01", "label": "A01: Broken Access Control", "color": "#E65100"},
+          {"id": "a02", "label": "A02: Cryptographic Failures", "color": "#7B1FA2"},
+          {"id": "a03", "label": "A03: Injection", "color": "#D32F2F"},
+          {"id": "a06", "label": "A06: Vulnerable Components", "color": "#1976D2"},
+          {"id": "a09", "label": "A09: Logging Failures", "color": "#388E3C"}
+        ],
+        "xp_per_correct": 7
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "swipe_cards",
+      "title": "Ransomware Defense: Good Practice?",
+      "content": {
+        "instruction": "¿Es esta práctica efectiva contra ransomware?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "VPN con MFA + time-based access (8AM-6PM solo)",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          },
+          {
+            "id": 2,
+            "scenario": "Backups en same network (accessible desde production)",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          },
+          {
+            "id": 3,
+            "scenario": "Network segmentation: IT zone separada de OT zone via firewall",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          },
+          {
+            "id": 4,
+            "scenario": "Pagar ransom es fastest recovery method",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          },
+          {
+            "id": 5,
+            "scenario": "Offline backups (air-gapped), tested quarterly",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INEFECTIVA", "right": "✅ EFECTIVA"}
+          }
+        ],
+        "xp_per_correct": 9
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "Incident Response Phases",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "emergency",
+            "term": "IR LIFECYCLE",
+            "subtitle": "NIST 800-61 framework",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "NIST 800-61: Computer Security Incident Handling Guide. 4 phases: Preparation, Detection & Analysis, Containment/Eradication/Recovery, Post-Incident.",
+            "phases": [
+              "1. Preparation: IR plan, CSIRT team, tools, playbooks, training",
+              "2. Detection & Analysis: SIEM alerts, triage, scope assessment",
+              "3. Containment: Short-term (isolate), Long-term (patch, rebuild)",
+              "4. Eradication: Remove malware, close vulnerabilities",
+              "5. Recovery: Restore systems, monitor for reinfection",
+              "6. Post-Incident: Lessons learned, update IR plan"
+            ],
+            "colonial_gaps": "No tested backups (recovery slow). No IT/OT segmentation (containment hard). MFA absent (prevention fail).",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: VPN Anomalous Login",
+      "content": {
+        "scenario": "Investigas Colonial breach. VPN logs muestran logins. Find las 2 lines sospechosas que indican compromised credentials.",
+        "log_lines": [
+          {"id": 1, "text": "2021-05-06 08:23:11 VPN_LOGIN user=john.smith@colonial.com src_ip=203.45.12.8 (Richmond, VA) result=success MFA=true", "is_suspicious": false},
+          {"id": 2, "text": "2021-05-07 00:45:33 VPN_LOGIN user=contractor_hvac@colonial.com src_ip=185.220.101.14 (Moscow, Russia) result=success MFA=false", "is_suspicious": true, "reason": "HVAC contractor login desde Russia 12AM + no MFA = compromised credentials"},
+          {"id": 3, "text": "2021-05-07 01:12:17 VPN_LOGIN user=contractor_hvac@colonial.com src_ip=185.220.101.14 multiple_failed_attempts=15 previous_hour result=success", "is_suspicious": true, "reason": "15 failed attempts followed por success = credential stuffing attack"},
+          {"id": 4, "text": "2021-05-07 09:15:42 VPN_LOGIN user=admin@colonial.com src_ip=172.16.0.5 (HQ) result=success MFA=true", "is_suspicious": false},
+          {"id": 5, "text": "2021-05-07 14:33:29 VPN_LOGIN user=jane.doe@colonial.com src_ip=98.12.34.56 (Atlanta, GA) result=success MFA=true", "is_suspicious": false}
+        ],
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "slider_balance",
+      "title": "⚖️ Estrategia de Backup",
+      "content": {
+        "scenario": "¿Cómo proteges los datos críticos ante Ransomware?",
+        "left_option": {
+          "label": "Sincronización Nube (Live)",
+          "icon": "cloud_upload",
+          "consequences": [
+            "✅ Copia instantánea",
+            "❌ El ransomware también se sincroniza",
+            "❌ Archivos cifrados sobrescriben los buenos"
+          ]
+        },
+        "right_option": {
+          "label": "Backup Inmutable / Offline",
+          "icon": "save",
+          "consequences": [
+            "✅ A prueba de ransomware",
+            "✅ Recuperación garantizada",
+            "❌ Gestión más compleja"
+          ]
+        },
+        "explanation": "Para ransomware, solo sirve lo inmutable o desconectado (Offline). Si tu PC puede escribir en el backup, el virus también puede."
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "timed_quiz",
+      "title": "⚡ Colonial Root Cause",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Cuál fue el root cause MÁS crítico del Colonial Pipeline breach?",
+        "options": [
+          {"id": "a", "text": "DarkSide ransomware era muy sophisticated", "is_correct": false},
+          {"id": "b", "text": "VPN sin MFA + leaked password = broken access control (OWASP A01)", "is_correct": true},
+          {"id": "c", "text": "Colonial no tenía firewall", "is_correct": false}
+        ],
+        "explanation": "Root cause: Broken Access Control (OWASP A01). VPN sin MFA + leaked password (dark web) = attacker login. Secondary: No IT/OT segmentation. MFA hubiera blocked attack even con leaked password.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "timed_quiz",
+      "title": "⚡ OWASP Top 10 Purpose",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Qué es OWASP Top 10 y cómo se usa?",
+        "options": [
+          {"id": "a", "text": "List de top 10 hacking tools", "is_correct": false},
+          {"id": "b", "text": "Industry-standard checklist de most critical web app security risks para SDLC", "is_correct": true},
+          {"id": "c", "text": "Ranking de top 10 hackers", "is_correct": false}
+        ],
+        "explanation": "OWASP Top 10: Awareness document sobre most critical web app security risks. Updated cada 3-4 años. Use como: Security requirements, code review checklist, pentesting scope, developer training.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "timed_quiz",
+      "title": "⚡ Ransomware Payment",
+      "content": {
+        "timer_seconds": 30,
+        "question": "Colonial pagó $4.4M ransom. ¿Por qué esto NO fue optimal strategy?",
+        "options": [
+          {"id": "a", "text": "Pagar ransom es illegal", "is_correct": false},
+          {"id": "b", "text": "Decryption key fue lento/unreliable. Backups hubieran sido faster. Pagar funds criminal gangs.", "is_correct": true},
+          {"id": "c", "text": "FBI siempre recupera ransoms", "is_correct": false}
+        ],
+        "explanation": "Ransomware payment issues: 1) No garantiza working decryption key (DarkSide key fue slow), 2) Funds organized crime, 3) Encourages future attacks. Backups + IR plan > paying ransom. FBI recovered solo $2.3M de $4.4M.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "security",
+          "name": "OWASP Security Expert",
+          "description": "Master OWASP Top 10 & ransomware defense strategies",
+          "rarity": "rare",
+          "color": "#D32F2F"
+        }
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 60,
+        "key_takeaways": [
+          "Colonial Pipeline: $4.4M ransom, 6 days offline. Root cause: VPN sin MFA (OWASP A01)",
+          "OWASP Top 10: Industry-standard web app security risks. Use en SDLC.",
+          "A01 Broken Access Control: MFA mandatory, least privilege, server-side enforcement",
+          "Ransomware-as-a-Service: Professional operations (DarkSide). Access brokers + affiliates.",
+          "IT/OT Segmentation: Isolate operational tech. Colonial lacked this = shutdown fear.",
+          "Defense: MFA, network segmentation, offline backups, IR plan tested"
+        ],
+        "next_lesson": {
+          "id": "c4_l2",
+          "title": "SQL Injection",
+          "preview": "Caso Target POS Breach - Supply chain + SQL injection"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "DarkSide ransomware, 5,500 miles pipeline offline, East Coast fuel crisis"
-  }
+  ]
 }

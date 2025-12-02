@@ -1,137 +1,361 @@
 {
   "id": "c2_l5",
-  "title": "Segmentación de Redes",
-  "description": "VPN Technologies",
+  "title": "Segmentación y Monitoreo",
+  "description": "Micro-Segmentation + Network Monitoring",
   "type": "interactive",
-  "duration_minutes": 8,
-  "xp_reward": 20,
+  "duration_minutes": 22,
+  "xp_reward": 55,
   "order_index": 5,
   "course_id": 2,
-  "total_screens": 3,
+  "total_screens": 17,
+  "theme": {
+    "primary_color": "#00BCD4",
+    "secondary_color": "#FF5722",
+    "accent_color": "#4CAF50",
+    "gradient": ["#0f2027", "#203a43", "#2c5364"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "VPN Technologies",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Network Segmentation & Visibility",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "vpn_lock",
-              "term": "Site-to-Site VPN",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Conecta networks entre offices/data centers. IPsec tunnel. Routers/firewalls terminan tunnel. Transparent para users.",
-              "example": "HQ en NY, branch en LA. Site-to-site VPN = single network lógico. IPsec with ESP (encryption) + AH (authentication).",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "phone_iphone",
-              "term": "Remote Access VPN",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Usuarios remotos conectan a corporate network. Client software. SSL/TLS based (easier) o IPsec (más secure).",
-              "example": "OpenVPN, Cisco AnyConnect, WireGuard. COVID-19: Remote work exploded VPN usage. Bandwidth bottleneck.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "language",
-              "term": "Zero Trust Network Access (ZTNA)",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Alternative a VPN. No 'trusted network'. Identity-based access. Micro-segmentation. Never trust, verify always.",
-              "example": "Cloudflare Access, Zscaler Private Access. User autentica, accede SOLO recursos específicos. No full network access como VPN tradicional.",
-              "color": "#FFB74D"
-            }
-          }
-        ]
+        "headline": "DEFENSE IN DEPTH",
+        "subheadline": "Segment + Monitor = Limit blast radius + Detect threats",
+        "stats": [
+          {"value": "200+", "label": "Days avg dwell time sin monitoreo"},
+          {"value": "Flat", "label": "Networks = worm paradise"},
+          {"value": "Zero Trust", "label": "Segment everything"}
+        ],
+        "cta_text": "Master Segmentation"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "VPN Best Practices",
-      "duration": 180,
+      "type": "flip_card_full",
+      "title": "Network Segmentation: Why",
       "content": {
-        "items": [
-          {
-            "id": "bp1",
-            "task": "Strong Authentication",
-            "subtitle": "MFA obligatorio",
-            "icon": "verified_user",
-            "unlock_content": {
-              "title": "No Solo Passwords",
-              "points": [
-                "MFA: TOTP, push notification, hardware token",
-                "Certificate-based auth mejor que passwords",
-                "Disable split-tunneling (force all traffic through VPN)",
-                "Monitor for concurrent sessions (same user, different locations)"
-              ],
-              "bonus_fact": "VPN sin MFA = low-hanging fruit para attackers. Credential stuffing hits VPNs hard."
-            }
+        "card": {
+          "front": {
+            "icon": "widgets",
+            "term": "SEGMENTATION",
+            "subtitle": "Divide and Conquer",
+            "color": "#00BCD4"
           },
-          {
-            "id": "bp2",
-            "task": "Modern Protocols",
-            "subtitle": "Upgrade legacy",
-            "icon": "update",
-            "unlock_content": {
-              "title": "Protocol Selection",
-              "points": [
-                "WireGuard: Modern, fast, secure. 4K lines code vs OpenVPN 70K",
-                "IKEv2: Mobile-friendly, reconnects seamlessly",
-                "Avoid PPTP (broken), L2TP/IPsec (slow)",
-                "TLS 1.3 for SSL VPNs"
-              ],
-              "bonus_fact": "WireGuard: Auditable, included in Linux kernel. OpenVPN works pero heavy."
-            }
+          "back": {
+            "definition": "Dividir network en zones aisladas. Controlar traffic entre zones con firewalls. Limita lateral movement y blast radius.",
+            "benefits": [
+              "Contain breaches: Compromiso de zone A ≠ compromiso de zone B",
+              "Reduce attack surface: Minimize exposed services",
+              "Compliance: Isolate PCI, HIPAA data",
+              "Performance: Reduce broadcast domains"
+            ],
+            "flat_network_risk": "Sin segmentación = worms (Mirai, WannaCry, NotPetya) se propagan sin fricción.",
+            "color": "#00ACC1"
           }
-        ]
+        }
       }
     },
     {
       "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación - VPN",
-      "duration": 60,
+      "type": "flip_card_full",
+      "title": "Segmentation: VLANs",
       "content": {
-        "question": "¿Diferencia entre VPN tradicional y ZTNA?",
-        "options": [
-          {
-            "id": "a",
-            "text": "Son lo mismo",
-            "is_correct": false,
-            "feedback": "Incorrecto. Son approaches diferentes para remote access."
+        "card": {
+          "front": {
+            "icon": "lan",
+            "term": "VLANs",
+            "subtitle": "Layer 2 Segmentation",
+            "color": "#1976D2"
           },
-          {
-            "id": "b",
-            "text": "VPN da acceso a network completo; ZTNA da acceso granular a recursos específicos",
-            "is_correct": true,
-            "feedback": "CORRECTO! VPN tradicional: User conecta, tiene acceso a entire corporate network (flat network). ZTNA: Identity-based, user accede SOLO a apps/recursos específicos authorized. Zero Trust = never trust network location, always verify identity + context."
-          },
-          {
-            "id": "c",
-            "text": "ZTNA no usa encryption",
-            "is_correct": false,
-            "feedback": "Incorrecto. ZTNA SÍ usa encryption (TLS). Diferencia no es encryption sino modelo de trust y granularidad de access."
+          "back": {
+            "definition": "Virtual LANs: Segmentación lógica en same physical switch. 802.1Q tagging. Devices en VLANs diferentes no pueden comunicarse sin router.",
+            "common_vlans": [
+              "VLAN 10: Management",
+              "VLAN 20: Users",
+              "VLAN 30: Servers",
+              "VLAN 40: Guest WiFi",
+              "VLAN 50: IoT devices",
+              "VLAN 99: Native/untagged"
+            ],
+            "implementation": "Managed switches con 802.1Q. Router o Layer 3 switch para inter-VLAN routing con ACLs.",
+            "color": "#1565C0"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "flip_card_full",
+      "title": "Micro-Segmentation",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "grid_view",
+            "term": "MICRO-SEGMENTATION",
+            "subtitle": "Workload-level isolation",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "Segmentación granular hasta workload/application level. Firewall policies entre cada workload. Software-defined.",
+            "how_it_works": "Host-based firewalls o SDN controllers definen rules dinámicas. Cada VM/container tiene own firewall policy.",
+            "use_case": "Cloud/virtualized environments. Zero Trust architecture. East-West traffic control (server-to-server).",
+            "example": "Web server solo puede hablar con app server. App server solo puede hablar con DB. DB no puede iniciar outbound connections.",
+            "tools": "VMware NSX, Cisco ACI, Illumio",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "drag_drop_builder",
+      "title": "🏗️ Design Segmented Network",
+      "content": {
+        "instruction": "Arrastra componentes para crear network segmentada",
+        "available_components": [
+          {"id": "firewall", "name": "Perimeter Firewall", "layer": "perimeter"},
+          {"id": "dmz", "name": "DMZ Zone", "layer": "dmz"},
+          {"id": "web", "name": "Web Servers", "layer": "dmz"},
+          {"id": "internal_fw", "name": "Internal Firewall", "layer": "internal_edge"},
+          {"id": "user_vlan", "name": "User VLAN", "layer": "internal"},
+          {"id": "server_vlan", "name": "Server VLAN", "layer": "internal"},
+          {"id": "db_vlan", "name": "Database VLAN", "layer": "internal"},
+          {"id": "guest_vlan", "name": "Guest WiFi VLAN", "layer": "internal"}
+        ],
+        "zones": [
+          {"id": "internet", "label": "Internet", "color": "#F44336"},
+          {"id": "perimeter", "label": "Perimeter", "color": "#FF9800"},
+          {"id": "dmz", "label": "DMZ", "color": "#FFC107"},
+          {"id": "internal_edge", "label": "Internal Edge", "color": "#00BCD4"},
+          {"id": "internal", "label": "Internal Network", "color": "#4CAF50"}
+        ],
+        "success_criteria": "Internet → Perimeter FW → DMZ → Internal FW → Internal VLANs",
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "Zero Trust Network",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "gpp_bad",
+            "term": "ZERO TRUST",
+            "subtitle": "Never trust, verify always",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "Modelo donde NO hay trusted network. Cada connection verificada. Location (office vs remote) no determina trust.",
+            "principles": [
+              "Verify explicitly: Auth + authorization para EVERY access",
+              "Least privilege: Minimum access needed, JIT",
+              "Assume breach: Act como si already compromised",
+              "Micro-segment: Limit lateral movement"
+            ],
+            "vs_traditional": "Traditional: Inside network = trusted. Zero Trust: Network location ≠ trust.",
+            "implementation": "ZTNA (Cloudflare Access, Zscaler), micro-segmentation, identity-based policies",
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "story_slide",
+      "title": "Network Monitoring: Visibility",
+      "content": {
+        "icon": "visibility",
+        "icon_color": "#FF9800",
+        "headline": "You Can't Protect What You Can't See",
+        "body": "Sin monitoring = blind. Average dwell time (tiempo que attacker está en network sin ser detectado): 200+ días. Monitoring reduce a días o horas.",
+        "highlight_box": {
+          "type": "info",
+          "text": "NetFlow/sFlow: Traffic telemetry. SIEM: Log correlation. IDS/IPS: Threat detection. Packet capture: Deep analysis."
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "NetFlow / sFlow",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "traffic",
+            "term": "NETFLOW",
+            "subtitle": "Traffic telemetry",
+            "color": "#2196F3"
+          },
+          "back": {
+            "definition": "Protocol para exportar metadata de network flows. Quién habla con quién, cuánto data, qué puertos. NO captura payloads.",
+            "flow_data": "Source IP, Dest IP, Ports, Protocol, Bytes, Packets, Timestamps",
+            "use_cases": [
+              "Baseline traffic patterns",
+              "Detect anomalies (data exfiltration, C2)",
+              "Capacity planning",
+              "Forensics (quién habló con quién)"
+            ],
+            "netflow_vs_sflow": "NetFlow (Cisco): Full feature. sFlow: Sampled (más scalable).",
+            "tools": "ntopng, SolarWinds, Plixer Scrutinizer",
+            "color": "#1976D2"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "SIEM: Security Information Event Management",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "analytics",
+            "term": "SIEM",
+            "subtitle": "Log correlation engine",
+            "color": "#9C27B0"
+          },
+          "back": {
+            "definition": "Agrega logs de todos los systems. Correlaciona eventos. Detecta patterns de ataque. Alertas + dashboards.",
+            "data_sources": "Firewalls, IDS/IPS, servers, endpoints, AD, cloud, applications",
+            "capabilities": [
+              "Real-time monitoring",
+              "Correlation rules (if X then Y = alert)",
+              "Threat intelligence integration",
+              "Compliance reporting",
+              "Forensics y incident investigation"
+            ],
+            "example_rule": "Failed logins >5 from same IP en 5 min = brute force alert",
+            "tools": "Splunk, ELK Stack, Microsoft Sentinel, QRadar",
+            "color": "#7B1FA2"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "log_hunter",
+      "title": "🔍 Detect Lateral Movement",
+      "content": {
+        "instruction": "Analiza NetFlow data. Identifica lateral movement sospechoso.",
+        "logs": [
+          {"id": 1, "text": "10.0.1.50 (workstation) → 8.8.8.8:443 HTTPS 2MB", "suspicious": false},
+          {"id": 2, "text": "10.0.1.50 (workstation) → 10.0.2.10 (DC):445 SMB 50KB", "suspicious": true},
+          {"id": 3, "text": "10.0.1.60 (workstation) → 10.0.1.1:53 DNS 5KB", "suspicious": false},
+          {"id": 4, "text": "10.0.1.50 → 10.0.2.11 (server):3389 RDP connection", "suspicious": true},
+          {"id": 5, "text": "10.0.2.10 (DC) → 10.0.2.20 (file server):445 SMB 500MB", "suspicious": false},
+          {"id": 6, "text": "10.0.1.50 → 10.0.3.0/24 (server subnet):445 SMB scan", "suspicious": true}
+        ],
+        "hints": [
+          "Workstation → DC directo = anómalo (debería ir por infraestructura)",
+          "Workstation → RDP a server = sospechoso",
+          "SMB scan de workstation = reconnaissance"
+        ],
+        "success_threshold": 3,
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "Packet Capture (PCAP)",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "camera",
+            "term": "PACKET CAPTURE",
+            "subtitle": "Full visibility",
+            "color": "#FF5722"
+          },
+          "back": {
+            "definition": "Capturar TODOS los packets en network. Full payload + headers. Forensics gold pero storage intensive.",
+            "use_cases": [
+              "Deep forensics después de incident",
+              "Malware analysis (extract malware from PCAP)",
+              "Protocol debugging",
+              "Proof en legal cases"
+            ],
+            "tools": "Wireshark, tcpdump, tshark, NetworkMiner",
+            "challenge": "Storage: 1Gbps link = ~300GB/hour. Retention limitado. Privacy concerns.",
+            "best_practice": "Capture crítico (DMZ, DC traffic). Retention 7-30 días.",
+            "color": "#E64A19"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "drag_drop_match",
+      "title": "Match: Tool → Purpose",
+      "content": {
+        "instruction": "Arrastra cada tool a su uso principal",
+        "scenarios": [
+          {"id": 1, "text": "Wireshark", "correct_target": "pcap"},
+          {"id": 2, "text": "Splunk", "correct_target": "siem"},
+          {"id": 3, "text": "ntopng", "correct_target": "netflow"},
+          {"id": 4, "text": "Snort", "correct_target": "ids"},
+          {"id": 5, "text": "pfSense", "correct_target": "firewall"}
+        ],
+        "targets": [
+          {"id": "pcap", "label": "Packet Capture", "color": "#FF5722"},
+          {"id": "siem", "label": "SIEM", "color": "#9C27B0"},
+          {"id": "netflow", "label": "NetFlow Analysis", "color": "#2196F3"},
+          {"id": "ids", "label": "IDS/IPS", "color": "#388E3C"},
+          {"id": "firewall", "label": "Firewall", "color": "#00BCD4"}
+        ],
+        "xp_per_correct": 6
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "timed_quiz",
+      "title": "⚡ Segmentation Best Practice",
+      "content": {
+        "timer_seconds": 20,
+        "question": "¿Cuál es la MEJOR segmentación para contener breach?",
+        "options": [
+          {"id": "a", "text": "Flat network - más fácil management", "is_correct": false},
+          {"id": "b", "text": "VLANs por función + micro-segmentation entre workloads", "is_correct": true},
+          {"id": "c", "text": "Solo firewall perimeter", "is_correct": false}
+        ],
+        "explanation": "VLANs proveen segmentation básica. Micro-segmentation provee granular control workload-to-workload. Combinados = defense in depth. Flat network = worm paradise.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "visibility",
+          "name": "Network Visibility Master",
+          "description": "Dominas segmentation, monitoring y Zero Trust",
+          "rarity": "rare",
+          "color": "#00BCD4"
+        }
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 55,
+        "key_takeaways": [
+          "Segmentation: VLANs + Micro-seg = limita blast radius",
+          "Zero Trust: Never trust network location",
+          "NetFlow: Traffic metadata. SIEM: Log correlation",
+          "PCAP: Full visibility pero storage intensive",
+          "WiFi: WPA3 mandatory. Monitor rogue APs"
+        ],
+        "next_lesson": {
+          "id": "c2_l6",
+          "title": "Seguridad Wireless",
+          "preview": "War Driving, Evil Twins y el peligro del WiFi abierto"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }

@@ -1,215 +1,496 @@
 {
   "id": "c3_l3",
-  "title": "Cifrado Asimétrico",
-  "description": "Caso: Uber CISO Charged (2022)",
+  "title": "Gobernanza y cumplimiento de la identidad",
+  "description": "Caso Real: Uber CISO Charged (2022)",
   "type": "interactive",
-  "duration_minutes": 13,
-  "xp_reward": 20,
+  "duration_minutes": 25,
+  "xp_reward": 60,
   "order_index": 3,
   "course_id": 3,
-  "total_screens": 4,
+  "total_screens": 19,
+  "theme": {
+    "primary_color": "#000000",
+    "secondary_color": "#09B8A6",
+    "accent_color": "#C0392B",
+    "gradient": ["#000000", "#1a1a1a", "#2d2d2d"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso: Uber CISO Charged (2022)",
-      "duration": 200,
+      "type": "story_intro",
+      "title": "Operación: Cover-Up Criminal",
       "content": {
-        "story_title": "Uber 2016 Breach Cover-Up",
-        "story_intro": "CISO criminally charged por cover-up de breach de 57M records",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "data_thresholding",
-            "title": "El Breach: GitHub Credentials",
-            "content": "2016: Attackers encontraron AWS credentials de Uber en GitHub public repo. Accedieron S3 bucket con 57M rider/driver records: names, emails, phone, license numbers.",
-            "insight": "Secrets in code = common mistake. GitHub scanning encontraría esto hoy."
-          },
-          {
-            "id": "2",
-            "icon": "payments",
-            "title": "El Cover-Up: $100K 'Bug Bounty'",
-            "content": "CISO Joe Sullivan pagó $100K a attackers para destroy data y firmar NDA. Disfrazado como bug bounty. NO disclosure a reguladores (FTC) ni afectados. Obstruction of justice.",
-            "insight": "Cover-ups SIEMPRE se descubren. Legal obligation de disclosure en 48-72 hours (varies by jurisdiction)."
-          },
-          {
-            "id": "3",
-            "icon": "gavel",
-            "title": "Criminal Charges",
-            "content": "2020: DOJ acusó Sullivan de obstruction y misprision of felony. First CISO criminally charged. 2022: Encontrado guilty. Sentencia: 3 años probation, $50K fine.",
-            "insight": "CISOs tienen duty to disclose breaches. Cover-up = criminal liability. Ethics > job security."
-          },
-          {
-            "id": "4",
-            "icon": "article",
-            "title": "Lecciones: Incident Response",
-            "content": "Proper response: 1) Contain breach. 2) Forensics. 3) Notify regulators (GDPR 72h, varies by region). 4) Notify affected individuals. 5) Public statement. Transparency builds trust.",
-            "insight": "Sullivan case establece precedente: CISO liability es real. Ethics y compliance son non-negotiable."
-          }
-        ]
+        "headline": "OCTUBRE 2022",
+        "subheadline": "CISO criminally charged por cover-up de breach 57M records",
+        "stats": [
+          {"value": "57M", "label": "Records robados"},
+          {"value": "$100K", "label": "Payoff a hackers"},
+          {"value": "5 años", "label": "Prisión potencial"}
+        ],
+        "cta_text": "Investigar Obstruction of Justice"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "Identity Governance",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "GitHub Credential Leak → Federal Crime",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "manage_accounts",
-              "term": "Identity Lifecycle",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Birth → Joiner (hire) → Mover (role change) → Leaver (termination). Provisioning/de-provisioning automation. Reduce manual errors.",
-              "example": "Hire: Auto-create accounts en AD, email, apps. Promotion: Update group memberships. Termination: Disable ALL access within 1 hour. HR system integration critical.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "assignment_turned_in",
-              "term": "Access Certification",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Periodic review de access rights. Manager certifica: 'Does employee still need this access?'. Detect privilege creep, orphaned accounts.",
-              "example": "Quarterly campaigns. SailPoint, Saviynt tools. Manager recibe list de subordinates' access. Certify or revoke. Compliance requirement (SOX).",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "policy",
-              "term": "Segregation of Duties (SoD)",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "No single person controla end-to-end process. Prevents fraud. One person requests, otro approves. Finance: quien crea invoice ≠ quien paga.",
-              "example": "Sarbanes-Oxley requirement. SAP: User NO puede create vendor y approve payment. Toxic combinations detected by IGA tools.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "info",
-              "term": "Data Privacy Compliance",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "GDPR, CCPA, HIPAA, etc. Right to be forgotten. Data minimization. Consent management. Breach notification (72 hours GDPR).",
-              "example": "Uber: Failure to disclose within required timeframe = violation. GDPR fines up to 4% global revenue. Privacy by design.",
-              "color": "#BA68C8"
-            }
-          }
-        ]
+        "icon": "gavel",
+        "icon_color": "#C0392B",
+        "headline": "Cuando Breach Response Se Convierte en Criminal Case",
+        "body": "2016: Hackers roban 57M Uber rider/driver records vía GitHub credential leak. CISO Joe Sullivan decide: 1) Pagar $100K a hackers como 'bug bounty', 2) NO notificar FTC (ongoing investigation), 3) Make hackers firmar NDA. 2022: Sullivan convicted de obstruction of justice + misprision of felony.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Lesson: Breach response tiene legal obligations. Cover-up > breach. GDPR 72h notification. US states breach laws. CISO personal criminal liability."
+        }
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Breach Response Checklist",
-      "duration": 300,
+      "type": "crisis_timeline",
+      "title": "⏱️ BREACH → COVER-UP → CONVICTION",
       "content": {
-        "items": [
+        "events": [
           {
-            "id": "ir_step1",
-            "task": "Detection & Containment",
-            "subtitle": "Stop the bleeding",
-            "icon": "emergency",
-            "unlock_content": {
-              "title": "Immediate Actions",
-              "points": [
-                "Detect: SIEM alert, user report, third-party notification",
-                "Isolate: Segment compromised systems. Prevent lateral movement.",
-                "Preserve evidence: Don't destroy logs. Chain of custody for forensics.",
-                "Activate IR team: CISO, Legal, PR, Engineering",
-                "Document: Timestamped log of all actions taken"
-              ],
-              "bonus_fact": "First 24 hours critical. Containment speed reduces damage exponentially."
-            }
+            "time": "Oct 2016",
+            "icon": "code",
+            "title": "GitHub Credential Leak",
+            "description": "Uber engineer commits AWS key a GitHub repo público. Hackers scan GitHub, find key, access S3 bucket con 57M records.",
+            "severity": "critical"
           },
           {
-            "id": "ir_step2",
-            "task": "Investigation & Notification",
-            "subtitle": "Understand scope",
-            "icon": "search",
-            "unlock_content": {
-              "title": "Forensics & Compliance",
-              "points": [
-                "Forensics: Third-party firm (Mandiant, CrowdStrike). Determine scope, root cause.",
-                "Legal analysis: Which laws apply? GDPR (EU), CCPA (CA), HIPAA (health), etc.",
-                "Regulatory notification: GDPR 72h, state laws vary (CA 48h). Counsel advises.",
-                "Individual notification: Email affected users. Offer credit monitoring if PII.",
-                "Don't cover up: Uber lesson. Transparency > trying to hide."
-              ],
-              "bonus_fact": "GDPR fines: British Airways £183M, Marriott £99M. Notification delay increases penalty."
-            }
+            "time": "Nov 2016",
+            "icon": "email",
+            "title": "Extortion Email",
+            "description": "Hackers email Uber: 'We have your data. Pay us or we leak.' Attach sample de stolen data como proof.",
+            "severity": "critical"
           },
           {
-            "id": "ir_step3",
-            "task": "Recovery & Lessons Learned",
-            "subtitle": "Return to normal",
-            "icon": "restore",
-            "unlock_content": {
-              "title": "Post-Incident",
-              "points": [
-                "Eradication: Remove attacker presence. Patch vulnerabilities. Rotate credentials.",
-                "Recovery: Restore from clean backups. Gradual bring-up with monitoring.",
-                "Post-mortem: What went wrong? What went right? Blameless culture.",
-                "Remediation: Implement fixes. Update IR playbook.",
-                "Training: Share lessons company-wide. Improve defenses."
-              ],
-              "bonus_fact": "Companies with tested IR plans recover 50% faster and 30% cheaper."
-            }
+            "time": "Nov 2016",
+            "icon": "money",
+            "title": "Bug Bounty Cover-Up",
+            "description": "Sullivan decide pagar $100K disfrazado como 'bug bounty'. Make hackers firmar NDA. NO report a regulators.",
+            "severity": "critical"
+          },
+          {
+            "time": "2016-2017",
+            "icon": "visibility_off",
+            "title": "Conceal from FTC",
+            "description": "FTC investigating Uber por prior breach. Sullivan NO disclose este nuevo breach durante investigation. Obstruction.",
+            "severity": "critical"
+          },
+          {
+            "time": "Nov 2017",
+            "icon": "campaign",
+            "title": "New CEO Discovers",
+            "description": "Dara Khosrowshahi (new CEO) descubre cover-up. Immediately disclose publicly. Fire Sullivan.",
+            "severity": "warning"
+          },
+          {
+            "time": "Oct 2022",
+            "icon": "gavel",
+            "title": "Criminal Conviction",
+            "description": "Joe Sullivan convicted: Obstruction of justice + Misprision of felony. Facing 5 years prison (sentenced 3 years probation).",
+            "severity": "critical"
           }
         ]
       }
     },
     {
       "screen_id": 4,
-      "type": "quiz",
-      "title": "Evaluación - Compliance",
-      "duration": 90,
+      "type": "crisis_decision",
+      "title": "🚨 Breach Discovery: ¿Qué Haces?",
       "content": {
-        "question": "Uber CISO fue criminally charged porque:",
+        "scenario": "Eres CISO. Hackers email: 'We have 50M user records from your S3 bucket. Pay $100K or we publish.' Adjuntan proof. Tu CEO pregunta: ¿Opciones?",
+        "timer_seconds": 30,
         "options": [
           {
-            "id": "a",
-            "text": "Permitió el breach",
+            "id": "coverup",
+            "text": "Pagar como 'bug bounty', make them firmar NDA, no reportar",
+            "icon": "money_off",
             "is_correct": false,
-            "feedback": "Incorrecto. Breaches pasan. No es criminal tener breach. Lo criminal fue el cover-up."
+            "consequence": {
+              "title": "Esto fue Uber",
+              "description": "Sullivan convicted de federal crime. Obstruction of justice. 3 years probation. Career destroyed. Company fined $148M. Lesson: Cover-up peor que breach.",
+              "impact_score": -100
+            }
           },
           {
-            "id": "b",
-            "text": "Ocultó breach de reguladores, pagó attackers para firmar NDA, obstruyó investigación",
+            "id": "comply",
+            "text": "Immediately notify: Legal, regulators (72h), affected users. Involve FBI. Document todo",
+            "icon": "policy",
             "is_correct": true,
-            "feedback": "CORRECTO! Joe Sullivan: 1) Sabía de breach (57M records). 2) NO notificó FTC (legal requirement). 3) Pagó $100K a attackers disfrazado como bug bounty. 4) Hizo firmar NDA a attackers. 5) Cuando FTC investigaba Uber, no reveló. Obstruction of justice. First CISO criminally prosecuted. Lesson: Transparency es mandatory, cover-up es criminal."
-          },
-          {
-            "id": "c",
-            "text": "No implementó MFA",
-            "is_correct": false,
-            "feedback": "Incorrecto. Technical controls pueden tener gaps sin ser criminales. Cover-up ES criminal."
-          },
-          {
-            "id": "d",
-            "text": "Usó bug bounty program",
-            "is_correct": false,
-            "feedback": "Incorrecto. Bug bounties son legítimos. Problema: esto NO era bug bounty real, era payoff para silence."
+            "consequence": {
+              "title": "Legal Compliance",
+              "description": "GDPR 72h. US state laws (CA, NY). FTC notification. Evitas obstruction charges. FBI investiga hackers. Transparency protects company long-term.",
+              "impact_score": 100,
+              "xp_bonus": 30
+            }
           }
         ]
       }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "GDPR Breach Notification",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "notifications_active",
+            "term": "GDPR 72 HORAS",
+            "subtitle": "Notification deadline",
+            "color": "#1565C0"
+          },
+          "back": {
+            "definition": "GDPR (EU regulation) require breach notification a supervisory authority dentro de 72 horas de 'becoming aware' del breach.",
+            "what_to_report": [
+              "Nature of breach (what data, how many records)",
+              "Contact point (DPO - Data Protection Officer)",
+              "Likely consequences",
+              "Measures taken to mitigate"
+            ],
+            "penalties": "Up to €20M o 4% global revenue, whichever is greater. Non-compliance = massive fines.",
+            "affected_users": "Si 'high risk' a individuals, notify them directly sin undue delay.",
+            "uber_violation": "Uber breached EU users, NO notificó 72h. Cover-up duró 1 año. Multa: €1.2M por Italy DPA.",
+            "color": "#0D47A1"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "US Breach Notification Laws",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "location_on",
+            "term": "US STATE LAWS",
+            "subtitle": "All 50 states have laws",
+            "color": "#C62828"
+          },
+          "back": {
+            "definition": "US NO tiene federal breach law (propuesto pero not passed). All 50 states tienen own breach notification laws con diferentes requirements.",
+            "key_states": [
+              "California (CCPA): Notify affected residents 'without unreasonable delay'",
+              "New York (SHIELD Act): Notify within 'most expedient time'",
+              "Massachusetts: Notify AG + residents within reasonable time"
+            ],
+            "what_triggers": "PII breach: SSN, license, financial, health data. Varies by state.",
+            "penalties": "Varies: CA up to $7,500/victim. NY AG enforcement. Class action lawsuits.",
+            "uber_impact": "Uber violated CA law (HQ en SF). Settlement: $148M to 50 states + DC.",
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Data Protection Officer (DPO)",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "person_shield",
+            "term": "DPO",
+            "subtitle": "GDPR-mandated role",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Data Protection Officer: GDPR-required role (if processing large scale sensitive data). Independent privacy expert dentro de company.",
+            "responsibilities": [
+              "Monitor GDPR compliance",
+              "Advice on DPIAs (Data Protection Impact Assessments)",
+              "Contact point para supervisory authority y data subjects",
+              "Training employees on privacy"
+            ],
+            "independence": "Must report to highest management. Cannot be fired por doing DPO duties. NO conflict of interest (can't also be CISO/CTO).",
+            "uber_lesson": "Strong DPO hubiera challenged Sullivan's cover-up. Independent reporting line = check on security team.",
+            "color": "#6A1B9A"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Breach Response Plan",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "emergency",
+            "term": "INCIDENT RESPONSE",
+            "subtitle": "Prepare before breach",
+            "color": "#E65100"
+          },
+          "back": {
+            "definition": "Pre-defined plan para handle breach. Who, what, when. Practice via tabletop exercises. Update annually.",
+            "key_components": [
+              "Roles: Incident Commander, Legal, PR, IT, CISO",
+              "Notification process: Timeline, templates, approval workflow",
+              "Evidence preservation: Forensics, logs, chain of custody",
+              "Communication: Internal, customers, regulators, media"
+            ],
+            "legal_holds": "DO NOT delete anything. Legal hold on all relevant data/communications. Spoliation = obstruction.",
+            "uber_failure": "No formal plan. Sullivan made unilateral decision to cover-up. Legal/CEO not involved hasta 1 year later.",
+            "color": "#D84315"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "drag_drop_match",
+      "title": "Breach Notification Deadlines",
+      "content": {
+        "instruction": "Match el regulation/law con su deadline:",
+        "scenarios": [
+          {"id": 1, "text": "GDPR breach notification a supervisory authority", "correct_target": "72h"},
+          {"id": 2, "text": "California CCPA: Notify affected residents", "correct_target": "reasonable"},
+          {"id": 3, "text": "HIPAA breach notification a HHS", "correct_target": "60d"},
+          {"id": 4, "text": "GDPR high-risk breach notification a individuals", "correct_target": "undue"},
+          {"id": 5, "text": "SEC public company breach disclosure (material)", "correct_target": "4days"}
+        ],
+        "targets": [
+          {"id": "72h", "label": "72 horas", "color": "#1565C0"},
+          {"id": "reasonable", "label": "Without unreasonable delay", "color": "#C62828"},
+          {"id": "60d", "label": "60 días", "color": "#558B2F"},
+          {"id": "undue", "label": "Without undue delay", "color": "#6A1B9A"},
+          {"id": "4days", "label": "4 business days", "color": "#D84315"}
+        ],
+        "xp_per_correct": 7
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "flip_card_full",
+      "title": "Obstruction of Justice",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "gavel",
+            "term": "OBSTRUCTION",
+            "subtitle": "Federal crime",
+            "color": "#C62828"
+          },
+          "back": {
+            "definition": "Impede/influence investigation, proceeding, o official action. Includes: destroy evidence, lie to investigators, tamper with witnesses.",
+            "uber_specifics": "Sullivan obstructed FTC investigation. FTC investigating Uber por PRIOR breach. Sullivan NO disclosed este nuevo breach durante investigation = obstruction.",
+            "penalties": "18 USC §1505: Up to 5 years prison + fines. Applies even if underlying crime not charged.",
+            "other_examples": [
+              "Martha Stewart: Lied to FBI (insider trading investigation)",
+              "Arthur Andersen: Destroyed Enron documents"
+            ],
+            "lesson": "Cover-up peor que crime. Always cooperate con investigators. Consult legal.",
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "Misprision of Felony",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "visibility_off",
+            "term": "MISPRISION",
+            "subtitle": "Concealing known felony",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "Federal crime (18 USC §4): Conocer de felony + tomar steps para conceal it + NO reportar a authorities.",
+            "elements": [
+              "Knowledge: You know felony occurred",
+              "Concealment: Affirmative act to hide it (not just silence)",
+              "No report: Failure to report to law enforcement"
+            ],
+            "uber_application": "Sullivan knew breach (felony: computer fraud). Paid hackers + NDA = concealment. NO reported FBI.",
+            "penalties": "Up to 3 years prison. Rare charge pero Uber case revived it.",
+            "defense": "NO legal duty to report crime (5th Amendment). BUT affirmative concealment = crime.",
+            "color": "#EF6C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "swipe_cards",
+      "title": "Breach Response: Legal?",
+      "content": {
+        "instruction": "¿Es esta acción legal en breach response?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "Pagar hackers $100K como 'bug bounty' para evitar leak",
+            "correct_answer": "left",
+            "labels": {"left": "❌ ILEGAL", "right": "✅ LEGAL"}
+          },
+          {
+            "id": 2,
+            "scenario": "Notify GDPR supervisory authority dentro de 72 horas",
+            "correct_answer": "right",
+            "labels": {"left": "❌ ILEGAL", "right": "✅ LEGAL"}
+          },
+          {
+            "id": 3,
+            "scenario": "Delete forensic logs para 'clean up' después de breach",
+            "correct_answer": "left",
+            "labels": {"left": "❌ ILEGAL", "right": "✅ LEGAL"}
+          },
+          {
+            "id": 4,
+            "scenario": "Involve FBI Cyber Division para investigate hackers",
+            "correct_answer": "right",
+            "labels": {"left": "❌ ILEGAL", "right": "✅ LEGAL"}
+          },
+          {
+            "id": 5,
+            "scenario": "NO notify users porque 'damage control' - wait 6 months",
+            "correct_answer": "left",
+            "labels": {"left": "❌ ILEGAL", "right": "✅ LEGAL"}
+          }
+        ],
+        "xp_per_correct": 9
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "flip_card_full",
+      "title": "CISO Personal Liability",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "account_balance",
+            "term": "PERSONAL LIABILITY",
+            "subtitle": "CISOs at risk",
+            "color": "#D32F2F"
+          },
+          "back": {
+            "definition": "CISOs pueden ser personally liable (criminal + civil) por security failures, especialmente si negligence o cover-up.",
+            "criminal_exposure": [
+              "Obstruction of justice (Uber CISO)",
+              "Wire fraud (if misrepresent security to investors)",
+              "Securities fraud (public companies, material misstatement)"
+            ],
+            "civil_exposure": "Shareholder lawsuits (breach → stock drop). D&O insurance covers pero NOT intentional misconduct.",
+            "sec_charges": "SolarWinds CISO charged 2023 por misleading investors sobre security posture. First case charging CISO directly.",
+            "protection": "Document risk discussions. Escalate to Board. Get D&O insurance. Consult legal before major decisions.",
+            "color": "#C62828"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: GitHub Credential Leak",
+      "content": {
+        "scenario": "Investigas Uber breach. GitHub audit logs muestran commits. Find las 2 lines que exponen credentials.",
+        "log_lines": [
+          {"id": 1, "text": "2016-09-12 14:23:45 git commit -m 'Update database config' file=db_config.py author=engineer@uber.com", "is_suspicious": false},
+          {"id": 2, "text": "2016-09-12 14:24:01 git push origin master file=aws_keys.py AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE AWS_SECRET=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY", "is_suspicious": true, "reason": "AWS keys committed a public repo = credential exposure"},
+          {"id": 3, "text": "2016-09-15 09:11:22 git commit -m 'Fix typo' file=README.md author=engineer@uber.com", "is_suspicious": false},
+          {"id": 4, "text": "2016-10-03 16:45:33 S3 bucket access AWS_KEY=AKIAIOSFODNN7EXAMPLE action=ListBucket bucket=uber-user-data-prod IP=185.220.101.14", "is_suspicious": true, "reason": "External IP usando leaked key accede S3 bucket con user data"},
+          {"id": 5, "text": "2016-10-15 08:32:11 git commit -m 'Add feature X' file=app.js author=dev@uber.com", "is_suspicious": false}
+        ],
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "timed_quiz",
+      "title": "⚡ GDPR vs US Law",
+      "content": {
+        "timer_seconds": 30,
+        "question": "Key difference entre GDPR breach notification y US state laws?",
+        "options": [
+          {"id": "a", "text": "GDPR tiene deadline específico (72h), US laws dicen 'reasonable time'", "is_correct": true},
+          {"id": "b", "text": "GDPR solo aplica a EU citizens, US laws a all residents", "is_correct": false},
+          {"id": "c", "text": "US laws tienen penalties más severos que GDPR", "is_correct": false}
+        ],
+        "explanation": "GDPR: 72 horas a supervisory authority (hard deadline). US states: 'without unreasonable delay' o 'most expedient time' (ambiguous). GDPR penalties son generalmente más severos (up to 4% global revenue).",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "timed_quiz",
+      "title": "⚡ Uber CISO Conviction",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Por qué Joe Sullivan fue criminally convicted?",
+        "options": [
+          {"id": "a", "text": "Por no prevenir el breach (negligence)", "is_correct": false},
+          {"id": "b", "text": "Obstruction of justice (cover-up durante FTC investigation) + misprision of felony", "is_correct": true},
+          {"id": "c", "text": "Por pagar $100K a hackers", "is_correct": false}
+        ],
+        "explanation": "Sullivan convicted de: 1) Obstruction of justice (conceal breach durante ongoing FTC investigation), 2) Misprision of felony (knew crime, concealed it, didn't report). El pago fue PARTE del cover-up pero not itself the crime.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "slider_balance",
+      "title": "⚖️ Tiempos de Notificación",
+      "content": {
+        "scenario": "Descubres un breach. ¿Cuándo notificas a los usuarios?",
+        "left_option": {
+          "label": "Inmediato (<24h)",
+          "icon": "campaign",
+          "consequences": [
+            "✅ Máxima transparencia",
+            "❌ Información incompleta o errónea",
+            "❌ Pánico innecesario"
+          ]
+        },
+        "right_option": {
+          "label": "Verificado (72h GDPR)",
+          "icon": "fact_check",
+          "consequences": [
+            "✅ Información precisa y accionable",
+            "✅ Cumple con plazos legales (GDPR)",
+            "❌ Riesgo de filtración antes del anuncio"
+          ]
+        },
+        "explanation": "No corras sin saber. Tienes 72 horas bajo GDPR para notificar a reguladores. Usa ese tiempo para confirmar el alcance y preparar un plan de comunicación sólido."
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "policy",
+          "name": "Compliance Guardian",
+          "description": "Master breach notification laws & identity governance",
+          "rarity": "epic",
+          "color": "#09B8A6"
+        }
+      }
+    },
+    {
+      "screen_id": 19,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 60,
+        "key_takeaways": [
+          "GDPR: 72h notification a supervisory authority. High-risk: notify users sin undue delay",
+          "US: All 50 states tienen breach laws. CA, NY most strict. 'Reasonable time' ambiguous",
+          "Cover-up > breach: Obstruction of justice + misprision = federal crimes",
+          "CISO personal liability: Criminal charges posible (Uber, SolarWinds cases)",
+          "Breach Response Plan: Pre-define roles, legal holds, notification templates"
+        ],
+        "next_lesson": {
+          "id": "c3_l4",
+          "title": "Password Management",
+          "preview": "NIST guidelines, credential stuffing, passwordless future"
+        }
+      }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "CISO criminally charged por cover-up de breach de 57M records"
-  }
+  ]
 }

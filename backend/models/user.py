@@ -11,7 +11,6 @@ class User(Base):
     password_hash = Column(String(255), nullable=False)
     name = Column(String(100))
     
-    # ✅ NUEVOS CAMPOS DE VERIFICACIÓN
     email_verified = Column(Boolean, default=False)
     email_verified_at = Column(DateTime, nullable=True)
     terms_accepted_at = Column(DateTime, nullable=True)

@@ -1,167 +1,624 @@
 {
   "id": "c3_l6",
   "title": "Evaluación Final Curso 3",
-  "description": "Evaluación Final: Diseña IAM Architecture",
-  "type": "interactive",
-  "duration_minutes": 13,
-  "xp_reward": 20,
+  "description": "Healthcare IAM Design Challenge",
+  "type": "final_exam",
+  "duration_minutes": 30,
+  "xp_reward": 100,
   "order_index": 6,
   "course_id": 3,
-  "total_screens": 3,
+  "total_screens": 20,
+  "theme": {
+    "primary_color": "#00897B",
+    "secondary_color": "#D32F2F",
+    "accent_color": "#FFB300",
+    "gradient": ["#004d40", "#00695c", "#00897b"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Evaluación Final: Diseña IAM Architecture",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Misión Final: MediSaaS IAM",
       "content": {
-        "story_title": "Scenario: Healthcare Platform IAM",
-        "story_intro": "Diseña IAM para healthcare SaaS. 10K+ patients, 200 providers, HIPAA compliance",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "local_hospital",
-            "title": "Requirements",
-            "content": "Healthcare platform. Patient portal, provider EHR access, admin functions. Data: PHI (Protected Health Information). HIPAA compliance mandatory. Multi-tenant SaaS (cada hospital = tenant).",
-            "insight": "HIPAA = strict access controls, audit logs, encryption. PHI access es heavily regulated."
-          },
-          {
-            "id": "2",
-            "icon": "architecture",
-            "title": "Tu Misión",
-            "content": "Diseñar: 1) User types y roles. 2) Authentication (MFA strategy). 3) Authorization (RBAC/ABAC). 4) Audit logging. 5) Tenant isolation. 6) Compliance controls.",
-            "insight": "Healthcare IAM = complex. Balance security, usability, compliance."
-          }
-        ]
+        "headline": "HEALTHCARE SAAS STARTUP",
+        "subheadline": "Design complete IAM system para HIPAA compliance",
+        "stats": [
+          {"value": "10K", "label": "Patients"},
+          {"value": "200", "label": "Healthcare providers"},
+          {"value": "$140K", "label": "Annual security budget"}
+        ],
+        "cta_text": "Aceptar Misión"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "IAM Architecture Design",
-      "duration": 360,
+      "type": "story_slide",
+      "title": "MediSaaS: Scenario Overview",
       "content": {
-        "items": [
+        "icon": "local_hospital",
+        "icon_color": "#00897B",
+        "headline": "Tu Startup: MediSaaS (EHR - Electronic Health Records)",
+        "body": "MediSaaS es SaaS platform para clinics. 10K patients, 200 healthcare providers (doctors, nurses, admins) en 15 clinics. Hosts en AWS (HIPAA-compliant infrastructure). Necesitas diseñar: 1) IAM architecture (roles, access control), 2) Authentication strategy, 3) HIPAA compliance approach, 4) Incident response plan. Budget: $140K/year.",
+        "highlight_box": {
+          "type": "info",
+          "text": "Requirements: HIPAA compliance, multi-tenant isolation, audit logging, MFA, least privilege, breach notification plan."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "crisis_decision",
+      "title": "🎯 Decision 1: Role Design",
+      "content": {
+        "scenario": "Diseñas roles para MediSaaS. Healthcare providers necesitan diferentes access levels. ¿Qué architecture?",
+        "timer_seconds": 35,
+        "options": [
           {
-            "id": "design1",
-            "task": "Define User Roles",
-            "subtitle": "RBAC hierarchy",
+            "id": "simple_roles",
+            "text": "2 roles: 'Admin' (full access) y 'User' (basic access)",
             "icon": "people",
-            "unlock_content": {
-              "title": "Role Design",
-              "points": [
-                "Patients: View own records, schedule appointments, message providers",
-                "Providers (Doctors/Nurses): View assigned patients, update charts, prescribe",
-                "Admins: User management, billing, reports",
-                "Super Admin: System config, security settings (break glass)",
-                "SoD: Billing admin ≠ Clinical admin (fraud prevention)"
-              ],
-              "bonus_fact": "HIPAA: Minimum necessary rule. Provider sees ONLY patients they treat, not entire database."
+            "is_correct": false,
+            "consequence": {
+              "title": "Too Broad",
+              "description": "Receptionist NO debe ver prescriptions. Nurse NO debe modify billing. Least privilege violated. HIPAA audit fail. Need granular roles.",
+              "impact_score": -60
             }
           },
           {
-            "id": "design2",
-            "task": "Authentication Strategy",
-            "subtitle": "Secure access",
-            "icon": "verified_user",
-            "unlock_content": {
-              "title": "Auth Implementation",
-              "points": [
-                "Patients: Passwordless (magic link/SMS code) OR password + TOTP. Lower friction.",
-                "Providers: Password + MFA mandatory. FIDO2 for doctors (highest privilege).",
-                "SSO: Integrate hospital AD/Okta via SAML/OIDC.",
-                "Session timeout: 15 min idle for PHI access (HIPAA best practice).",
-                "Device trust: Register devices, anomaly detection on new device."
-              ],
-              "bonus_fact": "Healthcare breach avg cost: $10M+. Strong auth is cheapest insurance."
+            "id": "rbac_granular",
+            "text": "RBAC: Doctor, Nurse, Receptionist, Billing, Admin - scoped permissions",
+            "icon": "admin_panel_settings",
+            "is_correct": true,
+            "consequence": {
+              "title": "Proper RBAC",
+              "description": "Doctor: Read/write clinical notes + prescriptions. Nurse: Read clinical, no prescriptions. Receptionist: Scheduling only. Billing: Financial data only. Least privilege achieved.",
+              "impact_score": 100,
+              "xp_bonus": 20
             }
           },
           {
-            "id": "design3",
-            "task": "Authorization & Tenant Isolation",
-            "subtitle": "Granular access",
-            "icon": "security",
-            "unlock_content": {
-              "title": "Authorization Design",
-              "points": [
-                "RBAC baseline: Roles defined above.",
-                "ABAC enhancement: IF (provider.specialty='Cardiology' AND patient.condition='heart') THEN allow.",
-                "Tenant isolation: Hospital A providers CANNOT see Hospital B data. Database-level RLS (Row-Level Security).",
-                "Emergency access: Break-glass for ER. Log heavily. Require justification.",
-                "API authorization: OAuth 2.0 scopes. Fine-grained permissions."
-              ],
-              "bonus_fact": "Multi-tenancy bug = HIPAA violation. Patient data leak across hospitals = catastrophic."
-            }
-          },
-          {
-            "id": "design4",
-            "task": "Audit & Compliance",
-            "subtitle": "Accountability",
-            "icon": "fact_check",
-            "unlock_content": {
-              "title": "Logging & Compliance",
-              "points": [
-                "Audit log: WHO accessed WHAT PHI WHEN. Immutable logs. 6-year retention (HIPAA).",
-                "SIEM: Real-time monitoring. Alert on: bulk data access, off-hours access, geographic anomalies.",
-                "Access reviews: Quarterly. Manager certifies provider access.",
-                "Compliance reports: HIPAA audit trail. Automated generation.",
-                "Encryption: At-rest (AES-256), in-transit (TLS 1.3), backups encrypted."
-              ],
-              "bonus_fact": "HIPAA audit: Must produce access logs. No logs = automatic violation. $50K+ per incident."
-            }
-          },
-          {
-            "id": "design5",
-            "task": "Incident Response",
-            "subtitle": "Breach preparedness",
-            "icon": "crisis_alert",
-            "unlock_content": {
-              "title": "IR for PHI Breach",
-              "points": [
-                "Detection: SIEM alert on anomalous PHI access.",
-                "Containment: Disable compromised account. Isolate affected systems.",
-                "Notification: HHS (60 days), affected individuals (60 days), media if 500+.",
-                "Forensics: Determine scope. How many records? Root cause?",
-                "Uber lesson: DO NOT cover up. Transparency is legal requirement."
-              ],
-              "bonus_fact": "HIPAA breach notification: https://ocrportal.hhs.gov/ocr/breach/breach_report.jsf - Wall of Shame public."
+            "id": "abac_complex",
+            "text": "ABAC: Context-based (time, location, patient relationship)",
+            "icon": "tune",
+            "is_correct": false,
+            "consequence": {
+              "title": "Over-Engineering",
+              "description": "ABAC es powerful pero complex y expensive. Para 200 users, RBAC suficiente. ABAC para large enterprises (1000s users). Budget constraint.",
+              "impact_score": 40
             }
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Budget & Vendors",
-      "duration": 180,
+      "screen_id": 4,
+      "type": "crisis_decision",
+      "title": "🎯 Decision 2: Authentication",
       "content": {
-        "items": [
+        "scenario": "Healthcare providers acceden desde clinics (trusted) y desde home (untrusted). ¿Qué authentication strategy?",
+        "timer_seconds": 35,
+        "options": [
           {
-            "id": "budget",
-            "task": "IAM Budget Breakdown",
-            "subtitle": "200 providers, 10K patients",
-            "icon": "attach_money",
-            "unlock_content": {
-              "title": "Cost Estimate",
-              "points": [
-                "SSO/IdP: Okta Healthcare $8/user/month × 200 = $19K/year",
-                "MFA: Duo Healthcare $6/user/month × 200 = $14K/year",
-                "FIDO2 keys: YubiKey × 200 doctors = $10K one-time",
-                "SIEM: Splunk Cloud $5K/GB, ~$60K/year for logs",
-                "Compliance: HIPAA consultant + audit $30K/year",
-                "Training: Security awareness $5K/year",
-                "Total: ~$140K/year"
-              ],
-              "bonus_fact": "ROI: Single HIPAA breach avg $10M. $140K/year insurance is cheap."
+            "id": "password_only",
+            "text": "Password only (NIST-compliant: 12+ chars, breach check)",
+            "icon": "password",
+            "is_correct": false,
+            "consequence": {
+              "title": "Insufficient para HIPAA",
+              "description": "HIPAA requires 'unique user identification' + 'access controls'. Password alone vulnerable a credential stuffing, phishing. HIPAA auditors expect MFA.",
+              "impact_score": -80
+            }
+          },
+          {
+            "id": "mfa_everywhere",
+            "text": "MFA mandatory (TOTP app + SMS backup) + Conditional Access",
+            "icon": "verified_user",
+            "is_correct": true,
+            "consequence": {
+              "title": "HIPAA Compliant",
+              "description": "MFA blocks 99.9% credential attacks. Conditional Access: Require MFA from untrusted locations. Allow MFA bypass from trusted clinic IPs. Balance security + UX. Cost: $14K/year (Okta MFA).",
+              "impact_score": 100,
+              "xp_bonus": 20
+            }
+          },
+          {
+            "id": "biometric_only",
+            "text": "Biometric only (fingerprint scanners en all devices)",
+            "icon": "fingerprint",
+            "is_correct": false,
+            "consequence": {
+              "title": "Budget Overrun",
+              "description": "Hardware scanners: $200/device × 250 devices = $50K. Not scalable (BYOD, work from home). Biometric good pero not sole factor. Too expensive.",
+              "impact_score": -40
             }
           }
         ]
       }
+    },
+    {
+      "screen_id": 5,
+      "type": "crisis_decision",
+      "title": "🎯 Decision 3: Multi-Tenancy",
+      "content": {
+        "scenario": "MediSaaS tiene 15 clinics. Each clinic es separate tenant. Clinic A NO debe ver patients de Clinic B. ¿Cómo enforce tenant isolation?",
+        "timer_seconds": 35,
+        "options": [
+          {
+            "id": "shared_db",
+            "text": "Shared database con tenant_id column, app-level filtering",
+            "icon": "storage",
+            "is_correct": false,
+            "consequence": {
+              "title": "Risky Approach",
+              "description": "SQL injection o app bug → cross-tenant data leak. HIPAA violation = massive fines. Insuficiente isolation. Many SaaS breaches fueron app-level filtering failures.",
+              "impact_score": -70
+            }
+          },
+          {
+            "id": "separate_db",
+            "text": "Separate database per clinic (RDS instance per tenant)",
+            "icon": "dns",
+            "is_correct": false,
+            "consequence": {
+              "title": "Strong Isolation pero Budget",
+              "description": "Perfect isolation pero expensive. RDS: $50/month × 15 = $750/month = $9K/year (manageable). BUT complexity: 15 databases, backups, migrations. Over-engineering para 15 tenants.",
+              "impact_score": 60
+            }
+          },
+          {
+            "id": "schema_isolation",
+            "text": "Database schema per tenant + RLS (Row Level Security)",
+            "icon": "shield",
+            "is_correct": true,
+            "consequence": {
+              "title": "Optimal Balance",
+              "description": "PostgreSQL RLS enforces isolation at DB level (not app). Schemas separate data. Cost-effective (single RDS). Strong security + scalability. Industry standard para SaaS.",
+              "impact_score": 100,
+              "xp_bonus": 20
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "crisis_decision",
+      "title": "🎯 Decision 4: Audit Logging",
+      "content": {
+        "scenario": "HIPAA require audit logs de access a PHI (Protected Health Information). ¿Qué logging strategy?",
+        "timer_seconds": 35,
+        "options": [
+          {
+            "id": "app_logs",
+            "text": "Application logs only (log4j a file, 30-day retention)",
+            "icon": "description",
+            "is_correct": false,
+            "consequence": {
+              "title": "HIPAA Non-Compliant",
+              "description": "HIPAA require: 6-year retention, tamper-proof, centralized. File logs easy to delete/modify. 30 days insuficiente. Audit fail.",
+              "impact_score": -90
+            }
+          },
+          {
+            "id": "siem_full",
+            "text": "SIEM (Splunk/ELK) + CloudTrail + 6-year retention + alerting",
+            "icon": "monitor_heart",
+            "is_correct": true,
+            "consequence": {
+              "title": "HIPAA Compliant",
+              "description": "SIEM centralized logging. CloudTrail (AWS API audit). 6-year retention. Immutable (S3 Object Lock). Real-time alerts (anomalous access). Cost: $60K/year (within budget). Industry standard.",
+              "impact_score": 100,
+              "xp_bonus": 20
+            }
+          },
+          {
+            "id": "manual_logging",
+            "text": "Manual Excel spreadsheet de user actions",
+            "icon": "table_chart",
+            "is_correct": false,
+            "consequence": {
+              "title": "Completely Inadequate",
+              "description": "Manual logs: Not real-time, easy to forge, no automation, scales poorly. HIPAA auditors would laugh. Total failure.",
+              "impact_score": -100
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "crisis_decision",
+      "title": "🎯 Decision 5: Cloud IAM",
+      "content": {
+        "scenario": "MediSaaS en AWS. Backend EC2 instances necesitan access a S3 (patient documents) y RDS (database). ¿Qué credential strategy?",
+        "timer_seconds": 35,
+        "options": [
+          {
+            "id": "aws_keys",
+            "text": "AWS access keys en environment variables",
+            "icon": "vpn_key",
+            "is_correct": false,
+            "consequence": {
+              "title": "Uber-Style Risk",
+              "description": "Keys leakable (logs, GitHub, memory dumps). Permanent credentials. Uber breach: GitHub key → 57M records. Capital One: SSRF + keys → 100M records. Never use keys para EC2.",
+              "impact_score": -100
+            }
+          },
+          {
+            "id": "iam_roles",
+            "text": "IAM roles (EC2 instance profile) + scoped permissions",
+            "icon": "security",
+            "is_correct": true,
+            "consequence": {
+              "title": "AWS Best Practice",
+              "description": "IAM role: Temporary credentials (auto-rotate), no storage, cannot leak long-term. Scoped: s3:GetObject/PutObject en patient-docs bucket, RDS connect only. Least privilege. Industry standard.",
+              "impact_score": 100,
+              "xp_bonus": 20
+            }
+          },
+          {
+            "id": "root_account",
+            "text": "Root account credentials (full control)",
+            "icon": "dangerous",
+            "is_correct": false,
+            "consequence": {
+              "title": "Catastrophic",
+              "description": "Root = god mode, unrestricted. If leaked: Account closure, data deletion, total control. Never use root para app access. Lock root away.",
+              "impact_score": -100
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "crisis_decision",
+      "title": "🎯 Decision 6: Breach Response",
+      "content": {
+        "scenario": "3AM alert: Suspicious logins from Russia. 5 patient records accessed. Investigation confirms: Compromised doctor credentials (phishing). ¿Qué haces PRIMERO?",
+        "timer_seconds": 40,
+        "options": [
+          {
+            "id": "wait_investigate",
+            "text": "Investigate fully (1 week) antes de notificar",
+            "icon": "schedule",
+            "is_correct": false,
+            "consequence": {
+              "title": "HIPAA Violation",
+              "description": "HIPAA Breach Notification Rule: 60 days to notify HHS + affected individuals. Waiting 1 week OK, BUT must start notification process. Uber mistake: 1-year cover-up = criminal charges.",
+              "impact_score": -60
+            }
+          },
+          {
+            "id": "immediate_contain",
+            "text": "1) Revoke credentials 2) Isolate systems 3) Preserve evidence 4) Notify legal/compliance",
+            "icon": "emergency",
+            "is_correct": true,
+            "consequence": {
+              "title": "Proper Incident Response",
+              "description": "Contain first (stop bleeding), preserve forensics (legal holds), notify legal (breach notification timeline). HHS notification: 60 days if <500 patients. Transparency protects company long-term.",
+              "impact_score": 100,
+              "xp_bonus": 20
+            }
+          },
+          {
+            "id": "payoff",
+            "text": "Contact attacker, pagar para no leak data",
+            "icon": "money_off",
+            "is_correct": false,
+            "consequence": {
+              "title": "Cover-Up = Federal Crime",
+              "description": "Uber CISO: Paid $100K, convicted obstruction of justice + misprision. 3 years probation. Cover-up worse than breach. Always report.",
+              "impact_score": -100
+            }
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "budget_allocation",
+      "title": "💰 Budget Allocation: $140K/year",
+      "content": {
+        "total_budget": 140000,
+        "categories": [
+          {
+            "id": "sso",
+            "name": "SSO Platform (Okta)",
+            "description": "SAML/OIDC, 200 users",
+            "cost": 19000,
+            "mandatory": true,
+            "impact": "Centralized auth, easier onboarding/offboarding"
+          },
+          {
+            "id": "mfa",
+            "name": "MFA (Duo/Okta MFA)",
+            "description": "TOTP + SMS, 200 users",
+            "cost": 14000,
+            "mandatory": true,
+            "impact": "Block 99.9% credential attacks, HIPAA compliance"
+          },
+          {
+            "id": "siem",
+            "name": "SIEM (Splunk/ELK)",
+            "description": "Centralized logging, 6-year retention",
+            "cost": 60000,
+            "mandatory": true,
+            "impact": "HIPAA audit compliance, breach detection"
+          },
+          {
+            "id": "pam",
+            "name": "PAM Tool (CyberArk Lite)",
+            "description": "Privileged access management, 10 admins",
+            "cost": 25000,
+            "mandatory": false,
+            "impact": "JIT admin access, session recording, vault"
+          },
+          {
+            "id": "dlp",
+            "name": "DLP (Data Loss Prevention)",
+            "description": "Monitor/block PHI exfiltration",
+            "cost": 18000,
+            "mandatory": false,
+            "impact": "Prevent data leaks via email/USB/cloud"
+          },
+          {
+            "id": "pentesting",
+            "name": "Annual Penetration Test",
+            "description": "3rd party security assessment",
+            "cost": 22000,
+            "mandatory": false,
+            "impact": "Find vulnerabilities before attackers"
+          },
+          {
+            "id": "training",
+            "name": "Security Awareness Training",
+            "description": "Phishing simulations, 200 users",
+            "cost": 8000,
+            "mandatory": false,
+            "impact": "Reduce human error (80% breaches involve people)"
+          }
+        ],
+        "min_required": 93000,
+        "optimal_allocation": [
+          {"id": "sso", "selected": true},
+          {"id": "mfa", "selected": true},
+          {"id": "siem", "selected": true},
+          {"id": "training", "selected": true},
+          {"id": "pentesting", "selected": true}
+        ],
+        "explanation": "Optimal: SSO + MFA + SIEM (mandatory: $93K) + Security Training ($8K) + Pentest ($22K) = $123K. Leaves $17K buffer. PAM nice-to-have pero 10 admins manageable sin it. DLP expensive y limited ROI para small team."
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "drag_drop_match",
+      "title": "HIPAA Requirements Mapping",
+      "content": {
+        "instruction": "Match el HIPAA requirement con la technical control:",
+        "scenarios": [
+          {"id": 1, "text": "Access Control (§164.312(a)(1)): Unique user identification", "correct_target": "sso_mfa"},
+          {"id": 2, "text": "Audit Controls (§164.312(b)): Record/examine access to PHI", "correct_target": "siem"},
+          {"id": 3, "text": "Integrity (§164.312(c)(1)): PHI not improperly altered", "correct_target": "rls"},
+          {"id": 4, "text": "Transmission Security (§164.312(e)): Encrypt PHI in transit", "correct_target": "tls"},
+          {"id": 5, "text": "Breach Notification (§164.410): 60-day notification to HHS", "correct_target": "ir_plan"}
+        ],
+        "targets": [
+          {"id": "sso_mfa", "label": "SSO + MFA", "color": "#00897B"},
+          {"id": "siem", "label": "SIEM + 6yr retention", "color": "#1976D2"},
+          {"id": "rls", "label": "Row-Level Security", "color": "#7B1FA2"},
+          {"id": "tls", "label": "TLS 1.3", "color": "#F57C00"},
+          {"id": "ir_plan", "label": "Incident Response Plan", "color": "#D32F2F"}
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "timed_quiz",
+      "title": "⚡ Quiz: RBAC vs ABAC",
+      "content": {
+        "timer_seconds": 30,
+        "question": "Para MediSaaS (200 users), ¿por qué RBAC es mejor choice que ABAC?",
+        "options": [
+          {"id": "a", "text": "RBAC es más seguro que ABAC", "is_correct": false},
+          {"id": "b", "text": "RBAC sufficient granularity para 200 users, ABAC over-engineering + expensive", "is_correct": true},
+          {"id": "c", "text": "ABAC no funciona en healthcare", "is_correct": false}
+        ],
+        "explanation": "RBAC: 5-10 roles (Doctor, Nurse, etc), aligns con org structure, cost-effective. ABAC: Complex attribute policies, scales mejor para 1000s users, expensive infrastructure. Para 200 users, RBAC sufficient.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "timed_quiz",
+      "title": "⚡ Quiz: Multi-Tenancy",
+      "content": {
+        "timer_seconds": 35,
+        "question": "¿Por qué database schema per tenant + RLS es mejor que shared DB con tenant_id?",
+        "options": [
+          {"id": "a", "text": "Schemas son más rápidos", "is_correct": false},
+          {"id": "b", "text": "RLS enforces isolation at DB level (not app), protege contra app bugs/SQL injection", "is_correct": true},
+          {"id": "c", "text": "Tenant_id column es HIPAA non-compliant", "is_correct": false}
+        ],
+        "explanation": "App-level filtering (tenant_id WHERE clause): Vulnerable a app bugs, SQL injection. RLS (Row Level Security): Database enforces, even si app compromised. Schema separation + RLS = defense in depth.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "timed_quiz",
+      "title": "⚡ Quiz: IAM Roles",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Por qué IAM roles son critical para MediSaaS EC2 instances?",
+        "options": [
+          {"id": "a", "text": "Roles dan más permissions que access keys", "is_correct": false},
+          {"id": "b", "text": "Roles = temporary credentials (auto-rotate), keys = permanent (leakable)", "is_correct": true},
+          {"id": "c", "text": "HIPAA require roles, not keys", "is_correct": false}
+        ],
+        "explanation": "IAM roles: Temporary (1-12h), auto-rotate, cannot leak long-term, no storage. Keys: Permanent, stored en config, GitHub leaks common (Uber, Capital One). Always roles para AWS services.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "timed_quiz",
+      "title": "⚡ Quiz: HIPAA Notification",
+      "content": {
+        "timer_seconds": 35,
+        "question": "MediSaaS breach: 5 patients affected. ¿Notification timeline?",
+        "options": [
+          {"id": "a", "text": "No notification necesaria (<500 patients threshold)", "is_correct": false},
+          {"id": "b", "text": "Notify HHS + affected individuals dentro de 60 días", "is_correct": true},
+          {"id": "c", "text": "Notify solo si >1,000 patients affected", "is_correct": false}
+        ],
+        "explanation": "HIPAA Breach Notification: ANY breach de unsecured PHI require notification. <500 patients: 60 days to notify HHS + individuals. ≥500: Notify HHS + media within 60 days. No threshold exemption.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "timed_quiz",
+      "title": "⚡ Quiz: MFA Requirement",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Por qué MFA es mandatory para MediSaaS (HIPAA)?",
+        "options": [
+          {"id": "a", "text": "HIPAA explicitly require MFA en regulation text", "is_correct": false},
+          {"id": "b", "text": "HIPAA require 'access controls' - auditors expect MFA como reasonable safeguard", "is_correct": true},
+          {"id": "c", "text": "MFA solo needed para admin accounts", "is_correct": false}
+        ],
+        "explanation": "HIPAA NO explicitly mandate MFA, BUT require 'implement technical policies and procedures for electronic information systems [...] to allow access only to authorized persons' (§164.312(a)(1)). Auditors consider MFA industry standard = reasonably expected.",
+        "xp_reward": 15
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "swipe_cards",
+      "title": "MediSaaS Security Practices",
+      "content": {
+        "instruction": "¿Es esta práctica apropiada para MediSaaS?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "Shared admin password entre 3 IT staff",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INAPROPIADA", "right": "✅ APROPIADA"}
+          },
+          {
+            "id": 2,
+            "scenario": "RBAC: Doctor role tiene access a clinical notes + prescriptions only",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INAPROPIADA", "right": "✅ APROPIADA"}
+          },
+          {
+            "id": 3,
+            "scenario": "Database schema per clinic + Row-Level Security",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INAPROPIADA", "right": "✅ APROPIADA"}
+          },
+          {
+            "id": 4,
+            "scenario": "Application logs en local files, 30-day retention",
+            "correct_answer": "left",
+            "labels": {"left": "❌ INAPROPIADA", "right": "✅ APROPIADA"}
+          },
+          {
+            "id": 5,
+            "scenario": "EC2 instances use IAM roles (not access keys) para S3 access",
+            "correct_answer": "right",
+            "labels": {"left": "❌ INAPROPIADA", "right": "✅ APROPIADA"}
+          }
+        ],
+        "xp_per_correct": 10
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: Unauthorized PHI Access",
+      "content": {
+        "scenario": "MediSaaS SIEM logs. Find las 3 lines que indican unauthorized PHI access.",
+        "log_lines": [
+          {"id": 1, "text": "2024-11-15 09:23:11 user=dr.smith@clinic1 action=view_patient patient_id=10234 clinic=clinic1 result=success", "is_suspicious": false},
+          {"id": 2, "text": "2024-11-15 14:45:33 user=receptionist@clinic1 action=view_patient patient_id=10234 clinic=clinic1 result=success", "is_suspicious": false},
+          {"id": 3, "text": "2024-11-15 18:22:17 user=dr.johnson@clinic2 action=view_patient patient_id=10234 clinic=clinic1 result=success", "is_suspicious": true, "reason": "Doctor de Clinic 2 accediendo patient de Clinic 1 = cross-tenant access violation"},
+          {"id": 4, "text": "2024-11-15 19:33:44 user=unknown@external.com action=view_patient patient_id=10234 clinic=clinic1 result=success source_ip=185.220.101.14", "is_suspicious": true, "reason": "External email + suspicious IP (Tor) = compromised credentials o breach"},
+          {"id": 5, "text": "2024-11-15 20:05:29 user=billing@clinic1 action=export_patient_list count=1500 clinic=clinic1 result=success", "is_suspicious": true, "reason": "Mass export (1500 records) por billing staff = potential data exfiltration"},
+          {"id": 6, "text": "2024-11-15 21:12:03 user=nurse@clinic1 action=view_patient patient_id=10234 clinic=clinic1 result=success", "is_suspicious": false}
+        ],
+        "xp_reward": 30
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "slider_balance",
+      "title": "⚖️ Política de Passwords (Sanidad)",
+      "content": {
+        "scenario": "Médicos con prisa vs Seguridad HIPAA. ¿Qué eliges?",
+        "left_option": {
+          "label": "Rotación Frecuente (90 días)",
+          "icon": "sync",
+          "consequences": [
+            "✅ Cumple políticas antiguas",
+            "❌ Médicos usan 'Password01', 'Password02'...",
+            "❌ Seguridad real disminuye"
+          ]
+        },
+        "right_option": {
+          "label": "Estática Fuerte + MFA",
+          "icon": "shield",
+          "consequences": [
+            "✅ Contraseñas fuertes nunca cambiadas",
+            "✅ MFA bloquea robo de credenciales",
+            "✅ Mejor experiencia de usuario"
+          ]
+        },
+        "explanation": "NIST recomienda eliminar la rotación forzada. Una contraseña fuerte + MFA es el estándar de oro en seguridad moderna."
+      }
+    },
+    {
+      "screen_id": 19,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "military_tech",
+          "name": "IAM Master Architect",
+          "description": "Completed comprehensive IAM system design para healthcare SaaS",
+          "rarity": "legendary",
+          "color": "#FFB300"
+        }
+      }
+    },
+    {
+      "screen_id": 20,
+      "type": "lesson_complete",
+      "title": "Evaluación Final Completada",
+      "content": {
+        "xp_earned": 100,
+        "key_takeaways": [
+          "RBAC Design: Granular roles (Doctor, Nurse, Receptionist) con scoped permissions",
+          "Authentication: MFA mandatory + Conditional Access para HIPAA compliance",
+          "Multi-Tenancy: Database schema per tenant + RLS (Row-Level Security)",
+          "Audit Logging: SIEM + CloudTrail, 6-year retention, immutable",
+          "Cloud IAM: IAM roles > access keys. Least privilege. No root usage.",
+          "Breach Response: Contain, preserve evidence, notify legal, HHS within 60 days",
+          "Budget: SSO ($19K) + MFA ($14K) + SIEM ($60K) + Training ($8K) + Pentest ($22K) = $123K"
+        ],
+        "course_complete": {
+          "course_id": 3,
+          "course_title": "Curso 3: Gestión de Identidad y Acceso",
+          "total_xp": 395,
+          "final_message": "¡Felicidades! Has dominado IAM: Authorization models, compliance, password management, cloud IAM, y healthcare security. Ready para enterprise IAM challenges."
+        },
+        "next_course": {
+          "id": 4,
+          "title": "Curso 4: Seguridad en Desarrollo",
+          "preview": "SDLC security, DevSecOps, secure coding, dependency management"
+        }
+      }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "Diseña IAM para healthcare SaaS. 10K+ patients, 200 providers, HIPAA compliance"
-  }
+  ]
 }

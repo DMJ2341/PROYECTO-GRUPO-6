@@ -31,25 +31,23 @@ class BadgeService:
         user = session.query(User).get(user_id)
         if not user: return []
 
-        # 1. Badges de XP (Ej: 100 XP, 500 XP)
-        # ✅ user.total_xp ES CORRECTO según models/user.py línea 13
         xp_badges = session.query(Badge).filter_by(trigger_type='xp_milestone').all()
         for badge in xp_badges:
             if user.total_xp >= int(badge.trigger_value):
                 if self._award(user_id, badge, session):
                     new_badges.append(badge.name)
 
-        # 2. Badges de Lecciones (Ej: Primera lección)
+        # Badges de Lecciones (
         total_lessons = session.query(UserLessonProgress).filter_by(user_id=user_id, completed=True).count()
         if total_lessons >= 1:
             first_badge = session.query(Badge).filter_by(trigger_type='first_lesson').first()
             if first_badge and self._award(user_id, first_badge, session):
                 new_badges.append(first_badge.name)
 
-        # 3. Badges de Cursos Completados (Ej: Terminar Curso 1)
+        # Badges de Cursos Completados 
         completed_courses = session.query(UserCourseProgress).filter_by(user_id=user_id, percentage=100).all()
         for cp in completed_courses:
-            # Busca badge específico para este curso (trigger_value = course_id)
+            
             c_badge = session.query(Badge).filter_by(
                 trigger_type='course_completed', 
                 trigger_value=str(cp.course_id)
@@ -57,8 +55,8 @@ class BadgeService:
             if c_badge and self._award(user_id, c_badge, session):
                 new_badges.append(c_badge.name)
 
-        # 4. Badge Maestro (Todos los cursos básicos)
-        # Asumimos que hay 5 cursos en total
+        # Badge Maestro (Todos los cursos básicos)
+    
         if len(completed_courses) >= 5:
             master_badge = session.query(Badge).filter_by(trigger_type='all_basic_courses').first()
             if master_badge and self._award(user_id, master_badge, session):

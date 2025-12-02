@@ -2,7 +2,7 @@
 from database.db import get_session
 from models.glossary import Glossary
 from models.daily_term_log import DailyTermLog
-from models.activity import Activity, ActivityType # Asegúrate de que ActivityType esté definido en activity.py
+from models.activity import Activity, ActivityType 
 from sqlalchemy import func
 from datetime import date
 import sentry_sdk
@@ -14,7 +14,7 @@ def get_daily_term_for_user(user_id):
     session = get_session()
     today = date.today()
     try:
-        # 1. Determinar el término del día (Lógica de rotación simple)
+        # 1. Determinar el término del día 
         total_terms = session.query(Glossary).count()
         if total_terms == 0:
             return None

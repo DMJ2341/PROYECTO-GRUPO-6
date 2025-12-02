@@ -1,178 +1,264 @@
 {
   "id": "c5_l6",
   "title": "Evaluación Final Curso 5",
-  "description": "Evaluación Final: Risk Program Design",
+  "description": "Capstone: Respuesta a incidente crítico en GlobalHealth Corp",
   "type": "interactive",
-  "duration_minutes": 10,
-  "xp_reward": 20,
+  "duration_minutes": 50,
+  "xp_reward": 300,
   "order_index": 6,
   "course_id": 5,
-  "total_screens": 2,
+  "total_screens": 11,
+  "theme": {
+    "primary_color": "#B71C1C",
+    "secondary_color": "#00695C",
+    "accent_color": "#FF8F00",
+    "gradient": ["#000000", "#1a0000", "#330000"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Evaluación Final: Risk Program Design",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "INCIDENTE CRÍTICO: GlobalHealth Corp",
       "content": {
-        "story_title": "Scenario: Design Risk Management Program",
-        "story_intro": "1000-employee company, healthcare sector. No formal risk program. Build from scratch.",
-        "steps": [
+        "headline": "ALERTA ROJA 03:17 UTC",
+        "subheadline": "Hospitales en 12 países sin acceso a registros médicos",
+        "background_image": "hospital_dark",
+        "stats": [
+          {"value": "48", "label": "Hospitales afectados"},
+          {"value": "2.1M", "label": "Pacientes críticos"},
+          {"value": "HIPAA", "label": "Violación masiva"}
+        ],
+        "cta_text": "Asumir rol de CIRT Lead"
+      }
+    },
+    {
+      "screen_id": 2,
+      "type": "story_slide",
+      "title": "Escenario Actual",
+      "content": {
+        "icon": "local_hospital",
+        "icon_color": "#B71C1C",
+        "headline": "GlobalHealth Corp - EHR Provider",
+        "body": "Proveedor global de registros médicos electrónicos. 48 hospitales en 12 países han perdido acceso total al sistema. Pantallas muestran mensaje de ransomware exigiendo $70M en BTC. Sistemas Windows cifrados. Pacientes en quirófano sin historial.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Tienes 50 minutos para tomar decisiones críticas que decidirán vidas y el futuro de la empresa."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "crisis_decision",
+      "title": "03:20 - Primera decisión crítica",
+      "content": {
+        "scenario": "El CEO quiere pagar inmediatamente para salvar vidas. ¿Qué haces?",
+        "timer_seconds": 40,
+        "options": [
           {
-            "id": "1",
-            "icon": "local_hospital",
-            "title": "Company Profile",
-            "content": "Healthcare tech company. 1000 employees. Revenue $200M. Products: EHR software (cloud SaaS), patient portal. Data: 500K patient PHI. Compliance: HIPAA mandatory.",
-            "insight": "Healthcare = high risk. PHI breach = $10M+ cost. HIPAA fines. Reputation damage. Risk program is critical."
+            "id": "pay",
+            "text": "Autorizar pago inmediato de $70M",
+            "icon": "money",
+            "is_correct": false,
+            "consequence": {
+              "title": "Catastrófico",
+              "description": "No hay garantía de descifrado. NotPetya-style. Dinero perdido + incentivo a más ataques.",
+              "impact_score": -150
+            }
           },
           {
-            "id": "2",
-            "icon": "shield",
-            "title": "Your Mission",
-            "content": "Design: 1) Risk governance structure. 2) Risk assessment process. 3) Vulnerability management. 4) Third-party risk program. 5) BCP/DR. 6) Metrics & reporting. Budget: $2M/year.",
-            "insight": "Comprehensive risk program touches: governance, technical controls, processes, people, vendors, resilience."
+            "id": "contain",
+            "text": "ORDENAR CONTENCIÓN TOTAL: aislar todos los segmentos, preservar evidencia",
+            "icon": "block",
+            "is_correct": true,
+            "consequence": {
+              "title": "Respuesta correcta",
+              "description": "Contención es prioridad #1. Evidencia preservada. Vidas protegidas por procedimientos manuales.",
+              "impact_score": 100
+            }
           }
         ]
       }
     },
     {
-      "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Risk Program Design",
-      "duration": 360,
+      "screen_id": 4,
+      "type": "crisis_decision",
+      "title": "03:25 - Contención ejecutándose",
       "content": {
-        "items": [
+        "scenario": "El atacante está exfiltrando datos de pacientes en tiempo real. ¿Qué haces con los sistemas aún online?",
+        "timer_seconds": 35,
+        "options": [
           {
-            "id": "prog1",
-            "task": "Governance Structure",
-            "subtitle": "Who's accountable?",
-            "icon": "account_tree",
-            "unlock_content": {
-              "title": "Org Structure",
-              "points": [
-                "CISO: Reports to CEO or CRO. NOT to CIO (conflict of interest).",
-                "GRC team: 1 Director, 2 risk analysts, 1 compliance analyst ($600K/year).",
-                "Risk committee: Quarterly. CISO, CFO, CTO, General Counsel, CEO.",
-                "Board reporting: Quarterly risk report to Board. Cyber risk = board-level.",
-                "Policies: Risk management policy, acceptable use, incident response."
-              ],
-              "bonus_fact": "CISO reporting to CIO = problem. Budget/priority conflicts. CISO should be peer to CIO."
+            "id": "leave_on",
+            "text": "Mantener online para 'monitorear al atacante'",
+            "icon": "visibility",
+            "is_correct": false,
+            "consequence": {
+              "title": "Violación HIPAA masiva",
+              "description": "Más datos robados = multas de miles de millones. Vidas en riesgo.",
+              "impact_score": -120
             }
           },
           {
-            "id": "prog2",
-            "task": "Risk Assessment",
-            "subtitle": "Understand landscape",
-            "icon": "assessment",
-            "unlock_content": {
-              "title": "Assessment Cadence",
-              "points": [
-                "Annual: Comprehensive risk assessment. All assets, threats, vulns.",
-                "Quarterly: Risk register review. Update statuses, new risks.",
-                "Ad-hoc: Trigger events (new system, M&A, major threat).",
-                "Methodology: NIST RMF. Categorize (High for PHI), Select controls, Assess.",
-                "Tools: GRC platform (ServiceNow GRC, RSA Archer). $150K/year."
-              ],
-              "bonus_fact": "Risk assessment WITHOUT remediation = waste. Must have accountability for risk treatment."
-            }
-          },
-          {
-            "id": "prog3",
-            "task": "Vulnerability Management",
-            "subtitle": "Close technical gaps",
-            "icon": "bug_report",
-            "unlock_content": {
-              "title": "VM Program",
-              "points": [
-                "Scanning: Tenable, Qualys. Weekly authenticated scans. $100K/year.",
-                "Prioritization: CVSS + exploitability + asset criticality.",
-                "SLA: Critical 7 days, High 30 days, Medium 90 days.",
-                "Exception process: Must document, approve, compensating controls.",
-                "Metrics: MTTP, vulnerability debt, SLA compliance.",
-                "Equifax lesson: VM program only works if enforced."
-              ],
-              "bonus_fact": "MTTP is THE metric. Target: Critical <7 days. Track monthly. Executive visibility."
-            }
-          },
-          {
-            "id": "prog4",
-            "task": "Third-Party Risk",
-            "subtitle": "Vendor security",
-            "icon": "handshake",
-            "unlock_content": {
-              "title": "TPRM Program",
-              "points": [
-                "Inventory: All vendors. Classify by criticality (access to PHI = critical).",
-                "Assessment: SIG questionnaire, SOC 2 review, security ratings.",
-                "Contracts: Security clauses (breach notification, audit rights, liability).",
-                "Monitoring: Annual re-assessment, continuous ratings (BitSight $50K/year).",
-                "Tools: OneTrust, ProcessUnity for vendor tracking. $100K/year.",
-                "Target lesson: Small vendor = big risk. Assess ALL."
-              ],
-              "bonus_fact": "Critical vendors: Annual on-site audit or third-party assessment. Don't just trust questionnaire."
-            }
-          },
-          {
-            "id": "prog5",
-            "task": "BCP/DR",
-            "subtitle": "Resilience",
-            "icon": "restore",
-            "unlock_content": {
-              "title": "Continuity Planning",
-              "points": [
-                "BIA: Define RTOs/RPOs. EHR system = Tier 1 (RTO 4 hours).",
-                "Backups: 3-2-1 rule. Veeam backup solution $200K/year.",
-                "DR site: AWS multi-region for DR. Estimated $300K/year.",
-                "Testing: Annual full DR test. Quarterly tabletop.",
-                "Insurance: Cyber liability $10M coverage. $150K/year premium.",
-                "Colonial lesson: DR plan must be tested. Backups must work."
-              ],
-              "bonus_fact": "Cyber insurance: Requires MFA, EDR, backups, IR plan. Ensures baseline security."
-            }
-          },
-          {
-            "id": "prog6",
-            "task": "Metrics & Reporting",
-            "subtitle": "Measure & improve",
-            "icon": "analytics",
-            "unlock_content": {
-              "title": "Metrics Dashboard",
-              "points": [
-                "Key metrics: MTTP, vulnerability debt, control effectiveness, incident count.",
-                "Executive dashboard: Real-time. Red/yellow/green status.",
-                "Quarterly board report: Risk trends, top risks, mitigation status.",
-                "Annual attestation: CEO/CISO sign attestation of risk program effectiveness.",
-                "Continuous improvement: Review metrics quarterly, adjust targets."
-              ],
-              "bonus_fact": "Board wants: Are we secure? What are top risks? What's being done? Keep simple."
-            }
-          },
-          {
-            "id": "prog7",
-            "task": "Budget Summary",
-            "subtitle": "$2M allocation",
-            "icon": "attach_money",
-            "unlock_content": {
-              "title": "Cost Breakdown",
-              "points": [
-                "People: GRC team $600K",
-                "Tools: GRC platform $150K, Scanner $100K, Vendor mgmt $100K, BitSight $50K",
-                "DR: AWS multi-region $300K, Veeam $200K",
-                "Cyber insurance: $150K",
-                "Training: Security awareness $100K, GRC certs $50K",
-                "Consulting: Annual risk assessment $150K",
-                "Misc/contingency: $200K",
-                "Total: $2M"
-              ],
-              "bonus_fact": "30% people, 25% tools, 25% DR/insurance, 20% services/training. Typical distribution."
+            "id": "shutdown",
+            "text": "Apagar TODO lo que no sea crítico para vida",
+            "icon": "power_settings_new",
+            "is_correct": true,
+            "consequence": {
+              "title": "Correcto",
+              "description": "Detiene exfiltración. Hospitales activan protocolos manuales.",
+              "impact_score": 100
             }
           }
         ]
       }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "Análisis preliminar (Mandiant)",
+      "content": {
+        "card": {
+          "front": {"icon": "science", "term": "IOCs ENCONTRADOS", "subtitle": "Reporte inicial", "color": "#FF9800"},
+          "back": {
+            "definition": "Ransomware: Ryuk variant. Vector: Phishing a admin.",
+            "color": "#F57C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "budget_allocation",
+      "title": "Presupuesto de Recuperación",
+      "content": {
+        "total_budget": 150000000,
+        "categories": [
+          {
+            "id": "restore",
+            "name": "Restore desde backups offline",
+            "cost": 80000000,
+            "mandatory": true,
+            "impact": "Recuperación limpia y garantizada sin pagar criminales."
+          },
+          {
+            "id": "legal",
+            "name": "Notificación HIPAA + multas",
+            "cost": 40000000,
+            "mandatory": true,
+            "impact": "Cumplimiento legal obligatorio para evitar cárcel."
+          },
+          {
+            "id": "pr",
+            "name": "Gestión de crisis PR",
+            "cost": 10000000,
+            "mandatory": true,
+            "impact": "Control de daños reputacionales."
+          },
+          {
+            "id": "new_infra",
+            "name": "Reconstrucción segura (zero trust)",
+            "cost": 20000000,
+            "mandatory": false,
+            "impact": "Evita reinfección inmediata durante recovery."
+          },
+          {
+            "id": "ransom",
+            "name": "Pago de rescate (NO recomendado)",
+            "cost": 70000000,
+            "mandatory": false,
+            "impact": "Financia terrorismo, sin garantía de datos."
+          }
+        ],
+        "optimal_allocation": [
+          {"id": "restore", "selected": true},
+          {"id": "legal", "selected": true},
+          {"id": "pr", "selected": true},
+          {"id": "new_infra", "selected": true}
+        ]
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "drag_drop_match",
+      "title": "Fase NIST → Acción Real",
+      "content": {
+        "instruction": "Clasifica las acciones tomadas",
+        "scenarios": [
+          {"id": 1, "text": "Aislar segmentos de red", "correct_target": "containment"},
+          {"id": 2, "text": "Capturar memoria de 50 sistemas", "correct_target": "detection"},
+          {"id": 3, "text": "Restaurar desde backups Ghana-like", "correct_target": "recovery"},
+          {"id": 4, "text": "Lecciones aprendidas post-incidente", "correct_target": "post"}
+        ],
+        "targets": [
+          {"id": "containment", "label": "Containment", "color": "#D32F2F"},
+          {"id": "detection", "label": "Detection", "color": "#1976D2"},
+          {"id": "recovery", "label": "Recovery", "color": "#388E3C"},
+          {"id": "post", "label": "Post-Incident", "color": "#FF9800"}
+        ],
+        "xp_per_correct": 12
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "log_hunter",
+      "title": "Últimos IOCs críticos",
+      "content": {
+        "instruction": "Identifica tráfico malicioso en los logs.",
+        "scenario": "Logs del firewall durante el incidente. Última oportunidad",
+        "log_lines": [
+          {"id": 1, "text": "Normal patient query", "is_suspicious": false},
+          {"id": 2, "text": "10.0.0.50 → 185.23.24.99:443 (C2 Ryuk)", "is_suspicious": true, "reason": "Conexión a IP de Command & Control conocida."},
+          {"id": 3, "text": "10.0.0.51 → megaleak[.]site (exfiltración)", "is_suspicious": true, "reason": "Exfiltración de datos a dominio sospechoso."},
+          {"id": 4, "text": "Normal backup sync", "is_suspicious": false},
+          {"id": 5, "text": "Admin login from Russia", "is_suspicious": true, "reason": "Login geográficamente anómalo de cuenta privilegiada."}
+        ],
+        "xp_reward": 50
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "timed_quiz",
+      "title": "Decisión Final",
+      "content": {
+        "timer_seconds": 40,
+        "question": "El atacante ofrece 'descifrado garantizado' por $50M. ¿Qué haces?",
+        "options": [
+          {"id": "a", "text": "Pagar (vidas en juego)", "is_correct": false},
+          {"id": "b", "text": "Rechazar. Restaurar desde backups offline", "is_correct": true}
+        ],
+        "explanation": "Nunca pagar. No hay garantías. Financiar criminales solo trae más ataques. Restaurar es la única vía segura.",
+        "xp_reward": 40
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "achievement_unlock",
+      "title": "CERTIFICACIÓN COMPLETADA",
+      "content": {
+        "achievement": {
+          "icon": "military_tech",
+          "name": "CIRT Commander Elite",
+          "description": "Lideraste respuesta a incidente crítico global con éxito",
+          "rarity": "legendary",
+          "color": "#FFD700"
+        }
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "lesson_complete",
+      "title": "¡CURSO 5 COMPLETADO!",
+      "content": {
+        "xp_earned": 300,
+        "key_takeaways": [
+          "Contención siempre antes que análisis",
+          "Nunca pagar rescate (especialmente en wipers)",
+          "Backups offline/air-gapped salvan empresas",
+          "Vidas humanas > sistemas informáticos",
+          "Lecciones de Target, Sony, WannaCry, APT29 y Maersk aplicadas con éxito"
+        ],
+        "next_lesson": null
+      }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "1000-employee company, healthcare sector. No formal risk program. Build from scratch."
-  }
+  ]
 }

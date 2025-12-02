@@ -1,287 +1,131 @@
 {
   "id": "c5_l1",
-  "title": "Ciclo de Vida del Incidente",
-  "description": "Caso: Equifax Breach (2017)",
+  "title": "Fases de IR",
+  "description": "Caso Real: Target Breach 2013",
   "type": "interactive",
-  "duration_minutes": 18,
-  "xp_reward": 20,
+  "duration_minutes": 28,
+  "xp_reward": 70,
   "order_index": 1,
   "course_id": 5,
-  "total_screens": 5,
+  "total_screens": 15,
+  "theme": {
+    "primary_color": "#D32F2F",
+    "secondary_color": "#FF6F00",
+    "accent_color": "#388E3C",
+    "gradient": ["#1a0000", "#330000", "#4d0000"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso: Equifax Breach (2017)",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: BlackPOS",
       "content": {
-        "story_title": "Equifax: 147M Records, Preventable Vulnerability",
-        "story_intro": "Apache Struts CVE-2017-5638. Patch disponible 2 meses antes. No aplicado.",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "security",
-            "title": "Vulnerability: Apache Struts",
-            "content": "6 Marzo 2017: Apache Struts CVE-2017-5638 publicado (CVSS 10.0). RCE sin autenticación. Equifax usaba Struts en dispute portal. Patch disponible MISMO DÍA.",
-            "insight": "CVSS 10.0 = máxima severidad. Patch disponible. Equifax tenía 2 MESES para parchear antes del breach."
-          },
-          {
-            "id": "2",
-            "icon": "watch_later",
-            "title": "Risk Management Failure",
-            "content": "Equifax vulnerability management process falló. Scanner detectó Struts vulnerable PERO no escaló a patch. 2 meses sin acción. 13 Mayo: Attackers explotaron.",
-            "insight": "Tener scanner ≠ estar seguro. Need: Detection → Prioritization → Patch → Verification. Full lifecycle."
-          },
-          {
-            "id": "3",
-            "icon": "data_thresholding",
-            "title": "Exfiltration: 147M Records",
-            "content": "Attackers pivotaron de dispute portal a databases. 147M records: SSN, DOB, addresses, driver licenses. 76 días sin detectar. No segmentación de red.",
-            "insight": "RCE → Pivot → Exfiltration. Defense in depth ausente. Database no debería ser accesible desde web server."
-          },
-          {
-            "id": "4",
-            "icon": "visibility_off",
-            "title": "Detection Failure",
-            "content": "SSL inspection certificate expiró. Equifax NO podía monitorear outbound traffic cifrado. Exfiltración invisible por 76 días. Monitoring gaps = blind spots.",
-            "insight": "Expired certs = monitoring down. No alerting on monitoring failure = compounding error."
-          },
-          {
-            "id": "5",
-            "icon": "gavel",
-            "title": "Aftermath: $700M Settlement",
-            "content": "$700M settlement con FTC. CEO Richard Smith renunció. CIO/CSO despedidos. Class action lawsuits. Congressional testimony. Reputational damage permanente.",
-            "insight": "Costo de no parchear vulnerabilidad conocida: $700M+ en multas, executive careers ended, trust destroyed."
-          },
-          {
-            "id": "6",
-            "icon": "article",
-            "title": "Lessons: Risk Management",
-            "content": "GAO report: 1) Patch management process broken. 2) Asset inventory incomplete (no sabían todos Struts instances). 3) Segmentation ausente. 4) Monitoring gaps. 5) Expired certificates.",
-            "insight": "Risk management is foundational. Technical debt kills. Proper processes > heroic firefighting."
-          }
-        ]
+        "headline": "NOVIEMBRE - DICIEMBRE 2013",
+        "subheadline": "40 millones de tarjetas robadas en plena temporada navideña",
+        "stats": [
+          {"value": "40M", "label": "Tarjetas robadas"},
+          {"value": "70M", "label": "Registros PII"},
+          {"value": "$300M+", "label": "Costos totales"},
+          {"value": "17 días", "label": "Dwell time"}
+        ],
+        "cta_text": "Iniciar Investigación"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "Risk Management Framework",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "El Ataque Perfecto",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "assessment",
-              "term": "Risk = Likelihood × Impact",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Risk es función de probabilidad de ocurrencia Y magnitud de daño. Alto likelihood + bajo impact puede ser < bajo likelihood + catastrophic impact.",
-              "example": "Equifax: High likelihood (Struts vuln public, actively exploited). High impact (147M records). Result: Critical risk. Should have been priority 1 patch.",
-              "color": "#EF5350"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "trending_up",
-              "term": "Risk Appetite vs Tolerance",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Appetite: Cuánto risk org willing to take para achieve objectives. Tolerance: Max deviation acceptable. Board-level decisions.",
-              "example": "Startup: High risk appetite (move fast). Bank: Low risk appetite (regulatory). Equifax tolerance: Clearly exceeded when patch delayed 2 months.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "shield",
-              "term": "Risk Treatment: 4 Options",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "1) Avoid: Don't do risky activity. 2) Mitigate: Implement controls. 3) Transfer: Insurance, outsource. 4) Accept: Acknowledge, document decision.",
-              "example": "Equifax should: Mitigate (patch immediately). Transfer (cyber insurance). Actually did: Accept (implicitly, by inaction). Wrong choice.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "inventory",
-              "term": "Asset Inventory",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Can't protect what you don't know exists. Comprehensive inventory: hardware, software, data, cloud resources. Equifax problem: Incomplete inventory.",
-              "example": "CMDB (Configuration Management Database). Asset tagging. Discovery scans. Equifax: Didn't know all Struts instances = couldn't patch all.",
-              "color": "#FFB74D"
-            }
-          }
-        ]
+        "icon": "local_atm",
+        "icon_color": "#D32F2F",
+        "headline": "Supply Chain + POS Malware + Alert Fatigue",
+        "body": "Todo empezó con un proveedor de HVAC (Fazio Mechanical) que tenía acceso VPN a la red corporativa de Target. Un simple phishing → malware → credential theft → lateral movement → instalación de BlackPOS en 60,000 terminales POS justo antes de Black Friday.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "FireEye detectó el malware… pero el SOC de Target ignoró las alertas. 17 días de exfiltración masiva."
+        }
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Vulnerability Management Lifecycle",
-      "duration": 360,
+      "type": "crisis_timeline",
+      "title": "⏱️ KILL CHAIN COMPLETA",
       "content": {
-        "items": [
+        "events": [
           {
-            "id": "vm1",
-            "task": "1. Discovery & Asset Inventory",
-            "subtitle": "Know your attack surface",
-            "icon": "search",
-            "unlock_content": {
-              "title": "Asset Discovery",
-              "points": [
-                "Network scanning: Nmap, Nessus, Qualys",
-                "Agent-based: Deploy agents on endpoints for inventory",
-                "Cloud discovery: AWS Config, Azure Resource Graph",
-                "Application discovery: Dependency mapping, SBOM (Software Bill of Materials)",
-                "Equifax gap: Incomplete inventory = missed Struts instances",
-                "Update frequency: Continuous or weekly minimum"
-              ],
-              "bonus_fact": "Shadow IT is real. Developers deploy without approval. Continuous discovery catches this."
-            }
+            "time": "27 Nov 2013",
+            "icon": "phishing",
+            "title": "Phishing a Fazio Mechanical",
+            "description": "Citrix malware (trojan) en workstation del proveedor HVAC.",
+            "severity": "warning"
           },
           {
-            "id": "vm2",
-            "task": "2. Vulnerability Scanning",
-            "subtitle": "Find the weaknesses",
-            "icon": "bug_report",
-            "unlock_content": {
-              "title": "Scanning Strategy",
-              "points": [
-                "Authenticated scans: Better accuracy (can see installed patches)",
-                "Unauthenticated scans: Attacker perspective",
-                "Frequency: Weekly for general, daily for critical assets",
-                "Scan types: Network, web app (DAST), code (SAST), containers",
-                "Equifax: Had scanners but results not acted upon",
-                "False positives: Validate findings before panic"
-              ],
-              "bonus_fact": "Scanner detected Equifax vulnerability. Problem was downstream: no action taken."
-            }
+            "time": "30 Nov",
+            "icon": "vpn_key",
+            "title": "VPN Access",
+            "description": "Credenciales robadas → acceso a red corporativa Target. No segmentación.",
+            "severity": "critical"
           },
           {
-            "id": "vm3",
-            "task": "3. Risk Assessment & Prioritization",
-            "subtitle": "What to fix first?",
-            "icon": "priority_high",
-            "unlock_content": {
-              "title": "Prioritization Factors",
-              "points": [
-                "CVSS score: Baseline (10.0 = critical)",
-                "Exploitability: Is exploit public? Actively exploited?",
-                "Asset criticality: Internet-facing? Crown jewels?",
-                "Compensating controls: Firewall, WAF mitigating?",
-                "Vendor priority: Microsoft Patch Tuesday severity",
-                "Equifax: CVSS 10.0 + public exploit + internet-facing = P0"
-              ],
-              "bonus_fact": "Not all CVEs equal. CVSS 10.0 internet-facing > CVSS 9.0 internal asset."
-            }
+            "time": "2-10 Dic",
+            "icon": "memory",
+            "title": "BlackPOS en 60K POS",
+            "description": "RAM scraper instalado. Captura Track 1&2 antes de encryption.",
+            "severity": "critical"
           },
           {
-            "id": "vm4",
-            "task": "4. Remediation & Verification",
-            "subtitle": "Fix and confirm",
-            "icon": "build",
-            "unlock_content": {
-              "title": "Patch Management",
-              "points": [
-                "Testing: Patch in dev/staging before production",
-                "Change control: Approval process, rollback plan",
-                "Maintenance windows: Schedule with stakeholders",
-                "Emergency patching: Expedited process for critical (Equifax needed this)",
-                "Verification: Re-scan post-patch to confirm",
-                "Documentation: What patched, when, by whom"
-              ],
-              "bonus_fact": "Equifax had 2 months. Emergency patch should have happened in 48 hours for CVSS 10.0."
-            }
+            "time": "2-18 Dic",
+            "icon": "credit_card",
+            "title": "Exfiltración masiva",
+            "description": "40M tarjetas → server en Rusia → dark web. $100 por tarjeta.",
+            "severity": "critical"
           },
           {
-            "id": "vm5",
-            "task": "5. Reporting & Metrics",
-            "subtitle": "Continuous improvement",
-            "icon": "analytics",
-            "unlock_content": {
-              "title": "VM Metrics",
-              "points": [
-                "Mean Time To Patch (MTTP): Goal <30 days standard, <7 days critical",
-                "Vulnerability debt: Total open vulnerabilities by severity",
-                "SLA compliance: % patched within policy timeframe",
-                "Repeat vulnerabilities: Same CVE reappearing = systemic issue",
-                "Equifax metric: MTTP for critical = 60+ days. Unacceptable.",
-                "Executive dashboard: Trend over time, risk exposure"
-              ],
-              "bonus_fact": "Good VM program: MTTP critical <7 days. Equifax: 60+ days. Order of magnitude off."
-            }
+            "time": "12 Dic",
+            "icon": "warning",
+            "title": "FireEye alerta (IGNORADA)",
+            "description": "Detección automática de malware. Alertas marcadas como false positive.",
+            "severity": "critical"
+          },
+          {
+            "time": "18 Dic",
+            "icon": "report",
+            "title": "DOJ notifica a Target",
+            "description": "Bancos detectan fraude masivo. Target confirma breach.",
+            "severity": "critical"
           }
         ]
       }
     },
     {
       "screen_id": 4,
-      "type": "memory_cards",
-      "title": "Compliance Frameworks",
-      "duration": 180,
+      "type": "crisis_decision",
+      "title": "🚨 Alerta FireEye 12 Dic",
       "content": {
-        "cards": [
+        "scenario": "12 de diciembre, FireEye alerta: 'Malware detectado en POS terminals, ex in progress exfiltration'. SOC analyst lo marca como false positive. Eres el CISO. ¿Qué haces?",
+        "timer_seconds": 35,
+        "options": [
           {
-            "id": "1",
-            "front": {
-              "icon": "gavel",
-              "term": "GDPR - EU Privacy",
-              "color": "#0057B8"
-            },
-            "back": {
-              "definition": "General Data Protection Regulation. EU citizen data protection. Rights: Access, erasure, portability. 72-hour breach notification. Fines up to 4% global revenue.",
-              "example": "Equifax: If EU citizens affected, GDPR violation. British Airways: £183M fine. Marriott: £99M. Consent, data minimization, privacy by design mandatory.",
-              "color": "#4D9DE0"
+            "id": "ignore",
+            "text": "Confiar en el analyst - es Black Friday, no podemos parar",
+            "icon": "visibility_off",
+            "is_correct": false,
+            "consequence": {
+              "title": "Esto hizo Target",
+              "description": "6 días más de exfiltración. 40M tarjetas robadas. Costo final: $300M+ y dimisión del CEO.",
+              "impact_score": -100
             }
           },
           {
-            "id": "2",
-            "front": {
-              "icon": "security",
-              "term": "PCI DSS - Payment Card",
-              "color": "#D32F2F"
-            },
-            "back": {
-              "definition": "Payment Card Industry Data Security Standard. 12 requirements: Firewall, encryption, access control, monitoring, testing. Quarterly ASV scans, annual audit.",
-              "example": "Target breach: PCI violation. Fines from card brands + loss of ability to process cards. SAQ (Self-Assessment Questionnaire) for small merchants.",
-              "color": "#EF5350"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "local_hospital",
-              "term": "HIPAA - Healthcare",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Health Insurance Portability & Accountability Act. PHI (Protected Health Information) security. Administrative, physical, technical safeguards. Breach notification 60 days.",
-              "example": "Healthcare breaches avg $10M cost. HHS Wall of Shame: Public breach list. Must report 500+ affected individuals. Equifax: Medical records included.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "account_balance",
-              "term": "SOX - Financial",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Sarbanes-Oxley Act. Public company financial reporting integrity. IT controls over financial systems. Segregation of duties, audit trails, change management.",
-              "example": "Section 404: Internal control assessment. IT general controls (ITGC): Access, change, operations. Equifax: Public company, SOX applicable.",
-              "color": "#FFB74D"
+            "id": "contain",
+            "text": "Activar contención inmediata: aislar POS, bloquear C2, preservar evidencia",
+            "icon": "emergency",
+            "is_correct": true,
+            "consequence": {
+              "title": "Respuesta correcta",
+              "description": "Hubiera limitado el breach a ~5M tarjetas. Contención es siempre prioridad 1.",
+              "impact_score": 100,
+              "xp_bonus": 30
             }
           }
         ]
@@ -289,42 +133,199 @@
     },
     {
       "screen_id": 5,
-      "type": "quiz",
-      "title": "Evaluación - Risk Management",
-      "duration": 90,
+      "type": "flip_card_full",
+      "title": "NIST IR Lifecycle",
       "content": {
-        "question": "Equifax breach: ¿Cuál fue el PRIMARY risk management failure?",
-        "options": [
-          {
-            "id": "a",
-            "text": "No tenían vulnerability scanner",
-            "is_correct": false,
-            "feedback": "Incorrecto. Equifax SÍ tenía scanner. Scanner detectó la vulnerabilidad Struts. Problem was downstream."
+        "card": {
+          "front": {
+            "icon": "emergency",
+            "term": "NIST 800-61",
+            "subtitle": "Incident Response Lifecycle",
+            "color": "#388E3C"
           },
-          {
-            "id": "b",
-            "text": "Vulnerability scanning → Risk prioritization → Remediation process BROKE. Scanner detected, pero no action.",
-            "is_correct": true,
-            "feedback": "CORRECTO! Scanner funcionó: Detectó CVE-2017-5638. Pero process breakdown: 1) Results no escalados properly. 2) CVSS 10.0 no triggered emergency patch. 3) No verification que patch aplicado. 4) Incomplete asset inventory = missed some Struts. 5) Process de patch management lento (60+ days). Full lifecycle falló. Technology worked, process failed. Risk management is about PROCESS, not just tools."
-          },
-          {
-            "id": "c",
-            "text": "Apache Struts era zero-day",
-            "is_correct": false,
-            "feedback": "Incorrecto. CVE-2017-5638 publicado 6 Marzo. Patch disponible MISMO DÍA. Equifax breached 13 Mayo = 2+ meses DESPUÉS. Not zero-day."
-          },
-          {
-            "id": "d",
-            "text": "SSL inspection certificate expiration",
-            "is_correct": false,
-            "feedback": "Parcialmente correcto. Cert expiration causó monitoring gap (detection failure). Pero PRIMARY failure: No parchar vulnerabilidad conocida por 2 meses. Cert issue compounded problema."
+          "back": {
+            "phases": [
+              "1. Preparation: IR plan, tools, training",
+              "2. Detection & Analysis: Alertas, triage, scoping",
+              "3. Containment, Eradication, Recovery",
+              "4. Post-Incident Activity: Lessons learned"
+            ],
+            "target_failure": "Detection falló (alert fatigue), Containment tardío (6 días), Recovery sin re-image completo.",
+            "color": "#2E7D32"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "Phase 1: Preparation",
+      "content": {
+        "card": {
+          "front": {"icon": "build", "term": "PREPARATION", "color": "#1976D2"},
+          "back": {
+            "key_elements": [
+              "IR Playbooks actualizados",
+              "CSIRT definido y entrenado",
+              "Tools: EDR, SIEM, forensics kit",
+              "Comunicación: legal, PR, regulators",
+              "Backups offline y testeados"
+            ],
+            "target_gap": "No playbooks para POS malware. No entrenamiento para alertas FireEye.",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Phase 2: Detection & Analysis",
+      "content": {
+        "card": {
+          "front": {"icon": "search", "term": "DETECTION", "color": "#FF9800"},
+          "back": {
+            "target_failure": "FireEye detectó PERO alertas ignoradas. Alert fatigue + falta de escalación.",
+            "best_practice": "Triage 24/7, severity scoring, auto-escalation para critical alerts.",
+            "color": "#F57C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Phase 3: Containment",
+      "content": {
+        "card": {
+          "front": {"icon": "block", "term": "CONTAINMENT", "color": "#D32F2F"},
+          "back": {
+            "short_term": "Aislar sistemas infectados, bloquear C2, cambiar credenciales",
+            "long_term": "Patch, re-image, segmentación",
+            "target_mistake": "Containment tardío → 6 días más de exfiltración",
+            "golden_rule": "Containment FIRST, forensics SECOND",
+            "color": "#B71C1C"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "flip_card_full",
+      "title": "Phase 4: Post-Incident",
+      "content": {
+        "card": {
+          "front": {"icon": "school", "term": "LESSONS LEARNED", "color": "#7B1FA2"},
+          "back": {
+            "target_did": "CEO y CIO dimitieron. $300M en costos. Segmentación implementada después.",
+            "questions": "What went wrong? What went right? How to prevent recurrence?",
+            "color": "#6A1B9A"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "drag_drop_match",
+      "title": "Fase → Acción Target",
+      "content": {
+        "instruction": "Relaciona cada acción con su fase correcta",
+        "scenarios": [
+          {"id": 1, "text": "Ignorar alertas FireEye", "correct_target": "detection"},
+          {"id": 2, "text": "CEO dimite tras breach", "correct_target": "post"},
+          {"id": 3, "text": "No tener segmentación IT/OT", "correct_target": "preparation"},
+          {"id": 4, "text": "6 días de exfiltración tras detección", "correct_target": "containment"}
+        ],
+        "targets": [
+          {"id": "preparation", "label": "Preparation", "color": "#1976D2"},
+          {"id": "detection", "label": "Detection & Analysis", "color": "#FF9800"},
+          {"id": "containment", "label": "Containment", "color": "#D32F2F"},
+          {"id": "post", "label": "Post-Incident", "color": "#7B1FA2"}
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "swipe_cards",
+      "title": "IR Best Practice?",
+      "content": {
+        "instruction": "¿Es buena práctica en IR?",
+        "cards": [
+          {"id": 1, "scenario": "Ignorar alertas en temporada alta", "correct_answer": "left"},
+          {"id": 2, "scenario": "Containment inmediato tras detección crítica", "correct_answer": "right"},
+          {"id": 3, "scenario": "Re-image desde backups limpios", "correct_answer": "right"},
+          {"id": 4, "scenario": "Dejar sistemas online para 'monitorear al atacante'", "correct_answer": "left"},
+          {"id": 5, "scenario": "Realizar lessons learned con blame", "correct_answer": "left"}
+        ],
+        "labels": {"left": "❌ MAL", "right": "✅ BIEN"},
+        "xp_per_correct": 10
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: FireEye Alerts Ignoradas",
+      "content": {
+        "scenario": "Logs del SIEM de Target. Encuentra las 3 alertas críticas ignoradas",
+        "log_lines": [
+          {"id": 1, "text": "2023-12-10 08:23:11 Normal login user=admin", "is_suspicious": false},
+          {"id": 2, "text": "2023-12-12 03:15:22 FIREYE MALWARE DETECTED: BlackPOS on pos-12345.exe", "is_suspicious": true},
+          {"id": 3, "text": "2023-12-12 03:16:01 FIREYE C2 DETECTED: outbound to 185.23.24.99 (Russia)", "is_suspicious": true},
+          {"id": 4, "text": "2023-12-12 03:30:45 Alert dismissed as false positive by analyst_john", "is_suspicious": true},
+          {"id": 5, "text": "2023-12-12 09:15:42 Normal payment processing", "is_suspicious": false}
+        ],
+        "xp_reward": 30
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "timed_quiz",
+      "title": "⚡ Target Root Cause",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Cuál fue el fallo MÁS crítico en Target 2013?",
+        "options": [
+          {"id": "a", "text": "El proveedor HVAC era débil", "is_correct": false},
+          {"id": "b", "text": "Ignorar alertas de detección + contención tardía", "is_correct": true}
+        ],
+        "explanation": "El phishing fue el vector inicial, pero el daño masivo ocurrió por fallos en Detection y Containment. FireEye funcionó perfectamente.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "emergency",
+          "name": "IR Phase Master",
+          "description": "Dominas el ciclo de vida de respuesta a incidentes",
+          "rarity": "rare",
+          "color": "#D32F2F"
+        }
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 70,
+        "key_takeaways": [
+          "Target 2013: 40M tarjetas por fallos en Detection y Containment",
+          "NIST 800-61: Preparation → Detection → Containment → Post-Incident",
+          "Containment es SIEMPRE prioridad #1",
+          "Alert fatigue mata: nunca ignores alertas críticas",
+          "FireEye detectó, humanos fallaron"
+        ],
+        "next_lesson": {
+          "id": "c5_l2",
+          "title": "Forensics",
+          "preview": "Caso Sony Pictures 2014 - wiper malware"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "Apache Struts CVE-2017-5638. Patch disponible 2 meses antes. No aplicado."
-  }
+  ]
 }

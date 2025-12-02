@@ -1,215 +1,118 @@
 {
   "id": "c3_l1",
   "title": "Introducción a la Criptografía",
-  "description": "Caso: SolarWinds Supply Chain (2020)",
+  "description": "Caso Real: SolarWinds Supply Chain (2020)",
   "type": "interactive",
-  "duration_minutes": 17,
-  "xp_reward": 20,
+  "duration_minutes": 22,
+  "xp_reward": 65,
   "order_index": 1,
   "course_id": 3,
-  "total_screens": 5,
+  "total_screens": 19,
+  "theme": {
+    "primary_color": "#00E5FF",
+    "secondary_color": "#FF1744",
+    "accent_color": "#00E676",
+    "gradient": ["#0f0c29", "#302b63", "#24243e"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "step_revelation",
-      "title": "Caso: SolarWinds Supply Chain (2020)",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: SolarWinds",
       "content": {
-        "story_title": "SolarWinds: Nation-State Supply Chain Attack",
-        "story_intro": "APT29 (Cozy Bear) compromised 18K+ organizations vía trojanized update",
-        "steps": [
-          {
-            "id": "1",
-            "icon": "security",
-            "title": "El Vector: Orion Software Update",
-            "content": "SolarWinds Orion: Network monitoring usado por Fortune 500, gobierno US. Atacantes (APT29/Russia) comprometieron build system. Inyectaron backdoor SUNBURST en update legítimo.",
-            "insight": "Supply chain attack bypassa ALL perimeter defenses. Víctimas instalan malware voluntariamente."
-          },
-          {
-            "id": "2",
-            "icon": "download",
-            "title": "Infection: 18,000 Organizations",
-            "content": "18,000 customers descargaron update trojanizado. SUNBURST backdoor dormant por 2 semanas antes de activar. FireEye, Microsoft, Departamento de Justicia, Tesoro US comprometidos.",
-            "insight": "Dormancy period evade detection inicial. C2 traffic usaba dominios legítimos (avsvmcloud)."
-          },
-          {
-            "id": "3",
-            "icon": "vpn_key",
-            "title": "Privilege Escalation",
-            "content": "SUNBURST permitió robar credentials de admin. Atacantes pivotaron a cloud (O365, Azure AD). Golden SAML attacks: forjar SAML tokens para impersonate any user.",
-            "insight": "On-prem compromise → cloud compromise. Hybrid environments amplify attack surface."
-          },
-          {
-            "id": "4",
-            "icon": "visibility",
-            "title": "Detección: 9 Meses Después",
-            "content": "FireEye detectó en Dic 2020. Breach comenzó en Mar 2020. 9 meses de acceso sin detectar. APT29 exfiltró emails, documentos classified de gobierno.",
-            "insight": "Dwell time promedio de nation-state: 200+ días. Detection es el challenge."
-          },
-          {
-            "id": "5",
-            "icon": "gavel",
-            "title": "Aftermath: Zero Trust Mandate",
-            "content": "Biden Executive Order 14028: Federal agencies deben implementar Zero Trust. SolarWinds CEO testified ante Congreso. Enfoque en supply chain security. SBOM (Software Bill of Materials) requirement.",
-            "insight": "SolarWinds aceleró adopción de Zero Trust architecture en gobierno y enterprise."
-          }
-        ]
+        "headline": "MARZO 2020",
+        "subheadline": "El ataque de supply chain más sofisticado de la historia",
+        "background_image": "solarwinds_dark",
+        "stats": [
+          {"value": "18K+", "label": "Organizaciones comprometidas"},
+          {"value": "9", "label": "Meses sin detectar"},
+          {"value": "SUNBURST", "label": "Backdoor legendario"}
+        ],
+        "cta_text": "Entrar en la Red"
       }
     },
     {
       "screen_id": 2,
-      "type": "memory_cards",
-      "title": "Authentication Fundamentals",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "El Golpe Perfecto",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "password",
-              "term": "Something You Know",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Factor 1: Passwords, PINs, security questions. Más común pero más vulnerable. Phishing, credential stuffing, brute force.",
-              "example": "Password: Solo knowledge-based. Vulnerable a: keyloggers, phishing, database leaks (Have I Been Pwned). Requiere complexity rules, rotation policies.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "phonelink_lock",
-              "term": "Something You Have",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Factor 2: Physical token, smartphone, smart card, hardware key. Possession-based. Más seguro que passwords solo.",
-              "example": "FIDO2 keys (YubiKey), TOTP apps (Google Authenticator), push notifications (Duo). SolarWinds: Stolen creds inútiles con MFA hardware.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "fingerprint",
-              "term": "Something You Are",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Factor 3: Biometrics. Fingerprint, face recognition, iris scan, voice. Inherence-based. No se puede 'olvidar' pero no se puede cambiar si compromised.",
-              "example": "Touch ID, Face ID, Windows Hello. Spoofing risk con high-res photos. False accept/reject rates. GDPR concerns con biometric data storage.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "location_on",
-              "term": "Contextual Factors",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "Factor adicional: Location (GPS, IP), time of day, device posture, behavior analytics. Risk-based authentication.",
-              "example": "Login desde Russia cuando user normalmente en US = block. Impossible travel. Device fingerprinting. Adaptive MFA aumenta friction solo cuando risk alto.",
-              "color": "#BA68C8"
-            }
-          }
-        ]
+        "icon": "security",
+        "icon_color": "#00E5FF",
+        "headline": "APT29 (Cozy Bear) - Rusia",
+        "body": "Los atacantes no rompieron la puerta. Entraron con llave legítima. Comprometieron el sistema de compilación de SolarWinds e inyectaron el backdoor SUNBURST en una actualización oficial firmada digitalmente.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Las víctimas instalaron el malware voluntariamente... porque venía firmado por SolarWinds."
+        },
+        "mood": "tension"
       }
     },
     {
       "screen_id": 3,
-      "type": "progress_checklist",
-      "title": "Multi-Factor Authentication (MFA)",
-      "duration": 300,
+      "type": "crisis_timeline",
+      "title": "⏱️ 9 MESES DE SILENCIO",
       "content": {
-        "items": [
+        "events": [
           {
-            "id": "mfa1",
-            "task": "MFA Types Comparison",
-            "subtitle": "Efectividad y usabilidad",
-            "icon": "compare",
-            "unlock_content": {
-              "title": "MFA Spectrum",
-              "points": [
-                "SMS/Voice (Least secure): SIM swapping, SS7 attacks. Mejor que nada.",
-                "TOTP Apps (Medium): Google Auth, Authy. Phishing-resistant NO. Codes can be phished.",
-                "Push Notifications (Better): Duo, Okta Verify. UX bueno. Push bombing risk.",
-                "Hardware Tokens (Best): FIDO2, YubiKey. Phishing-resistant. Public key crypto.",
-                "Biometrics (Device-local): Touch/Face ID. Convenient pero device-dependent."
-              ],
-              "bonus_fact": "Microsoft: MFA blocks 99.9% of automated attacks. FIDO2 blocks 100% of phishing."
-            }
+            "time": "Mar 2020",
+            "icon": "code",
+            "title": "Inyección del Backdoor",
+            "description": "SUNBURST inyectado en DLL firmada. Update distribuido a 18K+ clientes.",
+            "severity": "critical"
           },
           {
-            "id": "mfa2",
-            "task": "FIDO2/WebAuthn",
-            "subtitle": "Phishing-resistant standard",
-            "icon": "key",
-            "unlock_content": {
-              "title": "Modern Authentication",
-              "points": [
-                "FIDO2: Public key cryptography. Private key never leaves device.",
-                "WebAuthn: Browser API standard. Works con YubiKey, Windows Hello, Touch ID.",
-                "Phishing-resistant: Attacker no puede replay credentials. Domain-bound.",
-                "Passwordless: Can replace passwords entirely. Microsoft, Google, Apple support.",
-                "SolarWinds defense: Hardware MFA hubiera bloqueado credential theft."
-              ],
-              "bonus_fact": "FIDO2 adoption growing 50%/year. Passkeys (Apple/Google) are FIDO2-based."
-            }
+            "time": "Mar-Dic",
+            "icon": "visibility_off",
+            "title": "Dormancia Perfecta",
+            "description": "Backdoor inactivo 2 semanas. C2 vía dominios legítimos (avsvmcloud.com).",
+            "severity": "critical"
           },
           {
-            "id": "mfa3",
-            "task": "MFA Bypass Techniques",
-            "subtitle": "Attackers adapt",
+            "time": "Dic 2020",
             "icon": "warning",
-            "unlock_content": {
-              "title": "Know the Enemy",
-              "points": [
-                "Push bombing/fatigue: Spam push notifications hasta que user acepta.",
-                "Session hijacking: Steal session token post-MFA. MFA protects login, no session.",
-                "Social engineering: Call helpdesk, reset MFA device claiming 'lost phone'.",
-                "AiTM (Adversary-in-The-Middle): Proxy phishing, relay MFA codes real-time.",
-                "Defense: FIDO2 (no relay possible), anomaly detection, rate limiting MFA attempts."
-              ],
-              "bonus_fact": "Twitter 2020 hack: Insiders bypassed MFA via internal tools. Insider threat is MFA weakness."
-            }
+            "title": "FireEye Descubre",
+            "description": "FireEye detecta breach propio. SUNBURST encontrado. Mundo se entera.",
+            "severity": "critical"
+          },
+          {
+            "time": "Dic 2020",
+            "icon": "public",
+            "title": "Revelación Global",
+            "description": "Microsoft, Tesoro US, NSA, Pentagon... todos comprometidos. 9 meses de acceso.",
+            "severity": "critical"
           }
         ]
       }
     },
     {
       "screen_id": 4,
-      "type": "memory_cards",
-      "title": "Single Sign-On (SSO)",
-      "duration": 180,
+      "type": "crisis_decision",
+      "title": "🚨 ¿Qué Hicieron Mal?",
       "content": {
-        "cards": [
+        "scenario": "Eres CISO de SolarWinds en 2019. Tu equipo de build propone: 'Para agilizar releases, firmemos todo con la misma clave privada en todos los servidores'. ¿Qué decides?",
+        "timer_seconds": 30,
+        "options": [
           {
-            "id": "1",
-            "front": {
-              "icon": "apps",
-              "term": "SAML 2.0",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Security Assertion Markup Language. XML-based. IdP (Identity Provider) autentica user, emite SAML assertion, SP (Service Provider) confía.",
-              "example": "Corporate SSO: Okta (IdP) → G Suite, Salesforce, Slack (SPs). SolarWinds attack: Golden SAML forged tokens, bypassed authentication.",
-              "color": "#42A5F5"
+            "id": "single_key",
+            "text": "Usar una sola clave privada para todo",
+            "icon": "key_off",
+            "is_correct": false,
+            "consequence": {
+              "title": "Esto fue SolarWinds",
+              "description": "Una clave comprometida = TODAS las actualizaciones firmadas maliciosas. Backdoor distribuido globalmente.",
+              "impact_score": -100
             }
           },
           {
-            "id": "2",
-            "front": {
-              "icon": "verified_user",
-              "term": "OAuth 2.0 + OIDC",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "OAuth: Authorization framework (access delegation). OIDC: Authentication layer on OAuth. JSON-based, RESTful. Modern alternative a SAML.",
-              "example": "'Sign in with Google/Apple/Facebook'. OAuth grants access tokens. OIDC adds ID tokens (JWT) con user info. Widely adopted por developers.",
-              "color": "#66BB6A"
+            "id": "hsm",
+            "text": "HSM + claves por entorno + rotación",
+            "icon": "enhanced_encryption",
+            "is_correct": true,
+            "consequence": {
+              "title": "Best Practice",
+              "description": "Claves separadas por entorno. HSM (Hardware Security Module). Rotación regular. Compromiso limitado.",
+              "impact_score": 100,
+              "xp_bonus": 30
             }
           }
         ]
@@ -217,42 +120,252 @@
     },
     {
       "screen_id": 5,
-      "type": "quiz",
-      "title": "Evaluación - Authentication",
-      "duration": 90,
+      "type": "flip_card_full",
+      "title": "Criptografía: Confidencialidad",
       "content": {
-        "question": "¿Por qué FIDO2/YubiKey es superior a TOTP apps para MFA?",
-        "options": [
-          {
-            "id": "a",
-            "text": "FIDO2 es más barato",
-            "is_correct": false,
-            "feedback": "Incorrecto. YubiKeys cuestan $25-50, apps son free. Ventaja NO es costo."
+        "card": {
+          "front": {
+            "icon": "visibility_off",
+            "term": "CONFIDENCIALIDAD",
+            "subtitle": "Nadie lee lo que no debe",
+            "color": "#00E5FF"
           },
-          {
-            "id": "b",
-            "text": "FIDO2 es phishing-resistant; TOTP codes pueden ser phished/relayed",
-            "is_correct": true,
-            "feedback": "CORRECTO! FIDO2 usa public key crypto. Private key NUNCA sale del hardware token. Domain-bound: solo funciona en sitio legítimo, no en phishing site. TOTP: 6-digit code puede ser phished (user ingresa en fake site) y relayed a sitio real en real-time. SolarWinds: FIDO2 hubiera prevenido credential reuse incluso si passwords leaked."
-          },
-          {
-            "id": "c",
-            "text": "FIDO2 no requiere internet",
-            "is_correct": false,
-            "feedback": "Incorrecto. Ambos pueden funcionar offline/online. Diferencia es phishing resistance."
-          },
-          {
-            "id": "d",
-            "text": "TOTP es más seguro",
-            "is_correct": false,
-            "feedback": "Incorrecto. TOTP es menos seguro. Codes son phishable. FIDO2 es cryptographically secure y phishing-resistant."
+          "back": {
+            "definition": "Garantizar que la información solo sea accesible por partes autorizadas.",
+            "solarwinds": "SUNBURST estaba cifrado y firmado. Parecía legítimo. Pero una vez ejecutado... todo era visible.",
+            "key_lesson": "Cifrado protege datos en reposo y tránsito. Pero si el código malicioso se ejecuta... game over.",
+            "color": "#00B0FF"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "Criptografía: Integridad",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "verified",
+            "term": "INTEGRIDAD",
+            "subtitle": "Nada ha sido alterado",
+            "color": "#00E676"
+          },
+          "back": {
+            "definition": "Garantizar que la información no ha sido modificada sin autorización.",
+            "solarwinds": "La DLL maliciosa estaba firmada con certificado válido de SolarWinds. Integridad técnica perfecta... pero semántica violada.",
+            "key_lesson": "Firma digital verifica origen + integridad. Pero si el origen está comprometido... firma ayuda al atacante.",
+            "color": "#00C853"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Criptografía: Autenticidad",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "how_to_reg",
+            "term": "AUTENTICIDAD",
+            "subtitle": "Es quien dice ser",
+            "color": "#FF1744"
+          },
+          "back": {
+            "definition": "Verificar la identidad del origen de la información.",
+            "solarwinds": "La actualización venía firmada con certificado válido. Los sistemas la aceptaron como auténtica.",
+            "key_lesson": "Autenticidad sin verificación de confianza es inútil. El certificado era válido... pero robado.",
+            "color": "#D50000"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "drag_drop_match",
+      "title": "SolarWinds: ¿Qué Falló?",
+      "content": {
+        "instruction": "Arrastra cada ataque a la propiedad criptográfica violada",
+        "scenarios": [
+          {"id": 1, "text": "DLL maliciosa firmada con certificado válido", "correct_target": "autenticidad"},
+          {"id": 2, "text": "Backdoor ejecutado en memoria (no detectado)", "correct_target": "integridad"},
+          {"id": 3, "text": "Datos robados enviados cifrados a C2", "correct_target": "confidencialidad"},
+          {"id": 4, "text": "Certificado privado comprometido", "correct_target": "autenticidad"}
+        ],
+        "targets": [
+          {"id": "confidencialidad", "label": "Confidencialidad", "color": "#00E5FF"},
+          {"id": "integridad", "label": "Integridad", "color": "#00E676"},
+          {"id": "autenticidad", "label": "Autenticidad", "color": "#FF1744"}
+        ],
+        "xp_per_correct": 10
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "story_slide",
+      "title": "El Arte de la Firma Digital",
+      "content": {
+        "icon": "draw",
+        "icon_color": "#FFC107",
+        "headline": "Cómo Funciona la Firma",
+        "body": "La firma digital usa criptografía asimétrica para verificar origen e integridad.",
+        "visual_element": {
+          "type": "encryption_flow",
+          "steps": [
+            {"step": "1", "desc": "Hash del archivo"},
+            {"step": "2", "desc": "Cifrar hash con clave privada"},
+            {"step": "3", "desc": "Firma adjunta al archivo"},
+            {"step": "4", "desc": "Receptor verifica con clave pública → descifra hash → compara"}
+          ]
+        }
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "flip_card_full",
+      "title": "Criptografía Simétrica",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "lock",
+            "term": "SIMÉTRICA",
+            "subtitle": "Una clave para todo",
+            "color": "#FF9800"
+          },
+          "back": {
+            "definition": "Misma clave para cifrar y descifrar. Rápida pero problema de distribución de clave.",
+            "algoritmos": ["AES-256-GCM (estándar actual)", "ChaCha20", "3DES (obsoleto)"],
+            "use_cases": "Cifrado de disco, TLS data, ransomware",
+            "solarwinds": "SUNBURST usaba AES para cifrar C2 traffic. Rápido y seguro... si la clave no está comprometida.",
+            "color": "#F57C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "Criptografía Asimétrica",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "key",
+            "term": "ASIMÉTRICA",
+            "subtitle": "Clave pública + privada",
+            "color": "#9C27B0"
+          },
+          "back": {
+            "definition": "Par de claves: Pública (cifra) + Privada (descifra). Soluciona distribución de clave.",
+            "algoritmos": ["RSA-2048/4096", "ECC (Elliptic Curve)", "Ed25519"],
+            "use_cases": "TLS handshake, firmas digitales, SSH, PGP",
+            "solarwinds": "La clave privada de firma fue comprometida → atacantes firmaban actualizaciones legítimas.",
+            "color": "#7B1FA2"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "flip_card_full",
+      "title": "Hash: Integridad Pura",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "fingerprint",
+            "term": "HASH",
+            "subtitle": "One-way function",
+            "color": "#FF5722"
+          },
+          "back": {
+            "definition": "Función unidireccional que convierte cualquier entrada en valor fijo. Detecta alteraciones.",
+            "algoritmos": ["SHA-256", "SHA-3", "BLAKE3"],
+            "propiedades": ["Avalancha", "Pre-image resistance", "Collision resistance"],
+            "solarwinds": "Hash del update legítimo ≠ hash del update malicioso. Pero nadie verificó.",
+            "color": "#E64A19"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "swipe_cards",
+      "title": "¿Cifrado o Hash?",
+      "content": {
+        "instruction": "Desliza para clasificar",
+        "cards": [
+          {"id": 1, "scenario": "Verificar integridad de archivo descargado", "correct_answer": "right", "labels": {"left": "Cifrado", "right": "Hash"}},
+          {"id": 2, "scenario": "Proteger datos en reposo", "correct_answer": "left"},
+          {"id": 3, "scenario": "Firmar actualización de software", "correct_answer": "left"},
+          {"id": 4, "scenario": "Almacenar passwords de forma segura", "correct_answer": "right"}
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "story_slide",
+      "title": "El Kill Switch de SolarWinds",
+      "content": {
+        "icon": "power_settings_new",
+        "icon_color": "#4CAF50",
+        "headline": "El Error que Salvó al Mundo",
+        "body": "SUNBURST tenía un kill switch: si detectaba análisis, se desactivaba. Pero el dominio estaba mal configurado.",
+        "highlight_box": {
+          "type": "success",
+          "text": "Microsoft registró el dominio y activó el kill switch. Detuvo la propagación... pero ya era tarde para 18K organizaciones."
+        }
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "timed_quiz",
+      "title": "⚡ Crypto Challenge",
+      "content": {
+        "timer_seconds": 20,
+        "question": "¿Qué propiedad criptográfica falló CRÍTICAMENTE en SolarWinds?",
+        "options": [
+          {"id": "a", "text": "Confidencialidad del tráfico C2", "is_correct": false},
+          {"id": "b", "text": "Autenticidad del origen del update", "is_correct": true},
+          {"id": "c", "text": "Integridad del payload cifrado", "is_correct": false}
+        ],
+        "explanation": "La clave privada de firma fue comprometida → atacantes firmaban actualizaciones legítimas → bypass de autenticidad. El cifrado funcionó... pero el origen era falso.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "encrypted",
+          "name": "Cryptographer Apprentice",
+          "description": "Completaste tu primera lección de criptografía",
+          "rarity": "rare",
+          "color": "#00E5FF"
+        }
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 65,
+        "key_takeaways": [
+          "Criptografía = Confidencialidad + Integridad + Autenticidad",
+          "Simétrica: rápida, problema de clave. Asimétrica: lenta, distribución fácil",
+          "Hash: integridad, no reversible",
+          "SolarWinds: clave privada comprometida = confianza rota",
+          "Supply chain attacks bypassan todo si la firma es válida"
+        ],
+        "next_lesson": {
+          "id": "c3_l2",
+          "title": "Modelos de Autorización",
+          "preview": "Twitter Hack 2020: cuando 1,000 admins tenían god-mode"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": "APT29 (Cozy Bear) compromised 18K+ organizations vía trojanized update"
-  }
+  ]
 }

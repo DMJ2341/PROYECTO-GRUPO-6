@@ -1,186 +1,279 @@
 {
   "id": "c4_l6",
-  "title": "API Security",
-  "description": "Security Orchestration (SOAR)",
+  "title": "Seguridad de contenedores",
+  "description": "Caso Real: Tesla Kubernetes Breach (2018)",
   "type": "interactive",
-  "duration_minutes": 8,
-  "xp_reward": 20,
+  "duration_minutes": 28,
+  "xp_reward": 70,
   "order_index": 6,
   "course_id": 4,
-  "total_screens": 3,
+  "total_screens": 20,
+  "theme": {
+    "primary_color": "#F57C00",
+    "secondary_color": "#03A9F4",
+    "accent_color": "#8BC34A",
+    "gradient": ["#331900", "#663300", "#994d00"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "Security Orchestration (SOAR)",
-      "duration": 180,
+      "type": "story_intro",
+      "title": "Operación: CryptoJacking Tesla",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "smart_toy",
-              "term": "SOAR - Security Orchestration, Automation & Response",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "Platform que automatiza response actions. Integrates tools (SIEM, EDR, firewall). Playbooks: IF alert THEN automated actions. Reduce MTTR.",
-              "example": "Palo Alto Cortex XSOAR, Splunk SOAR, Microsoft Sentinel. Playbook: Phishing alert → Auto-isolate user → Scan email → Block sender → Notify SOC.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "account_tree",
-              "term": "Playbooks",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "Automated workflows. Trigger → Actions → Decision points. Codify tribal knowledge. Example: Ransomware playbook con steps from detection to recovery.",
-              "example": "Ransomware playbook: 1) Detect (EDR alert) → 2) Isolate endpoint (auto-quarantine) → 3) Kill processes → 4) Block C2 IPs → 5) Alert Tier 2 → 6) Create ticket.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "extension",
-              "term": "Integration",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "SOAR connects disparate tools via APIs. Single pane of glass. Example: SIEM detects → SOAR queries threat intel → Blocks at firewall → Updates ticketing.",
-              "example": "Target scenario: SOAR could auto-escalate FireEye alert → Query VirusTotal → If malicious → Isolate POS terminals → Alert management.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "query_stats",
-              "term": "Metrics & Improvement",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "SOAR tracks: MTTR, MTTD, alert volume, automation rate, false positive rate. Data-driven SOC improvement.",
-              "example": "Before SOAR: MTTR 4 hours. After SOAR: MTTR 30 min (auto-containment). Automation handles 70% of alerts, analysts focus on complex 30%.",
-              "color": "#BA68C8"
-            }
-          }
-        ]
+        "headline": "FEBRERO 2018",
+        "subheadline": "Kubernetes console sin contraseña → criptominería masiva",
+        "stats": [
+          {"value": "100%", "label": "CPUs al máximo"},
+          {"value": "$3k+", "label": "Factura AWS"},
+          {"value": "0 días", "label": "Con contraseña"}
+        ],
+        "cta_text": "Investigar K8s Breach"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Automation Candidates",
-      "duration": 240,
+      "type": "story_slide",
+      "title": "K8s Dashboard expuesto",
       "content": {
-        "items": [
+        "icon": "dashboard",
+        "icon_color": "#F57C00",
+        "headline": "Tesla dejó console Kubernetes pública sin auth",
+        "body": "Attacker escanea internet → encuentra kube-dashboard.expósito. Sin contraseña, sin RBAC. Acceso total al cluster. Despliega criptomineros en todos los pods. Factura AWS se dispara. Credenciales internas expuestas en configuración.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Lección: Cloud + containers no son seguros por defecto. Todo necesita defensa explícita."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "crisis_timeline",
+      "title": "⏱️ TESLA K8S BREACH",
+      "content": {
+        "events": [
           {
-            "id": "auto1",
-            "task": "Tier 1 Alert Triage",
-            "subtitle": "Filter noise",
-            "icon": "filter_list",
-            "unlock_content": {
-              "title": "Automate Triage",
-              "points": [
-                "Enrich alerts: Auto-query threat intel, WHOIS, geolocation",
-                "Context gathering: User recent activity, asset criticality",
-                "Severity scoring: ML-based prioritization",
-                "Auto-close: Known false positives (scanner IPs, approved maintenance)",
-                "Escalate: High-severity to human analyst"
-              ],
-              "bonus_fact": "70% of Tier 1 work is automatable. Frees analysts for investigation."
-            }
+            "time": "2017",
+            "icon": "build",
+            "title": "Tesla migra a Kubernetes",
+            "description": "Dashboard instalado con configuración default.",
+            "severity": "warning"
           },
           {
-            "id": "auto2",
-            "task": "Containment Actions",
-            "subtitle": "Speed matters",
-            "icon": "block",
-            "unlock_content": {
-              "title": "Automated Response",
-              "points": [
-                "Endpoint isolation: EDR auto-quarantine on malware detection",
-                "Account disable: Compromised user = auto-disable AD account",
-                "Firewall block: C2 IPs auto-added to block list",
-                "Email quarantine: Phishing detected = recall from all mailboxes",
-                "Colonial benefit: Auto-isolation could limit ransomware spread"
-              ],
-              "bonus_fact": "Manual containment: 30+ min. Automated: <1 min. Ransomware spreads fast."
-            }
+            "time": "Feb 2018",
+            "icon": "public",
+            "title": "Dashboard expuesto a internet",
+            "description": "Sin auth, sin RBAC, sin NetworkPolicy.",
+            "severity": "critical"
           },
           {
-            "id": "auto3",
-            "task": "Threat Intel Enrichment",
-            "subtitle": "Context for decisions",
-            "icon": "info",
-            "unlock_content": {
-              "title": "Intelligence Automation",
-              "points": [
-                "IP reputation: Auto-check VirusTotal, AbuseIPDB, internal history",
-                "Domain reputation: WHOIS age, category, threat feeds",
-                "File hash: Check against malware databases",
-                "User risk score: Aggregate risk indicators",
-                "Auto-escalate: High-risk indicators = priority alert"
-              ],
-              "bonus_fact": "Enrichment reduces investigation time 50%. Analyst has context immediately."
-            }
+            "time": "Feb 2018",
+            "icon": "currency_bitcoin",
+            "title": "Criptominería desplegada",
+            "description": "Mineros en todos los nodos. AWS bill explota.",
+            "severity": "critical"
           },
           {
-            "id": "auto4",
-            "task": "Reporting & Metrics",
-            "subtitle": "Visibility",
-            "icon": "assessment",
-            "unlock_content": {
-              "title": "Automated Reporting",
-              "points": [
-                "Daily SOC metrics: Alerts handled, MTTR, open investigations",
-                "Weekly executive summary: Trends, top threats, actions taken",
-                "Compliance reports: Auto-generate audit trails",
-                "Incident reports: Template population from SOAR case data",
-                "Target lesson: Automated reporting of FireEye alerts could show pattern of dismissals"
-              ],
-              "bonus_fact": "Manual reporting = hours/week. SOAR = minutes. Time saved for hunting."
-            }
+            "time": "Feb 2018",
+            "icon": "report",
+            "title": "Red Team descubre breach",
+            "description": "Investigación revela credenciales internas en config.",
+            "severity": "critical"
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación",
-      "duration": 60,
+      "screen_id": 4,
+      "type": "flip_card_full",
+      "title": "Container Attack Surface",
       "content": {
-        "question": "SOAR primary benefit?",
-        "options": [
-          {
-            "id": "a",
-            "text": "Replace SOC analysts",
-            "is_correct": false,
-            "feedback": "Incorrecto. SOAR augments humans, no reemplaza. Complex decisions need human judgment."
-          },
-          {
-            "id": "b",
-            "text": "Automate repetitive tasks, reduce MTTR, allow analysts to focus on complex threats",
-            "is_correct": true,
-            "feedback": "CORRECTO! SOAR handles 70% repetitive work (enrichment, triage, basic containment). Benefits: 1) Reduce MTTR: Automated containment en seconds vs minutes. 2) Consistent response: Playbooks = same actions every time. 3) Scale: Handle alert volume that humans can't. 4) Analyst retention: Less burnout from repetitive work. 5) Focus: Analysts spend time hunting, investigating complex threats. Target example: SOAR could auto-escalate FireEye alerts con proper enrichment, reducing dismissals."
-          },
-          {
-            "id": "c",
-            "text": "Solo para compliance reporting",
-            "is_correct": false,
-            "feedback": "Incorrecto. Reporting es feature pero main benefit es response automation."
+        "card": {
+          "front": {"icon": "warning", "term": "ATAQUE CONTAINERS", "subtitle": "7 capas de riesgo", "color": "#F57C00"},
+          "back": {
+            "layers": [
+              "1. Imagen vulnerable (CVE)",
+              "2. Container escape (host breakout)",
+              "3. Secrets en plaintext",
+              "4. Privilegios innecesarios",
+              "5. Configuración insegura (Docker socket)",
+              "6. Red expuesta",
+              "7. Orquestador mal configurado (K8s RBAC)"
+            ],
+            "color": "#EF6C00"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "Imágenes Confiables",
+      "content": {
+        "card": {
+          "front": {"icon": "verified", "term": "IMÁGENES SEGURAS", "subtitle": "No FROM scratch siempre", "color": "#8BC34A"},
+          "back": {
+            "best_practices": [
+              "Base images oficiales y minimalistas (alpine, distroless)",
+              "Multi-stage builds",
+              "USER non-root",
+              "No secrets en Dockerfile",
+              "Firmar imágenes (cosign, notary)"
+            ],
+            "color": "#689F38"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "RBAC + NetworkPolicy",
+      "content": {
+        "card": {
+          "front": {"icon": "policy", "term": "RBAC K8s", "subtitle": "Least privilege", "color": "#03A9F4"},
+          "back": {
+            "defense": "Roles y ClusterRoles mínimos. Nadie con admin salvo break-glass.",
+            "networkpolicy": "Por defecto denegar todo tráfico. Allow explícito.",
+            "tesla_fail": "Dashboard con acceso anónimo total",
+            "color": "#0288D1"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "Secrets Management",
+      "content": {
+        "card": {
+          "front": {"icon": "key", "term": "SECRETOS", "subtitle": "Nunca en env vars", "color": "#E91E63"},
+          "back": {
+            "tools": "HashiCorp Vault, AWS Secrets Manager, Sealed Secrets, External Secrets Operator",
+            "tesla_leak": "Credenciales AWS en configuración de pod",
+            "color": "#C2185B"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Runtime Security",
+      "content": {
+        "card": {
+          "front": {"icon": "security", "term": "RUNTIME", "subtitle": "Falco, Sysdig, Aqua", "color": "#388E3C"},
+          "back": {
+            "detecta": "Crypto miners, shell reversa, privilege escalation, container escape",
+            "reglas": "Falco rules por defecto + custom",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "drag_drop_match",
+      "title": "K8s Hardening",
+      "content": {
+        "instruction": "Relaciona control con su función:",
+        "scenarios": [
+          { "id": 1, "text": "Bloquea tráfico entre pods", "correct_target": "netpol" },
+          { "id": 2, "text": "Evita root en container", "correct_target": "nonroot" },
+          { "id": 3, "text": "Detecta cryptojacking", "correct_target": "falco" },
+          { "id": 4, "text": "Escanea imágenes", "correct_target": "trivy" },
+          { "id": 5, "text": "Controla quién hace deploy", "correct_target": "rbac" }
+        ],
+        "targets": [
+          { "id": "netpol", "label": "NetworkPolicy", "color": "#03A9F4" },
+          { "id": "nonroot", "label": "runAsNonRoot", "color": "#F57C00" },
+          { "id": "falco", "label": "Falco", "color": "#D32F2F" },
+          { "id": "trivy", "label": "Trivy/Aqua", "color": "#4CAF50" },
+          { "id": "rbac", "label": "RBAC", "color": "#9C27B0" }
+        ],
+        "xp_per_correct": 8
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "swipe_cards",
+      "title": "Container Security: ¿Seguro?",
+      "content": {
+        "instruction": "¿Es segura esta práctica?",
+        "cards": [
+          {"id": 1, "scenario": "Dashboard K8s público sin auth", "correct_answer": "left"},
+          {"id": 2, "scenario": "PodSecurity Standards enforced", "correct_answer": "right"},
+          {"id": 3, "scenario": "Secrets en env vars plaintext", "correct_answer": "left"},
+          {"id": 4, "scenario": "Imágenes escaneadas en CI/CD", "correct_answer": "right"},
+          {"id": 5, "scenario": "privileged: true en pod", "correct_answer": "left"}
+        ],
+        "labels": {"left": "❌ INSEGURO", "right": "✅ SEGURO"},
+        "xp_per_correct": 10
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: CryptoMiner",
+      "content": {
+        "scenario": "Logs Falco. Encuentra las 2 alertas de cryptojacking.",
+        "log_lines": [
+          {"id": 1, "text": "14:23:11 Normal app startup in pod web-7", "is_suspicious": false},
+          {"id": 2, "text": "14:45:33 Shell spawned in container (kstr1d process)", "is_suspicious": true},
+          {"id": 3, "text": "14:46:12 High CPU usage + process xmrig detected", "is_suspicious": true},
+          {"id": 4, "text": "15:02:15 Normal health check", "is_suspicious": false},
+          {"id": 5, "text": "15:15:42 Pod scheduled normally", "is_suspicious": false}
+        ],
+        "xp_reward": 30
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "timed_quiz",
+      "title": "⚡ Tesla Root Cause",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Qué permitió el breach de Tesla?",
+        "options": [
+          { "id": "a", "text": "Vulnerabilidad zero-day en K8s", "is_correct": false },
+          { "id": "b", "text": "Dashboard expuesto sin autenticación + credenciales en config", "is_correct": true }
+        ],
+        "explanation": "No fue un hack sofisticado. Fue higiene básica: una consola de administración expuesta a todo internet sin contraseña. Las credenciales de AWS estaban en texto plano dentro del pod.",
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "security",
+          "name": "Container Hardened",
+          "description": "Master en seguridad de contenedores y Kubernetes",
+          "rarity": "epic",
+          "color": "#F57C00"
+        }
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 70,
+        "key_takeaways": [
+          "Tesla 2018: K8s dashboard público → cryptojacking",
+          "7 capas de riesgo en containers",
+          "Defensas: RBAC estricto, NetworkPolicy, PodSecurity, non-root, secrets externas",
+          "Escaneo imágenes (Trivy), runtime (Falco), firma imágenes",
+          "Nunca expongas servicios K8s sin auth"
+        ],
+        "next_lesson": {
+          "id": "c4_l7",
+          "title": "Evaluación Final DevSecOps",
+          "preview": "Examen práctico + teórico"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }

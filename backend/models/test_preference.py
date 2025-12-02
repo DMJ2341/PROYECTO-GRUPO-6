@@ -133,7 +133,6 @@ class AcademicReference(Base):
             'reference': self.reference
         }
 
-# ✅ RENOMBRADO: De UserTestResult a TestResult para coincidir con db.py y service
 class TestResult(Base):
     __tablename__ = 'user_test_results'
     
@@ -156,7 +155,6 @@ class TestResult(Base):
     
     user = relationship("User", backref="test_results")
 
-# ✅ RENOMBRADO: De UserTestAnswer a TestAnswer
 class TestAnswer(Base):
     __tablename__ = 'user_test_answers'
     

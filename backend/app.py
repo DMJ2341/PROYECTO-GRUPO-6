@@ -346,22 +346,25 @@ def get_lesson_secure(current_user_id, lesson_id):
                     "message": f"Completa {prev_lesson.title}"
                 }), 403
         
-        # ✅ CORREGIDO: Extraer screens correctamente
+        # Extraer screens correctamente
         screens_data = []
         if lesson.screens:
-            # Si screens es un dict con una key "screens" dentro
             if isinstance(lesson.screens, dict) and "screens" in lesson.screens:
                 screens_data = lesson.screens.get("screens", [])
-            # Si screens ya es una lista
             elif isinstance(lesson.screens, list):
                 screens_data = lesson.screens
+        
+        # --- 🆕 CAMBIO AQUÍ: Extraer el tema visual del contenido ---
+        lesson_theme = lesson.content.get("theme") if lesson.content else None
         
         return jsonify({
             "success": True, 
             "id": lesson.id, 
             "title": lesson.title,
             "description": lesson.description,
-            "screens": screens_data,  # ← Ahora es lista directa
+            "type": lesson.type,        # <--- 🆕 IMPORTANTE: Tipo de juego (crisis, tycoon, etc.)
+            "theme": lesson_theme,      # <--- 🆕 IMPORTANTE: Colores (neón, oscuro, etc.)
+            "screens": screens_data, 
             "total_screens": len(screens_data),
             "duration_minutes": lesson.duration_minutes,
             "xp_reward": lesson.xp_reward or 20

@@ -1,194 +1,465 @@
 {
   "id": "c4_l3",
-  "title": "XSS y CSRF",
-  "description": "Threat Hunting",
+  "title": "Gestión de dependencias",
+  "description": "Caso Real: SolarWinds Supply Chain (2020)",
   "type": "interactive",
-  "duration_minutes": 10,
-  "xp_reward": 20,
+  "duration_minutes": 24,
+  "xp_reward": 60,
   "order_index": 3,
   "course_id": 4,
-  "total_screens": 3,
+  "total_screens": 18,
+  "theme": {
+    "primary_color": "#D32F2F",
+    "secondary_color": "#FF6F00",
+    "accent_color": "#1976D2",
+    "gradient": ["#1a0000", "#330000", "#4d0000"]
+  },
   "screens": [
     {
       "screen_id": 1,
-      "type": "memory_cards",
-      "title": "Threat Hunting",
-      "duration": 240,
+      "type": "story_intro",
+      "title": "Operación: Supply Chain Catastrophe",
       "content": {
-        "cards": [
-          {
-            "id": "1",
-            "front": {
-              "icon": "travel_explore",
-              "term": "Proactive Threat Hunting",
-              "color": "#1976D2"
-            },
-            "back": {
-              "definition": "No esperar alerts. Buscar proactivamente threats que evaded detection. Hypothesis-driven: 'Creo que tenemos X porque Y'. Hunt for evidence.",
-              "example": "Hypothesis: 'Attacker usando living-off-the-land binaries (LOLBins) para evade EDR'. Hunt: Query logs para unusual PowerShell/WMI activity. Target: Hunt for POS anomalies.",
-              "color": "#42A5F5"
-            }
-          },
-          {
-            "id": "2",
-            "front": {
-              "icon": "fingerprint",
-              "term": "IoCs vs TTPs",
-              "color": "#388E3C"
-            },
-            "back": {
-              "definition": "IoC (Indicator of Compromise): Hash, IP, domain. Fácil cambiar. TTP (Tactics, Techniques, Procedures): Behavior. Harder to change.",
-              "example": "IoC: Malware hash 'abc123'. Change 1 byte = new hash. TTP: 'Uses Mimikatz for credential dumping' = detectable behavior regardless of hash.",
-              "color": "#66BB6A"
-            }
-          },
-          {
-            "id": "3",
-            "front": {
-              "icon": "psychology",
-              "term": "Hypothesis Development",
-              "color": "#F57C00"
-            },
-            "back": {
-              "definition": "Generate hunts basado en: threat intel, industry trends, TTPs de APTs relevantes, crown jewels (what attackers want), past incidents.",
-              "example": "Retail: POS malware common. Hypothesis: 'Check for unusual process accessing POS terminal memory'. Target: This hunt would find BlackPOS.",
-              "color": "#FFB74D"
-            }
-          },
-          {
-            "id": "4",
-            "front": {
-              "icon": "fact_check",
-              "term": "Hunt Validation",
-              "color": "#7B1FA2"
-            },
-            "back": {
-              "definition": "Hunt results: True positive (found threat), False positive (benign), or Inconclusive. Document findings. Feed back to detection rules.",
-              "example": "Found: Unusual PowerShell accessing lsass.exe = True positive (credential dumping). Update SIEM rule to auto-alert. Continuous improvement loop.",
-              "color": "#BA68C8"
-            }
-          }
-        ]
+        "headline": "DICIEMBRE 2020",
+        "subheadline": "Nation-state compromete software update, infecta 18,000+ orgs",
+        "stats": [
+          {"value": "18K+", "label": "Orgs comprometidas"},
+          {"value": "9 meses", "label": "Undetected access"},
+          {"value": "US Gov", "label": "Agencies breached"}
+        ],
+        "cta_text": "Investigar Supply Chain Attack"
       }
     },
     {
       "screen_id": 2,
-      "type": "progress_checklist",
-      "title": "Threat Hunting Methodology",
-      "duration": 300,
+      "type": "story_slide",
+      "title": "SolarWinds: Trust Exploited",
       "content": {
-        "items": [
+        "icon": "cloud_sync",
+        "icon_color": "#D32F2F",
+        "headline": "Russian APT Weaponizes Software Update",
+        "body": "SolarWinds Orion: Network monitoring software usado por Fortune 500, US gov. Marzo 2020: Russian APT (SVR) compromise build system. Inject SUNBURST backdoor en Orion update. Diciembre 2020: FireEye detecta breach, investiga, descubre SolarWinds supply chain attack. 18,000+ customers recibieron trojanized update. Scope: Pentagon, DHS, Treasury, Microsoft, Cisco, Intel.",
+        "highlight_box": {
+          "type": "danger",
+          "text": "Supply chain attack: Compromise trusted vendor → infect all customers. Single point of compromise = massive scale. Trust becomes vulnerability."
+        }
+      }
+    },
+    {
+      "screen_id": 3,
+      "type": "crisis_timeline",
+      "title": "⏱️ 9 MESES COMPROMETIDO",
+      "content": {
+        "events": [
           {
-            "id": "hunt1",
-            "task": "1. Define Hypothesis",
-            "subtitle": "What to hunt for?",
-            "icon": "lightbulb",
-            "unlock_content": {
-              "title": "Hypothesis Creation",
-              "points": [
-                "Based on: Recent threat intel, industry sector risks, crown jewels",
-                "Example hypotheses for retail:",
-                "- 'POS terminals infected with RAM scraper'",
-                "- 'Attacker pivoted from vendor VPN to payment network'",
-                "- 'Credentials exfiltrated via DNS tunneling'",
-                "Target example: 'Fazio credentials used to access non-HVAC systems'"
-              ],
-              "bonus_fact": "Good hypothesis is specific, testable, based on realistic threat model."
-            }
+            "time": "Mar 2020",
+            "icon": "engineering",
+            "title": "Build System Compromise",
+            "description": "APT gain access a SolarWinds build environment. Possibly vía compromised credentials o supply chain of supplier.",
+            "severity": "warning"
           },
           {
-            "id": "hunt2",
-            "task": "2. Gather Data",
-            "subtitle": "What logs needed?",
-            "icon": "storage",
-            "unlock_content": {
-              "title": "Data Sources",
-              "points": [
-                "Endpoint: Process execution, file access, network connections, registry changes",
-                "Network: NetFlow, DNS logs, proxy logs, firewall logs",
-                "Authentication: Login attempts, privilege escalation, lateral movement",
-                "Application: Database queries, web app logs, API calls",
-                "Target needed: POS terminal logs, network traffic from POS to external IPs"
-              ],
-              "bonus_fact": "Data retention critical. Can't hunt if logs deleted. Recommend 90+ days minimum."
-            }
+            "time": "Mar-May 2020",
+            "icon": "code",
+            "title": "SUNBURST Development",
+            "description": "Attackers create SUNBURST backdoor. Sophisticated: Dormant 2 weeks, domain generation algorithm (DGA), mimics Orion traffic.",
+            "severity": "critical"
           },
           {
-            "id": "hunt3",
-            "task": "3. Execute Hunt",
-            "subtitle": "Query and analyze",
+            "time": "Jun 2020",
+            "icon": "update",
+            "title": "Trojanized Update Released",
+            "description": "SolarWinds Orion 2019.4 HF 5 release con SUNBURST. Digitally signed (valid signature). 18,000+ customers install 'legitimate' update.",
+            "severity": "critical"
+          },
+          {
+            "time": "Jun-Dec 2020",
+            "icon": "visibility_off",
+            "title": "Silent Reconnaissance",
+            "description": "SUNBURST phones home, awaits commands. APT selectively target ~100 high-value orgs. Steal data, credentials, emails. Undetected.",
+            "severity": "critical"
+          },
+          {
+            "time": "Dec 8, 2020",
             "icon": "search",
-            "unlock_content": {
-              "title": "Analysis Techniques",
-              "points": [
-                "Stack counting: Group by rare events. Outliers are interesting.",
-                "Time-series analysis: Detect anomalies in patterns.",
-                "Correlation: Connect dots across data sources.",
-                "Indicators: Search for known bad (IoCs) while hunting for behavior (TTPs).",
-                "Tools: Splunk, ELK, Jupyter notebooks, custom scripts"
-              ],
-              "bonus_fact": "Hunting is art + science. Experience matters. Pattern recognition improves with time."
+            "title": "FireEye Detects Breach",
+            "description": "FireEye discovers own breach. Forensics revela SolarWinds as infection vector. Alert industry.",
+            "severity": "critical"
+          },
+          {
+            "time": "Dec 13, 2020",
+            "icon": "campaign",
+            "title": "Public Disclosure",
+            "description": "SolarWinds, FireEye, Microsoft disclose. Emergency patching. CISA guidance. National security incident.",
+            "severity": "critical"
+          }
+        ]
+      }
+    },
+    {
+      "screen_id": 4,
+      "type": "crisis_decision",
+      "title": "🚨 Third-Party Software Update",
+      "content": {
+        "scenario": "Eres CISO. SolarWinds (trusted vendor) releases critical security update. Auto-update enabled para 500 servers. Security team quiere test first (1 week). Operations dice 'auto-update para patches rápidos'. ¿Qué decides?",
+        "timer_seconds": 35,
+        "options": [
+          {
+            "id": "auto_update",
+            "text": "Auto-update enabled - Trust vendor, patch ASAP",
+            "icon": "update",
+            "is_correct": false,
+            "consequence": {
+              "title": "Esto fue SolarWinds Victims",
+              "description": "18,000+ orgs auto-updated a trojanized version. Trusted vendor compromised. Even digital signatures can't guarantee safety. Staged rollout + monitoring essential.",
+              "impact_score": -100
             }
           },
           {
-            "id": "hunt4",
-            "task": "4. Document & Improve",
-            "subtitle": "Close the loop",
-            "icon": "assignment",
-            "unlock_content": {
-              "title": "Continuous Improvement",
-              "points": [
-                "Document findings: What found, when, how, impact",
-                "True positive → Incident response + New detection rule",
-                "False positive → Refine hypothesis for next hunt",
-                "Inconclusive → Need better data sources",
-                "Share with team: Knowledge transfer, training",
-                "Target lesson: Document 'FireEye alert X dismissed' → Root cause → Training"
-              ],
-              "bonus_fact": "Mature SOCs: Hunt results feed detection engineering. Virtuous cycle."
+            "id": "staged_rollout",
+            "text": "Staged rollout: Canary servers (5%) → monitor 48h → full deployment",
+            "icon": "science",
+            "is_correct": true,
+            "consequence": {
+              "title": "Defense in Depth",
+              "description": "Canary deployment: Test en small subset, monitor anomalies. 48h window permite detect issues. EDR monitoring critical. Balance speed y safety. Detected SolarWinds early = limited blast radius.",
+              "impact_score": 100,
+              "xp_bonus": 30
             }
           }
         ]
       }
     },
     {
-      "screen_id": 3,
-      "type": "quiz",
-      "title": "Evaluación - Threat Hunting",
-      "duration": 60,
+      "screen_id": 5,
+      "type": "flip_card_full",
+      "title": "Supply Chain Attack",
       "content": {
-        "question": "Diferencia entre reactive detection y proactive hunting?",
-        "options": [
-          {
-            "id": "a",
-            "text": "Son lo mismo",
-            "is_correct": false,
-            "feedback": "Incorrecto. Muy diferentes approaches."
+        "card": {
+          "front": {
+            "icon": "link",
+            "term": "SUPPLY CHAIN ATTACK",
+            "subtitle": "Compromise supplier → infect customers",
+            "color": "#D32F2F"
           },
-          {
-            "id": "b",
-            "text": "Detection espera alerts; Hunting busca proactivamente threats que evaded detection",
-            "is_correct": true,
-            "feedback": "CORRECTO! Reactive detection: SIEM rules → alerts → investigate. Waits for known bad. Proactive hunting: Hypothesis → query logs → find unknowns. Assumes breach already happened but undetected. Detection finds 70-80% of threats. Hunting finds the stealthy 20-30%. Target: FireEye detected (reactive) pero dismissed. Hunting hubiera found BlackPOS proactively (hypothesis: 'POS memory scraping')."
-          },
-          {
-            "id": "c",
-            "text": "Hunting es solo para APTs, detection para malware común",
-            "is_correct": false,
-            "feedback": "Incorrecto. Hunting aplica a cualquier threat que evades detection, no solo APTs."
-          },
-          {
-            "id": "d",
-            "text": "Detection requiere más skill",
-            "is_correct": false,
-            "feedback": "Incorrecto. Hunting requiere más skill (hypothesis, creativity, deep analysis). Detection es más process-driven."
+          "back": {
+            "definition": "Attacker compromise vendor/supplier en supply chain. Inject malicious code en trusted software/hardware. Customers trust vendor, install compromised product.",
+            "why_effective": "Scale: Single compromise → thousands victims. Trust: Victims trust vendor signature/brand. Stealth: Malware appears legitimate.",
+            "examples": [
+              "SolarWinds (2020): Orion update",
+              "CCleaner (2017): Avast software trojanized",
+              "NotPetya (2017): M.E.Doc update (Ukraine)",
+              "ASUS Live Update (2019): Supply chain backdoor"
+            ],
+            "defense": "Vendor security assessments. SBOM. Staged rollouts. EDR monitoring. Trust but verify.",
+            "color": "#C62828"
           }
-        ]
+        }
+      }
+    },
+    {
+      "screen_id": 6,
+      "type": "flip_card_full",
+      "title": "SCA: Software Composition Analysis",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "inventory",
+            "term": "SCA",
+            "subtitle": "Know your dependencies",
+            "color": "#1976D2"
+          },
+          "back": {
+            "definition": "SCA tools analyze dependencies (open source libraries, packages). Identify known vulnerabilities (CVEs), license issues, outdated versions.",
+            "what_it_scans": "Package.json (npm), requirements.txt (pip), pom.xml (Maven), go.mod, Gemfile. Transitive dependencies (dependencies of dependencies).",
+            "tools": [
+              "Snyk (commercial, developer-friendly)",
+              "OWASP Dependency-Check (open source)",
+              "GitHub Dependabot (integrated)",
+              "WhiteSource/Mend (enterprise)"
+            ],
+            "integration": "CI/CD pipeline. Block build si critical vuln. Automated PRs para patches. Continuous monitoring.",
+            "color": "#1565C0"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 7,
+      "type": "flip_card_full",
+      "title": "SBOM: Software Bill of Materials",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "receipt_long",
+            "term": "SBOM",
+            "subtitle": "Ingredients list para software",
+            "color": "#388E3C"
+          },
+          "back": {
+            "definition": "SBOM: Complete list de components/dependencies en software. Like nutrition label pero para code. Machine-readable (SPDX, CycloneDX formats).",
+            "why_critical": "SolarWinds lesson: If no SBOM, how know if you're affected? SBOM permite rapid response: 'Do we use vulnerable component?'",
+            "requirements": [
+              "Executive Order 14028 (Biden, 2021): SBOM mandatory para gov software",
+              "Name, version, supplier de cada component",
+              "Dependency relationships (tree)",
+              "License info, known vulnerabilities"
+            ],
+            "use_cases": "Vulnerability response. License compliance. Supply chain transparency. Procurement decisions.",
+            "color": "#2E7D32"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 8,
+      "type": "flip_card_full",
+      "title": "Transitive Dependencies",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "account_tree",
+            "term": "TRANSITIVE DEPS",
+            "subtitle": "Dependencies of dependencies",
+            "color": "#F57C00"
+          },
+          "back": {
+            "definition": "App depends on Library A. Library A depends on Library B. B = transitive dependency. You didn't choose B directly, pero your app uses it.",
+            "risk": "90%+ de vulnerabilities están en transitive deps. You may not even know they exist. Deep dependency trees.",
+            "example": "Left-pad incident (2016): 11 lines de code, pero dependency de Babel, React. Unpublished → broke internet. One package, thousands affected.",
+            "mitigation": [
+              "SCA scan transitive deps (not just direct)",
+              "Dependency pinning (lock files)",
+              "Regular updates (automated PRs)",
+              "Minimize dependencies (reduce attack surface)"
+            ],
+            "color": "#EF6C00"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 9,
+      "type": "drag_drop_match",
+      "title": "Dependency Risk Scenarios",
+      "content": {
+        "instruction": "Match el scenario con la mitigation strategy:",
+        "scenarios": [
+          {"id": 1, "text": "Open source library con critical CVE disclosed", "correct_target": "sca"},
+          {"id": 2, "text": "Need know ALL components en your app para compliance", "correct_target": "sbom"},
+          {"id": 3, "text": "Trusted vendor releases update (could be compromised)", "correct_target": "staged"},
+          {"id": 4, "text": "Dependency of dependency tiene vulnerability", "correct_target": "transitive"},
+          {"id": 5, "text": "NPM package suddenly unpublished, breaks build", "correct_target": "lock"}
+        ],
+        "targets": [
+          {"id": "sca", "label": "SCA Scanning", "color": "#1976D2"},
+          {"id": "sbom", "label": "Generate SBOM", "color": "#388E3C"},
+          {"id": "staged", "label": "Staged Rollout", "color": "#D32F2F"},
+          {"id": "transitive", "label": "Scan Transitive Deps", "color": "#F57C00"},
+          {"id": "lock", "label": "Dependency Pinning (Lock Files)", "color": "#7B1FA2"}
+        ],
+        "xp_per_correct": 7
+      }
+    },
+    {
+      "screen_id": 10,
+      "type": "flip_card_full",
+      "title": "Dependency Pinning",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "push_pin",
+            "term": "DEPENDENCY PINNING",
+            "subtitle": "Lock exact versions",
+            "color": "#7B1FA2"
+          },
+          "back": {
+            "definition": "Specify exact versions de dependencies, not ranges. Lock files (package-lock.json, requirements.txt, go.sum) ensure reproducible builds.",
+            "without_pinning": "package.json: 'lodash': '^4.0.0' → cualquier 4.x.x version. CI build puede get different version que dev. Left-pad incident.",
+            "with_pinning": "package-lock.json: 'lodash': '4.17.21' → exact version. Everyone gets same version. Reproducible.",
+            "tradeoff": "Security updates require manual bump (or automated PRs). Pero control > surprise updates.",
+            "best_practice": "Pin versions. Use Dependabot/Renovate para automated update PRs. Review + test + merge.",
+            "color": "#6A1B9A"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 11,
+      "type": "flip_card_full",
+      "title": "Code Signing & Verification",
+      "content": {
+        "card": {
+          "front": {
+            "icon": "verified",
+            "term": "CODE SIGNING",
+            "subtitle": "Cryptographic authenticity",
+            "color": "#00897B"
+          },
+          "back": {
+            "definition": "Developer signs code/binaries con private key. Users verify signature con public key. Proves: 1) Author authenticity, 2) No tampering since signed.",
+            "solarwinds_lesson": "SUNBURST fue digitally signed con valid SolarWinds certificate. Signature verified, pero code was malicious. Attackers compromised signing key.",
+            "limitations": "Signature proves 'this came from X', NOT 'this is safe'. If X compromised, signature meaningless.",
+            "best_practices": [
+              "HSM (Hardware Security Module) para signing keys (not on build server)",
+              "Automated builds en isolated environment",
+              "Code review + approval before signing",
+              "Signature verification (but trust but verify)"
+            ],
+            "color": "#00796B"
+          }
+        }
+      }
+    },
+    {
+      "screen_id": 12,
+      "type": "swipe_cards",
+      "title": "Supply Chain Security Practice?",
+      "content": {
+        "instruction": "¿Es esta práctica buena para supply chain security?",
+        "cards": [
+          {
+            "id": 1,
+            "scenario": "Auto-update enabled para ALL third-party software",
+            "correct_answer": "left",
+            "labels": {"left": "❌ RIESGOSA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 2,
+            "scenario": "Generate SBOM para every release, share con customers",
+            "correct_answer": "right",
+            "labels": {"left": "❌ RIESGOSA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 3,
+            "scenario": "No dependency scanning - 'We trust open source community'",
+            "correct_answer": "left",
+            "labels": {"left": "❌ RIESGOSA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 4,
+            "scenario": "SCA en CI/CD, block build si critical CVE found",
+            "correct_answer": "right",
+            "labels": {"left": "❌ RIESGOSA", "right": "✅ SEGURA"}
+          },
+          {
+            "id": 5,
+            "scenario": "Signing keys stored en shared build server",
+            "correct_answer": "left",
+            "labels": {"left": "❌ RIESGOSA", "right": "✅ SEGURA"}
+          }
+        ],
+        "xp_per_correct": 9
+      }
+    },
+    {
+      "screen_id": 13,
+      "type": "log_hunter",
+      "title": "🔍 Hunt: SUNBURST Indicators",
+      "content": {
+        "scenario": "Network logs post-SolarWinds disclosure. Find las 2 lines que indican SUNBURST activity.",
+        "log_lines": [
+          {"id": 1, "text": "2020-12-01 14:23:11 DNS_QUERY host=web-server.internal query=google.com result=success", "is_suspicious": false},
+          {"id": 2, "text": "2020-12-01 18:45:33 DNS_QUERY host=orion-monitor.internal query=avsvmcloud.com result=success", "is_suspicious": true, "reason": "avsvmcloud.com = SUNBURST C2 domain. DGA domain characteristic de SUNBURST backdoor"},
+          {"id": 3, "text": "2020-12-01 19:02:15 PROCESS_CREATE parent=SolarWinds.Orion.Core.BusinessLayer.dll child=rundll32.exe", "is_suspicious": true, "reason": "SUNBURST spawn rundll32 from Orion DLL = known IOC. Process injection technique"},
+          {"id": 4, "text": "2020-12-01 20:15:42 HTTP_REQUEST host=web-server.internal url=https://api.github.com method=GET", "is_suspicious": false},
+          {"id": 5, "text": "2020-12-01 21:33:28 DNS_QUERY host=workstation-5.internal query=microsoft.com result=success", "is_suspicious": false}
+        ],
+        "xp_reward": 25
+      }
+    },
+    {
+      "screen_id": 14,
+      "type": "slider_balance",
+      "title": "⚖️ Frecuencia de Actualización",
+      "content": {
+        "scenario": "¿Con qué frecuencia actualizas las librerías de terceros?",
+        "left_option": {
+          "label": "Rara vez (Si no está roto...)",
+          "icon": "history",
+          "consequences": [
+            "✅ Estabilidad máxima",
+            "❌ Acumulación de deuda técnica",
+            "❌ Vulnerable a CVEs conocidos"
+          ]
+        },
+        "right_option": {
+          "label": "Frecuente (Automático)",
+          "icon": "update",
+          "consequences": [
+            "✅ Siempre protegido (parches)",
+            "✅ Pequeños cambios manejables",
+            "❌ Riesgo de romper builds (necesita tests)"
+          ]
+        },
+        "explanation": "Las vulnerabilidades en dependencias (como Log4j) son críticas. Automatiza las actualizaciones y ten un buen suite de tests para dormir tranquilo."
+      }
+    },
+    {
+      "screen_id": 15,
+      "type": "timed_quiz",
+      "title": "⚡ SolarWinds Impact Scope",
+      "content": {
+        "timer_seconds": 30,
+        "question": "¿Por qué SolarWinds supply chain attack fue tan devastador?",
+        "options": [
+          {"id": "a", "text": "SUNBURST malware era technically undetectable", "is_correct": false},
+          {"id": "b", "text": "Single compromise (trusted vendor) → 18,000+ victims. Scale + trust exploitation", "is_correct": true},
+          {"id": "c", "text": "Attackers tenían zero-day vulnerability", "is_correct": false}
+        ],
+        "explanation": "Supply chain attack power: ONE compromise (SolarWinds build system) → 18,000+ customers infected automatically vía trusted update. Victims trust vendor signature. Scale impossible con direct attacks. SUNBURST detectable con proper monitoring.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 16,
+      "type": "timed_quiz",
+      "title": "⚡ SBOM Purpose",
+      "content": {
+        "timer_seconds": 25,
+        "question": "¿Cuál es el primary benefit de SBOM?",
+        "options": [
+          {"id": "a", "text": "Previene supply chain attacks", "is_correct": false},
+          {"id": "b", "text": "Rapid response: Know instantly si vulnerable component en your software", "is_correct": true},
+          {"id": "c", "text": "Automatically patches vulnerabilities", "is_correct": false}
+        ],
+        "explanation": "SBOM NO previene attacks o auto-patches. Key benefit: Visibility. When Log4Shell disclosed, orgs con SBOM conocían instantly: 'Do we use Log4j? Which versions?' Fast response. Sin SBOM: Weeks searching codebases.",
+        "xp_reward": 20
+      }
+    },
+    {
+      "screen_id": 17,
+      "type": "achievement_unlock",
+      "title": "Logro Desbloqueado",
+      "content": {
+        "achievement": {
+          "icon": "inventory",
+          "name": "Supply Chain Guardian",
+          "description": "Master dependency management & supply chain security",
+          "rarity": "epic",
+          "color": "#D32F2F"
+        }
+      }
+    },
+    {
+      "screen_id": 18,
+      "type": "lesson_complete",
+      "title": "Lección Completada",
+      "content": {
+        "xp_earned": 60,
+        "key_takeaways": [
+          "SolarWinds: Supply chain attack → 18,000+ victims. Single vendor compromise = massive scale",
+          "SCA: Software Composition Analysis. Scan dependencies (direct + transitive) para CVEs",
+          "SBOM: Software Bill of Materials. Mandatory (Biden EO). Know your ingredients.",
+          "Transitive dependencies: 90%+ vulns. Scan entire dependency tree, not just direct",
+          "Defense: SCA scanning, SBOM generation, staged rollouts, dependency pinning, HSM para signing keys"
+        ],
+        "next_lesson": {
+          "id": "c4_l4",
+          "title": "Secure Coding Practices",
+          "preview": "Input validation, output encoding, defensive programming"
+        }
       }
     }
-  ],
-  "success": true,
-  "content": {
-    "intro": ""
-  }
+  ]
 }
