@@ -1,9 +1,11 @@
+@file:OptIn(ExperimentalLayoutApi::class)
 package com.example.cyberlearnapp.ui.screens.lessons
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,25 +18,24 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyberlearnapp.network.models.LessonResponse
+import com.example.cyberlearnapp.network.models.*
 import com.example.cyberlearnapp.utils.getIconByName
-import kotlinx.serialization.json.*
-
+import kotlinx.coroutines.delay
 import com.example.cyberlearnapp.ui.theme.*
 
 // =========================================================================
-// FUNCIÓN PRINCIPAL DE RENDERIZADO DE PANTALLAS DE LECCIÓN
+// DISPATCHER PRINCIPAL
 // =========================================================================
 
 @Composable
 fun LessonScreenRender(
-    lesson: LessonResponse,
+    lesson: LessonDetailResponse,
     screenIndex: Int,
     onNext: () -> Unit,
     onPrev: () -> Unit,
@@ -44,82 +45,46 @@ fun LessonScreenRender(
 
     if (currentScreen == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                "Cargando contenido o fin de lección...",
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            Text("Cargando...", color = TextPrimary)
         }
         return
     }
 
-    val type = currentScreen.type
-    val contentData = currentScreen.content
-    val title = currentScreen.title
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Título de la pantalla
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        // Título
         Text(
-            text = title,
+            text = currentScreen.title,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp),
-            color = MaterialTheme.colorScheme.onBackground
+            color = TextPrimary,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // Contenido principal (con scroll)
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-            when (type) {
-                "step_revelation" -> RenderStepRevelation(contentData)
-                "story_hook" -> RenderStoryHook(contentData)
-                "theory_tabs" -> RenderTheoryTabs(contentData)
-                "theory_section" -> RenderTheorySection(contentData)
-                "interactive_concept" -> RenderInteractiveConcept(contentData)
-                "quiz" -> RenderQuiz(contentData)
-                "memory_cards" -> RenderMemoryCards(contentData)
-                "accordion_list" -> RenderAccordionList(contentData)
-                "progress_checklist" -> RenderProgressChecklist(contentData)
-                else -> {
-                    // Mensaje informativo para tipos no implementados
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = WarningOrange.copy(alpha = 0.2f)
-                        ),
-                        border = BorderStroke(2.dp, WarningOrange)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Icon(
-                                Icons.Default.Warning,
-                                contentDescription = null,
-                                tint = WarningOrange,
-                                modifier = Modifier.size(32.dp)
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                "Tipo de contenido no soportado: $type",
-                                color = TextPrimary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                "Este tipo de pantalla aún no ha sido implementado.",
-                                color = TextSecondary,
-                                fontSize = 14.sp
-                            )
-                        }
-                    }
-                }
+        // Contenido dinámico
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+            when (currentScreen) {
+                is StoryIntro -> RenderStoryIntro(currentScreen.content)
+                is StorySlide -> RenderStorySlide(currentScreen.content)
+                is CrisisTimeline -> RenderCrisisTimeline(currentScreen.content)
+                is CrisisDecision -> RenderCrisisDecision(currentScreen.content, onNext)
+                is FlipCard -> RenderFlipCardFull(currentScreen.content)
+                is SwipeCards -> RenderSwipeCards(currentScreen.content)
+                is DragDropMatch -> RenderDragDropMatch(currentScreen.content)
+                is DragDropBuilder -> RenderDragDropBuilder(currentScreen.content)
+                is LogHunter -> RenderLogHunter(currentScreen.content)
+                is SliderBalance -> RenderSliderBalance(currentScreen.content)
+                is TimedQuiz -> RenderTimedQuiz(currentScreen.content)
+                is BudgetAllocation -> RenderBudgetAllocation(currentScreen.content)
+                is CodePractice -> RenderCodePractice(currentScreen.content)
+                is EvidenceLab -> RenderEvidenceLab(currentScreen.content)
+                is AchievementUnlock -> RenderAchievementUnlock(currentScreen.content)
+                is LessonComplete -> RenderLessonComplete(currentScreen.content)
+                is SummaryStats -> RenderSummaryStats(currentScreen.content)
+                is UnknownScreen -> Text("Tipo no soportado", color = WarningOrange)
             }
         }
 
-        // Botones de navegación
+        // Navegación
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -127,29 +92,22 @@ fun LessonScreenRender(
             Button(
                 onClick = onPrev,
                 enabled = screenIndex > 0,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
+                colors = ButtonDefaults.buttonColors(containerColor = SurfaceElevated)
             ) {
-                Text("Anterior", color = MaterialTheme.colorScheme.onSecondary)
+                Text("Anterior", color = TextSecondary)
             }
             Button(
                 onClick = onNext,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryCyan)
             ) {
-                Text(
-                    if (isLastScreen) "Finalizar" else "Siguiente",
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
+                Text(if (isLastScreen) "Finalizar" else "Siguiente", color = Color.Black, fontWeight = FontWeight.Bold)
             }
         }
     }
 }
 
 // =========================================================================
-// FUNCIÓN DE UTILIDAD: PARSING SEGURO DE COLORES HEXADECIMALES
+// UTILS
 // =========================================================================
 
 fun parseColorHex(hex: String?, default: Color): Color {
@@ -157,630 +115,164 @@ fun parseColorHex(hex: String?, default: Color): Color {
         if (hex.isNullOrBlank()) return default
         val cleanHex = hex.removePrefix("#")
         if (cleanHex.length != 6 && cleanHex.length != 8) return default
-
         val colorValue = cleanHex.toLong(16)
-        val finalValue = if (cleanHex.length == 6) {
-            0xFF000000 or colorValue
-        } else {
-            colorValue
-        }
+        val finalValue = if (cleanHex.length == 6) 0xFF000000 or colorValue else colorValue
         Color(finalValue)
-    } catch (e: Exception) {
-        default
-    }
+    } catch (e: Exception) { default }
 }
 
 // =========================================================================
-// RENDERER: STEP REVELATION
-// Para pantallas tipo "Caso Real" con pasos revelables
+// RENDERERS PARTE 1: STORY + CRISIS + FLIP
 // =========================================================================
 
 @Composable
-fun RenderStepRevelation(content: JsonObject) {
-    val storyTitle = content["story_title"]?.jsonPrimitive?.content
-    val storyIntro = content["story_intro"]?.jsonPrimitive?.content
-    val steps = content["steps"]?.jsonArray
-
-    var currentStep by remember { mutableStateOf(0) }
-    var showInsight by remember { mutableStateOf(false) }
-
+fun RenderStoryIntro(content: StoryIntroContent) {
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Título de la historia
-        if (storyTitle != null) {
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = ErrorRed.copy(alpha = 0.15f)),
+                border = BorderStroke(2.dp, ErrorRed)
+            ) {
+                Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Default.Warning, null, tint = ErrorRed, modifier = Modifier.size(48.dp))
+                    Spacer(Modifier.height(16.dp))
+                    Text(content.headline, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = TextPrimary, textAlign = TextAlign.Center)
+                    Spacer(Modifier.height(8.dp))
+                    Text(content.subheadline, style = MaterialTheme.typography.bodyLarge, color = TextSecondary, textAlign = TextAlign.Center)
+                }
+            }
+        }
+
+        if (content.stats.isNotEmpty()) {
             item {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                    content.stats.forEach { stat ->
+                        Card(
+                            modifier = Modifier.weight(1f).padding(horizontal = 4.dp),
+                            colors = CardDefaults.cardColors(containerColor = PrimaryCyan.copy(alpha = 0.1f))
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(stat.value, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = PrimaryCyan)
+                                Spacer(Modifier.height(4.dp))
+                                Text(stat.label, style = MaterialTheme.typography.bodySmall, color = TextSecondary, textAlign = TextAlign.Center)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderStorySlide(content: StorySlideContent) {
+    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 8.dp)) {
+            Icon(getIconByName(content.icon), null, tint = parseColorHex(content.iconColor, PrimaryCyan), modifier = Modifier.size(40.dp))
+            Spacer(Modifier.width(16.dp))
+            Text(content.headline, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = TextPrimary)
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Text(content.body, style = MaterialTheme.typography.bodyLarge, color = TextSecondary, lineHeight = 24.sp)
+
+        content.highlightBox?.let { box ->
+            Spacer(Modifier.height(24.dp))
+            val boxColor = when (box.type) {
+                "danger" -> ErrorRed
+                "warning" -> WarningOrange
+                "success" -> SuccessGreen
+                else -> PrimaryCyan
+            }
+
+            Card(colors = CardDefaults.cardColors(containerColor = boxColor.copy(alpha = 0.15f)), border = BorderStroke(2.dp, boxColor)) {
+                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.Top) {
+                    Icon(Icons.Default.Lightbulb, null, tint = boxColor, modifier = Modifier.size(24.dp))
+                    Spacer(Modifier.width(12.dp))
+                    Text(box.text, style = MaterialTheme.typography.bodyMedium, color = TextPrimary, lineHeight = 22.sp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderCrisisTimeline(content: CrisisTimelineContent) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        items(content.events) { event ->
+            val severityColor = when (event.severity) {
+                "critical" -> ErrorRed
+                "warning" -> WarningOrange
+                else -> PrimaryCyan
+            }
+
+            Card(colors = CardDefaults.cardColors(containerColor = SurfaceCard), border = BorderStroke(1.dp, severityColor.copy(alpha = 0.3f))) {
+                Row(modifier = Modifier.padding(12.dp)) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(60.dp)) {
+                        Text(event.time, style = MaterialTheme.typography.labelSmall, color = severityColor, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                        Spacer(Modifier.height(4.dp))
+                        Icon(getIconByName(event.icon), null, tint = severityColor)
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(event.title, fontWeight = FontWeight.Bold, color = TextPrimary)
+                        Text(event.description, style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderCrisisDecision(content: CrisisDecisionContent, onNext: () -> Unit) {
+    var timeLeft by remember { mutableIntStateOf(content.timerSeconds) }
+    var selectedOption by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        while (timeLeft > 0 && selectedOption == null) {
+            delay(1000)
+            timeLeft--
+        }
+    }
+
+    Column {
+        Card(colors = CardDefaults.cardColors(containerColor = if (timeLeft <= 10) ErrorRed.copy(0.2f) else WarningOrange.copy(0.2f))) {
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("DECISIÓN CRÍTICA", fontWeight = FontWeight.Bold, color = TextPrimary)
+                Text("${timeLeft}s", fontWeight = FontWeight.Black, color = if (timeLeft <= 10) ErrorRed else WarningOrange)
+            }
+        }
+        Spacer(Modifier.height(16.dp))
+        Text(content.scenario, style = MaterialTheme.typography.bodyLarge, color = TextPrimary)
+        Spacer(Modifier.height(16.dp))
+
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(content.options) { option ->
+                val isSelected = selectedOption == option.id
+                val showResult = selectedOption != null
+                val color = if (showResult && isSelected) (if (option.isCorrect) SuccessGreen else ErrorRed) else PrimaryCyan
+
                 Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = PrimaryPurple.copy(alpha = 0.2f)
-                    ),
-                    border = BorderStroke(2.dp, PrimaryPurple)
+                    onClick = { if (!showResult) selectedOption = option.id },
+                    colors = CardDefaults.cardColors(containerColor = if (isSelected) color.copy(0.2f) else SurfaceCard),
+                    border = BorderStroke(1.dp, if (isSelected) color else SurfaceElevated)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Icon(
-                            Icons.Default.MenuBook,
-                            contentDescription = null,
-                            tint = PrimaryPurple,
-                            modifier = Modifier.size(32.dp)
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            storyTitle,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary
-                        )
-                    }
-                }
-            }
-        }
-
-        // Introducción
-        if (storyIntro != null) {
-            item {
-                Text(
-                    storyIntro,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = TextSecondary,
-                    fontStyle = FontStyle.Italic,
-                    lineHeight = 24.sp
-                )
-            }
-        }
-
-        // Pasos de la historia
-        if (steps != null && steps.isNotEmpty()) {
-            items(steps.size) { index ->
-                if (index <= currentStep) {
-                    val step = steps[index].jsonObject
-                    val stepTitle = step["title"]?.jsonPrimitive?.content ?: ""
-                    val stepContent = step["content"]?.jsonPrimitive?.content ?: ""
-                    val stepInsight = step["insight"]?.jsonPrimitive?.content
-                    val stepIcon = step["icon"]?.jsonPrimitive?.content ?: "info"
-
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = SurfaceCard
-                        ),
-                        border = BorderStroke(
-                            1.dp,
-                            if (index == currentStep) PrimaryCyan else SurfaceElevated
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            // Header del paso
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(
-                                    getIconByName(stepIcon),
-                                    contentDescription = null,
-                                    tint = PrimaryCyan,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(Modifier.width(12.dp))
-
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        "Paso ${index + 1}",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = TextTertiary
-                                    )
-                                    Text(
-                                        stepTitle,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = TextPrimary,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
-                            }
-
-                            Spacer(Modifier.height(12.dp))
-
-                            // Contenido del paso
-                            Text(
-                                stepContent,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TextSecondary,
-                                lineHeight = 22.sp
-                            )
-
-                            // Insight (revelable)
-                            if (stepInsight != null && index == currentStep) {
-                                Spacer(Modifier.height(12.dp))
-
-                                OutlinedButton(
-                                    onClick = { showInsight = !showInsight },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    colors = ButtonDefaults.outlinedButtonColors(
-                                        contentColor = AccentGold
-                                    ),
-                                    border = BorderStroke(1.dp, AccentGold)
-                                ) {
-                                    Icon(
-                                        Icons.Default.Lightbulb,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        if (showInsight) "Ocultar Insight" else "Ver Insight Clave",
-                                        style = MaterialTheme.typography.labelMedium
-                                    )
-                                }
-
-                                AnimatedVisibility(visible = showInsight) {
-                                    Card(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 8.dp),
-                                        colors = CardDefaults.cardColors(
-                                            containerColor = AccentGold.copy(alpha = 0.15f)
-                                        )
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(12.dp),
-                                            verticalAlignment = Alignment.Top
-                                        ) {
-                                            Text("💡", fontSize = 20.sp)
-                                            Spacer(Modifier.width(8.dp))
-                                            Text(
-                                                stepInsight,
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = TextPrimary,
-                                                fontStyle = FontStyle.Italic,
-                                                lineHeight = 20.sp
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Botón para revelar siguiente paso
-            if (currentStep < steps.size - 1) {
-                item {
-                    Button(
-                        onClick = {
-                            currentStep++
-                            showInsight = false
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = PrimaryCyan
-                        )
-                    ) {
-                        Icon(Icons.Default.ArrowForward, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Continuar Historia")
-                    }
-                }
-            } else {
-                // Mensaje final
-                item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = SuccessGreen
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.CheckCircle,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(32.dp)
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(getIconByName(option.icon), null, tint = color)
                             Spacer(Modifier.width(12.dp))
-                            Text(
-                                "Historia completada. Continúa a la siguiente sección.",
-                                color = Color.White,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Text(option.text, color = TextPrimary, fontWeight = FontWeight.SemiBold)
                         }
-                    }
-                }
-            }
-        }
-    }
-}
-
-// =========================================================================
-// RENDERERS DE TIPOS DE CONTENIDO
-// =========================================================================
-
-@Composable
-fun RenderStoryHook(content: JsonObject) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        item {
-            content["image_url"]?.jsonPrimitive?.content?.let { url ->
-                Text(
-                    "Imagen: $url",
-                    color = PrimaryCyan,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-
-            Text(
-                content["narrative"]?.jsonPrimitive?.content ?: "",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            val stats = content["stats"]?.jsonArray
-            if (stats != null) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    stats.forEach { statElement ->
-                        val stat = statElement.jsonObject
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                getIconByName(stat["icon"]?.jsonPrimitive?.content ?: ""),
-                                null,
-                                tint = AccentGold
-                            )
-                            Text(
-                                stat["value"]?.jsonPrimitive?.content ?: "",
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                stat["label"]?.jsonPrimitive?.content ?: "",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun RenderTheoryTabs(content: JsonObject) {
-    val intro = content["intro"]?.jsonPrimitive?.content
-    val tabs = content["tabs"]?.jsonArray
-
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        if (intro != null) {
-            item {
-                Text(
-                    intro,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        }
-
-        items(tabs?.size ?: 0) { index ->
-            val tab = tabs!![index].jsonObject
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            getIconByName(tab["icon"]?.jsonPrimitive?.content ?: ""),
-                            null,
-                            tint = PrimaryCyan
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            tab["title"]?.jsonPrimitive?.content ?: "",
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        tab["text"]?.jsonPrimitive?.content ?: "",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = 20.sp
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun RenderTheorySection(content: JsonObject) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        content["intro"]?.jsonPrimitive?.contentOrNull?.let {
-            item {
-                Text(
-                    it,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        }
-
-        val components = content["components"]?.jsonArray
-        if (components != null) {
-            item {
-                Text(
-                    "Componentes Clave:",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            items(components.size) { index ->
-                val element = components[index]
-                if (element is JsonObject) {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                element["name"]?.jsonPrimitive?.content ?: "",
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        supportingContent = {
-                            Text(
-                                element["description"]?.jsonPrimitive?.content ?: "",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        },
-                        leadingContent = {
-                            Icon(Icons.Default.CheckCircle, null, tint = SuccessGreen)
-                        }
-                    )
-                } else if (element is JsonPrimitive) {
-                    Row(modifier = Modifier.padding(vertical = 4.dp)) {
-                        Icon(
-                            Icons.Default.ArrowRight,
-                            contentDescription = null,
-                            tint = PrimaryCyan
-                        )
-                        Text(
-                            text = element.content,
-                            modifier = Modifier.padding(start = 8.dp),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun RenderInteractiveConcept(content: JsonObject) {
-    val concepts = content["concepts"]?.jsonArray
-
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        item {
-            Text(
-                content["description"]?.jsonPrimitive?.content ?: "",
-                modifier = Modifier.padding(bottom = 16.dp),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-
-        items(concepts?.size ?: 0) { index ->
-            val c = concepts!![index].jsonObject
-            OutlinedCard(
-                modifier = Modifier.fillMaxWidth(),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        c["name"]?.jsonPrimitive?.content ?: "",
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Divider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                    Text(
-                        "Def: ${c["definition"]?.jsonPrimitive?.content ?: ""}",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        lineHeight = 20.sp
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun RenderQuiz(content: JsonObject) {
-    val question = content["question"]?.jsonPrimitive?.content ?: ""
-    val options = content["options"]?.jsonArray
-    var selectedOption by remember { mutableStateOf<String?>(null) }
-    var feedback by remember { mutableStateOf("") }
-
-    Column {
-        Text(
-            question,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 16.dp),
-            color = MaterialTheme.colorScheme.onBackground,
-            lineHeight = 24.sp
-        )
-
-        options?.forEach { element ->
-            val opt = element.jsonObject
-            val id = opt["id"]?.jsonPrimitive?.content
-            val text = opt["text"]?.jsonPrimitive?.content
-            val isCorrect = opt["is_correct"]?.jsonPrimitive?.boolean == true
-            val optFeedback = opt["feedback"]?.jsonPrimitive?.content ?: ""
-
-            val containerColor = when {
-                selectedOption != null && selectedOption == id ->
-                    if (isCorrect) SuccessGreen.copy(alpha = 0.2f)
-                    else ErrorRed.copy(alpha = 0.2f)
-                selectedOption == id -> SurfaceActive
-                else -> MaterialTheme.colorScheme.surface
-            }
-
-            val borderColor = when {
-                selectedOption != null && selectedOption == id ->
-                    if (isCorrect) SuccessGreen else ErrorRed
-                selectedOption == id -> PrimaryCyan
-                else -> MaterialTheme.colorScheme.surfaceVariant
-            }
-
-            Card(
-                onClick = {
-                    selectedOption = id
-                    feedback = optFeedback
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = containerColor
-                ),
-                border = BorderStroke(2.dp, borderColor)
-            ) {
-                Text(
-                    text ?: "",
-                    modifier = Modifier.padding(16.dp),
-                    color = TextPrimary,
-                    lineHeight = 22.sp
-                )
-            }
-        }
-
-        if (feedback.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = SurfaceElevated
-                )
-            ) {
-                Text(
-                    feedback,
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    lineHeight = 22.sp
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun RenderMemoryCards(content: JsonObject) {
-    val cards = content["cards"]?.jsonArray ?: return
-
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(cards.size) { index ->
-            val card = cards[index].jsonObject
-            var flipped by remember { mutableStateOf(false) }
-
-            val frontColorString = card["front"]?.jsonObject?.get("color")?.jsonPrimitive?.content
-            val backColorString = card["back"]?.jsonObject?.get("color")?.jsonPrimitive?.content
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clickable { flipped = !flipped },
-                colors = CardDefaults.cardColors(
-                    containerColor = if (flipped)
-                        parseColorHex(backColorString, SurfaceActive)
-                    else
-                        parseColorHex(frontColorString, PrimaryCyan)
-                )
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (!flipped) {
-                        // FRENTE
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Icon(
-                                getIconByName(
-                                    card["front"]?.jsonObject?.get("icon")?.jsonPrimitive?.content ?: ""
-                                ),
-                                null,
-                                tint = Color.White,
-                                modifier = Modifier.size(48.dp)
-                            )
-                            Spacer(Modifier.height(16.dp))
-                            Text(
-                                card["front"]?.jsonObject?.get("term")?.jsonPrimitive?.content ?: "",
-                                color = Color.White,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                        if (isSelected && showResult) {
                             Spacer(Modifier.height(8.dp))
-                            Text(
-                                "Toca para ver definición",
-                                color = Color.White.copy(alpha = 0.7f),
-                                fontSize = 12.sp
-                            )
-                        }
-                    } else {
-                        // REVERSO
-                        Column(
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            Text(
-                                "Definición:",
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                card["back"]?.jsonObject?.get("definition")?.jsonPrimitive?.content ?: "",
-                                color = Color.White,
-                                fontSize = 15.sp,
-                                lineHeight = 20.sp
-                            )
-
-                            Spacer(Modifier.height(12.dp))
-
-                            Text(
-                                "Ejemplo:",
-                                color = Color.White.copy(alpha = 0.8f),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                card["back"]?.jsonObject?.get("example")?.jsonPrimitive?.content ?: "",
-                                color = Color.White.copy(alpha = 0.9f),
-                                fontSize = 13.sp,
-                                lineHeight = 18.sp
-                            )
+                            Text(option.consequence.title, fontWeight = FontWeight.Bold, color = color)
+                            Text(option.consequence.description, style = MaterialTheme.typography.bodySmall, color = TextSecondary)
                         }
                     }
                 }
@@ -790,440 +282,959 @@ fun RenderMemoryCards(content: JsonObject) {
 }
 
 @Composable
-fun RenderAccordionList(content: JsonObject) {
-    val sections = content["sections"]?.jsonArray ?: return
-    var expandedSection by remember { mutableStateOf<String?>(null) }
-    var expandedItem by remember { mutableStateOf<String?>(null) }
+fun RenderFlipCardFull(content: FlipCardContent) {
+    var flipped by remember { mutableStateOf(false) }
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    // ✅ CORRECCIÓN: Acceso explícito al color
+    val cardColor = if (!flipped) {
+        parseColorHex(content.card.front.color, PrimaryCyan)
+    } else {
+        parseColorHex(content.card.back.color, PrimaryCyan)
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth().height(350.dp).clickable { flipped = !flipped },
+        colors = CardDefaults.cardColors(containerColor = cardColor)  // ✅ Usar cardColor
     ) {
-        items(sections.toList()) { section ->
-            val sec = section.jsonObject
-            val sectionId = sec["id"]?.jsonPrimitive?.content ?: ""
-            val isExpanded = expandedSection == sectionId
-
-            val sectionColor = parseColorHex(
-                sec["color"]?.jsonPrimitive?.content,
-                PrimaryCyan
-            )
-
-            // Sección principal
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        expandedSection = if (isExpanded) null else sectionId
-                        expandedItem = null
-                    },
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                border = BorderStroke(
-                    2.dp,
-                    if (isExpanded) sectionColor else MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        getIconByName(sec["icon"]?.jsonPrimitive?.content ?: ""),
-                        null,
-                        tint = sectionColor
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        sec["title"]?.jsonPrimitive?.content ?: "",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Icon(
-                        if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                        null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-            // Items de la sección (expandible)
-            AnimatedVisibility(visible = isExpanded) {
-                Column(modifier = Modifier.padding(start = 16.dp, top = 8.dp)) {
-                    sec["items"]?.jsonArray?.forEach { item ->
-                        val it = item.jsonObject
-                        val itemId = it["id"]?.jsonPrimitive?.content ?: ""
-                        val isItemExpanded = expandedItem == itemId
-
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .clickable {
-                                    expandedItem = if (isItemExpanded) null else itemId
-                                },
-                            colors = CardDefaults.cardColors(
-                                containerColor = SurfaceElevated
-                            )
-                        ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        getIconByName(it["icon"]?.jsonPrimitive?.content ?: ""),
-                                        null,
-                                        tint = PrimaryCyan,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        it["title"]?.jsonPrimitive?.content ?: "",
-                                        fontWeight = FontWeight.Medium,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    Spacer(Modifier.weight(1f))
-                                    Icon(
-                                        if (isItemExpanded) Icons.Default.ExpandLess
-                                        else Icons.Default.ExpandMore,
-                                        null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-
-                                AnimatedVisibility(visible = isItemExpanded) {
-                                    Column(modifier = Modifier.padding(top = 12.dp)) {
-                                        val details = it["details"]?.jsonObject
-
-                                        DetailRow(
-                                            label = "Definición",
-                                            value = details?.get("definition")?.jsonPrimitive?.content ?: "",
-                                            color = PrimaryCyan
-                                        )
-
-                                        val types = details?.get("types")?.jsonArray?.joinToString(", ") {
-                                            it.jsonPrimitive.content
-                                        }
-                                        if (types != null) {
-                                            DetailRow(
-                                                label = "Tipos",
-                                                value = types,
-                                                color = WarningOrange
-                                            )
-                                        }
-
-                                        DetailRow(
-                                            label = "Caso Real",
-                                            value = details?.get("real_case")?.jsonPrimitive?.content ?: "",
-                                            color = ErrorRed
-                                        )
-
-                                        val prevention = details?.get("prevention")?.jsonArray
-                                        if (prevention != null) {
-                                            Text(
-                                                "Prevención:",
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 12.sp,
-                                                color = SuccessGreen,
-                                                modifier = Modifier.padding(top = 8.dp)
-                                            )
-                                            prevention.forEach { prev ->
-                                                Row(
-                                                    modifier = Modifier.padding(
-                                                        start = 8.dp,
-                                                        top = 2.dp
-                                                    )
-                                                ) {
-                                                    Text("✓", color = SuccessGreen)
-                                                    Spacer(Modifier.width(4.dp))
-                                                    Text(
-                                                        prev.jsonPrimitive.content,
-                                                        fontSize = 12.sp,
-                                                        lineHeight = 18.sp,
-                                                        color = MaterialTheme.colorScheme.onSurface
-                                                    )
-                                                }
-                                            }
-                                        }
-
-                                        val severity = details?.get("severity")?.jsonPrimitive?.content
-                                        if (severity != null) {
-                                            Spacer(Modifier.height(8.dp))
-                                            Box(
-                                                modifier = Modifier
-                                                    .background(
-                                                        when (severity) {
-                                                            "CRÍTICA" -> ErrorRed.copy(alpha = 0.8f)
-                                                            "ALTA" -> WarningOrange.copy(alpha = 0.8f)
-                                                            "MEDIA" -> AccentGold.copy(alpha = 0.8f)
-                                                            else -> SuccessGreen.copy(alpha = 0.8f)
-                                                        },
-                                                        RoundedCornerShape(4.dp)
-                                                    )
-                                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                                            ) {
-                                                Text(
-                                                    "Severidad: $severity",
-                                                    color = Color.White,
-                                                    fontSize = 11.sp,
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+        Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                if (!flipped) {
+                    // FRENTE
+                    Icon(getIconByName(content.card.front.icon), null, tint = Color.White, modifier = Modifier.size(64.dp))
+                    Spacer(Modifier.height(16.dp))
+                    Text(content.card.front.term, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black, color = Color.White)
+                    content.card.front.subtitle?.let { Text(it, color = Color.White.copy(0.8f)) }
+                    Spacer(Modifier.height(16.dp))
+                    Text("Toca para voltear", color = Color.White.copy(0.6f), fontSize = 12.sp)
+                } else {
+                    // REVERSO
+                    Text("DEFINICIÓN", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = Color.White.copy(0.6f))
+                    Spacer(Modifier.height(8.dp))
+                    Text(content.card.back.definition ?: "", style = MaterialTheme.typography.bodyLarge, color = Color.White, textAlign = TextAlign.Center)
                 }
             }
         }
     }
 }
 
-@Composable
-fun DetailRow(label: String, value: String, color: Color) {
-    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        Text(
-            "$label:",
-            fontWeight = FontWeight.Bold,
-            fontSize = 12.sp,
-            color = color
-        )
-        Text(
-            value,
-            fontSize = 13.sp,
-            lineHeight = 18.sp,
-            color = TextPrimary,
-            modifier = Modifier.padding(start = 8.dp, top = 2.dp)
-        )
-    }
-}
 
 @Composable
-fun RenderProgressChecklist(content: JsonObject) {
-    val items = content["items"]?.jsonArray ?: return
-    var completedItems by remember { mutableStateOf(setOf<String>()) }
+fun RenderSwipeCards(content: SwipeCardsContent) {
+    var currentIndex by remember { mutableIntStateOf(0) }
+    var answers by remember { mutableStateOf(mapOf<Int, Boolean>()) }
 
-    Column {
-        val progress = if (items.isNotEmpty()) {
-            completedItems.size.toFloat() / items.size
-        } else {
-            0f
+    if (currentIndex >= content.cards.size) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = SuccessGreen.copy(0.15f)),
+            border = BorderStroke(2.dp, SuccessGreen)
+        ) {
+            Column(modifier = Modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(Icons.Default.CheckCircle, null, tint = SuccessGreen, modifier = Modifier.size(64.dp))
+                Spacer(Modifier.height(16.dp))
+                Text("¡Completado!", style = MaterialTheme.typography.headlineMedium, color = SuccessGreen, fontWeight = FontWeight.Bold)
+                Text("${answers.values.count { it }} de ${content.cards.size} correctas", color = TextSecondary)
+            }
         }
+        return
+    }
+
+    val card = content.cards[currentIndex]
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(content.instruction, color = TextSecondary, textAlign = TextAlign.Center)
+        Spacer(Modifier.height(24.dp))
 
         Card(
-            colors = CardDefaults.cardColors(
-                containerColor = SurfaceCard
-            ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().height(250.dp),
+            colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+            border = BorderStroke(2.dp, PrimaryCyan)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "Progreso del Módulo",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = TextPrimary
-                    )
-                    Text(
-                        "${(progress * 100).toInt()}%",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = PrimaryCyan
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-                LinearProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                        .clip(RoundedCornerShape(4.dp)),
-                    color = PrimaryCyan,
-                    trackColor = SurfaceElevated
-                )
-                Text(
-                    "${completedItems.size} de ${items.size} completados",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondary,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(card.scenario, modifier = Modifier.padding(24.dp), textAlign = TextAlign.Center, color = TextPrimary, style = MaterialTheme.typography.bodyLarge, lineHeight = 24.sp)
+            }
+        }
+
+        Spacer(Modifier.height(32.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            Button(
+                onClick = {
+                    answers = answers + (card.id to (card.correctAnswer == "left"))
+                    currentIndex++
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = ErrorRed),
+                modifier = Modifier.weight(1f).padding(end = 8.dp)
+            ) {
+                Icon(Icons.Default.Close, null)
+                Spacer(Modifier.width(8.dp))
+                Text(content.labels["left"] ?: "Malo")
+            }
+            Button(
+                onClick = {
+                    answers = answers + (card.id to (card.correctAnswer == "right"))
+                    currentIndex++
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen),
+                modifier = Modifier.weight(1f).padding(start = 8.dp)
+            ) {
+                Icon(Icons.Default.Check, null)
+                Spacer(Modifier.width(8.dp))
+                Text(content.labels["right"] ?: "Bueno")
             }
         }
 
         Spacer(Modifier.height(16.dp))
+        Text("${currentIndex + 1} / ${content.cards.size}", color = TextTertiary, fontSize = 14.sp)
+    }
+}
 
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items.forEach { item ->
-                val it = item.jsonObject
-                val itemId = it["id"]?.jsonPrimitive?.content ?: ""
-                val isCompleted = completedItems.contains(itemId)
+@Composable
+fun RenderDragDropMatch(content: DragDropMatchContent) {
+    var matches by remember { mutableStateOf(mapOf<Int, String>()) }
+    var selectedScenario by remember { mutableStateOf<Int?>(null) }
+    var showResults by remember { mutableStateOf(false) }
+
+    Column {
+        Text(content.instruction, color = TextPrimary, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(16.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            content.targets.forEach { target ->
+                Button(
+                    onClick = {
+                        selectedScenario?.let { scenarioId ->
+                            matches = matches + (scenarioId to target.id)
+                            selectedScenario = null
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = parseColorHex(target.color, PrimaryCyan)),
+                    modifier = Modifier.weight(1f),
+                    enabled = selectedScenario != null
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        target.icon?.let { Icon(getIconByName(it), null, tint = Color.White) }
+                        Text(target.label, color = Color.White, fontSize = 12.sp, textAlign = TextAlign.Center)
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(content.scenarios) { scenario ->
+                val isSelected = selectedScenario == scenario.id
+                val matchedTarget = matches[scenario.id]
+                val isCorrect = matchedTarget == scenario.correctTarget
 
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            completedItems = if (isCompleted) {
-                                completedItems - itemId
-                            } else {
-                                completedItems + itemId
-                            }
-                        },
+                    onClick = { if (!showResults) selectedScenario = scenario.id },
                     colors = CardDefaults.cardColors(
-                        containerColor = if (isCompleted)
-                            SuccessGreen.copy(alpha = 0.1f)
-                        else
-                            SurfaceCard
+                        containerColor = when {
+                            showResults && matchedTarget != null -> if (isCorrect) SuccessGreen.copy(0.2f) else ErrorRed.copy(0.2f)
+                            isSelected -> PrimaryCyan.copy(0.2f)
+                            else -> SurfaceCard
+                        }
                     ),
                     border = BorderStroke(
                         2.dp,
-                        if (isCompleted) SuccessGreen else SurfaceElevated
+                        when {
+                            showResults && matchedTarget != null -> if (isCorrect) SuccessGreen else ErrorRed
+                            isSelected -> PrimaryCyan
+                            else -> SurfaceElevated
+                        }
                     )
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Checkbox(
-                                checked = isCompleted,
-                                onCheckedChange = null,
-                                colors = CheckboxDefaults.colors(
-                                    checkedColor = SuccessGreen,
-                                    uncheckedColor = TextSecondary
-                                )
-                            )
-                            Spacer(Modifier.width(12.dp))
-                            Icon(
-                                getIconByName(it["icon"]?.jsonPrimitive?.content ?: ""),
-                                null,
-                                tint = if (isCompleted) SuccessGreen else PrimaryCyan,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(Modifier.width(12.dp))
-                            Text(
-                                it["task"]?.jsonPrimitive?.content ?: "",
-                                fontWeight = if (isCompleted) FontWeight.Bold else FontWeight.Normal,
-                                fontSize = 16.sp,
-                                color = if (isCompleted) TextSecondary else TextPrimary,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-
-                        AnimatedVisibility(visible = isCompleted) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(start = 56.dp, top = 12.dp)
-                                    .background(
-                                        SuccessGreen.copy(alpha = 0.15f),
-                                        RoundedCornerShape(8.dp)
-                                    )
-                                    .padding(16.dp)
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("🎉", fontSize = 24.sp)
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        it["unlock_content"]?.jsonObject?.get("title")?.jsonPrimitive?.content
-                                            ?: "¡Desbloqueado!",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp,
-                                        color = SuccessGreen
-                                    )
-                                }
-
-                                Spacer(Modifier.height(8.dp))
-
-                                it["unlock_content"]?.jsonObject?.get("points")?.jsonArray?.forEach { point ->
-                                    Row(
-                                        modifier = Modifier.padding(vertical = 2.dp)
-                                    ) {
-                                        Text("•", color = SuccessGreen, fontWeight = FontWeight.Bold)
-                                        Spacer(Modifier.width(8.dp))
-                                        Text(
-                                            point.jsonPrimitive.content,
-                                            fontSize = 14.sp,
-                                            lineHeight = 20.sp,
-                                            color = TextPrimary
-                                        )
-                                    }
-                                }
-
-                                val bonusFact = it["unlock_content"]?.jsonObject?.get("bonus_fact")
-                                    ?.jsonPrimitive?.content
-                                if (bonusFact != null) {
-                                    Spacer(Modifier.height(8.dp))
-                                    Card(
-                                        colors = CardDefaults.cardColors(
-                                            containerColor = SurfaceElevated
-                                        )
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(12.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Icon(
-                                                Icons.Default.Lightbulb,
-                                                null,
-                                                tint = AccentGold,
-                                                modifier = Modifier.size(20.dp)
-                                            )
-                                            Spacer(Modifier.width(8.dp))
-                                            Text(
-                                                bonusFact,
-                                                fontSize = 13.sp,
-                                                lineHeight = 18.sp,
-                                                color = TextPrimary,
-                                                fontStyle = FontStyle.Italic
-                                            )
-                                        }
-                                    }
+                    Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(scenario.text, color = TextPrimary, modifier = Modifier.weight(1f))
+                        if (matchedTarget != null) {
+                            val target = content.targets.find { it.id == matchedTarget }
+                            target?.let {
+                                Spacer(Modifier.width(8.dp))
+                                Card(colors = CardDefaults.cardColors(containerColor = parseColorHex(it.color, PrimaryCyan))) {
+                                    Text(it.label, color = Color.White, fontSize = 12.sp, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
                                 }
                             }
                         }
                     }
                 }
             }
-        }
 
-        if (completedItems.size == items.size && items.isNotEmpty()) {
-            Spacer(Modifier.height(16.dp))
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = SuccessGreen
-                ),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Default.EmojiEvents,
-                        null,
-                        tint = Color.White,
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Spacer(Modifier.width(16.dp))
-                    Column {
-                        Text(
-                            "¡Módulo Completado!",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
-                        Text(
-                            "Has dominado todos los conceptos",
-                            color = Color.White.copy(alpha = 0.9f),
-                            fontSize = 14.sp
-                        )
+            if (!showResults && matches.size == content.scenarios.size) {
+                item {
+                    Button(
+                        onClick = { showResults = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryCyan)
+                    ) {
+                        Text("VERIFICAR RESPUESTAS", color = Color.Black, fontWeight = FontWeight.Bold)
                     }
                 }
             }
         }
     }
 }
+
+@Composable
+fun RenderDragDropBuilder(content: DragDropBuilderContent) {
+    var selectedComponents by remember { mutableStateOf(listOf<String>()) }
+
+    Column {
+        Text(content.instruction, color = TextPrimary, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(16.dp))
+
+        Text("COMPONENTES DISPONIBLES:", color = TextSecondary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(8.dp))
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            content.availableComponents.forEach { component ->
+                SuggestionChip(
+                    onClick = { selectedComponents = selectedComponents + component.id },
+                    label = { Text(component.name, fontSize = 12.sp) },
+                    icon = { Icon(Icons.Default.Add, null, modifier = Modifier.size(16.dp)) }
+                )
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth().height(300.dp),
+            colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+            border = BorderStroke(2.dp, PrimaryCyan)
+        ) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (selectedComponents.isEmpty()) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Default.Build, null, tint = TextTertiary, modifier = Modifier.size(48.dp))
+                        Spacer(Modifier.height(8.dp))
+                        Text("ÁREA DE CONSTRUCCIÓN", color = TextTertiary)
+                        Text("Selecciona componentes arriba", color = TextTertiary, fontSize = 12.sp)
+                    }
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        items(selectedComponents) { componentId ->
+                            val component = content.availableComponents.find { it.id == componentId }
+                            component?.let {
+                                Card(colors = CardDefaults.cardColors(containerColor = SurfaceElevated)) {
+                                    Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(Icons.Default.DragHandle, null, tint = PrimaryCyan)
+                                        Spacer(Modifier.width(12.dp))
+                                        Text(it.name, color = TextPrimary)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (selectedComponents.isNotEmpty()) {
+            Spacer(Modifier.height(16.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(
+                    onClick = { selectedComponents = emptyList() },
+                    colors = ButtonDefaults.buttonColors(containerColor = ErrorRed),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("LIMPIAR")
+                }
+                Button(
+                    onClick = { },
+                    colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("VALIDAR")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderLogHunter(content: LogHunterContent) {
+    var selectedIds by remember { mutableStateOf(setOf<Int>()) }
+    var showResults by remember { mutableStateOf(false) }
+    val logs = content.allLogs
+
+    Column {
+        content.instruction?.let {
+            Text(it, color = TextPrimary, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(8.dp))
+        }
+        content.scenario?.let {
+            Text(it, color = TextSecondary, fontSize = 14.sp)
+            Spacer(Modifier.height(16.dp))
+        }
+
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(logs) { log ->
+                val isSelected = selectedIds.contains(log.id)
+                val isSuspicious = log.isSuspiciousCombined
+
+                val borderColor = when {
+                    showResults && isSuspicious -> SuccessGreen
+                    showResults && isSelected && !isSuspicious -> ErrorRed
+                    isSelected -> PrimaryCyan
+                    else -> SurfaceElevated
+                }
+
+                Card(
+                    onClick = {
+                        if (!showResults) {
+                            selectedIds = if (isSelected) selectedIds - log.id else selectedIds + log.id
+                        }
+                    },
+                    border = BorderStroke(1.dp, borderColor),
+                    colors = CardDefaults.cardColors(
+                        containerColor = when {
+                            showResults && isSuspicious -> SuccessGreen.copy(0.1f)
+                            showResults && isSelected && !isSuspicious -> ErrorRed.copy(0.1f)
+                            isSelected -> PrimaryCyan.copy(0.1f)
+                            else -> SurfaceCard
+                        }
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(log.text, fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace, fontSize = 11.sp, color = TextSecondary, lineHeight = 16.sp)
+                        if (showResults && isSuspicious) {
+                            Spacer(Modifier.height(8.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Warning, null, tint = SuccessGreen, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(4.dp))
+                                Text("AMENAZA DETECTADA", color = SuccessGreen, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                            }
+                            log.reason?.let { reason ->
+                                Text(reason, fontSize = 11.sp, color = TextPrimary, fontStyle = FontStyle.Italic)
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(8.dp))
+                if (!showResults) {
+                    Button(
+                        onClick = { showResults = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryCyan)
+                    ) {
+                        Icon(Icons.Default.Search, null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("ANALIZAR LOGS", color = Color.Black, fontWeight = FontWeight.Bold)
+                    }
+                } else {
+                    val correctCount = logs.count { it.isSuspiciousCombined && selectedIds.contains(it.id) }
+                    val totalSuspicious = logs.count { it.isSuspiciousCombined }
+
+                    Card(colors = CardDefaults.cardColors(containerColor = if (correctCount == totalSuspicious) SuccessGreen.copy(0.2f) else WarningOrange.copy(0.2f))) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text("Resultado: $correctCount / $totalSuspicious amenazas detectadas", fontWeight = FontWeight.Bold, color = if (correctCount == totalSuspicious) SuccessGreen else WarningOrange)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderSliderBalance(content: SliderBalanceContent) {
+    var sliderValue by remember { mutableFloatStateOf(50f) }
+    var showExplanation by remember { mutableStateOf(false) }
+
+    Column {
+        Text(content.scenario, color = TextPrimary, style = MaterialTheme.typography.bodyLarge)
+        Spacer(Modifier.height(24.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(getIconByName(content.leftOption.icon), null, tint = ErrorRed)
+                    Spacer(Modifier.width(8.dp))
+                    Text(content.leftOption.label, color = TextPrimary, fontWeight = FontWeight.Bold)
+                }
+                content.leftOption.consequences.forEach { consequence ->
+                    Text("• $consequence", fontSize = 12.sp, color = TextSecondary)
+                }
+            }
+            Spacer(Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(content.rightOption.label, color = TextPrimary, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.width(8.dp))
+                    Icon(getIconByName(content.rightOption.icon), null, tint = SuccessGreen)
+                }
+                content.rightOption.consequences.forEach { consequence ->
+                    Text("• $consequence", fontSize = 12.sp, color = TextSecondary, textAlign = TextAlign.End)
+                }
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        Slider(
+            value = sliderValue,
+            onValueChange = { sliderValue = it },
+            valueRange = 0f..100f,
+            colors = SliderDefaults.colors(thumbColor = PrimaryCyan, activeTrackColor = PrimaryCyan, inactiveTrackColor = SurfaceElevated)
+        )
+
+        Text("Balance: ${sliderValue.toInt()}%", color = PrimaryCyan, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+
+        Spacer(Modifier.height(16.dp))
+
+        Button(
+            onClick = { showExplanation = !showExplanation },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = AccentGold)
+        ) {
+            Icon(Icons.Default.Lightbulb, null)
+            Spacer(Modifier.width(8.dp))
+            Text(if (showExplanation) "Ocultar Análisis" else "Ver Análisis Óptimo")
+        }
+
+        if (showExplanation) {
+            Spacer(Modifier.height(16.dp))
+            Card(colors = CardDefaults.cardColors(containerColor = AccentGold.copy(0.15f)), border = BorderStroke(1.dp, AccentGold)) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("ANÁLISIS", fontWeight = FontWeight.Bold, color = AccentGold)
+                    Spacer(Modifier.height(8.dp))
+                    Text(content.explanation, color = TextPrimary, lineHeight = 22.sp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderTimedQuiz(content: TimedQuizContent) {
+    var timeLeft by remember { mutableIntStateOf(content.timerSeconds) }
+    var selectedOption by remember { mutableStateOf<String?>(null) }
+    var showExplanation by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        while (timeLeft > 0 && selectedOption == null) {
+            delay(1000)
+            timeLeft--
+        }
+    }
+
+    Column {
+        Card(colors = CardDefaults.cardColors(containerColor = if (timeLeft <= 10) ErrorRed.copy(0.2f) else PrimaryCyan.copy(0.2f))) {
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Timer, null, tint = if (timeLeft <= 10) ErrorRed else PrimaryCyan)
+                    Spacer(Modifier.width(8.dp))
+                    Text("TIEMPO", fontWeight = FontWeight.Bold, color = TextPrimary)
+                }
+                Text("${timeLeft}s", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black, color = if (timeLeft <= 10) ErrorRed else PrimaryCyan)
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Text(content.question, style = MaterialTheme.typography.titleMedium, color = TextPrimary)
+        Spacer(Modifier.height(16.dp))
+
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(content.options) { option ->
+                val isSelected = selectedOption == option.id
+                val showResult = selectedOption != null
+                val color = if (showResult && isSelected) (if (option.isCorrect) SuccessGreen else ErrorRed) else PrimaryCyan
+
+                Card(
+                    onClick = { if (!showResult) selectedOption = option.id },
+                    colors = CardDefaults.cardColors(containerColor = if (isSelected && showResult) color.copy(0.2f) else SurfaceCard),
+                    border = BorderStroke(2.dp, if (isSelected) color else SurfaceElevated)
+                ) {
+                    Text(option.text, modifier = Modifier.padding(16.dp), color = TextPrimary, lineHeight = 22.sp)
+                }
+            }
+
+            if (selectedOption != null && !showExplanation) {
+                item {
+                    Button(
+                        onClick = { showExplanation = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentGold)
+                    ) {
+                        Text("VER EXPLICACIÓN")
+                    }
+                }
+            }
+
+            if (showExplanation) {
+                item {
+                    Card(colors = CardDefaults.cardColors(containerColor = SurfaceElevated)) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text("EXPLICACIÓN", fontWeight = FontWeight.Bold, color = AccentGold)
+                            Spacer(Modifier.height(8.dp))
+                            Text(content.explanation, color = TextPrimary, lineHeight = 22.sp)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@Composable
+fun RenderBudgetAllocation(content: BudgetAllocationContent) {
+    var allocations by remember { mutableStateOf(content.categories.associate { it.id to false }.toMutableMap()) }
+    val spent = content.categories.filter { allocations[it.id] == true }.sumOf { it.cost }
+    val remaining = content.totalBudget - spent
+    var showResults by remember { mutableStateOf(false) }
+
+    Column {
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = when {
+                    remaining < 0 -> ErrorRed.copy(0.2f)
+                    remaining == 0 -> SuccessGreen.copy(0.2f)
+                    else -> PrimaryCyan.copy(0.2f)
+                }
+            ),
+            border = BorderStroke(2.dp, when {
+                remaining < 0 -> ErrorRed
+                remaining == 0 -> SuccessGreen
+                else -> PrimaryCyan
+            })
+        ) {
+            Row(modifier = Modifier.fillMaxWidth().padding(20.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Column {
+                    Text("PRESUPUESTO", fontWeight = FontWeight.Bold, color = TextSecondary, fontSize = 12.sp)
+                    Text("Total: $${content.totalBudget / 1000}K", style = MaterialTheme.typography.titleMedium, color = TextPrimary)
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text("RESTANTE", fontWeight = FontWeight.Bold, color = TextSecondary, fontSize = 12.sp)
+                    Text("$${remaining / 1000}K", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black, color = when {
+                        remaining < 0 -> ErrorRed
+                        remaining == 0 -> SuccessGreen
+                        else -> PrimaryCyan
+                    })
+                }
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            items(content.categories) { category ->
+                val isSelected = allocations[category.id] == true
+                val isOptimal = content.optimalAllocation.find { it.id == category.id }?.selected == true
+
+                Card(
+                    onClick = {
+                        if (!showResults) {
+                            allocations = allocations.apply { this[category.id] = !(this[category.id] ?: false) }.toMutableMap()
+                        }
+                    },
+                    colors = CardDefaults.cardColors(
+                        containerColor = when {
+                            showResults && isSelected && isOptimal -> SuccessGreen.copy(0.15f)
+                            showResults && isSelected && !isOptimal -> ErrorRed.copy(0.15f)
+                            showResults && !isSelected && isOptimal -> WarningOrange.copy(0.15f)
+                            isSelected -> PrimaryCyan.copy(0.15f)
+                            else -> SurfaceCard
+                        }
+                    ),
+                    border = BorderStroke(2.dp, when {
+                        showResults && isSelected && isOptimal -> SuccessGreen
+                        showResults && isSelected && !isOptimal -> ErrorRed
+                        showResults && !isSelected && isOptimal -> WarningOrange
+                        isSelected -> PrimaryCyan
+                        else -> SurfaceElevated
+                    })
+                ) {
+                    Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.size(32.dp).background(if (isSelected) PrimaryCyan else SurfaceElevated, RoundedCornerShape(6.dp)), contentAlignment = Alignment.Center) {
+                            if (isSelected) {
+                                Icon(Icons.Default.Check, null, tint = Color.White, modifier = Modifier.size(20.dp))
+                            }
+                        }
+
+                        Spacer(Modifier.width(16.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(category.name, fontWeight = FontWeight.Bold, color = TextPrimary)
+                                if (category.mandatory) {
+                                    Spacer(Modifier.width(8.dp))
+                                    Card(colors = CardDefaults.cardColors(containerColor = ErrorRed)) {
+                                        Text("OBLIGATORIO", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
+                                    }
+                                }
+                            }
+                            Spacer(Modifier.height(4.dp))
+                            Text("Impacto: ${category.impact}", fontSize = 13.sp, color = TextSecondary)
+                            if (showResults && isOptimal && !isSelected) {
+                                Spacer(Modifier.height(4.dp))
+                                Text("⚠️ Se recomienda incluir", fontSize = 12.sp, color = WarningOrange, fontWeight = FontWeight.Bold)
+                            }
+                        }
+
+                        Spacer(Modifier.width(12.dp))
+
+                        Text("$${category.cost / 1000}K", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = if (isSelected) PrimaryCyan else TextSecondary)
+                    }
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(8.dp))
+                if (!showResults) {
+                    Button(
+                        onClick = { showResults = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentGold),
+                        enabled = remaining >= 0
+                    ) {
+                        Icon(Icons.Default.Assessment, null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("EVALUAR ASIGNACIÓN", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderCodePractice(content: CodePracticeContent) {
+    var revealedSnippets by remember { mutableStateOf(setOf<Int>()) }
+
+    Column {
+        Text(content.instruction, color = TextPrimary, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(16.dp))
+
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(content.codeSnippets) { snippet ->
+                val isRevealed = revealedSnippets.contains(snippet.id)
+
+                Card(
+                    onClick = {
+                        revealedSnippets = if (isRevealed) revealedSnippets - snippet.id else revealedSnippets + snippet.id
+                    },
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isRevealed) {
+                            if (snippet.isVulnerable) ErrorRed.copy(0.15f) else SuccessGreen.copy(0.15f)
+                        } else SurfaceCard
+                    ),
+                    border = BorderStroke(2.dp, if (isRevealed) {
+                        if (snippet.isVulnerable) ErrorRed else SuccessGreen
+                    } else SurfaceElevated)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Card(colors = CardDefaults.cardColors(containerColor = PrimaryCyan.copy(0.3f))) {
+                                Text(snippet.language.uppercase(), color = PrimaryCyan, fontSize = 11.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
+                            }
+                            if (!isRevealed) {
+                                Text("Toca para analizar", fontSize = 12.sp, color = TextTertiary, fontStyle = FontStyle.Italic)
+                            }
+                        }
+
+                        Spacer(Modifier.height(12.dp))
+
+                        Card(colors = CardDefaults.cardColors(containerColor = BackgroundMain)) {
+                            Text(snippet.code, fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace, fontSize = 12.sp, color = TextPrimary, lineHeight = 18.sp, modifier = Modifier.padding(12.dp))
+                        }
+
+                        if (isRevealed) {
+                            Spacer(Modifier.height(16.dp))
+                            HorizontalDivider(color = SurfaceElevated)
+                            Spacer(Modifier.height(12.dp))
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(if (snippet.isVulnerable) Icons.Default.Dangerous else Icons.Default.VerifiedUser, null, tint = if (snippet.isVulnerable) ErrorRed else SuccessGreen, modifier = Modifier.size(24.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Text(if (snippet.isVulnerable) "CÓDIGO VULNERABLE" else "CÓDIGO SEGURO", fontWeight = FontWeight.Bold, color = if (snippet.isVulnerable) ErrorRed else SuccessGreen, fontSize = 16.sp)
+                            }
+
+                            snippet.explanation?.let { explanation ->
+                                Spacer(Modifier.height(12.dp))
+                                Text(explanation, color = TextPrimary, lineHeight = 22.sp, fontSize = 14.sp)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderEvidenceLab(content: EvidenceLabContent) {
+    var selectedItems by remember { mutableStateOf(listOf<String>()) }
+    var showResults by remember { mutableStateOf(false) }
+
+    Column {
+        Text(content.instruction, color = TextPrimary, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(8.dp))
+        Text("Selecciona las evidencias en el orden correcto", color = TextSecondary, fontSize = 14.sp)
+        Spacer(Modifier.height(24.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            content.dropZones.sortedBy { it.order ?: 0 }.forEach { zone ->
+                val itemInZone = selectedItems.getOrNull((zone.order ?: 1) - 1)
+                Card(
+                    modifier = Modifier.weight(1f).height(100.dp),
+                    colors = CardDefaults.cardColors(containerColor = if (itemInZone != null) PrimaryCyan.copy(0.15f) else SurfaceCard),
+                    border = BorderStroke(2.dp, if (itemInZone != null) PrimaryCyan else SurfaceElevated)
+                ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(zone.label ?: "Paso ${zone.order}", fontSize = 12.sp, color = TextSecondary, textAlign = TextAlign.Center)
+                            if (itemInZone != null) {
+                                Spacer(Modifier.height(4.dp))
+                                val item = content.evidenceItems.find { it.id == itemInZone }
+                                item?.let {
+                                    Icon(getIconByName(it.icon), null, tint = PrimaryCyan)
+                                    Text(it.name, fontSize = 11.sp, color = TextPrimary, textAlign = TextAlign.Center)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(32.dp))
+
+        Text("EVIDENCIAS DISPONIBLES:", color = TextSecondary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(12.dp))
+
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(content.evidenceItems.filter { !selectedItems.contains(it.id) }) { item ->
+                Card(
+                    onClick = {
+                        if (!showResults && selectedItems.size < content.dropZones.size) {
+                            selectedItems = selectedItems + item.id
+                        }
+                    },
+                    colors = CardDefaults.cardColors(containerColor = SurfaceCard)
+                ) {
+                    Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(getIconByName(item.icon), null, tint = AccentGold, modifier = Modifier.size(28.dp))
+                        Spacer(Modifier.width(16.dp))
+                        Text(item.name, color = TextPrimary, fontWeight = FontWeight.Medium)
+                    }
+                }
+            }
+
+            if (selectedItems.isNotEmpty()) {
+                item {
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Button(
+                            onClick = { selectedItems = emptyList() },
+                            colors = ButtonDefaults.buttonColors(containerColor = ErrorRed),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("LIMPIAR")
+                        }
+                        if (selectedItems.size == content.dropZones.size && !showResults) {
+                            Button(
+                                onClick = { showResults = true },
+                                colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("VERIFICAR")
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (showResults) {
+                item {
+                    val isCorrect = selectedItems.withIndex().all { (index, itemId) ->
+                        content.evidenceItems.find { it.id == itemId }?.correctOrder == index + 1
+                    }
+
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = if (isCorrect) SuccessGreen.copy(0.2f) else WarningOrange.copy(0.2f)),
+                        border = BorderStroke(2.dp, if (isCorrect) SuccessGreen else WarningOrange)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(if (isCorrect) Icons.Default.CheckCircle else Icons.Default.Info, null, tint = if (isCorrect) SuccessGreen else WarningOrange, modifier = Modifier.size(32.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Text(if (isCorrect) "¡ORDEN CORRECTO!" else "REVISA EL ORDEN", fontWeight = FontWeight.Bold, color = if (isCorrect) SuccessGreen else WarningOrange, fontSize = 18.sp)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderAchievementUnlock(content: AchievementUnlockContent) {
+    val achievement = content.achievement
+    val rarityColor = when (achievement.rarity.lowercase()) {
+        "legendary" -> AccentGold
+        "epic" -> PrimaryPurple
+        "rare" -> PrimaryCyan
+        else -> SuccessGreen
+    }
+
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Card(modifier = Modifier.fillMaxWidth(0.9f), colors = CardDefaults.cardColors(containerColor = rarityColor.copy(0.15f)), border = BorderStroke(3.dp, rarityColor)) {
+            Column(modifier = Modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(getIconByName(achievement.icon), null, tint = rarityColor, modifier = Modifier.size(80.dp))
+                Spacer(Modifier.height(24.dp))
+                Text("LOGRO DESBLOQUEADO", style = MaterialTheme.typography.labelLarge, color = rarityColor, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(8.dp))
+                Text(achievement.name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = TextPrimary, textAlign = TextAlign.Center)
+                Spacer(Modifier.height(12.dp))
+                Text(achievement.description, style = MaterialTheme.typography.bodyLarge, color = TextSecondary, textAlign = TextAlign.Center, lineHeight = 24.sp)
+                Spacer(Modifier.height(24.dp))
+                Card(colors = CardDefaults.cardColors(containerColor = rarityColor)) {
+                    Text(achievement.rarity.uppercase(), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderLessonComplete(content: LessonCompleteContent) {
+    LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        item {
+            Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = SuccessGreen.copy(0.15f)), border = BorderStroke(3.dp, SuccessGreen)) {
+                Column(modifier = Modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Default.EmojiEvents, null, tint = SuccessGreen, modifier = Modifier.size(64.dp))
+                    Spacer(Modifier.height(16.dp))
+                    Text("¡LECCIÓN COMPLETADA!", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = SuccessGreen)
+                    Spacer(Modifier.height(8.dp))
+                    Text("+${content.xpEarned} XP", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black, color = AccentGold)
+                }
+            }
+        }
+
+        if (content.keyTakeaways.isNotEmpty()) {
+            item {
+                Card(colors = CardDefaults.cardColors(containerColor = SurfaceCard)) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Lightbulb, null, tint = AccentGold)
+                            Spacer(Modifier.width(12.dp))
+                            Text("PUNTOS CLAVE", fontWeight = FontWeight.Bold, color = TextPrimary, fontSize = 18.sp)
+                        }
+                        Spacer(Modifier.height(16.dp))
+                        content.keyTakeaways.forEach { takeaway ->
+                            Row(modifier = Modifier.padding(vertical = 6.dp)) {
+                                Icon(Icons.Default.CheckCircle, null, tint = SuccessGreen, modifier = Modifier.size(20.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Text(takeaway, color = TextPrimary, lineHeight = 22.sp)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        content.nextLesson?.let { next ->
+            item {
+                Card(colors = CardDefaults.cardColors(containerColor = SurfaceCard), border = BorderStroke(2.dp, PrimaryCyan)) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Text("SIGUIENTE LECCIÓN", style = MaterialTheme.typography.labelMedium, color = PrimaryCyan, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(8.dp))
+                        Text(next.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = TextPrimary)
+                        Spacer(Modifier.height(8.dp))
+                        Text(next.preview, color = TextSecondary, lineHeight = 22.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenderSummaryStats(content: SummaryStatsContent) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        items(content.stats) { stat ->
+            Card(colors = CardDefaults.cardColors(containerColor = parseColorHex(stat.color, PrimaryCyan).copy(0.15f)), border = BorderStroke(1.dp, parseColorHex(stat.color, PrimaryCyan))) {
+                Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(getIconByName(stat.icon), null, tint = parseColorHex(stat.color, PrimaryCyan), modifier = Modifier.size(40.dp))
+                    Spacer(Modifier.width(16.dp))
+                    Column {
+                        Text(stat.value, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = parseColorHex(stat.color, PrimaryCyan))
+                        Text(stat.label, style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+                    }
+                }
+            }
+        }
+
+        content.keyInsight?.let { insight ->
+            item {
+                Card(colors = CardDefaults.cardColors(containerColor = AccentGold.copy(0.15f)), border = BorderStroke(2.dp, AccentGold)) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Lightbulb, null, tint = AccentGold, modifier = Modifier.size(28.dp))
+                            Spacer(Modifier.width(12.dp))
+                            Text("INSIGHT CLAVE", fontWeight = FontWeight.Bold, color = AccentGold, fontSize = 16.sp)
+                        }
+                        Spacer(Modifier.height(12.dp))
+                        Text(insight, color = TextPrimary, lineHeight = 24.sp, fontSize = 15.sp)
+                    }
+                }
+            }
+        }
+
+        content.lessons?.let { lessons ->
+            item {
+                Card(colors = CardDefaults.cardColors(containerColor = SurfaceCard)) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Text("LECCIONES APRENDIDAS", fontWeight = FontWeight.Bold, color = TextPrimary, fontSize = 16.sp)
+                        Spacer(Modifier.height(12.dp))
+                        lessons.forEach { lesson ->
+                            Row(modifier = Modifier.padding(vertical = 4.dp)) {
+                                Text("•", color = PrimaryCyan, fontWeight = FontWeight.Bold)
+                                Spacer(Modifier.width(8.dp))
+                                Text(lesson, color = TextSecondary, lineHeight = 22.sp)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

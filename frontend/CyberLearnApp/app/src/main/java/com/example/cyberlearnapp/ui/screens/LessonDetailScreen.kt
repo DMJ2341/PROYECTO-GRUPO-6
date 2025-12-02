@@ -23,10 +23,12 @@ fun LessonDetailScreen(
     viewModel: LessonViewModel = hiltViewModel(),
     lessonId: String
 ) {
+    // Cargar lección al entrar
     LaunchedEffect(lessonId) {
         viewModel.loadLesson(lessonId)
     }
 
+    // ✅ CAMBIO: lessonResponse ahora es LessonDetailResponse
     val lessonResponse by viewModel.lesson.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
@@ -34,6 +36,7 @@ fun LessonDetailScreen(
 
     var currentScreenIndex by remember { mutableIntStateOf(0) }
 
+    // Dialog de lección completada
     if (completionResult != null) {
         AlertDialog(
             onDismissRequest = { },
@@ -76,6 +79,8 @@ fun LessonDetailScreen(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
+
+                    // ✅ ELIMINADO: Ya no mostramos new_badges porque no existe en el modelo
                 }
             },
             confirmButton = {
@@ -106,54 +111,79 @@ fun LessonDetailScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            if (isLoading && lessonResponse == null) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-            } else if (error != null) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(32.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Lock,
-                        null,
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(64.dp)
-                    )
-                    Text(
-                        "Acceso Bloqueado",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Text(
-                        "Completa las lecciones anteriores primero.",
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { navController.popBackStack() }) {
-                        Text("Volver")
+            when {
+                // Estado de carga
+                isLoading && lessonResponse == null -> {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
+
+                // Estado de error
+                error != null -> {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Lock,
+                            null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            "Acceso Bloqueado",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            error ?: "Error desconocido",
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.padding(horizontal = 24.dp)
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Button(
+                            onClick = {
+                                viewModel.clearError()
+                                navController.popBackStack()
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
+                            Text("Volver al Dashboard")
+                        }
                     }
                 }
-            } else if (lessonResponse != null) {
-                val totalScreens = lessonResponse!!.screens.size
 
-                LessonScreenRender(
-                    lesson = lessonResponse!!,
-                    screenIndex = currentScreenIndex,
-                    onNext = {
-                        if (currentScreenIndex < totalScreens - 1) {
-                            currentScreenIndex++
-                        } else {
-                            if (completionResult == null) {
-                                viewModel.completeLesson(lessonId)
+                // ✅ Estado de contenido cargado
+                lessonResponse != null -> {
+                    val lesson = lessonResponse!!
+                    val totalScreens = lesson.totalScreens
+
+                    LessonScreenRender(
+                        lesson = lesson,
+                        screenIndex = currentScreenIndex,
+                        onNext = {
+                            if (currentScreenIndex < totalScreens - 1) {
+                                currentScreenIndex++
+                            } else {
+                                // Última pantalla: completar lección
+                                if (completionResult == null) {
+                                    viewModel.completeLesson(lessonId)
+                                }
                             }
-                        }
-                    },
-                    onPrev = {
-                        if (currentScreenIndex > 0) currentScreenIndex--
-                    },
-                    isLastScreen = currentScreenIndex == totalScreens - 1
-                )
+                        },
+                        onPrev = {
+                            if (currentScreenIndex > 0) {
+                                currentScreenIndex--
+                            }
+                        },
+                        isLastScreen = currentScreenIndex == totalScreens - 1
+                    )
+                }
             }
         }
     }
