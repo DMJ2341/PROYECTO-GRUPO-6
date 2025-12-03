@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.models.*
-import com.example.cyberlearnapp.network.ApiService
+import com.example.cyberlearnapp.repository.TestRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TestViewModel @Inject constructor(
-    private val apiService: ApiService
+    private val testRepository: TestRepository
 ) : ViewModel() {
 
     private val _questions = MutableStateFlow<List<TestQuestion>>(emptyList())
@@ -28,6 +28,10 @@ class TestViewModel @Inject constructor(
 
     private val _result = MutableStateFlow<TestResult?>(null)
     val result: StateFlow<TestResult?> = _result.asStateFlow()
+
+    // ✅ NUEVO: Para saber si hay resultado previo
+    private val _currentResult = MutableStateFlow<TestResult?>(null)
+    val currentResult: StateFlow<TestResult?> = _currentResult.asStateFlow()
 
     private val _recommendations = MutableStateFlow<Recommendations?>(null)
     val recommendations: StateFlow<Recommendations?> = _recommendations.asStateFlow()
@@ -43,23 +47,47 @@ class TestViewModel @Inject constructor(
 
     private var startTime: Long = 0
 
+    // ✅ NUEVA FUNCIÓN: Verificar resultado previo
+    fun checkExistingResult(token: String) {
+        viewModelScope.launch {
+            try {
+                Log.d("TestViewModel", "🔍 checkExistingResult - INICIO")
+                val response = testRepository.getPreviousResult(token)
+
+                Log.d("TestViewModel", "📦 Response recibida: hasResult=${response.hasResult}, result=${response.result}")
+
+                if (response.hasResult && response.result != null) {
+                    _currentResult.value = response.result
+                    _result.value = response.result // También lo guardamos en result
+                    Log.d("TestViewModel", "✅ _currentResult.value actualizado a: ${_currentResult.value?.recommendedRole}")
+                    Log.d("TestViewModel", "✅ _result.value actualizado a: ${_result.value?.recommendedRole}")
+
+                    // Cargar recomendaciones automáticamente
+                    loadRecommendations(token, response.result.recommendedRole)
+                } else {
+                    _currentResult.value = null
+                    _result.value = null
+                    Log.d("TestViewModel", "ℹ️ No hay resultado previo")
+                }
+            } catch (e: Exception) {
+                Log.e("TestViewModel", "❌ Error verificando resultado: ${e.message}")
+                _currentResult.value = null
+                _result.value = null
+            }
+        }
+    }
+
     fun loadQuestions(token: String) {
-        // Evitar recargar si ya tenemos preguntas
         if (_questions.value.isNotEmpty()) return
 
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                val response = apiService.getQuestions("Bearer $token")
-                if (response.isSuccessful && response.body()?.success == true) {
-                    _questions.value = response.body()!!.questions
-                    startTime = System.currentTimeMillis()
-                    Log.d("TestViewModel", "✅ Preguntas cargadas: ${_questions.value.size}")
-                } else {
-                    _error.value = "Error cargando preguntas: ${response.code()}"
-                    Log.e("TestViewModel", "❌ Error: ${response.errorBody()?.string()}")
-                }
+                val response = testRepository.getQuestions(token)
+                _questions.value = response.questions
+                startTime = System.currentTimeMillis()
+                Log.d("TestViewModel", "✅ Preguntas cargadas: ${_questions.value.size}")
             } catch (e: Exception) {
                 _error.value = e.message ?: "Error desconocido"
                 Log.e("TestViewModel", "❌ Exception: ${e.message}", e)
@@ -76,8 +104,6 @@ class TestViewModel @Inject constructor(
         if (_currentIndex.value < _questions.value.size - 1) {
             _currentIndex.value += 1
         } else {
-            // Al responder la última, marcamos completado localmente.
-            // La UI observará esto para disparar el submitTest.
             Log.d("TestViewModel", "🏁 Todas las preguntas respondidas.")
             _isCompleted.value = true
         }
@@ -90,7 +116,6 @@ class TestViewModel @Inject constructor(
     }
 
     fun submitTest(token: String) {
-        // Evitar doble envío si ya estamos cargando o ya tenemos resultado
         if (_isLoading.value || _result.value != null) return
 
         viewModelScope.launch {
@@ -105,20 +130,12 @@ class TestViewModel @Inject constructor(
 
                 Log.d("TestViewModel", "📤 Enviando ${_answers.value.size} respuestas al servidor...")
 
-                val response = apiService.submitTest("Bearer $token", submission)
+                val response = testRepository.submitTest(token, submission)
+                _result.value = response.result
+                _currentResult.value = response.result // ✅ También actualizamos currentResult
+                Log.d("TestViewModel", "✅ Resultado recibido: ${response.result.recommendedRole}")
 
-                if (response.isSuccessful && response.body()?.success == true) {
-                    val responseResult = response.body()!!.result
-                    // Guardamos el resultado. Al dejar de ser null, la UI navegará.
-                    _result.value = responseResult
-                    Log.d("TestViewModel", "✅ Resultado recibido: ${responseResult.recommendedRole}")
-
-                    // Cargar recomendaciones en segundo plano
-                    loadRecommendations(token, responseResult.recommendedRole)
-                } else {
-                    _error.value = "Error enviando test: ${response.code()}"
-                    Log.e("TestViewModel", "❌ Error API: ${response.errorBody()?.string()}")
-                }
+                loadRecommendations(token, response.result.recommendedRole)
             } catch (e: Exception) {
                 _error.value = e.message ?: "Error de conexión al enviar"
                 Log.e("TestViewModel", "❌ Exception submit: ${e.message}", e)
@@ -131,25 +148,26 @@ class TestViewModel @Inject constructor(
     fun loadRecommendations(token: String, role: String) {
         viewModelScope.launch {
             try {
-                val response = apiService.getRecommendations("Bearer $token", role)
-                if (response.isSuccessful && response.body()?.success == true) {
-                    _recommendations.value = response.body()!!.recommendations
-                }
+                val response = testRepository.getRecommendations(token, role)
+                _recommendations.value = response.recommendations
             } catch (e: Exception) {
                 Log.e("TestViewModel", "❌ Error recomendaciones: ${e.message}")
             }
         }
     }
 
+    // ✅ NUEVA FUNCIÓN: Reset completo (borra resultado local)
     fun resetTest() {
         _currentIndex.value = 0
         _answers.value = emptyMap()
         _result.value = null
+        _currentResult.value = null // ✅ También limpiamos el resultado previo
         _recommendations.value = null
         _isCompleted.value = false
         _error.value = null
+        _questions.value = emptyList() // ✅ Forzar recarga de preguntas
         startTime = System.currentTimeMillis()
-        Log.d("TestViewModel", "🔄 Test reiniciado")
+        Log.d("TestViewModel", "🔄 Test reiniciado completamente")
     }
 
     fun getProgress(): Float {
