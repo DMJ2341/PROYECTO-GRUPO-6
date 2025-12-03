@@ -23,12 +23,10 @@ fun LessonDetailScreen(
     viewModel: LessonViewModel = hiltViewModel(),
     lessonId: String
 ) {
-    // Cargar lección al entrar
     LaunchedEffect(lessonId) {
         viewModel.loadLesson(lessonId)
     }
 
-    // ✅ CAMBIO: lessonResponse ahora es LessonDetailResponse
     val lessonResponse by viewModel.lesson.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
@@ -36,7 +34,7 @@ fun LessonDetailScreen(
 
     var currentScreenIndex by remember { mutableIntStateOf(0) }
 
-    // Dialog de lección completada
+    // ✅ Dialog de lección completada
     if (completionResult != null) {
         AlertDialog(
             onDismissRequest = { },
@@ -79,17 +77,16 @@ fun LessonDetailScreen(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
-
-                    // ✅ ELIMINADO: Ya no mostramos new_badges porque no existe en el modelo
                 }
             },
             confirmButton = {
                 Button(
                     onClick = {
                         viewModel.resetCompletionResult()
+                        // ✅ SEÑAL PARA REFRESCAR DASHBOARD
                         navController.previousBackStackEntry
                             ?.savedStateHandle
-                            ?.set("refresh_dashboard", true)
+                            ?.set("lesson_completed", true)
                         navController.popBackStack()
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -112,12 +109,10 @@ fun LessonDetailScreen(
             contentAlignment = Alignment.Center
         ) {
             when {
-                // Estado de carga
                 isLoading && lessonResponse == null -> {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
 
-                // Estado de error
                 error != null -> {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -158,7 +153,6 @@ fun LessonDetailScreen(
                     }
                 }
 
-                // ✅ Estado de contenido cargado
                 lessonResponse != null -> {
                     val lesson = lessonResponse!!
                     val totalScreens = lesson.totalScreens
@@ -170,7 +164,6 @@ fun LessonDetailScreen(
                             if (currentScreenIndex < totalScreens - 1) {
                                 currentScreenIndex++
                             } else {
-                                // Última pantalla: completar lección
                                 if (completionResult == null) {
                                     viewModel.completeLesson(lessonId)
                                 }

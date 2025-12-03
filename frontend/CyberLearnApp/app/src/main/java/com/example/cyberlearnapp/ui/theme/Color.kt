@@ -13,6 +13,8 @@ val SurfaceCard = Color(0xFF1E2A3A)         // Gris azulado oscuro (Cards están
 val SurfaceElevated = Color(0xFF243447)     // Cards elevados / Contenedores secundarios
 val SurfaceActive = Color(0xFF2A3F5F)       // Elementos seleccionados / activos
 
+val TerminalBlack = Color(0xFF000000)
+
 // --- COLORES PRIMARIOS ---
 val PrimaryCyan = Color(0xFF00E5FF)         // Cian Tech (Botones, links, interacciones)
 val PrimaryTeal = Color(0xFF697763)         // Teal Celestial (Elementos secundarios)
