@@ -28,9 +28,11 @@ class TestPreferenceService:
         """
         session = get_session()
         try:
-            # 1. Validar que tenga 28 respuestas
-            if len(answers) != 28:
-                raise ValueError(f"Se requieren 28 respuestas, recibidas: {len(answers)}")
+            questions = session.query(TestQuestion).all()
+            total_questions = len(questions)
+          
+            if len(answers) != total_questions:
+                raise ValueError(f"Se requieren {total_questions} respuestas, recibidas: {len(answers)}")
             
             # 2. Calcular scores por dimensión
             scores = self._calculate_dimension_scores(answers, session)
