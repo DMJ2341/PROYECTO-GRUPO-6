@@ -1,8 +1,9 @@
+// app/src/main/java/com/example/cyberlearnapp/network/ApiService.kt
+
 package com.example.cyberlearnapp.network
 
-import com.example.cyberlearnapp.models.* // Importamos tus nuevos modelos (TestQuestionsResponse, etc)
+import com.example.cyberlearnapp.models.*
 import com.example.cyberlearnapp.network.models.*
-import com.example.cyberlearnapp.network.models.assessments.*
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
@@ -25,11 +26,15 @@ interface ApiService {
     @POST("api/auth/resend-code")
     suspend fun resendVerificationCode(@Body request: ResendCodeRequest): Response<MessageResponse>
 
+    // ✅ ESTE ES EL ÚNICO refreshToken - Tipo Call<> para uso síncrono en Authenticator
     @POST("api/auth/refresh")
     fun refreshToken(@Body request: Map<String, String>): Call<AuthResponse>
 
     @POST("api/auth/logout")
-    suspend fun logout(@Header("Authorization") token: String, @Body request: Map<String, String>): Response<Unit>
+    suspend fun logout(
+        @Header("Authorization") token: String,
+        @Body request: Map<String, String>
+    ): Response<Unit>
 
     @GET("api/user/dashboard")
     suspend fun getDashboard(@Header("Authorization") token: String): Response<DashboardResponse>
@@ -53,12 +58,11 @@ interface ApiService {
         @Path("courseId") courseId: Int
     ): Response<List<Lesson>>
 
-    // ✅ CAMBIO CRÍTICO: LessonResponse → LessonDetailResponse
     @GET("api/lessons/{lessonId}")
     suspend fun getLessonDetail(
         @Header("Authorization") token: String,
         @Path("lessonId") lessonId: String
-    ): Response<LessonDetailResponse>  // ⬅️ CAMBIO AQUÍ
+    ): Response<LessonDetailResponse>
 
     @POST("api/progress/lesson/{lessonId}")
     suspend fun completeLesson(
@@ -125,22 +129,8 @@ interface ApiService {
 
 
     // ==========================================
-    // 🎓 EVALUACIONES (EXAMEN FINAL)
+    // 🎯 TEST DE PREFERENCIAS
     // ==========================================
-
-    @GET("api/exam/final")
-    suspend fun getFinalExam(@Header("Authorization") token: String): Response<ExamStartResponse>
-
-    @POST("api/exam/final/submit")
-    suspend fun submitFinalExam(
-        @Header("Authorization") token: String,
-        @Body body: ExamSubmitRequest
-    ): Response<ExamResultResponse>
-
-    // ==========================================
-    // 🎯 TEST DE PREFERENCIAS (NUEVO)
-    // ==========================================
-    // Nota: Agregamos "api/" al inicio porque tus rutas en Flask son /api/test/...
 
     @GET("api/test/questions")
     suspend fun getQuestions(
@@ -175,5 +165,4 @@ interface ApiService {
     ): Response<BasicResponse>
 }
 
-// Clase auxiliar simple para respuestas vacías o básicas
 data class BasicResponse(val success: Boolean, val message: String? = null)

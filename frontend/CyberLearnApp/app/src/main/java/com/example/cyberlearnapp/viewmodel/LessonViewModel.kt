@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyberlearnapp.network.models.LessonCompletionData
 import com.example.cyberlearnapp.network.models.LessonDetailResponse
 import com.example.cyberlearnapp.repository.LessonRepository
+import com.example.cyberlearnapp.utils.RefreshEvent
+import com.example.cyberlearnapp.utils.RefreshEventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,10 +16,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LessonViewModel @Inject constructor(
-    private val repository: LessonRepository
+    private val repository: LessonRepository,
+    private val refreshEventBus: RefreshEventBus
 ) : ViewModel() {
 
-    // ✅ CAMBIO: Ahora usamos LessonDetailResponse en lugar de LessonResponse
     private val _lesson = MutableStateFlow<LessonDetailResponse?>(null)
     val lesson: StateFlow<LessonDetailResponse?> = _lesson
 
@@ -39,8 +41,6 @@ class LessonViewModel @Inject constructor(
                 val result = repository.getLesson(lessonId)
                 _lesson.value = result
 
-                // ✅ CORRECCIÓN: Usamos ?. (safe call) para acceder a las propiedades
-                // porque 'result' puede ser null.
                 if (result != null) {
                     Log.d("LessonViewModel", "✅ Lección cargada: ${result.title} (${result.totalScreens} screens)")
                 } else {
@@ -70,6 +70,10 @@ class LessonViewModel @Inject constructor(
                     Log.d("LessonViewModel", "✅ XP ganado: ${result.xp_earned}")
                     Log.d("LessonViewModel", "✅ Lección completada: ${result.lesson_completed}")
                     _completionResult.value = result
+
+                    // ✅ EMITIR EVENTO PARA REFRESCAR DASHBOARD
+                    refreshEventBus.emit(RefreshEvent.Dashboard)
+                    Log.d("LessonViewModel", "📡 Evento de refresco emitido")
                 } else {
                     Log.e("LessonViewModel", "❌ Resultado es null")
                 }
