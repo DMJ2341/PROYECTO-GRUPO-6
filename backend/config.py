@@ -1,5 +1,6 @@
 # backend/config.py
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 # Carga las variables del archivo .env si existe
@@ -18,12 +19,20 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # ==========================================
-    # 🔐 SEGURIDAD
+    # 🔐 SEGURIDAD Y TOKENS
     # ==========================================
     SECRET_KEY = os.getenv('SECRET_KEY')
     if not SECRET_KEY:
         raise ValueError("❌ Error Crítico: No se encontró SECRET_KEY en las variables de entorno.")
     
+    # ✅ TOKENS CONFIGURADOS CORRECTAMENTE
+    # Access Token: Corto por seguridad (se renueva automáticamente)
+    ACCESS_TOKEN_EXPIRES = timedelta(hours=2)  # Aumentado a 2 horas
+    
+    # Refresh Token: Largo para mantener sesión (365 días = 1 año)
+    REFRESH_TOKEN_EXPIRES = timedelta(days=365)
+    
+    # Configuración legacy (mantener por compatibilidad)
     JWT_EXPIRATION_HOURS = 24
     PASSWORD_MIN_LENGTH = 8
     

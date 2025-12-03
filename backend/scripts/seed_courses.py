@@ -39,35 +39,35 @@ def seed_courses():
             "id": 1,
             "title": "Fundamentos de Ciberdefensa",
             "description": "Comprender principios fundamentales de seguridad según estándares NIST.",
-            "level": "Principiante", "xp": 420, "bg": "0D8ABC",
+            "level": "Principiante", "xp": 440, "bg": "0D8ABC",
             "lessons_count": 7 # Usamos esto para iterar
         },
         {
             "id": 2,
             "title": "Seguridad y Defensa de Redes",
             "description": "Arquitecturas de red seguras, TCP/IP y Firewalls.",
-            "level": "Intermedio", "xp": 420, "bg": "555555",
+            "level": "Intermedio", "xp": 415, "bg": "555555",
             "lessons_count": 7
         },
         {
             "id": 3,
             "title": "Criptografía y Gestión de Identidades (IAM)",
             "description": "Implementar y gestionar sistemas de control de acceso (MFA, RBAC).",
-            "level": "Intermedio", "xp": 395, "bg": "6200EA",
+            "level": "Intermedio", "xp": 400, "bg": "6200EA",
             "lessons_count": 6
         },
         {
             "id": 4,
             "title": "Seguridad de Aplicaciones y DevSecOps",
             "description": "Ejecutar procesos de IR según NIST y preservar evidencia.",
-            "level": "Avanzado", "xp": 440, "bg": "C62828",
+            "level": "Avanzado", "xp": 615, "bg": "C62828",
             "lessons_count": 7
         },
         {
             "id": 5,
             "title": "Respuesta a Incidentes y Forense (DFIR)",
             "description": "Aplicar frameworks de gestión de riesgos (RMF) y cumplimiento.",
-            "level": "Avanzado", "xp": 385, "bg": "F9A825",
+            "level": "Avanzado", "xp": 695, "bg": "F9A825",
             "lessons_count": 6
         }
     ]

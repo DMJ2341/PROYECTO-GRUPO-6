@@ -42,3 +42,19 @@ class User(Base):
         if '@uni.pe' in self.email:
             return 'UNI'
         return None
+
+    # --- NUEVA LÓGICA DE NIVELES (Centralizada) ---
+    def get_level(self):
+        """Calcula el nivel basado en 250 XP por nivel."""
+        # 250 XP = 1 Nivel.
+        # 0-249 XP = Nivel 1
+        # 250-499 XP = Nivel 2
+        # ...
+        # 2500+ XP = Nivel 11 (Final)
+        return (self.total_xp // 250) + 1
+    
+    def get_xp_for_next_level(self):
+        """Calcula cuánta XP falta para el siguiente nivel."""
+        current_level = self.get_level()
+        next_level_xp = current_level * 250
+        return next_level_xp - self.total_xp

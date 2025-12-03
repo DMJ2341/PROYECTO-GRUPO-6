@@ -13,8 +13,9 @@ from config import Config
 class AuthService:
     def __init__(self):
         self.secret_key = Config.SECRET_KEY 
-        self.access_expires = timedelta(minutes=30)
-        self.refresh_expires = timedelta(days=30)
+        # ✅ USAR LAS NUEVAS CONFIGURACIONES
+        self.access_expires = Config.ACCESS_TOKEN_EXPIRES
+        self.refresh_expires = Config.REFRESH_TOKEN_EXPIRES
         self.email_service = EmailService()
 
     def _create_token(self, user_id: int, expires_delta: timedelta, is_refresh=False):
@@ -76,8 +77,8 @@ class AuthService:
                 email=email,
                 password_hash=password_hash.decode('utf-8'),
                 name=name,
-                email_verified=False,  #No verificado inicialmente
-                terms_accepted_at=datetime.utcnow()  # Acepta términos al registrarse
+                email_verified=False,
+                terms_accepted_at=datetime.utcnow()
             )
             session.add(user)
             session.commit()
@@ -98,7 +99,7 @@ class AuthService:
             except Exception as e:
                 print(f"⚠️ Error enviando email: {e}")
 
-            # 7. NO generar tokens todavía (usuario debe verificar primero)
+            # 7. NO generar tokens todavía
             return {
                 "success": True,
                 "message": "Usuario registrado. Verifica tu email.",
@@ -115,7 +116,6 @@ class AuthService:
         try:
             email = email.lower()
             
-            # 1. Buscar usuario
             user = session.query(User).filter_by(email=email).first()
             if not user:
                 raise ValueError("Usuario no encontrado")
@@ -123,7 +123,6 @@ class AuthService:
             if user.email_verified:
                 raise ValueError("Este email ya está verificado")
             
-            # 2. Buscar código válido
             verification = session.query(EmailVerificationCode).filter_by(
                 user_id=user.id,
                 code=code,
@@ -136,14 +135,13 @@ class AuthService:
             if verification.is_expired():
                 raise ValueError("El código ha expirado. Solicita uno nuevo.")
             
-            # 3. Marcar email como verificado
             user.email_verified = True
             user.email_verified_at = datetime.utcnow()
             verification.used = True
             session.commit()
             session.refresh(user)
             
-            # 4. Generar tokens ahora que está verificado
+            # ✅ GENERAR TOKENS CON LOS NUEVOS TIEMPOS
             access_token, _ = self._create_token(user.id, self.access_expires)
             refresh_token, refresh_expire = self._create_token(user.id, self.refresh_expires, is_refresh=True)
 
@@ -156,7 +154,6 @@ class AuthService:
             session.add(rt)
             session.commit()
             
-            # 5. Enviar email de bienvenida
             try:
                 self.email_service.send_welcome_email(user.email, user.name)
             except:
@@ -190,7 +187,6 @@ class AuthService:
             if user.email_verified:
                 raise ValueError("Este email ya está verificado")
             
-            # Invalidar códigos anteriores
             old_codes = session.query(EmailVerificationCode).filter_by(
                 user_id=user.id,
                 used=False
@@ -198,7 +194,6 @@ class AuthService:
             for old in old_codes:
                 old.used = True
             
-            # Generar nuevo código
             code = self.email_service.generate_verification_code()
             verification = EmailVerificationCode(
                 user_id=user.id,
@@ -207,7 +202,6 @@ class AuthService:
             session.add(verification)
             session.commit()
             
-            # Enviar email
             self.email_service.send_verification_email(email, code, user.name)
             
             return {
@@ -227,10 +221,10 @@ class AuthService:
             if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
                 raise ValueError("Credenciales inválidas")
             
-            # VERIFICAR QUE EL EMAIL ESTÉ CONFIRMADO
             if not user.email_verified:
                 raise ValueError("Debes verificar tu email antes de iniciar sesión")
 
+            # ✅ GENERAR TOKENS CON LOS NUEVOS TIEMPOS
             access_token, _ = self._create_token(user.id, self.access_expires)
             refresh_token, refresh_expire = self._create_token(user.id, self.refresh_expires, is_refresh=True)
 
@@ -277,8 +271,10 @@ class AuthService:
                 session.commit()
                 raise ValueError("Token inválido")
 
+            # ✅ REVOCAR TOKEN VIEJO
             rt.revoked = True
             
+            # ✅ CREAR NUEVOS TOKENS CON LOS NUEVOS TIEMPOS
             new_access, _ = self._create_token(payload["user_id"], self.access_expires)
             new_refresh, new_expire = self._create_token(payload["user_id"], self.refresh_expires, True)
             

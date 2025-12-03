@@ -227,12 +227,15 @@ def get_user_profile(current_user_id):
             "success": True,
             "user": {
                 "id": user.id, "email": user.email, "name": user.name,
-                "total_xp": user.total_xp, "level": (user.total_xp // 100) + 1,
+                "total_xp": user.total_xp, 
+                "level": user.get_level(),  # <--- USAR MÉTODO NUEVO
+                "xp_next_level": user.get_xp_for_next_level(), # <--- NUEVO DATO ÚTIL
                 "completed_courses": completed_courses, "badges_count": badges_count
             }
         })
     finally:
         session.close()
+
 
 @app.route('/api/user/dashboard', methods=['GET'])
 @token_required
@@ -242,27 +245,70 @@ def get_user_dashboard(current_user_id):
         user = session.query(User).filter_by(id=current_user_id).first()
         streak_service = StreakService()
         
-        # Lógica simplificada para dashboard
-        courses = session.query(Course).order_by(Course.id).all()
-        course_progress_list = []
+        # 1. Obtener TODOS los cursos ordenados
+        all_courses = session.query(Course).order_by(Course.id).all()
+        total_courses = len(all_courses)
         
-        for course in courses:
+        course_progress_list = []
+        completed_count = 0
+        next_course_obj = None # Variable para guardar el siguiente curso sugerido
+
+        for course in all_courses:
+            # Buscar progreso del usuario en este curso
             prog = session.query(UserCourseProgress).filter_by(user_id=current_user_id, course_id=course.id).first()
+            percentage = prog.percentage if prog else 0
+            
+            # Calcular lecciones (estimado o real si tienes la query)
+            total_lessons = session.query(Lesson).filter_by(course_id=course.id).count()
+            # Estimamos lecciones completadas basado en el porcentaje
+            completed_lessons = int((percentage / 100) * total_lessons) if total_lessons > 0 else 0
+
+            # Lógica de Completado y Siguiente Curso
+            if percentage == 100:
+                completed_count += 1
+            elif next_course_obj is None:
+                # El primer curso que NO esté al 100% es el siguiente recomendado
+                next_course_obj = {
+                    "title": course.title,
+                    "level": course.level
+                }
+
+            # Armar el objeto para la lista
             course_progress_list.append({
-                "course_id": course.id, "title": course.title,
-                "percentage": prog.percentage if prog else 0,
-                "completed": prog.percentage == 100 if prog else False
+                "course_id": course.id, 
+                "title": course.title,
+                "completed_lessons": completed_lessons, 
+                "total_lessons": total_lessons,         
+                "percentage": percentage
             })
             
+        current_streak_value = streak_service.update_and_get_streak(current_user_id)
+        
+        # 2. Contar medallas reales del usuario
+        badges_count = session.query(UserBadge).filter_by(user_id=current_user_id).count()
+        
+        # 3. Verificar si hizo el test de preferencias
         has_preference_result = session.query(TestResult).filter_by(user_id=current_user_id).first() is not None
+        
+        # 4. Verificar si completó todos los cursos (Equivalente a pasar el "Examen Final" del programa)
+        final_exam_passed = (completed_count == total_courses) and (total_courses > 0)
         
         return jsonify({
             "success": True,
             "dashboard": {
                 "total_xp": user.total_xp,
-                "current_streak": streak_service.get_current_streak(current_user_id),
+                "level": user.get_level(), # <--- USAR MÉTODO NUEVO
+                "xp_next_level": user.get_xp_for_next_level(), # <--- OPCIONAL: Enviarlo al dashboard también
+                "current_streak": current_streak_value,
+                
+                # ... resto de campos igual ...
+                "badges_count": badges_count,           
                 "courses_progress": course_progress_list,
-                "has_preference_result": has_preference_result
+                "next_course": next_course_obj,         
+                "completed_courses": completed_count,
+                "total_courses": total_courses,         
+                "has_preference_result": has_preference_result,
+                "final_exam_passed": final_exam_passed  
             }
         })
     finally:

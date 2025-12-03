@@ -1,4 +1,4 @@
-# backend/services/progress_service.py - COMPLETAMENTE CORREGIDO
+# backend/services/progress_service.py
 from database.db import get_session
 from models.user_progress import UserCourseProgress, UserLessonProgress
 from models.lesson import Lesson
@@ -10,56 +10,36 @@ from datetime import datetime
 
 activity_service = ActivityService()
 
+
 def mark_lesson_completed(user_id: int, lesson_id: str):
     session = get_session()
     try:
-        #1. Obtener usuario
         user = session.query(User).filter_by(id=user_id).first()
         if not user:
             return {"error": "user_not_found"}
 
-        #2. Obtener lección
         lesson = session.query(Lesson).filter_by(id=lesson_id).first()
         if not lesson:
             return {"error": "lesson_not_found"}
 
-        #3. Obtener curso (para incluir title en respuesta)
         course = session.query(Course).filter_by(id=lesson.course_id).first()
-        if not course:
-            return {"error": "course_not_found"}
 
-        #4. Buscar o crear registro de progreso de la lección
+        # Verificar si ya estaba completada
         progress = session.query(UserLessonProgress).filter_by(
             user_id=user_id, lesson_id=lesson_id
         ).first()
 
-        # Calcular progreso actual del curso
-        completed_count = session.query(UserLessonProgress).join(Lesson).filter(
-            UserLessonProgress.user_id == user_id,
-            Lesson.course_id == lesson.course_id,
-            UserLessonProgress.completed == True
-        ).count()
-        
-        total_count = session.query(Lesson).filter_by(course_id=lesson.course_id).count()
-        percentage = int((completed_count / total_count) * 100) if total_count > 0 else 0
+        # Calcular XP a otorgar
+        xp_amount = lesson.xp_reward if lesson.xp_reward else 20
 
-        # Si ya está completada, devolver respuesta válida sin dar XP
-        if progress and progress.completed:
-            return {
-                "lesson_completed": True,
-                "xp_earned": 0,
-                "new_badges": [],
-                "course_progress": {
-                    "course_id": lesson.course_id,
-                    "title": course.title, 
-                    "percentage": percentage,
-                    "completed_lessons": completed_count,
-                    "total_lessons": total_count,
-                    "course_completed": percentage == 100
-                }
-            }
+        # Si ya estaba completada → no dar XP de nuevo
+        xp_earned = 0
+        if not progress or not progress.completed:
+            xp_earned = xp_amount
+            current_xp = user.total_xp if user.total_xp is not None else 0
+            user.total_xp = current_xp + xp_earned
 
-        #5. Crear o actualizar progreso
+        # Crear o actualizar progreso de la lección
         if not progress:
             progress = UserLessonProgress(
                 user_id=user_id,
@@ -70,102 +50,95 @@ def mark_lesson_completed(user_id: int, lesson_id: str):
             )
             session.add(progress)
         else:
-            progress.completed = True
-            progress.completed_at = datetime.utcnow()
+            if not progress.completed:
+                progress.completed = True
+                progress.completed_at = datetime.utcnow()
             progress.attempts += 1
 
-        #6. ACTUALIZAR XP DEL USUARIO (CRÍTICO)
-        xp_amount = lesson.xp_reward if lesson.xp_reward else 20
-        user.total_xp += xp_amount  
+        # Registrar actividad solo si se ganó XP
+        if xp_earned > 0:
+            activity_service.create_activity(
+                user_id=user_id,
+                activity_type="lesson_completed",
+                points=xp_earned,
+                lesson_id=lesson_id,
+                description=f"Lección {lesson_id} completada",
+                session=session
+            )
 
-        #7. Registrar actividad 
-        activity_service.create_activity(
-            user_id=user_id,
-            activity_type="lesson_completed",
-            points=xp_amount,
-            lesson_id=lesson_id,
-            description=f"Lección {lesson_id} completada",
-            session=session  
-        )
-
-        # 8. Calcular progreso del CURSO
-        course_id = lesson.course_id
-
-        # Recalcular después de agregar esta lección
+        # Calcular progreso del curso
+        total_lessons = session.query(Lesson).filter_by(course_id=lesson.course_id).count()
         completed_count = session.query(UserLessonProgress).join(Lesson).filter(
             UserLessonProgress.user_id == user_id,
-            Lesson.course_id == course_id,
+            Lesson.course_id == lesson.course_id,
             UserLessonProgress.completed == True
         ).count()
 
-        total_count = session.query(Lesson).filter_by(course_id=course_id).count()
-        percentage = int((completed_count / total_count) * 100) if total_count > 0 else 0
+        percentage = int((completed_count / total_lessons) * 100) if total_lessons > 0 else 0
 
-        course_progress = session.query(UserCourseProgress).filter_by(
-            user_id=user_id, course_id=course_id
+        # Actualizar progreso del curso
+        course_prog = session.query(UserCourseProgress).filter_by(
+            user_id=user_id, course_id=lesson.course_id
         ).first()
 
-        if not course_progress:
-            course_progress = UserCourseProgress(
+        if not course_prog:
+            course_prog = UserCourseProgress(
                 user_id=user_id,
-                course_id=course_id,
+                course_id=lesson.course_id,
                 completed_lessons=completed_count,
-                total_lessons=total_count,
+                total_lessons=total_lessons,
                 percentage=percentage
             )
-            if percentage == 100:
-                course_progress.completed_at = datetime.utcnow()
-            session.add(course_progress)
+            session.add(course_prog)
         else:
-            course_progress.completed_lessons = completed_count
-            course_progress.total_lessons = total_count
-            course_progress.percentage = percentage
-            if percentage == 100 and not course_progress.completed_at:
-                course_progress.completed_at = datetime.utcnow()
+            course_prog.completed_lessons = completed_count
+            course_prog.total_lessons = total_lessons
+            course_prog.percentage = percentage
+            if percentage == 100 and not course_prog.completed_at:
+                course_prog.completed_at = datetime.utcnow()
 
-        #9. VERIFICAR Y OTORGAR BADGES
-        
-        session.flush() 
-        
+        # Detectar nuevas insignias
+        session.flush()
         badge_service = BadgeService()
         new_badges = badge_service.check_and_award_badges(user_id, session)
 
+        # COMMIT + REFRESH (¡ESTO ES LO QUE ARREGLA EL PROBLEMA DEL XP!)
         session.commit()
-        
+        session.refresh(user)   # ← ¡AQUÍ ESTÁ LA MAGIA!
+
         return {
             "lesson_completed": True,
-            "xp_earned": xp_amount,
+            "xp_earned": xp_earned,
             "new_badges": new_badges,
             "course_progress": {
-                "course_id": course_id,
-                "title": course.title, 
+                "course_id": lesson.course_id,
+                "title": course.title if course else "Curso",
                 "percentage": percentage,
                 "completed_lessons": completed_count,
-                "total_lessons": total_count,
-                "course_completed": percentage == 100
+                "total_lessons": total_lessons,
+                "completed": percentage == 100
             }
         }
+
     except Exception as e:
         session.rollback()
-        print(f"❌ ERROR en mark_lesson_completed: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        print(f"Error en progress: {e}")
         raise e
     finally:
         session.close()
 
+
+# La otra función la dejas tal cual
 def get_user_course_progress(user_id: int, course_id: int = None):
     session = get_session()
     try:
         if course_id:
-            progress = session.query(UserCourseProgress).filter_by(
-                user_id=user_id, course_id=course_id
-            ).first()
+            progress = session.query(UserCourseProgress).filter_by(user_id=user_id, course_id=course_id).first()
             if progress:
                 course = session.query(Course).filter_by(id=course_id).first()
                 return {
                     "course_id": progress.course_id,
-                    "title": course.title if course else "Unknown",  
+                    "title": course.title,
                     "percentage": progress.percentage,
                     "completed_lessons": progress.completed_lessons,
                     "total_lessons": progress.total_lessons
@@ -178,7 +151,7 @@ def get_user_course_progress(user_id: int, course_id: int = None):
             course = session.query(Course).filter_by(id=p.course_id).first()
             result.append({
                 "course_id": p.course_id,
-                "title": course.title if course else "Unknown",  
+                "title": course.title,
                 "percentage": p.percentage,
                 "completed_lessons": p.completed_lessons,
                 "total_lessons": p.total_lessons

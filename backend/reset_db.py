@@ -92,4 +92,3 @@ if __name__ == "__main__":
              print(f"⚠️ No se pudo restaurar la vista automáticamente: {e}")
 
         print("✅ Base de datos reiniciada exitosamente.")
-
