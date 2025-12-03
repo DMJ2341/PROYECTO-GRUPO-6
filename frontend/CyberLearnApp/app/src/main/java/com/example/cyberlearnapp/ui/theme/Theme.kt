@@ -22,6 +22,7 @@ private val DarkColorScheme = darkColorScheme(
     surface = SurfaceCard,                 // Superficie de cards y componentes
     surfaceVariant = SurfaceElevated,      // Contenedores secundarios
 
+
     // --- COLORES PRIMARIOS ---
     primary = PrimaryCyan,                 // Botones principales e interacciones
     onPrimary = BackgroundMain,            // Texto sobre primario (oscuro para contraste)
