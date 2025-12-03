@@ -13,8 +13,7 @@ DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/cour
 
 def load_lesson_json(course_num, lesson_num):
     """Carga el archivo JSON completo de una lección."""
-    # Ajuste: Buscar tanto 'lesson_X_Y.json' como 'c1_l1.json' por si acaso, 
-    # pero tu estructura actual es lesson_1_1.json, así que mantenemos ese estándar.
+    
     file_name = f"lesson_{course_num}_{lesson_num}.json"
     file_path = os.path.join(DATA_DIR, f"course_{course_num}", file_name)
     
@@ -32,15 +31,14 @@ def seed_courses():
     session = get_session()
     print("🚀 Iniciando carga de Cursos y Lecciones (Black Edition)...")
 
-    # Estructura base de Cursos (Los títulos y descripciones vienen de aquí, 
-    # pero el contenido detallado viene de los JSONs)
+    # Estructura base de Cursos 
     courses_struct = [
         {
             "id": 1,
             "title": "Fundamentos de Ciberdefensa",
             "description": "Comprender principios fundamentales de seguridad según estándares NIST.",
             "level": "Principiante", "xp": 440, "bg": "0D8ABC",
-            "lessons_count": 7 # Usamos esto para iterar
+            "lessons_count": 7 
         },
         {
             "id": 2,

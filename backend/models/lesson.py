@@ -12,7 +12,7 @@ class Lesson(Base):
     __tablename__ = 'lessons'
     
     # Primary Key
-    id = Column(String, primary_key=True)  # Formato: "c1_l1", "c3_l2", etc.
+    id = Column(String, primary_key=True) 
     
     # Relación con Curso
     course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)
@@ -20,12 +20,11 @@ class Lesson(Base):
     # Metadatos de la Lección
     title = Column(String(200), nullable=False)
     description = Column(String(500))
-    type = Column(String(50))  # "interactive", "crisis_simulator", "strategy_builder"
+    type = Column(String(50))  
     
-    # Contenido (Legacy - mantener por compatibilidad y para guardar 'theme' y 'intro')
     content = Column(JSONB, nullable=False)  
     
-    # 🎮 CAMPO CRÍTICO: Screens gaming (Array de screens)
+    # (Array de screens)
     screens = Column(JSONB)  
     
     # Estadísticas
@@ -36,7 +35,7 @@ class Lesson(Base):
     # Ordenamiento
     order_index = Column(Integer, nullable=False)
     
-    # Relación inversa con Course
+    
     course = relationship("Course", backref="lessons")
     
     def __repr__(self):
@@ -47,7 +46,7 @@ class Lesson(Base):
         Serializa la lección a diccionario para API response.
         Incluye extracción automática del 'theme' desde el campo content.
         """
-        # Intentar extraer el theme si existe en content, si no, null
+        
         lesson_theme = self.content.get("theme") if self.content else None
 
         return {
@@ -57,7 +56,7 @@ class Lesson(Base):
             "description": self.description,
             "type": self.type,
             "screens": self.screens or [],
-            "theme": lesson_theme,  # Enviamos el tema al frontend
+            "theme": lesson_theme, 
             "total_screens": self.total_screens,
             "duration_minutes": self.duration_minutes,
             "xp_reward": self.xp_reward,

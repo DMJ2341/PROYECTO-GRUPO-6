@@ -43,7 +43,7 @@ class User(Base):
             return 'UNI'
         return None
 
-    # --- NUEVA LÓGICA DE NIVELES (Centralizada) ---
+    # --- LÓGICA DE NIVELES  ---
     def get_level(self):
         """Calcula el nivel basado en 250 XP por nivel."""
         # 250 XP = 1 Nivel.

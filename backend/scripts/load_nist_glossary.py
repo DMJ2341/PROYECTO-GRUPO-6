@@ -19,7 +19,7 @@ def load_terms_from_json(session, terms_data):
     count = 0
     error_occurred = False
     
-    # Manejar si el JSON es una lista directa o un dict con clave "terms"
+    
     if isinstance(terms_data, dict) and "terms" in terms_data:
         items = terms_data["terms"]
     else:
@@ -46,7 +46,7 @@ def load_terms_from_json(session, terms_data):
                 # Si ya existe, lo saltamos para evitar duplicados
                 continue
 
-            # 3. Crear el objeto Glossary mapeando los campos
+            # 3. Crear el objeto Glossary 
             new_term = Glossary(
                 term_en=t_en,
                 term_es=t_es,
@@ -62,7 +62,7 @@ def load_terms_from_json(session, terms_data):
                 example_en=term_data.get('example_en'),
                 example_es=term_data.get('example_es'),
                 
-                # ✅ MAPEO CRÍTICO: 'sources' del JSON -> 'where_you_hear_it' de la BD
+                
                 where_you_hear_it=term_data.get('sources')
             )
 

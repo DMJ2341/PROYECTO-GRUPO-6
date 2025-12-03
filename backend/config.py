@@ -10,7 +10,7 @@ class Config:
     """Configuración segura de CyberLearn."""
     
     # ==========================================
-    # 🗄️ BASE DE DATOS
+    # BASE DE DATOS
     # ==========================================
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     if not SQLALCHEMY_DATABASE_URI:
@@ -19,13 +19,13 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # ==========================================
-    # 🔐 SEGURIDAD Y TOKENS
+    # SEGURIDAD Y TOKENS
     # ==========================================
     SECRET_KEY = os.getenv('SECRET_KEY')
     if not SECRET_KEY:
         raise ValueError("❌ Error Crítico: No se encontró SECRET_KEY en las variables de entorno.")
     
-    # ✅ TOKENS CONFIGURADOS CORRECTAMENTE
+    # TOKENS CONFIGURADOS CORRECTAMENTE
     # Access Token: Corto por seguridad (se renueva automáticamente)
     ACCESS_TOKEN_EXPIRES = timedelta(hours=2)  # Aumentado a 2 horas
     
@@ -37,7 +37,7 @@ class Config:
     PASSWORD_MIN_LENGTH = 8
     
     # ==========================================
-    # 📧 EMAIL (GMAIL SMTP)
+    # EMAIL (GMAIL SMTP)
     # ==========================================
     GMAIL_USER = os.getenv('GMAIL_USER')
     GMAIL_APP_PASSWORD = os.getenv('GMAIL_APP_PASSWORD')
@@ -46,14 +46,14 @@ class Config:
         print("⚠️ Advertencia: Credenciales de Gmail no configuradas. El envío de emails estará deshabilitado.")
     
     # ==========================================
-    # 🎓 DOMINIOS ACADÉMICOS PERMITIDOS
+    # DOMINIOS ACADÉMICOS PERMITIDOS
     # ==========================================
     ACADEMIC_DOMAINS = [
         '@uni.pe',
     ]
     
     # ==========================================
-    # 🔒 LISTA NEGRA DE CONTRASEÑAS DÉBILES
+    # LISTA NEGRA DE CONTRASEÑAS DÉBILES
     # ==========================================
     WEAK_PASSWORDS = [
         '12345678', 'password', 'qwerty123', 'abc12345',

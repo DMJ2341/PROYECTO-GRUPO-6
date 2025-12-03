@@ -24,7 +24,7 @@ class BadgeService:
         finally:
             session.close()
 
-    # 🔥 EL MÉTODO MÁGICO
+    
     def check_and_award_badges(self, user_id, session):
         """Revisa si el usuario merece nuevos badges y los otorga. (Usa sesión existente)"""
         new_badges = []
@@ -37,7 +37,7 @@ class BadgeService:
                 if self._award(user_id, badge, session):
                     new_badges.append(badge.name)
 
-        # Badges de Lecciones (
+        # Badges de Lecciones 
         total_lessons = session.query(UserLessonProgress).filter_by(user_id=user_id, completed=True).count()
         if total_lessons >= 1:
             first_badge = session.query(Badge).filter_by(trigger_type='first_lesson').first()

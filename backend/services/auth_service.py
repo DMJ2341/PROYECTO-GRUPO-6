@@ -13,7 +13,7 @@ from config import Config
 class AuthService:
     def __init__(self):
         self.secret_key = Config.SECRET_KEY 
-        # ✅ USAR LAS NUEVAS CONFIGURACIONES
+        # USAR LAS NUEVAS CONFIGURACIONES
         self.access_expires = Config.ACCESS_TOKEN_EXPIRES
         self.refresh_expires = Config.REFRESH_TOKEN_EXPIRES
         self.email_service = EmailService()
@@ -141,7 +141,7 @@ class AuthService:
             session.commit()
             session.refresh(user)
             
-            # ✅ GENERAR TOKENS CON LOS NUEVOS TIEMPOS
+            # GENERAR TOKENS CON LOS NUEVOS TIEMPOS
             access_token, _ = self._create_token(user.id, self.access_expires)
             refresh_token, refresh_expire = self._create_token(user.id, self.refresh_expires, is_refresh=True)
 
@@ -224,7 +224,7 @@ class AuthService:
             if not user.email_verified:
                 raise ValueError("Debes verificar tu email antes de iniciar sesión")
 
-            # ✅ GENERAR TOKENS CON LOS NUEVOS TIEMPOS
+            # GENERAR TOKENS CON LOS NUEVOS TIEMPOS
             access_token, _ = self._create_token(user.id, self.access_expires)
             refresh_token, refresh_expire = self._create_token(user.id, self.refresh_expires, is_refresh=True)
 
@@ -271,10 +271,10 @@ class AuthService:
                 session.commit()
                 raise ValueError("Token inválido")
 
-            # ✅ REVOCAR TOKEN VIEJO
+        
             rt.revoked = True
             
-            # ✅ CREAR NUEVOS TOKENS CON LOS NUEVOS TIEMPOS
+           
             new_access, _ = self._create_token(payload["user_id"], self.access_expires)
             new_refresh, new_expire = self._create_token(payload["user_id"], self.refresh_expires, True)
             

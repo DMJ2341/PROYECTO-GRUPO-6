@@ -12,11 +12,11 @@ class UserCourseProgress(Base):
     course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)
     completed_lessons = Column(Integer, default=0)
     total_lessons = Column(Integer, default=0)
-    percentage = Column(Integer, default=0)  # 0-100
-    completed_at = Column(DateTime, nullable=True)  # Fecha si llega al 100%
+    percentage = Column(Integer, default=0) 
+    completed_at = Column(DateTime, nullable=True)  
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relaciones
+    
     user = relationship("User", backref="course_progress")
     course = relationship("Course")
 
