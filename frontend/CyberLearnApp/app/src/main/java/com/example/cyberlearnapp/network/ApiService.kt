@@ -150,12 +150,12 @@ interface ApiService {
     ): Response<RecommendationsResponse>
 
     @GET("api/test/result")
-    suspend fun getUserResult(
+    suspend fun getUserTestResult(
         @Header("Authorization") token: String
     ): Response<UserTestResultResponse>
 
     @GET("api/test/history")
-    suspend fun getHistory(
+    suspend fun getTestHistory(
         @Header("Authorization") token: String
     ): Response<TestHistoryResponse>
 

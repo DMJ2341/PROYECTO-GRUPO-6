@@ -13,8 +13,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.example.cyberlearnapp.ui.screens.*
-import com.example.cyberlearnapp.viewmodel.*
 import com.example.cyberlearnapp.utils.AuthManager
+import com.example.cyberlearnapp.viewmodel.*
 
 @Composable
 fun NavGraph(
@@ -117,18 +117,31 @@ fun NavGraph(
             }
         }
 
-        /* ----------  🎯 TEST DE PREFERENCIAS FLOW (4 Pantallas) ---------- */
-        navigation(startDestination = "test_questions", route = Screens.PreferenceTest.route) {
-
-            // 1. Pantalla de Preguntas (Test)
-            composable("test_questions") { backStackEntry ->
-                // Compartir ViewModel: Obtenemos el VM del grafo padre "preference_test"
+        /* ----------  🎯 TEST DE PREFERENCIAS FLOW (5 Pantallas + Intro) ---------- */
+        // Todo el flujo ahora está dentro de un único grafo anidado
+        navigation(
+            startDestination = "preference_test_intro",   // <-- Intro es el inicio
+            route = Screens.PreferenceTest.route          // <-- Ruta raíz del grafo
+        ) {
+            // 0. Pantalla de Introducción
+            composable("preference_test_intro") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screens.PreferenceTest.route)
                 }
                 val testViewModel: TestViewModel = hiltViewModel(parentEntry)
 
-                // Obtener token directamente del AuthManager
+                PreferenceTestIntroScreen(
+                    navController = navController,
+                    viewModel = testViewModel
+                )
+            }
+
+            // 1. Pantalla de Preguntas
+            composable("test_questions") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screens.PreferenceTest.route)
+                }
+                val testViewModel: TestViewModel = hiltViewModel(parentEntry)
                 val token = AuthManager.getToken() ?: ""
 
                 TestScreen(
@@ -151,7 +164,7 @@ fun NavGraph(
                 )
             }
 
-            // 3. Recomendaciones (Certificaciones, Labs, Paths)
+            // 3. Recomendaciones
             composable("test_recommendations") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screens.PreferenceTest.route)

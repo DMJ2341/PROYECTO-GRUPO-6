@@ -425,7 +425,7 @@ fun DashboardScreen(
                         }
                     } else {
                         OutlinedButton(
-                            onClick = { navController.navigate(Screens.PreferenceResult.route) },
+                            onClick = { navController.navigate(Screens.PreferenceTest.route) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(64.dp),

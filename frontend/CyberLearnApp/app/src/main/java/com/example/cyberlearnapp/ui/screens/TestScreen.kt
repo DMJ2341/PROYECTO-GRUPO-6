@@ -152,12 +152,21 @@ fun TestScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val progress by remember {
+                        derivedStateOf {
+                            if (questions.isEmpty()) 0f
+                            else (currentIndex + 1) / questions.size.toFloat()
+                        }
+                    }
+
                     LinearProgressIndicator(
-                        progress = { viewModel.getProgress() },
+                        progress = { progress },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp)
                             .clip(RoundedCornerShape(4.dp)),
+                        color = Color(0xFF00D9FF),
+                        trackColor = Color(0xFF1A2332)
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
