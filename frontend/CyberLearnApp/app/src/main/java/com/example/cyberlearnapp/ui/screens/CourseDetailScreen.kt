@@ -17,15 +17,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import com.example.cyberlearnapp.network.models.Lesson
 import com.example.cyberlearnapp.viewmodel.CourseViewModel
+import com.example.cyberlearnapp.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +43,6 @@ fun CourseDetailScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // ✅ Recargar lecciones cuando volvemos de completar una
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -60,17 +63,28 @@ fun CourseDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(course?.title ?: "Cargando...") },
+                title = {
+                    Text(
+                        course?.title ?: "Cargando...",
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "Volver")
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            "Volver",
+                            tint = PrimaryCyan
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = BackgroundMain
                 )
             )
-        }
+        },
+        containerColor = BackgroundMain
     ) { padding ->
         if (isLoading) {
             Box(
@@ -79,75 +93,113 @@ fun CourseDetailScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = PrimaryCyan,
+                    strokeWidth = 4.dp
+                )
             }
             return@Scaffold
         }
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 20.dp)
+                .padding(padding),
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(Modifier.height(16.dp))
-
-            course?.let { c ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
-                    Column(Modifier.padding(20.dp)) {
-                        Text(
-                            text = c.title,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+            // HEADER DEL CURSO
+            item {
+                course?.let { c ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .shadow(8.dp, RoundedCornerShape(20.dp)),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = SurfaceCard
                         )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = c.description,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                        Spacer(Modifier.height(12.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            PrimaryCyan.copy(alpha = 0.15f),
+                                            SurfaceCard
+                                        )
+                                    )
+                                )
+                                .padding(24.dp)
                         ) {
-                            Chip("Nivel: ${c.level}")
-                            Chip("${lessons.size} lecciones")
+                            Column {
+                                Text(
+                                    text = c.title,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextPrimary,
+                                    lineHeight = 32.sp
+                                )
+
+                                Spacer(Modifier.height(12.dp))
+
+                                Text(
+                                    text = c.description,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = TextSecondary,
+                                    lineHeight = 22.sp
+                                )
+
+                                Spacer(Modifier.height(20.dp))
+
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    InfoChip(
+                                        icon = "📊",
+                                        text = "Nivel: ${c.level}"
+                                    )
+                                    InfoChip(
+                                        icon = "📚",
+                                        text = "${lessons.size} lecciones"
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
-
-            Text(
-                text = "📖 Lecciones",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(Modifier.height(12.dp))
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                items(lessons) { lesson ->
-                    LessonItem(
-                        lesson = lesson,
-                        onClick = {
-                            if (!lesson.isLocked) {
-                                navController.navigate("lesson_detail/${lesson.id}")
-                            }
-                        }
+            // TÍTULO DE LECCIONES
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "📖",
+                        fontSize = 24.sp
+                    )
+                    Text(
+                        text = "Lecciones",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
                     )
                 }
+            }
+
+            // LISTA DE LECCIONES
+            items(lessons) { lesson ->
+                LessonItem(
+                    lesson = lesson,
+                    onClick = {
+                        if (!lesson.isLocked) {
+                            navController.navigate("lesson_detail/${lesson.id}")
+                        }
+                    }
+                )
             }
         }
     }
@@ -161,17 +213,18 @@ private fun LessonItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(
+                elevation = if (lesson.isLocked) 0.dp else 4.dp,
+                shape = RoundedCornerShape(16.dp)
+            )
             .clickable(enabled = !lesson.isLocked, onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = when {
-                lesson.isCompleted -> MaterialTheme.colorScheme.tertiaryContainer
-                lesson.isLocked -> MaterialTheme.colorScheme.surfaceVariant
-                else -> MaterialTheme.colorScheme.surface
+                lesson.isCompleted -> SuccessGreen.copy(alpha = 0.15f)
+                lesson.isLocked -> SurfaceElevated.copy(alpha = 0.5f)
+                else -> SurfaceCard
             }
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (lesson.isLocked) 0.dp else 2.dp
         )
     ) {
         Row(
@@ -180,16 +233,17 @@ private fun LessonItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icono de estado
+            // ICONO DE ESTADO
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(56.dp)
+                    .shadow(4.dp, CircleShape)
                     .clip(CircleShape)
                     .background(
                         when {
-                            lesson.isCompleted -> MaterialTheme.colorScheme.tertiary
-                            lesson.isLocked -> MaterialTheme.colorScheme.outline
-                            else -> MaterialTheme.colorScheme.primary
+                            lesson.isCompleted -> SuccessGreen
+                            lesson.isLocked -> SurfaceElevated
+                            else -> PrimaryCyan
                         }
                     ),
                 contentAlignment = Alignment.Center
@@ -202,54 +256,58 @@ private fun LessonItem(
                     },
                     contentDescription = null,
                     tint = when {
-                        lesson.isCompleted -> MaterialTheme.colorScheme.onTertiary
-                        lesson.isLocked -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                        else -> MaterialTheme.colorScheme.onPrimary
+                        lesson.isCompleted -> BackgroundMain
+                        lesson.isLocked -> TextTertiary
+                        else -> BackgroundMain
                     },
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(28.dp)
                 )
             }
 
             Spacer(Modifier.width(16.dp))
 
+            // CONTENIDO
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = lesson.title,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = if (lesson.isLocked)
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    else
-                        MaterialTheme.colorScheme.onSurface
+                    fontWeight = FontWeight.Bold,
+                    color = if (lesson.isLocked) TextTertiary else TextPrimary,
+                    lineHeight = 22.sp
                 )
-                Spacer(Modifier.height(4.dp))
+
+                Spacer(Modifier.height(8.dp))
+
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text(
-                        text = "⏱️ ${lesson.durationMinutes} min",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    LessonStat(
+                        icon = "⏱️",
+                        text = "${lesson.durationMinutes} min",
+                        color = if (lesson.isLocked) TextTertiary else TextSecondary
                     )
-                    Text(
-                        text = "⭐ ${lesson.xpReward} XP",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary
+                    LessonStat(
+                        icon = "⭐",
+                        text = "${lesson.xpReward} XP",
+                        color = if (lesson.isLocked) TextTertiary else WarningOrange
                     )
                 }
             }
 
+            // BADGE DE COMPLETADA
             if (lesson.isCompleted) {
                 Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.tertiary
+                    shape = RoundedCornerShape(12.dp),
+                    color = SuccessGreen,
+                    shadowElevation = 2.dp
                 ) {
                     Text(
                         text = "✓ Completada",
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onTertiary
+                        color = BackgroundMain,
+                        fontSize = 11.sp
                     )
                 }
             }
@@ -258,16 +316,55 @@ private fun LessonItem(
 }
 
 @Composable
-private fun Chip(text: String) {
+private fun InfoChip(
+    icon: String,
+    text: String
+) {
     Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)
+        shape = RoundedCornerShape(12.dp),
+        color = SurfaceElevated,
+        shadowElevation = 2.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = icon,
+                fontSize = 14.sp
+            )
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary,
+                fontSize = 12.sp
+            )
+        }
+    }
+}
+
+@Composable
+private fun LessonStat(
+    icon: String,
+    text: String,
+    color: androidx.compose.ui.graphics.Color
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
+            text = icon,
+            fontSize = 14.sp
+        )
+        Text(
             text = text,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Medium,
+            color = color,
+            fontSize = 12.sp
         )
     }
 }

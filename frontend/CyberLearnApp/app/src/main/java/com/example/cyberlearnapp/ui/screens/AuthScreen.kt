@@ -15,36 +15,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyberlearnapp.viewmodel.AuthState
 import com.example.cyberlearnapp.viewmodel.AuthViewModel
 import com.example.cyberlearnapp.ui.theme.*
-import java.text.SimpleDateFormat
-import java.util.*
 
-// =========================================================================
-// CONSTANTES LEGALES (AJUSTADAS)
-// =========================================================================
 object LegalConstants {
     const val VERSION_TERMINOS = "1.2"
     const val FECHA_ACTUALIZACION = "Diciembre 2025"
-    // Ajuste: Edad mínima 14 años (legal en Perú para consentimiento adolescente)
     const val EDAD_MINIMA_CONSENTIMIENTO = 14
     const val EMAIL_SOPORTE = "soporte@cyberlearn.app"
     const val EMAIL_DATOS_PERSONALES = "datospersonales@cyberlearn.app"
     const val DIRECCION_LEGAL = "Lima, Perú"
-    const val RAZON_SOCIAL = "CyberLearn App S.A.C."
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +42,8 @@ object LegalConstants {
 fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit,
-    onNavigateToVerification: (String) -> Unit
+    onNavigateToVerification: (String) -> Unit,
+    onNavigateToForgotPassword: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -60,19 +51,16 @@ fun AuthScreen(
     var isRegister by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // Estados de consentimiento
     var termsAccepted by remember { mutableStateOf(false) }
     var privacyAccepted by remember { mutableStateOf(false) }
     var dataProcessingAccepted by remember { mutableStateOf(false) }
     var ageConfirmed by remember { mutableStateOf(false) }
 
-    // Diálogos
     var showTermsDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
     var showDataProcessingDialog by remember { mutableStateOf(false) }
     var showAgeVerificationDialog by remember { mutableStateOf(false) }
 
-    // Errores UI
     var showTermsError by remember { mutableStateOf(false) }
     var showPrivacyError by remember { mutableStateOf(false) }
     var showDataProcessingError by remember { mutableStateOf(false) }
@@ -97,7 +85,6 @@ fun AuthScreen(
         }
     }
 
-    // Reset errores al aceptar
     LaunchedEffect(termsAccepted) { if (termsAccepted) showTermsError = false }
     LaunchedEffect(privacyAccepted) { if (privacyAccepted) showPrivacyError = false }
     LaunchedEffect(dataProcessingAccepted) { if (dataProcessingAccepted) showDataProcessingError = false }
@@ -224,18 +211,33 @@ fun AuthScreen(
                 )
             )
 
-            if (isRegister && password.isNotEmpty()) {
+            // ✅ BOTÓN FORGOT PASSWORD (SOLO EN LOGIN) O INDICADOR DE FUERZA (SOLO EN REGISTRO)
+            if (!isRegister) {
+                // LOGIN: Mostrar botón de recuperación
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    TextButton(onClick = onNavigateToForgotPassword) {
+                        Text(
+                            text = "¿Olvidaste tu contraseña?",
+                            color = PrimaryCyan,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            } else if (password.isNotEmpty()) {
+                // REGISTRO: Mostrar indicador de fuerza
                 Spacer(Modifier.height(8.dp))
                 PasswordStrengthIndicator(password)
             }
 
-            // SECCIÓN DE CONSENTIMIENTOS
             if (isRegister) {
                 Spacer(Modifier.height(20.dp))
                 LegalNoticeCard()
                 Spacer(Modifier.height(16.dp))
 
-                // 1. EDAD
                 ConsentCard(
                     title = "Verificación de edad",
                     description = "Confirmo que tengo al menos ${LegalConstants.EDAD_MINIMA_CONSENTIMIENTO} años",
@@ -248,7 +250,6 @@ fun AuthScreen(
                 )
                 Spacer(Modifier.height(12.dp))
 
-                // 2. TÉRMINOS
                 ConsentCard(
                     title = "Términos y Condiciones",
                     description = "Acepto las reglas de uso de la plataforma",
@@ -261,7 +262,6 @@ fun AuthScreen(
                 )
                 Spacer(Modifier.height(12.dp))
 
-                // 3. PRIVACIDAD
                 ConsentCard(
                     title = "Política de Privacidad",
                     description = "Entiendo cómo se protegen mis datos",
@@ -274,7 +274,6 @@ fun AuthScreen(
                 )
                 Spacer(Modifier.height(12.dp))
 
-                // 4. DATOS
                 ConsentCard(
                     title = "Tratamiento de Datos",
                     description = "Autorizo el uso de mis datos académicos",
@@ -301,7 +300,6 @@ fun AuthScreen(
                     }
                 }
 
-                // Texto informativo Ley
                 Spacer(Modifier.height(12.dp))
                 Text(
                     text = "Tu información está protegida por la Ley N° 29733 de Protección de Datos Personales.",
@@ -380,14 +378,12 @@ fun AuthScreen(
         }
     }
 
-    // DIÁLOGOS (Con contenido COMPLETO ahora)
     if (showAgeVerificationDialog) AgeVerificationDialog({ showAgeVerificationDialog = false }, { ageConfirmed = true; showAgeVerificationDialog = false; showAgeError = false })
     if (showTermsDialog) TermsAndConditionsDialog({ showTermsDialog = false }, { termsAccepted = true; showTermsDialog = false; showTermsError = false })
     if (showPrivacyDialog) PrivacyPolicyDialog({ showPrivacyDialog = false }, { privacyAccepted = true; showPrivacyDialog = false; showPrivacyError = false })
     if (showDataProcessingDialog) DataProcessingConsentDialog({ showDataProcessingDialog = false }, { dataProcessingAccepted = true; showDataProcessingDialog = false; showDataProcessingError = false })
 }
 
-// FUNCIONES AUXILIARES
 private fun validateConsents(
     termsAccepted: Boolean, privacyAccepted: Boolean, dataProcessingAccepted: Boolean, ageConfirmed: Boolean,
     onTermsError: () -> Unit, onPrivacyError: () -> Unit, onDataProcessingError: () -> Unit, onAgeError: () -> Unit
@@ -462,10 +458,6 @@ fun calculatePasswordStrength(password: String): String {
     return when { score <= 2 -> "Muy débil"; score <= 3 -> "Débil"; score <= 4 -> "Media"; score <= 5 -> "Fuerte"; else -> "Muy fuerte" }
 }
 
-// =========================================================================
-// DIÁLOGOS COMPLETOS (TEXTOS REALES)
-// =========================================================================
-
 @Composable
 fun AgeVerificationDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
     var hasScrolledToBottom by remember { mutableStateOf(false) }
@@ -480,7 +472,7 @@ fun AgeVerificationDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
                 Card(modifier = Modifier.fillMaxWidth().height(300.dp), colors = CardDefaults.cardColors(containerColor = SurfaceCard)) {
                     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState)) {
                         LegalSection("REQUISITOS DE EDAD", "De conformidad con la Ley N° 29733, el tratamiento de datos de menores de 14 años requiere consentimiento parental.\n\nAl marcar la casilla, declaras bajo juramento que:\n\n✓ Tienes ${LegalConstants.EDAD_MINIMA_CONSENTIMIENTO} años cumplidos o más.\n✓ Tienes la capacidad para consentir el uso de tus datos para fines educativos.\n✓ La información proporcionada es veraz.")
-                        Spacer(Modifier.height(300.dp)) // Espacio extra para forzar scroll si la pantalla es grande
+                        Spacer(Modifier.height(300.dp))
                     }
                 }
                 if (!hasScrolledToBottom) Text("↓ Baja para aceptar", color = PrimaryCyan, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
@@ -533,9 +525,9 @@ fun PrivacyPolicyDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
             Column {
                 Card(modifier = Modifier.fillMaxWidth().height(350.dp), colors = CardDefaults.cardColors(containerColor = SurfaceCard)) {
                     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState)) {
-                        LegalSection("1. RESPONSABLE", "CyberLearn App S.A.C., con domicilio en Lima, Perú.")
+                        LegalSection("1. RESPONSABLE", "CyberLearn App, con domicilio en Lima, Perú.")
                         LegalSection("2. DATOS RECOPILADOS", "Nombre, email y progreso académico. No recopilamos datos sensibles.")
-                        LegalSection("3. FINALIDAD", "Gestión de cuenta y certificación académica.")
+                        LegalSection("3. FINALIDAD", "Gestión de cuenta.")
                         LegalSection("4. TUS DERECHOS (ARCO)", "Puedes acceder, rectificar, cancelar u oponerte al tratamiento de tus datos escribiendo a ${LegalConstants.EMAIL_DATOS_PERSONALES}.")
                         Spacer(Modifier.height(300.dp))
                     }
@@ -561,7 +553,7 @@ fun DataProcessingConsentDialog(onDismiss: () -> Unit, onAccept: () -> Unit) {
             Column {
                 Card(modifier = Modifier.fillMaxWidth().height(300.dp), colors = CardDefaults.cardColors(containerColor = SurfaceCard)) {
                     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(scrollState)) {
-                        LegalSection("CONSENTIMIENTO EXPRESO", "De conformidad con el Art. 5 de la Ley 29733, otorgo mi consentimiento libre, previo, expreso e informado para que CyberLearn trate mis datos personales para fines de gestión educativa y certificación.")
+                        LegalSection("CONSENTIMIENTO EXPRESO", "De conformidad con el Art. 5 de la Ley 29733, otorgo mi consentimiento libre, previo, expreso e informado para que CyberLearn trate mis datos personales para fines de gestión educativa.")
                         Spacer(Modifier.height(200.dp))
                     }
                 }

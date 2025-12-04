@@ -1,5 +1,3 @@
-// app/src/main/java/com/example/cyberlearnapp/network/ApiService.kt
-
 package com.example.cyberlearnapp.network
 
 import com.example.cyberlearnapp.models.*
@@ -26,7 +24,6 @@ interface ApiService {
     @POST("api/auth/resend-code")
     suspend fun resendVerificationCode(@Body request: ResendCodeRequest): Response<MessageResponse>
 
-    // ✅ ESTE ES EL ÚNICO refreshToken - Tipo Call<> para uso síncrono en Authenticator
     @POST("api/auth/refresh")
     fun refreshToken(@Body request: Map<String, String>): Call<AuthResponse>
 
@@ -35,6 +32,16 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: Map<String, String>
     ): Response<Unit>
+
+    // ✅ RECUPERACIÓN DE CONTRASEÑA
+    @POST("api/auth/forgot-password")
+    suspend fun forgotPassword(@Body request: Map<String, String>): Response<MessageResponse>
+
+    @POST("api/auth/validate-reset-token")
+    suspend fun validateResetToken(@Body request: Map<String, String>): Response<MessageResponse>
+
+    @POST("api/auth/reset-password")
+    suspend fun resetPassword(@Body request: Map<String, String>): Response<MessageResponse>
 
     @GET("api/user/dashboard")
     suspend fun getDashboard(@Header("Authorization") token: String): Response<DashboardResponse>
@@ -127,7 +134,6 @@ interface ApiService {
         @Body request: CompleteDailyTermRequest
     ): Response<CompleteDailyTermResponse>
 
-
     // ==========================================
     // 🎯 TEST DE PREFERENCIAS
     // ==========================================
@@ -162,7 +168,5 @@ interface ApiService {
     @POST("api/test/retake")
     suspend fun retakeTest(
         @Header("Authorization") token: String
-    ): Response<BasicResponse>
+    ): Response<MessageResponse>
 }
-
-data class BasicResponse(val success: Boolean, val message: String? = null)

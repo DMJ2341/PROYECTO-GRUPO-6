@@ -32,6 +32,7 @@ fun NavGraph(
 
         /* ----------  AUTH  ---------- */
         composable("auth") {
+            // ✅ CORRECCIÓN AQUÍ: Se agregó el parámetro faltante 'onNavigateToForgotPassword'
             AuthScreen(
                 onLoginSuccess = {
                     navController.navigate("dashboard") {
@@ -40,6 +41,9 @@ fun NavGraph(
                 },
                 onNavigateToVerification = { email ->
                     navController.navigate("email_verification/$email")
+                },
+                onNavigateToForgotPassword = {
+                    navController.navigate("forgot_password")
                 }
             )
         }
@@ -59,6 +63,11 @@ fun NavGraph(
                 },
                 onNavigateBack = { navController.popBackStack() }
             )
+        }
+
+        /* ----------  PASSWORD RECOVERY (NUEVO)  ---------- */
+        composable("forgot_password") {
+            ForgotPasswordScreen(navController = navController)
         }
 
         /* ----------  DASHBOARD  ---------- */
@@ -117,13 +126,11 @@ fun NavGraph(
             }
         }
 
-        /* ----------  🎯 TEST DE PREFERENCIAS FLOW (5 Pantallas + Intro) ---------- */
-        // Todo el flujo ahora está dentro de un único grafo anidado
+        /* ----------  🎯 TEST DE PREFERENCIAS FLOW  ---------- */
         navigation(
-            startDestination = "preference_test_intro",   // <-- Intro es el inicio
-            route = Screens.PreferenceTest.route          // <-- Ruta raíz del grafo
+            startDestination = "preference_test_intro",
+            route = Screens.PreferenceTest.route
         ) {
-            // 0. Pantalla de Introducción
             composable("preference_test_intro") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screens.PreferenceTest.route)
@@ -136,7 +143,6 @@ fun NavGraph(
                 )
             }
 
-            // 1. Pantalla de Preguntas
             composable("test_questions") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screens.PreferenceTest.route)
@@ -151,7 +157,6 @@ fun NavGraph(
                 )
             }
 
-            // 2. Resumen del Resultado
             composable("test_result_summary") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screens.PreferenceTest.route)
@@ -164,7 +169,6 @@ fun NavGraph(
                 )
             }
 
-            // 3. Recomendaciones
             composable("test_recommendations") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screens.PreferenceTest.route)
@@ -177,7 +181,6 @@ fun NavGraph(
                 )
             }
 
-            // 4. Skills Detalladas
             composable("test_skills") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screens.PreferenceTest.route)
