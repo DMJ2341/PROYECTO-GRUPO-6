@@ -1,26 +1,30 @@
-// app/src/main/java/com/example/cyberlearnapp/ui/screens/TestRecommendationsScreen.kt
 package com.example.cyberlearnapp.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyberlearnapp.models.*
-import com.example.cyberlearnapp.ui.theme.*
 import com.example.cyberlearnapp.viewmodel.TestViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,145 +35,236 @@ fun TestRecommendationsScreen(
 ) {
     val recommendations by viewModel.recommendations.collectAsState()
     val result by viewModel.result.collectAsState()
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("📜 Certificaciones", "🧪 Laboratorios", "🛤️ Rutas")
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text("Recomendaciones")
-                        result?.let {
-                            val role = CyberRole.fromString(it.recommendedRole)
-                            Text(
-                                role?.displayName ?: "",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "Volver")
-                    }
-                },
-                actions = {
-                    // Botón para ver Skills
-                    IconButton(onClick = { navController.navigate("test_skills") }) {
-                        Icon(Icons.Default.Star, "Skills")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = BackgroundMain
+    // ✅ FONDO CON GRADIENTE
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF0F1419),
+                        Color(0xFF1A2332)
+                    )
                 )
             )
-        }
-    ) { padding ->
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            // Referencia académica (compacta)
-            if (recommendations?.academicReference != null) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+    ) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("💡", fontSize = 24.sp)
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    "Recomendaciones",
+                                    fontWeight = FontWeight.Black,
+                                    color = Color.White
+                                )
+                            }
+                            result?.let {
+                                val role = CyberRole.fromString(it.recommendedRole)
+                                Text(
+                                    role?.displayName ?: "",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White.copy(0.7f),
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, "Volver", tint = Color(0xFF00D9FF))
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { navController.navigate("test_skills") }) {
+                            Icon(Icons.Default.Star, "Skills", tint = Color(0xFFFBBF24))
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color(0xFF1A2332)
                     )
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                )
+            }
+        ) { padding ->
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                // REFERENCIA ACADÉMICA
+                if (recommendations?.academicReference != null) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .shadow(8.dp, RoundedCornerShape(16.dp)),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF00D9FF).copy(0.15f)
+                        ),
+                        border = BorderStroke(2.dp, Color(0xFF00D9FF)),
+                        shape = RoundedCornerShape(16.dp)
                     ) {
-                        Icon(
-                            Icons.Default.School,
-                            null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            "Basado en Holland Code (RIASEC) y NIST SP 800-181",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Medium
+                        Row(
+                            modifier = Modifier.padding(20.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "🎓",
+                                fontSize = 32.sp
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    "Basado en:",
+                                    fontSize = 12.sp,
+                                    color = Color.White.copy(0.7f),
+                                    fontWeight = FontWeight.Medium
+                                )
+                                Text(
+                                    "Holland Code (RIASEC) y NIST SP 800-181",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // ✅ TABS CON COLORES VIBRANTES (SIN INDICADOR PERSONALIZADO)
+                TabRow(
+                    selectedTabIndex = selectedTab,
+                    containerColor = Color(0xFF1A2332),
+                    contentColor = Color(0xFF00D9FF)
+                ) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTab == index,
+                            onClick = { selectedTab = index },
+                            text = {
+                                Text(
+                                    title,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = if (selectedTab == index) FontWeight.Black else FontWeight.Medium,
+                                    fontSize = 15.sp
+                                )
+                            },
+                            selectedContentColor = Color(0xFF00D9FF),
+                            unselectedContentColor = Color.White.copy(0.6f)
                         )
                     }
                 }
-            }
 
-            // Tabs
-            TabRow(selectedTabIndex = selectedTab) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        text = {
-                            Text(
-                                title,
-                                style = MaterialTheme.typography.titleSmall
-                            )
-                        }
-                    )
-                }
-            }
-
-            // Contenido según tab
-            if (recommendations == null) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    when (selectedTab) {
-                        0 -> { // Certificaciones
-                            item {
-                                Text(
-                                    "💡 Empieza por las gratuitas para ganar experiencia",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
+                // CONTENIDO SEGÚN TAB
+                if (recommendations == null) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color(0xFF00D9FF))
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        when (selectedTab) {
+                            0 -> { // CERTIFICACIONES
+                                item {
+                                    Card(
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = Color(0xFF10B981).copy(0.15f)
+                                        ),
+                                        border = BorderStroke(1.5.dp, Color(0xFF10B981)),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(16.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text("💡", fontSize = 24.sp)
+                                            Spacer(Modifier.width(12.dp))
+                                            Text(
+                                                "Empieza por las gratuitas para ganar experiencia",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = Color.White,
+                                                fontWeight = FontWeight.Medium,
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                    }
+                                }
+                                items(recommendations!!.certifications) { cert ->
+                                    CertificationCardCompact(cert)
+                                }
                             }
-                            items(recommendations!!.certifications) { cert ->
-                                CertificationCardCompact(cert)
+                            1 -> { // LABS
+                                item {
+                                    Card(
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = Color(0xFF8B5CF6).copy(0.15f)
+                                        ),
+                                        border = BorderStroke(1.5.dp, Color(0xFF8B5CF6)),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(16.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text("🎯", fontSize = 24.sp)
+                                            Spacer(Modifier.width(12.dp))
+                                            Text(
+                                                "Practica en estos laboratorios reales",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = Color.White,
+                                                fontWeight = FontWeight.Medium,
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                    }
+                                }
+                                items(recommendations!!.labs) { lab ->
+                                    LabCardCompact(lab)
+                                }
                             }
-                        }
-                        1 -> { // Labs
-                            item {
-                                Text(
-                                    "🎯 Practica en estos laboratorios reales",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                            }
-                            items(recommendations!!.labs) { lab ->
-                                LabCardCompact(lab)
-                            }
-                        }
-                        2 -> { // Learning Paths
-                            item {
-                                Text(
-                                    "📚 Rutas completas de aprendizaje estructurado",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                            }
-                            items(recommendations!!.learningPaths) { path ->
-                                LearningPathCardCompact(path)
+                            2 -> { // RUTAS
+                                item {
+                                    Card(
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = Color(0xFFFBBF24).copy(0.15f)
+                                        ),
+                                        border = BorderStroke(1.5.dp, Color(0xFFFBBF24)),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(16.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text("📚", fontSize = 24.sp)
+                                            Spacer(Modifier.width(12.dp))
+                                            Text(
+                                                "Rutas completas de aprendizaje estructurado",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = Color.White,
+                                                fontWeight = FontWeight.Medium,
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                    }
+                                }
+                                items(recommendations!!.learningPaths) { path ->
+                                    LearningPathCardCompact(path)
+                                }
                             }
                         }
                     }
@@ -179,6 +274,7 @@ fun TestRecommendationsScreen(
     }
 }
 
+// ✅ CARDS COMPACTAS CON COLORES VIBRANTES
 @Composable
 fun CertificationCardCompact(cert: Certification) {
     val context = LocalContext.current
@@ -186,13 +282,18 @@ fun CertificationCardCompact(cert: Certification) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(8.dp, RoundedCornerShape(16.dp))
             .clickable {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(cert.url))
                 context.startActivity(intent)
-            }
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1A2332)
+        ),
+        border = BorderStroke(2.dp, Color(0xFF00D9FF).copy(0.4f)),
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            // Header con badges
+        Column(modifier = Modifier.padding(20.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -200,92 +301,105 @@ fun CertificationCardCompact(cert: Certification) {
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     if (cert.isFree) {
-                        AssistChip(
-                            onClick = {},
-                            label = {
-                                Text(
-                                    "GRATIS",
-                                    fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = Color(0xFF4CAF50),
-                                labelColor = Color.White
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF10B981)
                             ),
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                "✨ GRATIS",
+                                fontWeight = FontWeight.Black,
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            )
+                        }
+                        Spacer(Modifier.height(12.dp))
                     }
 
                     Text(
                         cert.name,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        fontSize = 18.sp
                     )
                 }
 
-                // Badge de dificultad
+                Spacer(Modifier.width(12.dp))
+
                 val (diffColor, diffText) = when(cert.difficulty.lowercase()) {
-                    "beginner" -> Color(0xFF4CAF50) to "Principiante"
-                    "intermediate" -> Color(0xFFFF9800) to "Intermedio"
-                    "advanced" -> Color(0xFFE53935) to "Avanzado"
-                    else -> MaterialTheme.colorScheme.primary to cert.difficulty
+                    "beginner" -> Color(0xFF10B981) to "🌱 Principiante"
+                    "intermediate" -> Color(0xFFFBBF24) to "⚡ Intermedio"
+                    "advanced" -> Color(0xFFEF4444) to "🔥 Avanzado"
+                    else -> Color(0xFF00D9FF) to cert.difficulty
                 }
 
-                AssistChip(
-                    onClick = {},
-                    label = { Text(diffText, fontWeight = FontWeight.Medium) },
-                    colors = AssistChipDefaults.assistChipColors(
-                        containerColor = diffColor.copy(alpha = 0.15f),
-                        labelColor = diffColor
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = diffColor.copy(0.2f)
+                    ),
+                    border = BorderStroke(1.5.dp, diffColor),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(
+                        diffText,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                     )
-                )
+                }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
 
-            // Provider
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Default.Business,
-                    null,
-                    modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.width(4.dp))
+                Text("🏢", fontSize = 18.sp)
+                Spacer(Modifier.width(8.dp))
                 Text(
                     cert.provider,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = Color.White.copy(0.7f),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
 
-            // Descripción
             Text(
                 cert.description,
                 style = MaterialTheme.typography.bodyMedium,
-                maxLines = 3
+                color = Color.White.copy(0.9f),
+                fontSize = 15.sp,
+                lineHeight = 22.sp
             )
 
-            // Precio
             if (cert.priceInfo != null && !cert.isFree) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        Icons.Default.AttachMoney,
-                        null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        cert.priceInfo,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium
-                    )
+                Spacer(Modifier.height(12.dp))
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFFBBF24).copy(0.2f)
+                    ),
+                    border = BorderStroke(1.dp, Color(0xFFFBBF24)),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("💰", fontSize = 16.sp)
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            cert.priceInfo,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             }
         }
@@ -299,28 +413,38 @@ fun LabCardCompact(lab: Lab) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(8.dp, RoundedCornerShape(16.dp))
             .clickable {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(lab.url))
                 context.startActivity(intent)
-            }
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1A2332)
+        ),
+        border = BorderStroke(2.dp, Color(0xFF8B5CF6).copy(0.4f)),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icono
-            Icon(
-                Icons.Default.Science,
-                null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(48.dp)
-            )
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF8B5CF6)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    "🧪",
+                    fontSize = 36.sp,
+                    modifier = Modifier.padding(12.dp)
+                )
+            }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(Modifier.width(20.dp))
 
-            // Contenido
             Column(modifier = Modifier.weight(1f)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -329,30 +453,35 @@ fun LabCardCompact(lab: Lab) {
                     Text(
                         lab.name,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        fontSize = 17.sp
                     )
                     if (lab.isFree) {
-                        Icon(
-                            Icons.Default.StarRate,
-                            "Gratis",
-                            tint = Color(0xFFFFD700),
-                            modifier = Modifier.size(20.dp)
+                        Text(
+                            "⭐",
+                            fontSize = 20.sp
                         )
                     }
                 }
 
+                Spacer(Modifier.height(6.dp))
+
                 Text(
                     lab.platform,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = Color.White.copy(0.7f),
+                    fontSize = 13.sp
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(Modifier.height(8.dp))
 
                 Text(
                     lab.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2
+                    color = Color.White.copy(0.9f),
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp
                 )
             }
         }
@@ -366,72 +495,92 @@ fun LearningPathCardCompact(path: LearningPath) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(8.dp, RoundedCornerShape(16.dp))
             .clickable {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(path.url))
                 context.startActivity(intent)
-            }
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1A2332)
+        ),
+        border = BorderStroke(2.dp, Color(0xFFFBBF24).copy(0.4f)),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(20.dp),
             verticalAlignment = Alignment.Top
         ) {
-            // Icono
-            Icon(
-                Icons.Default.TrendingUp,
-                null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(48.dp)
-            )
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFFBBF24)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    "📈",
+                    fontSize = 36.sp,
+                    modifier = Modifier.padding(12.dp)
+                )
+            }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(Modifier.width(20.dp))
 
-            // Contenido
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     path.name,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 17.sp
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(Modifier.height(8.dp))
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         path.platform,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = Color.White.copy(0.7f),
+                        fontSize = 13.sp
                     )
 
-                    AssistChip(
-                        onClick = {},
-                        label = {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFBBF24).copy(0.2f)
+                        ),
+                        border = BorderStroke(1.dp, Color(0xFFFBBF24)),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("⏱️", fontSize = 14.sp)
+                            Spacer(Modifier.width(4.dp))
                             Text(
                                 "${path.estimatedHours}h",
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
                             )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Schedule,
-                                null,
-                                modifier = Modifier.size(14.dp)
-                            )
-                        },
-                        modifier = Modifier.height(24.dp)
-                    )
+                        }
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(Modifier.height(12.dp))
 
                 Text(
                     path.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2
+                    color = Color.White.copy(0.9f),
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp
                 )
             }
         }
