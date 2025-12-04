@@ -13,16 +13,18 @@ data class DashboardResponse(
 data class DashboardSummary(
     @SerialName("total_xp") val totalXp: Int,
     val level: Int,
-    @SerialName("current_streak") val currentStreak: Int, // ✅ CRÍTICO
-
+    @SerialName("current_streak") val currentStreak: Int,
     @SerialName("badges_count") val badgesCount: Int,
     @SerialName("completed_courses") val completedCourses: Int,
     @SerialName("total_courses") val totalCourses: Int,
     @SerialName("has_preference_result") val hasPreferenceResult: Boolean,
     @SerialName("final_exam_passed") val finalExamPassed: Boolean,
-
     @SerialName("courses_progress") val coursesProgress: List<CourseProgress>,
-    @SerialName("next_course") val nextCourse: NextCourse? = null
+    @SerialName("next_course") val nextCourse: NextCourse? = null,
+
+    // ✅ AGREGAR ESTOS DOS CAMPOS NUEVOS
+    @SerialName("is_academic") val isAcademic: Boolean = false,
+    val institution: String? = null
 )
 
 @Serializable

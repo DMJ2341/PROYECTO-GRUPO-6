@@ -1,5 +1,7 @@
 package com.example.cyberlearnapp.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,8 +42,11 @@ fun DashboardScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
 
-    // ✅ REFRESH AUTOMÁTICO
+    // ✅ COLOR OFICIAL UNI (VINO/BURGUNDY)
+    val uniColor = Color(0xFF8B1C1C) // Vino UNI
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -53,7 +59,6 @@ fun DashboardScreen(
         }
     }
 
-    // ✅ FONDO CON GRADIENTE
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -79,7 +84,7 @@ fun DashboardScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
-            // ✅ HEADER CON SALUDO Y RACHA REAL
+            // ✅ HEADER CON SALUDO Y RACHA
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -117,7 +122,6 @@ fun DashboardScreen(
                         )
                     }
 
-                    // ✅ RACHA REAL - CORREGIDO
                     Card(
                         colors = CardDefaults.cardColors(
                             containerColor = Color(0xFFFBBF24).copy(0.2f)
@@ -149,7 +153,109 @@ fun DashboardScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // ✅ XP LEVEL BAR CON DATOS REALES
+            // ✅ 🎓 BOTÓN EXCLUSIVO UNI - COLOR VINO OFICIAL
+            if (state.isAcademic && state.institution == "UNI") {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .shadow(16.dp, RoundedCornerShape(20.dp))
+                        .clickable {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://bit.ly/Drive_L4"))
+                            context.startActivity(intent)
+                        },
+                    colors = CardDefaults.cardColors(
+                        containerColor = uniColor.copy(0.2f) // Fondo vino translúcido
+                    ),
+                    border = BorderStroke(3.dp, uniColor),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                Brush.horizontalGradient(
+                                    colors = listOf(
+                                        uniColor.copy(0.3f),
+                                        Color.Transparent
+                                    )
+                                )
+                            )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // ✅ ÍCONO DE DRIVE CON COLOR UNI
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = uniColor
+                                ),
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                Text(
+                                    "📚",
+                                    fontSize = 40.sp,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+
+                            Spacer(Modifier.width(20.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = uniColor.copy(0.3f)
+                                    ),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Text(
+                                        "🎓 EXCLUSIVO UNI",
+                                        color = uniColor,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Black,
+                                        letterSpacing = 1.sp,
+                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                    )
+                                }
+
+                                Spacer(Modifier.height(10.dp))
+
+                                Text(
+                                    "Drive Académico UNI",
+                                    fontWeight = FontWeight.Black,
+                                    color = Color.White,
+                                    fontSize = 22.sp
+                                )
+
+                                Spacer(Modifier.height(8.dp))
+
+                                Text(
+                                    "Exámenes, prácticas y recursos de todos los ciclos",
+                                    color = Color.White.copy(0.8f),
+                                    fontSize = 14.sp,
+                                    lineHeight = 20.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+
+                            Spacer(Modifier.width(12.dp))
+
+                            Icon(
+                                imageVector = Icons.Default.ArrowForward,
+                                contentDescription = null,
+                                tint = uniColor,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(24.dp))
+            }
+
+            // ✅ XP LEVEL BAR
             XpLevelBar(
                 currentXp = state.userXp,
                 level = state.userLevel
@@ -157,7 +263,7 @@ fun DashboardScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // ✅ STATS GRID CON DATOS REALES
+            // ✅ STATS GRID
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -205,7 +311,7 @@ fun DashboardScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            // ✅ CURSOS EN PROGRESO CON DATOS REALES
+            // ✅ CURSOS EN PROGRESO
             if (state.coursesProgress.isNotEmpty()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -231,7 +337,6 @@ fun DashboardScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // ✅ MAPEAR CURSOS REALES
                 state.coursesProgress.take(2).forEach { course ->
                     CourseProgressCard(
                         course = course,
@@ -243,7 +348,7 @@ fun DashboardScreen(
                 }
             }
 
-            // ✅ GLOSARIO CON LAYOUT ARREGLADO Y DATOS REALES
+            // ✅ GLOSARIO
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -297,7 +402,6 @@ fun DashboardScreen(
 
                     Spacer(Modifier.width(12.dp))
 
-                    // ✅ STATS EN COLUMNA (NO APILADOS)
                     Card(
                         colors = CardDefaults.cardColors(
                             containerColor = Color(0xFFFBBF24).copy(0.3f)
@@ -425,7 +529,7 @@ fun DashboardScreen(
                         }
                     } else {
                         OutlinedButton(
-                            onClick = { navController.navigate(Screens.PreferenceTest.route) },
+                            onClick = { navController.navigate(Screens.PreferenceResult.route) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(64.dp),
@@ -470,7 +574,6 @@ fun DashboardScreen(
     }
 }
 
-// ✅ COMPONENTE AUXILIAR
 @Composable
 fun CourseProgressCard(
     course: CourseProgress,

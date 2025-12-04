@@ -25,6 +25,10 @@ data class DashboardState(
     val currentStreak: Int = 0,
     val badgesCount: Int = 0,
 
+    // ✅ NUEVO: Detector de correo académico UNI
+    val isAcademic: Boolean = false,
+    val institution: String? = null,
+
     // Contenido
     val dailyTerm: DailyTermWrapper? = null,
     val coursesProgress: List<CourseProgress> = emptyList(),
@@ -93,6 +97,11 @@ class DashboardViewModel @Inject constructor(
                     totalCourses = data.totalCourses,
                     coursesProgress = data.coursesProgress,
                     finalExamPassed = data.finalExamPassed,
+
+                    // ✅ LEER DIRECTAMENTE DEL DASHBOARD
+                    isAcademic = data.isAcademic,
+                    institution = data.institution,
+
                     isLoading = false,
                     error = null
                 )
