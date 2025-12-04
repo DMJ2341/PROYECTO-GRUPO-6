@@ -26,12 +26,13 @@ from models.glossary import Glossary
 from models.user_glossary_progress import UserGlossaryProgress  
 from models.daily_term_log import DailyTermLog
 from models.password_reset_token import PasswordResetToken
+# ✅ NUEVO IMPORT
+from models.password_reset_code import PasswordResetCode
 from models.user_glossary_favorite import UserGlossaryFavorite
 from models.test_preference import (
     TestQuestion, Certification, Lab, LearningPath,
     RoleSkill, AcademicReference, TestResult, TestAnswer
 )
-
 
 def create_all():
     """Crear todas las tablas"""
