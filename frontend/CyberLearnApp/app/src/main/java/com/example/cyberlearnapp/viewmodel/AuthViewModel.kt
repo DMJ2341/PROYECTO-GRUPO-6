@@ -23,9 +23,11 @@ class AuthViewModel @Inject constructor(
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
 
-    // ✅ NUEVO: Estado de verificación de email
     private val _verificationEmail = MutableStateFlow<String?>(null)
     val verificationEmail: StateFlow<String?> = _verificationEmail.asStateFlow()
+
+    private val _recoveryState = MutableStateFlow<RecoveryState>(RecoveryState.Idle)
+    val recoveryState: StateFlow<RecoveryState> = _recoveryState.asStateFlow()
 
     init {
         checkSession()
@@ -91,7 +93,6 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _authState.value = AuthState.Loading
 
-            // Validaciones en el cliente
             if (!termsAccepted) {
                 _authState.value = AuthState.Error("Debes aceptar los términos y condiciones")
                 return@launch
@@ -112,12 +113,10 @@ class AuthViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     val data = response.body()!!
 
-                    // ✅ NUEVO: Verificar si requiere verificación
                     if (data.requiresVerification) {
                         _verificationEmail.value = email
                         _authState.value = AuthState.RequiresVerification(email)
                     } else {
-                        // Flujo antiguo (por si el backend no envía código)
                         if (data.accessToken != null && data.refreshToken != null) {
                             AuthManager.saveToken(data.accessToken)
                             AuthManager.saveRefreshToken(data.refreshToken)
@@ -134,7 +133,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // ✅ NUEVO: Verificar código de email
     fun verifyEmail(email: String, code: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
@@ -161,7 +159,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // ✅ NUEVO: Reenviar código
     fun resendCode(email: String) {
         viewModelScope.launch {
             try {
@@ -177,6 +174,68 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // ==========================================
+    // 🔐 RECUPERACIÓN DE CONTRASEÑA
+    // ==========================================
+
+    fun sendRecoveryEmail(email: String) {
+        viewModelScope.launch {
+            _recoveryState.value = RecoveryState.Loading
+            try {
+                val response = apiService.forgotPassword(mapOf("email" to email))
+                if (response.isSuccessful) {
+                    _recoveryState.value = RecoveryState.EmailSent(email)
+                } else {
+                    _recoveryState.value = RecoveryState.Error("No se pudo enviar el correo. Verifica que exista.")
+                }
+            } catch (e: Exception) {
+                _recoveryState.value = RecoveryState.Error("Error de conexión: ${e.message}")
+            }
+        }
+    }
+
+    fun validateRecoveryToken(email: String, token: String) {
+        viewModelScope.launch {
+            _recoveryState.value = RecoveryState.Loading
+            try {
+                val response = apiService.validateResetToken(mapOf("email" to email, "token" to token))
+                if (response.isSuccessful) {
+                    _recoveryState.value = RecoveryState.TokenValid
+                } else {
+                    _recoveryState.value = RecoveryState.Error("Código inválido o expirado")
+                }
+            } catch (e: Exception) {
+                _recoveryState.value = RecoveryState.Error("Error de conexión: ${e.message}")
+            }
+        }
+    }
+
+    fun resetPassword(email: String, token: String, newPass: String) {
+        viewModelScope.launch {
+            _recoveryState.value = RecoveryState.Loading
+            try {
+                val response = apiService.resetPassword(
+                    mapOf(
+                        "email" to email,
+                        "token" to token,
+                        "new_password" to newPass
+                    )
+                )
+                if (response.isSuccessful) {
+                    _recoveryState.value = RecoveryState.PasswordResetSuccess
+                } else {
+                    _recoveryState.value = RecoveryState.Error("No se pudo cambiar la contraseña")
+                }
+            } catch (e: Exception) {
+                _recoveryState.value = RecoveryState.Error("Error de conexión: ${e.message}")
+            }
+        }
+    }
+
+    fun resetRecoveryFlow() {
+        _recoveryState.value = RecoveryState.Idle
+    }
+
     fun resetNavigation() {
         _authState.value = AuthState.Idle
     }
@@ -186,11 +245,24 @@ class AuthViewModel @Inject constructor(
     }
 }
 
+// ==========================================
+// SEALED CLASSES
+// ==========================================
+
 sealed class AuthState {
     object Idle : AuthState()
     object Loading : AuthState()
     object Success : AuthState()
-    data class RequiresVerification(val email: String) : AuthState()  // ✅ NUEVO
-    object CodeResent : AuthState()  // ✅ NUEVO
+    data class RequiresVerification(val email: String) : AuthState()
+    object CodeResent : AuthState()
     data class Error(val message: String) : AuthState()
+}
+
+sealed class RecoveryState {
+    object Idle : RecoveryState()
+    object Loading : RecoveryState()
+    data class EmailSent(val email: String) : RecoveryState()
+    object TokenValid : RecoveryState()
+    object PasswordResetSuccess : RecoveryState()
+    data class Error(val message: String) : RecoveryState()
 }
