@@ -35,7 +35,7 @@ from services.glossary_service import (
     get_all_glossary_terms, search_glossary, get_glossary_stats,
     mark_term_as_learned, get_learned_terms, record_quiz_attempt
 )
-from services.password_reset_service import create_reset_token, validate_reset_token, reset_password
+
 from services.course_service import CourseService
 from services.badge_service import BadgeService
 from services.progress_service import mark_lesson_completed, get_user_course_progress
@@ -45,6 +45,7 @@ from services.streak_service import StreakService
 from services.glossary_favorite_service import toggle_favorite, get_user_favorites, is_favorite
 from services.daily_term_service import get_daily_term_for_user, complete_daily_term
 from services.test_preference_service import TestPreferenceService
+from services.password_reset_service import create_reset_token, validate_reset_token, reset_password
 
 # -------------------------------------------------------------------
 # CONFIGURACIÓN
@@ -179,34 +180,86 @@ def logout_route(current_user_id):
 
 @app.route('/api/auth/forgot-password', methods=['POST'])
 def forgot_password_route():
+    """Envía código de recuperación al email."""
     data = request.get_json()
+    print(f"📦 [FORGOT] Data recibida: {data}")
+    
     try:
-        result = create_reset_token(data.get('email'))
+        email = data.get('email', '').strip().lower()
+        
+        if not email:
+            return jsonify({"success": False, "message": "Email requerido"}), 400
+        
+        print(f"📧 [FORGOT] Email procesado: '{email}'")
+        
+        result = create_reset_token(email)
+        
         return jsonify(result), 200
-    except Exception:
-        return jsonify({"error": "Error interno"}), 500
+        
+    except Exception as e:
+        print(f"❌ Error forgot_password: {e}")
+        return jsonify({"success": False, "message": "Error interno del servidor"}), 500
+
 
 @app.route('/api/auth/validate-reset-token', methods=['POST'])
 def validate_reset_token_route():
+    """Valida el código de 6 dígitos."""
     data = request.get_json()
+    print(f"📦 [VALIDATE] Data recibida: {data}")
+    
     try:
-        result = validate_reset_token(data.get('token'), data.get('email'))
-        return jsonify(result), 200
+        email = data.get('email', '').strip().lower()
+        code = data.get('token', '').strip()
+        
+        print(f"📧 [VALIDATE] Email procesado: '{email}'")
+        print(f"🔢 [VALIDATE] Código procesado: '{code}'")
+        
+        if not email or not code:
+            return jsonify({"success": False, "message": "Email y código requeridos"}), 400
+        
+        result = validate_reset_token(email, code)
+        
+        return jsonify({"success": True, "message": "Código válido"}), 200
+        
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except Exception:
-        return jsonify({"error": "Error interno"}), 500
+        print(f"❌ [VALIDATE] ValueError: {str(e)}")
+        return jsonify({"success": False, "message": str(e)}), 400
+    except Exception as e:
+        print(f"❌ [VALIDATE] Exception: {str(e)}")
+        return jsonify({"success": False, "message": "Error interno"}), 500
+
 
 @app.route('/api/auth/reset-password', methods=['POST'])
 def reset_password_route():
+    """Cambia la contraseña con el código validado."""
     data = request.get_json()
+    print(f"📦 [RESET] Data recibida: {data}")
+    
     try:
-        result = reset_password(data.get('token'), data.get('email'), data.get('password'))
+        email = data.get('email', '').strip().lower()
+        code = data.get('token', '').strip()
+        new_password = data.get('new_password', '').strip()
+        
+        print(f"📧 [RESET] Email procesado: '{email}'")
+        print(f"🔢 [RESET] Código procesado: '{code}'")
+        print(f"🔐 [RESET] Password length: {len(new_password)}")
+        
+        if not email or not code or not new_password:
+            return jsonify({"success": False, "message": "Todos los campos son requeridos"}), 400
+        
+        if len(new_password) < 8:
+            return jsonify({"success": False, "message": "La contraseña debe tener al menos 8 caracteres"}), 400
+        
+        result = reset_password(email, code, new_password)
+        
         return jsonify(result), 200
+        
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except Exception:
-        return jsonify({"error": "Error interno"}), 500
+        print(f"❌ [RESET] ValueError: {str(e)}")
+        return jsonify({"success": False, "message": str(e)}), 400
+    except Exception as e:
+        print(f"❌ [RESET] Exception: {str(e)}")
+        return jsonify({"success": False, "message": "Error interno"}), 500
 
 # ==========================================
 # 👤 USUARIO
